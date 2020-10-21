@@ -6,7 +6,6 @@ function App() {
       <header className="App-header">
         <Button variant="primary">different button</Button>
       </header>
-      
     </div>
   );
 }
