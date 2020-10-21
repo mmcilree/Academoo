@@ -1,0 +1,20 @@
+Metadata-Version: 2.1
+Name: flask-sqlalchemy-stubs
+Version: 0.2
+Summary: flask_sqlalchemy stubs
+Home-page: https://github.com/ryanwang520/flask_sqlalchemy-stubs
+Author: Ryan Wang
+Author-email: hwwangwang@gmail.com
+License: MIT License
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Programming Language :: Python :: 3
+Description-Content-Type: text/markdown
+Requires-Dist: mypy (>=0.720)
+Requires-Dist: typing-extensions (>=3.7.4)
+
+```
+pip install flask_sqlalchemy-stubs
+```
+
+
