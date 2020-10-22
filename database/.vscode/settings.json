@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "venv/bin/python",
+    "python.linting.enabled": false,
+    "python.linting.flake8Enabled": true
+}
