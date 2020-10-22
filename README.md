@@ -26,3 +26,5 @@ where \<type> is one of:
 - **style**: for changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc).
 - **test**: for adding missing tests or correcting existing tests.
 - **build**: for changes that affect the build system or external dependencies.
+
+to be continued...
