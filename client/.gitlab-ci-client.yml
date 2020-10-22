@@ -4,7 +4,7 @@ stages:
 
 build:
   before_script:
-  - cd /client
+  - cd ./client
   stage: build
   image: node
   script: 
@@ -15,7 +15,7 @@ build:
 
 test:
   before_script:
-  - cd /client
+  - cd ./client
   stage: test
   image: node
   script:
