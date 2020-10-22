@@ -8,6 +8,16 @@ build:
   stage: build
   image: python:latest
   script: 
-    - echo "Installing prerequisites"
+    - echo "Installing prerequisites..."
     - pip install -r requirements.txt
+    - echo "Success!"
+  
+test:
+  before_script:
+    - cd ./server
+  stage: test
+  image: python:latest
+  script:
+    - echo "Running tests..."
+    - pytest
     - echo "Success!"
