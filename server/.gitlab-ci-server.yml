@@ -1,6 +1,6 @@
 stages:
   - build
-  # - test
+  - test
 
 build:
   before_script:
