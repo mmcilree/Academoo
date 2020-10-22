@@ -4,7 +4,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Button variant="primary">different button</Button>
+        <Button variant="primary">This button should appear.</Button>
       </header>
     </div>
   );
