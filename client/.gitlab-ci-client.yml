@@ -3,6 +3,8 @@ stages:
   - test
 
 build:
+  before_script:
+  - cd /client
   stage: build
   image: node
   script: 
@@ -12,6 +14,8 @@ build:
     - echo "Build successfully!"
 
 test:
+  before_script:
+  - cd /client
   stage: test
   image: node
   script:
