@@ -8,7 +8,7 @@ administrating= db.Table('administrating',
 
 class User(db.Model):
     user_id = db.Column(db.String(50), primary_key=True)
-    posts = db.relationship('Post', backref='author')
+    posts_created = db.relationship('Post', backref='author')
     host = db.Column(db.String, nullable=False)
     admin_of = db.relationship('Community', secondary=administrating, back_ref='admins')
 
