@@ -16,6 +16,7 @@ class Community(db.Model):
     id = db.Column(db.String(1000), primary_key=True)
     title = db.Column(db.String(1000), nullable=False)
     description = db.Column(db.String(1000))
+    posts = db.relationship('Post', back_ref='community')
 
 class Post(db.Model):
     id = db.Column(db.String(1000), primary_key=True)
@@ -27,4 +28,5 @@ class Post(db.Model):
     created = db.Column(db.BigInteger)
     modified = db.Column(db.BigInteger)
     comments = db.relationship('Post', backref='parent')
+    community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
 
