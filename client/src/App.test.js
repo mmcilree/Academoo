@@ -1,9 +1,7 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { shallow, mount } from "enzyme";
 import App from './App';
 
-test('renders example', () => {
-  const { getByText } = render(<App />);
-  const buttonElement = getByText(/This button should appear./i);
-  expect(buttonElement).toBeInTheDocument();
+it("renders without crashing", () => {
+  shallow(<App />);
 });
