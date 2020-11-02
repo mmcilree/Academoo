@@ -1,7 +1,7 @@
 from app import db
 from datetime import datetime
 
-administrating= db.Table('administrating',
+administrating = db.Table('administrating',
     db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
     db.Column('community_id', db.String(1000), db.Integer, db.ForeignKey('community.id'))
     )

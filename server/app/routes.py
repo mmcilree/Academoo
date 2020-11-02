@@ -1,10 +1,5 @@
-from .middlewares import login_required
-from flask import Flask, json, g, request
-from flask_cors import CORS
-
-# React frontend should use axios to communicate with the backend
-app = Flask(__name__)
-CORS(app)
+from flask import json, g, request
+from app import app, db
 
 # Community
 @app.route("/communities", methods=["GET"])
@@ -14,7 +9,6 @@ def get_all_communities():
 @app.route("/communities/<id>", methods=["GET"])
 def get_community_by_id(id):
     return id
-
 
 # Posts
 @app.route("/posts", methods=["GET"])
@@ -36,6 +30,3 @@ def edit_post(id):
 @app.route("posts/<id>", methods=["DELETE"])
 def delete_post(id):
     pass
-
-if __name__ == "__main__":
-    app.run()

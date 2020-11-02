@@ -1,5 +1,5 @@
 from app import db
-from app.models import *
+from app.models import User, Community, Post
 import json
 import time
 
