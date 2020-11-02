@@ -1,15 +1,18 @@
 import React from 'react';
 import Create from './components/create';
 import Header from './components/header';
+import Welcome from './components/welcome';
 
 class App extends React.Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
+      <div>
+        <header>
           <Header />
         </header>
-        <Create />
+        <div class="container">
+          <Welcome />
+        </div>
       </div>
     );
   }
