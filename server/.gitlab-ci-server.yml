@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - deploy
 
 server_build:
   before_script:
@@ -23,3 +24,16 @@ server_test:
     - echo "Running tests..."
     - pytest
     - echo "Success!"
+
+server_deploy:
+  before_script:
+    - cd ./server
+    - pip install -r requirements.txt
+  stage: deploy
+  environment:
+    name: staging
+  script:
+    - flask db init
+    - flask db migrate
+    - flask db upgrade
+    - flask run
