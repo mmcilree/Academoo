@@ -1,4 +1,3 @@
-from re import L
 from flask import jsonify, g, request, Response
 from app import app, db, actions, guard
 from flask_praetorian import auth_required, current_user
