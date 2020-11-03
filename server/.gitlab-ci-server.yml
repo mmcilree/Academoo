@@ -38,7 +38,7 @@ server_deploy:
     name: staging
   script:
     - ssh -o StrictHostKeyChecking=no nnv2@nnv2.host.cs.st-andrews.ac.uk
-    - cd ~/Documents/CS3099/project-code
+    - cd /cs/home/nnv2/Documents/CS3099/project-code/server
     - git pull
 
     - cd server
