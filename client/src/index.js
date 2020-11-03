@@ -4,12 +4,12 @@ import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import RenderPost from "./components/render_posts";
+import PostsViewer from "./components/posts_viewer";
 
 ReactDOM.render(
   <React.StrictMode>
     <App />
-    <RenderPost />,
+    <PostsViewer />,
   </React.StrictMode>,
 
   document.getElementById("root")
