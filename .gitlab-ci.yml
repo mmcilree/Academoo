@@ -1,4 +1,4 @@
 include:
-  - local: '/client/.gitlab-ci-client.yml'
+  # - local: '/client/.gitlab-ci-client.yml'
   - local: '/server/.gitlab-ci-server.yml'
 
