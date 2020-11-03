@@ -26,8 +26,6 @@ const ContentTypeComponent = ({ contentType, body }) => {
   switch (contentType) {
     case "text":
       return <Card.Body>{body}</Card.Body>;
-    // case 'img':
-    //   return <Card.Img></Card.Img>
     default:
       return <Card.Body>{body}</Card.Body>;
   }
