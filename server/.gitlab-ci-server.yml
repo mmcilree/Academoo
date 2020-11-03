@@ -2,7 +2,7 @@ stages:
   - build
   - test
 
-build:
+server_build:
   before_script:
   - cd ./server
   stage: build
@@ -12,7 +12,7 @@ build:
     - pip install -r requirements.txt
     - echo "Success!"
   
-test:
+server_test:
   before_script:
     - cd ./server
     - echo "Installing prerequisites..."
