@@ -3,14 +3,14 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/card';
 
-class Create extends React.Component {
+class PostCreator extends React.Component {
     render() {
         return (
             <Card className="mt-4">
                 <Card.Body>
                     <Form>
                         <Form.Group controlId="createPostTitle">
-                            <Form.Label>Post Title</Form.Label>
+                            <Form.Label>Create a new post</Form.Label>
                             <Form.Control type="input" placeholder="Title (e.g. 'Moo')" />
                         </Form.Group>
 
@@ -27,4 +27,4 @@ class Create extends React.Component {
     }
 }
 
-export default Create;
+export default PostCreator;

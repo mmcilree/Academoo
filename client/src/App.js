@@ -1,17 +1,17 @@
 import React from 'react';
-import Create from './components/create';
-import Header from './components/header';
-import Welcome from './components/welcome';
+import PostCreator from './components/PostCreator';
+import HeaderBar from './components/HeaderBar';
+import Welcome from './components/Welcome';
 
 class App extends React.Component {
   render() {
     return (
       <div>
         <header>
-          <Header />
+          <HeaderBar />
         </header>
         <div class="container" >
-          <Create />
+          <PostCreator />
         </div>
       </div>
     );

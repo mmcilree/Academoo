@@ -10,7 +10,7 @@ import logo from '../images/logo.png'
 
 import { PlusCircle, PersonCircle, Gear, BoxArrowRight } from 'react-bootstrap-icons';
 
-class Header extends React.Component {
+class HeaderBar extends React.Component {
     render() {
         return (
             <Navbar bg="light" variant="light" expand="lg">
@@ -50,4 +50,4 @@ class Header extends React.Component {
     }
 }
 
-export default Header;
+export default HeaderBar;
