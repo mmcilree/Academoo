@@ -4,6 +4,7 @@ import json
 import time
 
 def getCommunityIDs():
+    z = Community.query.all()
     ids = [community.id for community in Community.query.all()]
     return json.dumps(ids)
 

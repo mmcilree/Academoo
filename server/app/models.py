@@ -23,12 +23,17 @@ class Community(db.Model):
 class Post(db.Model):
     id = db.Column(db.String(1000), primary_key=True)
     title = db.Column(db.String())
-    author_id = db.Column(db.String(50), db.ForeignKey('user.id'))
+    author_id = db.Column(db.String(50), db.ForeignKey('user.user_id'))
     content_type = db.Column(db.String(50))
     body = db.Column(db.String(1000))
+
+    # NOTE: This can be community ID or post ID no?
     parent_id = db.Column(db.Integer, db.ForeignKey('post.id'))
     created = db.Column(db.BigInteger)
     modified = db.Column(db.BigInteger)
-    comments = db.relationship('Post', backref='parent')
+
+    # NOTE: Circular relationship is causing issues. Is this necessary?
+    # comments = db.relationship('Post', backref='parent')
+
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
 

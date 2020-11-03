@@ -1,10 +1,10 @@
 from flask import json, g, request
-from app import app, db
+from app import app, db, actions
 
 # Community
 @app.route("/communities", methods=["GET"])
 def get_all_communities():
-    return "All Communities"
+    return actions.getCommunityIDs()
 
 @app.route("/communities/<id>", methods=["GET"])
 def get_community_by_id(id):
