@@ -37,4 +37,4 @@ server_deploy:
   environment:
     name: staging
   script:
-    - ssh nnv2@nnv2.host.cs.st-andrews.ac.uk "mkdir working && exit"
+    - ssh -o StrictHostKeyChecking=no nnv2@nnv2.host.cs.st-andrews.ac.uk "mkdir working && exit"
