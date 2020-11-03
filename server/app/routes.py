@@ -4,6 +4,10 @@ from app import app, db, actions
 # TODO: Error handling with invalid data
 # TODO: Testing
 
+@app.route("/")
+def index():
+    return "Hello World! The backend server is currently active."
+
 # Community
 @app.route("/fed/communities", methods=["GET"])
 def get_all_communities():
