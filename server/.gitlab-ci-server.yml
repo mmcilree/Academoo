@@ -30,6 +30,7 @@ server_deploy:
     - cd ./server
     - pip install -r requirements.txt
   stage: deploy
+  image: python:latest
   environment:
     name: staging
   script:
