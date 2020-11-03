@@ -6,26 +6,36 @@ import Dropdownbutton from 'react-bootstrap/DropdownButton';
 import Button from 'react-bootstrap/button';
 import Image from 'react-bootstrap/image';
 import defaultProfile from '../images/default_profile.png'
+import logo from '../images/logo.png'
+
 import { PlusCircle, PersonCircle, Gear, BoxArrowRight } from 'react-bootstrap-icons';
 
 class Header extends React.Component {
     render() {
         return (
-            <Navbar bg="dark" variant="dark" expand="lg">
-                <Navbar.Brand href="#home">Academoo</Navbar.Brand>
+            <Navbar bg="light" variant="light" expand="lg">
+                <Navbar.Brand href="#home">
+                    <img
+                        alt=""
+                        src={logo}
+                        width="30"
+                        height="30"
+                        className="d-inline-block align-top"
+                    />{' '}
+                    Academoo</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
                         <Nav.Link href="#home">Hoome</Nav.Link>
                         <Nav.Link href="#link">
                             <PlusCircle className="mb-1" />
-                            <span>  NewMoo</span>
+                            <span>  New Moo</span>
                         </Nav.Link>
                     </Nav>
 
                     <Nav>
-                        <Dropdownbutton variant="secondary" title={
-                            <span><Image className="mr-3" src={defaultProfile} roundedCircle style={{maxWidth: "30px"}}></Image>Yoo</span>
+                        <Dropdownbutton variant="outline-secondary" title={
+                            <span><Image className="mr-3" src={defaultProfile} roundedCircle width="25" height="25"></Image>Yoo</span>
                         } id="collasible-nav-dropdown" alignRight className="p0">
                             <NavDropdown.Item href="#action/3.1"><PersonCircle /> Profile</NavDropdown.Item>
                             <NavDropdown.Item href="#action/3.2"><Gear /> Settings</NavDropdown.Item>
