@@ -1,22 +1,24 @@
+from sqlalchemy.orm import backref
 from app import db
 from datetime import datetime
 
-administrating = db.Table('administrating',
+Administrating = db.Table('Administrating',
     db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
-    db.Column('community_id', db.String(1000), db.Integer, db.ForeignKey('community.id'))
+    db.Column('community_id', db.String(1000), db.ForeignKey('community.id'))
     )
 
 class User(db.Model):
     user_id = db.Column(db.String(50), primary_key=True)
     posts_created = db.relationship('Post', backref='author')
     host = db.Column(db.String, nullable=False)
-    admin_of = db.relationship('Community', secondary=administrating, back_ref='admins')
+    admin_of = db.relationship('Community', secondary=Administrating, backref='admins')
 
 class Community(db.Model):
     id = db.Column(db.String(1000), primary_key=True)
     title = db.Column(db.String(1000), nullable=False)
     description = db.Column(db.String(1000))
-    posts = db.relationship('Post', back_ref='community')
+    posts = db.relationship('Post', backref='community')
+    administrators = db.relationship("User", secondary=Administrating, backref='communities')
 
 class Post(db.Model):
     id = db.Column(db.String(1000), primary_key=True)

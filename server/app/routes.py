@@ -27,6 +27,6 @@ def create_post():
 def edit_post(id):
     pass
 
-@app.route("posts/<id>", methods=["DELETE"])
+@app.route("/posts/<id>", methods=["DELETE"])
 def delete_post(id):
     pass
