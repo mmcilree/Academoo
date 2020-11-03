@@ -27,23 +27,23 @@ def get_all_posts():
 
     return jsonify(actions.getFilteredPosts(limit, community, min_date))
 
-@app.route("/posts/<id>", methods=["GET"])
+@app.route("/fed/posts/<id>", methods=["GET"])
 def get_post_by_id(id):
     return jsonify(actions.getPost(id))
 
-@app.route("/posts", methods=["POST"])
+@app.route("/fed/posts", methods=["POST"])
 def create_post():
     actions.createPost(request.json)
 
     return Response(status = 200)
 
-@app.route("/posts/<id>", methods=["PUT"])
+@app.route("/fed/posts/<id>", methods=["PUT"])
 def edit_post(id):
     actions.editPost(id, request.json)
 
     return Response(status = 200)
 
-@app.route("/posts/<id>", methods=["DELETE"])
+@app.route("/fed/posts/<id>", methods=["DELETE"])
 def delete_post(id):
     actions.deletePost(id)
 
