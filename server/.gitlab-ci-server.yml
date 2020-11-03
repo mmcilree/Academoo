@@ -27,14 +27,13 @@ server_test:
 
 server_deploy:
   before_script:
-    - cd ./server
-    - pip install -r requirements.txt
+      - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+      - eval $(ssh-agent -s)
+      - ssh-add ./gitlab_rsa
+      - mkdir -p ~/.ssh
+      - chmod 700 ~/.ssh
   stage: deploy
-  image: python:latest
   environment:
     name: staging
   script:
-    - flask db init
-    - flask db migrate
-    - flask db upgrade
-    - flask run
+    - ssh nnv2@nnv2.host.cs.st-andrews.ac.uk "mkdir working && exit"
