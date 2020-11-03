@@ -29,6 +29,7 @@ server_deploy:
   before_script:
       - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
       - eval $(ssh-agent -s)
+      - chmod 400 ./gitlab_rsa
       - ssh-add ./gitlab_rsa
       - mkdir -p ~/.ssh
       - chmod 700 ~/.ssh
