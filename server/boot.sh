@@ -5,7 +5,7 @@ source venv/bin/activate
 pip3 install -r requirements.txt
 
 cp ./deployment/nginx.conf /host/nnv2/nginx.d/default/backend.conf
-nginx -c /host/<username>/nginx.conf -s reload
+nginx -c /host/nnv2/nginx.conf -s reload
 
 flask db init
 flask db upgrade

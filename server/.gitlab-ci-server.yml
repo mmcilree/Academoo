@@ -1,29 +1,29 @@
 stages:
-  # - build
-  # - test
+  - build
+  - test
   - deploy
 
-# server_build:
-#   before_script:
-#   - cd ./server
-#   stage: build
-#   image: python:latest
-#   script: 
-#     - echo "Installing prerequisites..."
-#     - pip install -r requirements.txt
-#     - echo "Success!"
+server_build:
+  before_script:
+  - cd ./server
+  stage: build
+  image: python:latest
+  script: 
+    - echo "Installing prerequisites..."
+    - pip install -r requirements.txt
+    - echo "Success!"
   
-# server_test:
-#   before_script:
-#     - cd ./server
-#     - echo "Installing prerequisites..."
-#     - pip install -r requirements.txt
-#   stage: test
-#   image: python:latest
-#   script:
-#     - echo "Running tests..."
-#     - pytest
-#     - echo "Success!"
+server_test:
+  before_script:
+    - cd ./server
+    - echo "Installing prerequisites..."
+    - pip install -r requirements.txt
+  stage: test
+  image: python:latest
+  script:
+    - echo "Running tests..."
+    - pytest
+    - echo "Success!"
 
 server_deploy:
   before_script:
@@ -34,6 +34,8 @@ server_deploy:
       - mkdir -p ~/.ssh
       - chmod 700 ~/.ssh
   stage: deploy
+  only:
+    - master
   environment:
     name: staging
   script:
