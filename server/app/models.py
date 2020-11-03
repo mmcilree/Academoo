@@ -29,7 +29,10 @@ class Post(db.Model):
 
     # NOTE: This can be community ID or post ID no?
     parent_id = db.Column(db.Integer, db.ForeignKey('post.id'))
+
+    # NOTE: Perhaps we can use datetime data type here and use default value of time now whenever it's created?
     created = db.Column(db.BigInteger)
+    
     modified = db.Column(db.BigInteger)
 
     # NOTE: Circular relationship is causing issues. Is this necessary?

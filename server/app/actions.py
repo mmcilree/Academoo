@@ -6,31 +6,32 @@ import time
 def getCommunityIDs():
     z = Community.query.all()
     ids = [community.id for community in Community.query.all()]
-    return json.dumps(ids)
+    return ids
 
 def getCommunity(community_id):
     community = Community.query.filter_by(id = community_id).first()
     community_dict = {"id": community.id, "title": community.title, "description": community.description, "admins": [{"id": admin.user_id, "host": admin.host} for admin in community.admins]}
-    return json.dumps(community_dict)
+    return community_dict
 
 def getAllCommunityPostsTimeModified(community_id):
     post_dicts = [{"id":post.id, "modified":post.modified} for post in Post.query.filter_by(community = community_id)]
-    return json.dumps(post_dicts)
+    return post_dicts
 
 def getFilteredPosts(limit, community_id, min_date):
-    posts = Post.query.filter_by(created >= min_date, community = community_id ).limit(limit)
+    posts = Post.query.filter(Post.created >= min_date, Post.community == community_id).limit(limit)
     post_dicts = [{"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content-type": post.content_type, "body": post.body, "author": {"id": post.admin.id, "host": post.admin.host}, "modified": post.modified, "created": post.created} for post in posts]
-    return json.dumps(post_dicts)
+    return post_dicts
 
-def createPost(json_file):
-    to_create = json.loads(json_file)
-    post_id = to_create["id"]
+def createPost(post_data):
+    # to_create = json.loads(json_file)
+    post_id = post_data["id"]
     # COULD BE NONE
-    post_parent = to_create["parent"]
-    post_title = to_create["title"]
-    post_content_type = to_create["content_type"]
-    post_body = to_create["body"]
-    author_dict = to_create["author"]
+    post_parent = post_data["parent"]
+    post_title = post_data["title"]
+    post_content_type = post_data["content_type"]
+    post_body = post_data["body"]
+    author_dict = post_data["author"]
+
     author_id = author_dict["id"]
     author_host = author_dict["host"]
     current_time = int(time.time())
@@ -53,11 +54,11 @@ def getPost(post_id):
     post_dict = {"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content-type": post.content_type, "body": post.body, "author": {"id": post.admin.id, "host": post.admin.host}, "modified": post.modified, "created": post.created}
     return json.dumps(post_dict)
 
-def editPost(post_id, json_file):
-    to_update = json.loads(json_file)
-    update_title = to_update["title"]
-    update_content_type = to_update["content_type"]
-    update_body = to_update["body"]
+def editPost(post_id, post_data):
+    # to_update = json.loads(json_file)
+    update_title = post_data["title"]
+    update_content_type = post_data["content_type"]
+    update_body = post_data["body"]
     update_modified = int(time.time())
 
     post = Post.query.filter_by(id = post_id)
