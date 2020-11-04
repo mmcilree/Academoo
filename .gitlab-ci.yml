@@ -1,4 +1,10 @@
+stages:
+  - build
+  - test
+  - deploy
+
 include:
   - local: '/client/.gitlab-ci-client.yml'
   - local: '/server/.gitlab-ci-server.yml'
+  - local: '/deployment/.gitlab-ci-deploy.yml'
 

@@ -9,20 +9,20 @@ def index():
     return "Hello World! The backend server is currently active."
 
 # Community
-@app.route("/fed/communities", methods=["GET"])
+@app.route("/communities", methods=["GET"])
 def get_all_communities():
     return jsonify(actions.getCommunityIDs())
 
-@app.route("/fed/communities/<id>", methods=["GET"])
+@app.route("/communities/<id>", methods=["GET"])
 def get_community_by_id(id):
     return jsonify(actions.getCommunity(id))
 
-@app.route("/fed/communities/<id>/timestamps")
+@app.route("/communities/<id>/timestamps")
 def get_community_timestamps(id):
     return jsonify(actions.getAllCommunityPostsTimeModified(id))
 
 # Posts
-@app.route("/fed/posts/", methods=["GET"])
+@app.route("/posts/", methods=["GET"])
 def get_all_posts():
     # limit, community, min_date
     limit = int(request.args.get("limit", 20))
@@ -31,23 +31,23 @@ def get_all_posts():
 
     return jsonify(actions.getFilteredPosts(limit, community, min_date))
 
-@app.route("/fed/posts/<id>", methods=["GET"])
+@app.route("/posts/<id>", methods=["GET"])
 def get_post_by_id(id):
     return jsonify(actions.getPost(id))
 
-@app.route("/fed/posts", methods=["POST"])
+@app.route("/posts", methods=["POST"])
 def create_post():
     actions.createPost(request.json)
 
     return Response(status = 200)
 
-@app.route("/fed/posts/<id>", methods=["PUT"])
+@app.route("/posts/<id>", methods=["PUT"])
 def edit_post(id):
     actions.editPost(id, request.json)
 
     return Response(status = 200)
 
-@app.route("/fed/posts/<id>", methods=["DELETE"])
+@app.route("/posts/<id>", methods=["DELETE"])
 def delete_post(id):
     actions.deletePost(id)
 
