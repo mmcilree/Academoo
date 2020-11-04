@@ -33,7 +33,7 @@ export const posts = [
     id: "comment1",
     parent: "post1",
     children: [],
-    title: "A comment",
+    title: "A Comment",
     contentType: "text",
     body: "Here's a comment!",
     author: {

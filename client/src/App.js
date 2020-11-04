@@ -11,9 +11,8 @@ class App extends React.Component {
     return (
       <Router>
         <div className="App">
-          <header></header>
           <HeaderBar />
-          <div className="container">
+          <div className="container-md">
             <Switch>
               <Route path="/" exact component={Welcome} />
               <Route path="/home" component={Welcome} />
