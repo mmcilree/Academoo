@@ -1,26 +1,32 @@
 import React from "react";
 import Post from "./post";
 import Card from "react-bootstrap/Card";
+import { posts } from "./test_post_json";
 
-function CommentsViewer(props) {
-  const parentPost = props.parentPost;
+function CommentsViewer({ match }) {
+  const parentPostId = match.params.id;
+
+  // const allPosts = props.allPosts;
+  const parentPost = posts.filter((data) => data.id === parentPostId)[0];
   console.log(parentPost);
-  const allPosts = props.allPosts;
+
+  const children = [];
+  parentPost.children.map((childId) => {
+    const child = posts.filter((data) => childId === data.id)[0];
+    children.push(child);
+  });
 
   return (
     <div className="comments_view">
-      <Card>
+      <Card className="mt-4">
         <Post postData={parentPost} />
       </Card>
-
-      {parentPost.children.map((childId) =>
-        allPosts.map((data) =>
-          childId === data.id ? (
-            <Card key={data.id} className="comment">
-              <Post postData={data} />
-            </Card>
-          ) : null
-        )
+      {children.map((child) =>
+        child ? (
+          <Card key={child.id} className="mt-4 comment">
+            <Post postData={child} />
+          </Card>
+        ) : null
       )}
     </div>
   );
