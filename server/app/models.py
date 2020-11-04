@@ -21,7 +21,19 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-    
+
+    @classmethod
+    def lookup(cls, username):
+        return cls.query.filter_by(username=username).one_or_none()
+
+    @classmethod
+    def identify(cls, id):
+        return cls.query.get(id)
+
+    @property
+    def identity(self):
+        return self.user_id
+
 class Community(db.Model):
     id = db.Column(db.String(1000), primary_key=True)
     title = db.Column(db.String(1000), nullable=False)

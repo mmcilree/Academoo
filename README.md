@@ -1,6 +1,6 @@
 # CS3099 Group Project Code
 
-## Commit Style 
+## Commit Message Conventions 
 
 We are using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/). 
 
@@ -26,5 +26,16 @@ where \<type> is one of:
 - **style**: for changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc).
 - **test**: for adding missing tests or correcting existing tests.
 - **build**: for changes that affect the build system or external dependencies.
+
+## React Naming Conventions
+
+We are using the react naming conventions similar to those adoped by [Airbnb](https://github.com/airbnb/javascript/tree/master/react#naming).
+
+- **Component Names**: PascalCase
+- **Component File Names**: PascalCase.jsx
+- **Component Instances**: camelCase
+- **Prop Names**: camelCase except if it is a component, in which case PascalCase
+- **Quotes**: Double Quotes ("") for all JSX attributes and Single Quotes ('') for all other JS. 
+- **Spacing**: Single space in <SelfClosing /> tags. Embedded JS should be {unpadded}
 
 to be continued...
