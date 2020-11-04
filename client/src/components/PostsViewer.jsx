@@ -3,55 +3,35 @@ import { posts } from "./test_post_json";
 import Post from "./Post";
 import CommentsViewer from "./CommentsViewer";
 import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
+import { Link } from "react-router-dom";
 
 // Will remove this comment later. 
 
 class PostsViewer extends Component {
-  state = {
-    view: "posts",
-    currentParent: null,
-  };
-
-  showComments(parentPost) {
-    this.setState({
-      view: "comments",
-      currentParent: parentPost,
-    });
-  }
-
-  showPosts() {
-    this.setState({
-      view: "posts",
-      currentParent: null,
-    });
-  }
-
   render() {
-    if (this.state.view === "posts") {
-      return (
-        <div className="card_container">
-          {posts.map((data) =>
-            data.parent === "" ? (
-              <Card key={data.id}>
-                <Post postData={data} />
-                <Button onClick={() => this.showComments(data)}>
-                  Click to see comments
-                </Button>
-              </Card>
-            ) : null
-          )}
-        </div>
-      );
-    }
-    if (this.state.view === "comments") {
-      return (
-        <CommentsViewer
-          parentPost={this.state.currentParent}
-          allPosts={posts}
-        />
-      );
-    }
+    return (
+      <div className="container-md">
+        <Card className="mt-4">
+          <Card.Body>
+            {posts.map((data) =>
+              data.parent === "" ? (
+                <Card key={data.id} className="mt-4">
+                  <Card.Body>
+                    <Post postData={data} />
+                    <Link
+                      to={`/moosfeed/comments/${data.id}`}
+                      className="btn btn-primary stretched-link"
+                    >
+                      View Comments
+                    </Link>
+                  </Card.Body>
+                </Card>
+              ) : null
+            )}
+          </Card.Body>
+        </Card>
+      </div>
+    );
   }
 }
 
