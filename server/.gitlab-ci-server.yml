@@ -1,5 +1,17 @@
 stages:
+  - build
   - test
+
+server_build:
+  before_script:
+  - cd ./server
+  stage: build
+  image: python:latest
+  script: 
+    - echo "Installing prerequisites..."
+    - pip install -r requirements.txt
+    - echo "Success!"
+
   
 server_test:
   before_script:
