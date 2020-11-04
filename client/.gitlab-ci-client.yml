@@ -15,7 +15,7 @@ client_build:
       - client/node_modules/
   only:
     changes:
-      - "client/*"
+      - "client/**/*"
 
 client_test:
   before_script:
@@ -33,4 +33,4 @@ client_test:
       - client/node_modules/
   only:
     changes:
-      - "client/*"
+      - "client/**/*"
