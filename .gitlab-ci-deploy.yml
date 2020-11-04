@@ -1,0 +1,18 @@
+stages:
+  - deploy
+
+deployment:
+  before_script:
+      - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+      - eval $(ssh-agent -s)
+      - chmod 400 .ssh/gitlab_rsa
+      - ssh-add .ssh/gitlab_rsa
+      - mkdir -p ~/.ssh
+      - chmod 700 ~/.ssh
+  stage: deploy
+  only:
+    - master
+  environment:
+    name: staging
+  script:
+    - ssh -o StrictHostKeyChecking=no nnv2@nnv2.host.cs.st-andrews.ac.uk "cd ~/Documents/CS3099/project-code && git pull && chmod +x boot.sh && ./boot.sh"
