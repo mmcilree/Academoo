@@ -14,7 +14,7 @@ class App extends React.Component {
           <HeaderBar />
           <div className="container-md">
             <Switch>
-              <Route path="/" exact component={Welcome} />
+              <Route exact path="/" component={Welcome} />
               <Route path="/home" component={Welcome} />
               <Route exact path="/moosfeed" component={PostsViewer} />
               <Route path="/create-post" component={PostCreator} />

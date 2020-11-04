@@ -6,15 +6,13 @@ import { shallow, mount } from "enzyme";
 import { posts } from "./components/test_post_json";
 
 import App from "./App";
+import Welcome from "./components/Welcome";
 import Post from "./components/post";
 import PostsViewer from "./components/posts_viewer";
 import CommentsViewer from "./components/comments_viewer";
-import HeaderBar from './components/HeaderBar';
-import PostCreator from './components/PostCreator';
-
-it("App renders without crashing", () => {
-  shallow(<App />);
-});
+import HeaderBar from "./components/HeaderBar";
+import PostCreator from "./components/PostCreator";
+import { MemoryRouter as Router } from "react-router-dom";
 
 const test_data = {
   id: "post1",
@@ -31,20 +29,14 @@ const test_data = {
   created: 1552832584,
 };
 
+it("App renders without crashing", () => {
+  shallow(<App />);
+});
+
 describe("", () => {
   it("Post accepts data props", () => {
     const wrapper = mount(<Post postData={test_data} />);
     expect(wrapper.props().postData).toEqual(test_data);
-  });
-});
-
-describe("", () => {
-  it("CommentsViewer accepts parent and posts props", () => {
-    const wrapper = mount(
-      <CommentsViewer parentPost={test_data} allPosts={posts} />
-    );
-    expect(wrapper.props().parentPost).toEqual(test_data);
-    expect(wrapper.props().allPosts).toEqual(posts);
   });
 });
 
@@ -59,4 +51,3 @@ it("HeaderBar renders without crashing", () => {
 it("PostCreator renders without crashing", () => {
   shallow(<PostCreator />);
 });
-
