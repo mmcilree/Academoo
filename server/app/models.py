@@ -37,9 +37,6 @@ class Post(db.Model):
     body = db.Column(db.String(1000))
     created = db.Column(db.DateTime, default=datetime.now)
     modified = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
-
     parent_id = db.Column(db.String(1000), db.ForeignKey('post.id'))
-
-    #parent = db.relationship('Post', remote_side=[id], backref='comments')
-    comments = db.relationship('Post', remote_side=[id], backref='parent')
+    parent = db.relationship('Post', remote_side=[id], backref='comments')
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
