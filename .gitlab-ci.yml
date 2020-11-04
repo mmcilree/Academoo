@@ -3,6 +3,9 @@ stages:
   - test
   - deploy
 
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
 include:
   - local: '/client/.gitlab-ci-client.yml'
   - local: '/server/.gitlab-ci-server.yml'

@@ -1,25 +1,36 @@
-stages:
-  - build
-  - test
-
 client_build:
   before_script:
-  - cd ./client
+    - cd ./client
+
   stage: build
-  image: node
-  script: 
-    - echo "Start building App"
+  image: node:latest
+  script:
     - npm install
-    - npm build
-    - echo "Build successfully!"
+    # - npm run build
+  cache:
+    key: 
+      files:
+        - client/package.json
+    paths:
+      - client/node_modules/
+  only:
+    changes:
+      - "client/*"
 
 client_test:
   before_script:
-  - cd ./client
+    - cd ./client
+
   stage: test
-  image: node
+  image: node:latest
   script:
-    - echo "Testing App"
-    - npm install
     - CI=true npm test
-    - echo "Test successfully!"
+  cache:
+    key: 
+      files:
+        - client/package.json
+    paths:
+      - client/node_modules/
+  only:
+    changes:
+      - "client/*"

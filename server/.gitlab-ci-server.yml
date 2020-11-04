@@ -1,26 +1,41 @@
-stages:
-  - build
-  - test
-
 server_build:
   before_script:
-  - cd ./server
-  stage: build
-  image: python:latest
-  script: 
-    - echo "Installing prerequisites..."
-    - pip install -r requirements.txt
-    - echo "Success!"
+    - cd ./server
 
-  
+  image: python:latest
+  stage: build
+  script:
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+  cache:
+    key: 
+      files:
+        - server/requirements.txt
+    paths:
+      - server/venv/
+      - .cache/pip
+  only:
+    changes:
+      - "server/*"
+
 server_test:
   before_script:
     - cd ./server
-    - echo "Installing prerequisites..."
-    - pip install -r requirements.txt
-  stage: test
+    - source venv/bin/activate
+
   image: python:latest
+  stage: test
   script:
-    - echo "Running tests..."
     - pytest
-    - echo "Success!"
+  cache:
+    key: 
+      files:
+        - server/requirements.txt
+    paths:
+      - server/venv/
+      - .cache/pip
+  only:
+    changes:
+      - "server/*"
