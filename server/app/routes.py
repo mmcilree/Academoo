@@ -1,5 +1,6 @@
 from flask import jsonify, g, request, Response
-from app import app, db, actions
+from app import app, db, actions, guard
+from flask_praetorian import auth_required, current_user
 
 # TODO: Error handling with invalid data
 # TODO: Testing
@@ -7,6 +8,25 @@ from app import app, db, actions
 @app.route("/")
 def index():
     return "Hello World! The backend server is currently active."
+
+@app.route("/register", methods=["POST"])
+def register():
+    # db.session.add(User(username = 'moo', password=guard.hash_password('password')))
+    pass
+
+@app.route("/login", methods=["POST"])
+def login():
+    req = request.json
+    username = req.get('username')
+    password = req.get('password')
+
+    user = guard.authenticate(username, password)
+    return {'access_token': guard.encode_jwt_token(user)}
+
+@app.route("/protected")
+@auth_required
+def protected():
+    return f"Congrats, you've logged in to {current_user().username}"
 
 # Community
 @app.route("/communities", methods=["GET"])
