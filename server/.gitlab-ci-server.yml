@@ -18,7 +18,7 @@ server_build:
       - .cache/pip
   only:
     changes:
-      - "server/*"
+      - "server/**/*"
 
 server_test:
   before_script:
@@ -38,4 +38,4 @@ server_test:
       - .cache/pip
   only:
     changes:
-      - "server/*"
+      - "server/**/*"
