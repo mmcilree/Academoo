@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { posts } from "./test_post_json";
-import Post from "./post";
-import CommentsViewer from "./comments_viewer";
+import Post from "./Post";
+import CommentsViewer from "./CommentsViewer";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
+
+// Will remove this comment later. 
 
 class PostsViewer extends Component {
   state = {

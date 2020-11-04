@@ -1,5 +1,5 @@
 import React from "react";
-import Post from "./post";
+import Post from "./Post";
 import Card from "react-bootstrap/Card";
 
 function CommentsViewer(props) {

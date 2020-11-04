@@ -6,9 +6,9 @@ import { shallow, mount } from "enzyme";
 import { posts } from "./components/test_post_json";
 
 import App from "./App";
-import Post from "./components/post";
-import PostsViewer from "./components/posts_viewer";
-import CommentsViewer from "./components/comments_viewer";
+import Post from "./components/Post";
+import PostsViewer from "./components/PostsViewer";
+import CommentsViewer from "./components/CommentsViewer";
 import HeaderBar from './components/HeaderBar';
 import PostCreator from './components/PostCreator';
 
