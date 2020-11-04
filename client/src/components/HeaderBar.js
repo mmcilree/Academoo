@@ -1,10 +1,10 @@
 import React from 'react';
-import Navbar from 'react-bootstrap/navbar';
-import Nav from 'react-bootstrap/nav';
-import NavDropdown from 'react-bootstrap/navdropdown';
+import Navbar from 'react-bootstrap/NavBar';
+import Nav from 'react-bootstrap/Nav';
+import NavDropdown from 'react-bootstrap/NavDropdown';
 import Dropdownbutton from 'react-bootstrap/DropdownButton';
-import Button from 'react-bootstrap/button';
-import Image from 'react-bootstrap/image';
+import Image from 'react-bootstrap/Image';
+
 import defaultProfile from '../images/default_profile.png'
 import logo from '../images/logo.png'
 
