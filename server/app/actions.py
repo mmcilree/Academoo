@@ -1,5 +1,5 @@
 from app import db
-from app.models import User, Community, Post, Comment
+from app.models import User, Community, Post
 import json
 from uuid import UUID
 import re
@@ -23,8 +23,6 @@ def getFilteredPosts(limit, community_id, min_date):
     return post_dicts
 
 def createPost(post_data):
-    # NOTE: is post_data already in dictionary format?
-    # to_create = json.loads(json_file)
     post_id = post_data["id"]
     post_parent = post_data["parent"]
     is_comment = True
@@ -67,7 +65,6 @@ def getPost(post_id):
     return json.dumps(post_dict)
 
 def editPost(post_id, post_data):
-    # to_update = json.loads(json_file)
     update_title = post_data["title"]
     update_content_type = post_data["content_type"]
     update_body = post_data["body"]
