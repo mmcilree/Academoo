@@ -1,16 +1,19 @@
-import React from "react";
-import Button from "react-bootstrap/Button";
+import React from 'react';
+import PostCreator from './components/PostCreator';
+import HeaderBar from './components/HeaderBar';
+import Welcome from './components/Welcome';
 import { Route, Switch } from "react-router-dom";
 import PostsViewer from "./components/posts_viewer";
 
 class App extends React.Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <h1>Welcome to Academoo!</h1>
-          <p>There's not much here yet...</p>
+      <div>
+        <header>
         </header>
+        <div class="container" >
+          <Welcome />
+        </div>     
         <Switch>
           <Route path="/moosfeed">
             <PostsViewer />

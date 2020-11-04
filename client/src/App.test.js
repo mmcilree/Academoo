@@ -4,10 +4,13 @@ import Adapter from "enzyme-adapter-react-16";
 configure({ adapter: new Adapter() });
 import { shallow, mount } from "enzyme";
 import { posts } from "./components/test_post_json";
+
 import App from "./App";
 import Post from "./components/post";
 import PostsViewer from "./components/posts_viewer";
 import CommentsViewer from "./components/comments_viewer";
+import HeaderBar from './components/HeaderBar';
+import PostCreator from './components/PostCreator';
 
 it("App renders without crashing", () => {
   shallow(<App />);
@@ -48,3 +51,12 @@ describe("", () => {
 it("PostsViewer renders without crashing", () => {
   shallow(<PostsViewer />);
 });
+
+it("HeaderBar renders without crashing", () => {
+  shallow(<HeaderBar />);
+});
+
+it("PostCreator renders without crashing", () => {
+  shallow(<PostCreator />);
+});
+
