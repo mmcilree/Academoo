@@ -10,8 +10,8 @@ deployment:
       - mkdir -p ~/.ssh
       - chmod 700 ~/.ssh
   stage: deploy
-  only:
-    - master
+  # only:
+  #   - master
   environment:
     name: staging
   script:
