@@ -8,10 +8,9 @@ class App extends React.Component {
     return (
       <div>
         <header>
-          <HeaderBar />
         </header>
         <div class="container" >
-          <PostCreator />
+          <Welcome />
         </div>
       </div>
     );
