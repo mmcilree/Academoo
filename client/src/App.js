@@ -1,14 +1,17 @@
 import React from 'react';
-import Button from 'react-bootstrap/Button';
+import PostCreator from './components/PostCreator';
+import HeaderBar from './components/HeaderBar';
+import Welcome from './components/Welcome';
 
 class App extends React.Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <h1>Welcome to Academoo!</h1>
-          <p>There's not much here yet...</p>
+      <div>
+        <header>
         </header>
+        <div class="container" >
+          <Welcome />
+        </div>
       </div>
     );
   }
