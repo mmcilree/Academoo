@@ -25,8 +25,8 @@ export default Post;
 const ContentTypeComponent = ({ contentType, body }) => {
   switch (contentType) {
     case "text":
-      return <Card.Body>{body}</Card.Body>;
+      return <Card.Text>{body}</Card.Text>;
     default:
-      return <Card.Body>{body}</Card.Body>;
+      return <Card.Text>{body}</Card.Text>;
   }
 };

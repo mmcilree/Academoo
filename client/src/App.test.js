@@ -11,6 +11,7 @@ import PostsViewer from "./components/PostsViewer";
 import CommentsViewer from "./components/CommentsViewer";
 import HeaderBar from './components/HeaderBar';
 import PostCreator from './components/PostCreator';
+import { MemoryRouter as Router } from "react-router-dom";
 
 it("App renders without crashing", () => {
   shallow(<App />);
@@ -31,20 +32,14 @@ const test_data = {
   created: 1552832584,
 };
 
+it("App renders without crashing", () => {
+  shallow(<App />);
+});
+
 describe("", () => {
   it("Post accepts data props", () => {
     const wrapper = mount(<Post postData={test_data} />);
     expect(wrapper.props().postData).toEqual(test_data);
-  });
-});
-
-describe("", () => {
-  it("CommentsViewer accepts parent and posts props", () => {
-    const wrapper = mount(
-      <CommentsViewer parentPost={test_data} allPosts={posts} />
-    );
-    expect(wrapper.props().parentPost).toEqual(test_data);
-    expect(wrapper.props().allPosts).toEqual(posts);
   });
 });
 
@@ -59,4 +54,3 @@ it("HeaderBar renders without crashing", () => {
 it("PostCreator renders without crashing", () => {
   shallow(<PostCreator />);
 });
-
