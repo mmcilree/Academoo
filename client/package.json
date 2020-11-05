@@ -43,5 +43,6 @@
     "enzyme-adapter-react-16": "^1.15.5",
     "react-test-renderer": "^17.0.1"
   },
-  "homepage": "."
+  "homepage": ".",
+  "proxy": "http://localhost:5000"
 }
