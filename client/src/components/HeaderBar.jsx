@@ -6,7 +6,8 @@ import Dropdownbutton from "react-bootstrap/DropdownButton";
 import Image from "react-bootstrap/Image";
 
 import defaultProfile from "../images/default_profile.png";
-import logo from "../images/logo.png";
+import logo from "../images/logo.svg";
+// import logo from "../images/logo.png";
 
 import {
   PlusCircle,
@@ -25,8 +26,8 @@ class HeaderBar extends React.Component {
           <img
             alt=""
             src={logo}
-            width="50"
-            height="50"
+            width="70"
+            height="70"
             className="d-inline-block align-center"
           />{" "}
           Academoo
