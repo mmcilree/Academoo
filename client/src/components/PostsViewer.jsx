@@ -1,32 +1,61 @@
 import React, { Component } from "react";
-import { posts } from "./test_post_json";
 import Post from "./Post";
 import CommentsViewer from "./CommentsViewer";
 import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
 
-// Will remove this comment later.
-
 class PostsViewer extends Component {
+  state = {
+    isLoading: true,
+    posts: [],
+    error: null
+  }
+
+  componentDidMount() {
+    this.fetchPosts();
+  }
+
+  fetchPosts() {
+    fetch('http://localhost:5000/posts')
+      .then(response => response.json())
+      .then(data =>
+        this.setState({ 
+          posts: data,
+          isLoading: false 
+        })
+      )
+      .catch(error => this.setState({ error, isLoading: false }));
+  }
+
   render() {
+    console.log(this.state.posts);
+    const { isLoading, posts, error } = this.state;
+
     return (
       <div className="container-md">
         <Card className="mt-4">
           <Card.Body>
-            {posts.map((data) =>
-              data.parent === "" ? (
-                <Card key={data.id} className="mt-4">
-                  <Card.Body>
-                    <Post postData={data} />
-                    <Link
-                      to={`/moosfeed/comments/${data.id}`}
-                      className="btn btn-secondary stretched-link"
-                    >
-                      View Comments
-                    </Link>
-                  </Card.Body>
-                </Card>
-              ) : null
+            {error ? <p>{error.message}</p> : null}
+            {!isLoading ? (
+              posts.slice(0).reverse().map(data => {
+                const {parent, id} = data;
+                return (
+                  parent === 'dafca76d-5883-4eff-959a-d32bc9f72e1a' ? (
+                    <Card key={id} className="mt-4">
+                      <Card.Body>
+                       <Post postData={data} />
+                       <Link
+                          to={`/moosfeed/comments/${id}`}
+                          className="btn btn-primary stretched-link"
+                       >
+                          View Comments
+                       </Link>
+                      </Card.Body>
+                    </Card>
+                  ) : null);
+                })
+              ) : (
+                <h3>Loading Posts...</h3>
             )}
           </Card.Body>
         </Card>
