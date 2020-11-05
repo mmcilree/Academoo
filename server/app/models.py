@@ -2,6 +2,8 @@ from sqlalchemy.orm import backref
 from app import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+import time
+import uuid
 
 administrating = db.Table('administrating',
     db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
@@ -42,13 +44,13 @@ class Community(db.Model):
     administrators = db.relationship("User", secondary=administrating, backref='communities')
 
 class Post(db.Model):
-    id = db.Column(db.String(1000), primary_key=True)
+    id = db.Column(db.String(1000), primary_key=True, default=str(uuid.uuid4()))
     title = db.Column(db.String(1000))
     author_id = db.Column(db.String(50), db.ForeignKey('user.user_id'))
     content_type = db.Column(db.String(50))
     body = db.Column(db.String(1000))
-    created = db.Column(db.DateTime, default=datetime.now)
-    modified = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+    created = db.Column(db.BigInteger, default=int(time.time()))
+    modified = db.Column(db.BigInteger, default=int(time.time()), onupdate=int(time.time()))
     parent_id = db.Column(db.String(1000), db.ForeignKey('post.id'))
     parent = db.relationship('Post', remote_side=[id], backref='comments')
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
