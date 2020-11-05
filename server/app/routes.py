@@ -42,7 +42,7 @@ def get_community_timestamps(id):
     return jsonify(actions.getAllCommunityPostsTimeModified(id))
 
 # Posts
-@app.route("/posts/", methods=["GET"])
+@app.route("/posts", methods=["GET"])
 def get_all_posts():
     # limit, community, min_date
     limit = int(request.args.get("limit", 20))

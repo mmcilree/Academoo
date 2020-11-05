@@ -19,7 +19,7 @@ def getAllCommunityPostsTimeModified(community_id):
 
 def getFilteredPosts(limit, community_id, min_date):
     posts = Post.query.filter(Post.created >= min_date, Post.community == community_id).limit(limit)
-    post_dicts = [{"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.admin.id, "host": post.admin.host}, "modified": post.modified, "created": post.created} for post in posts]
+    post_dicts = [{"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": "no exist ! post.admin.id", "host": "no exist ! post.admin.host"}, "modified": post.modified, "created": post.created} for post in posts]
     return post_dicts
 
 def createPost(post_data):
@@ -34,17 +34,17 @@ def createPost(post_data):
     author_id = author_dict["id"]
     author_host = author_dict["host"]
 
-    if User.query(User.user_id).filter_by(user_id = author_id).scalar() is not None:
+    if User.query.filter_by(user_id = author_id).scalar() is not None:
         user = User(user_id = author_id, host = author_host)
         db.session.add(user)
         db.session.commit()
     
-    post_author = User.query.filter_by(user_id = author_id)
+    post_author = User.query.filter_by(user_id = author_id).first()
 
     if is_comment:
-        post = Post(title=post_title, author=post_author, content_type=post_content_type, body=post_body, parent_id=post_parent)
+        post = Post(title=post_title, author_id=author_id, content_type=post_content_type, body=post_body, parent_id=post_parent)
     else:
-        post = Post(title=post_title, author=post_author, content_type=post_content_type, body=post_body, community_id=post_parent)
+        post = Post(title=post_title, author_id=author_id, content_type=post_content_type, body=post_body, community_id=post_parent)
 
     db.session.add(post)
     db.session.commit()
