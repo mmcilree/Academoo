@@ -1,4 +1,5 @@
 from sqlalchemy.orm import backref
+from sqlalchemy.dialects.postgresql import UUID
 from app import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -44,7 +45,7 @@ class Community(db.Model):
     administrators = db.relationship("User", secondary=administrating, backref='communities')
 
 class Post(db.Model):
-    id = db.Column(db.String(1000), primary_key=True, default=str(uuid.uuid4()))
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     title = db.Column(db.String(1000))
     author_id = db.Column(db.String(50), db.ForeignKey('user.user_id'))
     content_type = db.Column(db.String(50))
