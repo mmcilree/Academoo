@@ -1,0 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Comfortaa&display=swap");
+
+/* make the customizations */
+$theme-colors: (
+  "primary": #50a2a7,
+  "secondary": #d81159,
+  "info": #00a5cf,
+  "light": #fcfff7,
+  "dark": #141b41,
+);
+
+$font-family-base: Comfortaa;
+
+$headings-font-family: Comfortaa;
+
+/* import bootstrap to set changes */
+@import "~bootstrap/scss/bootstrap";
