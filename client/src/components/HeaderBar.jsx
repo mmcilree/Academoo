@@ -20,14 +20,14 @@ import { Link } from "react-router-dom";
 class HeaderBar extends React.Component {
   render() {
     return (
-      <Navbar bg="light" variant="light" expand="lg">
+      <Navbar bg="primary" variant="dark" expand="lg">
         <Navbar.Brand as={Link} to="/">
           <img
             alt=""
             src={logo}
-            width="30"
-            height="30"
-            className="d-inline-block align-top"
+            width="50"
+            height="50"
+            className="d-inline-block align-center"
           />{" "}
           Academoo
         </Navbar.Brand>
@@ -47,7 +47,7 @@ class HeaderBar extends React.Component {
             <Dropdownbutton
               // as={Link}
               // to="/user-profile"
-              variant="outline-secondary"
+              variant="outline-light"
               title={
                 <span>
                   <Image

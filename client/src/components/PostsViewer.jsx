@@ -5,7 +5,7 @@ import CommentsViewer from "./CommentsViewer";
 import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
 
-// Will remove this comment later. 
+// Will remove this comment later.
 
 class PostsViewer extends Component {
   render() {
@@ -20,7 +20,7 @@ class PostsViewer extends Component {
                     <Post postData={data} />
                     <Link
                       to={`/moosfeed/comments/${data.id}`}
-                      className="btn btn-primary stretched-link"
+                      className="btn btn-secondary stretched-link"
                     >
                       View Comments
                     </Link>
