@@ -45,6 +45,8 @@ class HeaderBar extends React.Component {
 
           <Nav>
             <Dropdownbutton
+              // as={Link}
+              // to="/user-profile"
               variant="outline-secondary"
               title={
                 <span>
@@ -62,10 +64,10 @@ class HeaderBar extends React.Component {
               alignRight
               className="p0"
             >
-              <NavDropdown.Item href="#action/3.1">
+              <NavDropdown.Item as={Link} to="/user-profile">
                 <PersonCircle /> Profile
               </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">
+              <NavDropdown.Item as={Link} to="/user-settings">
                 <Gear /> Settings
               </NavDropdown.Item>
               <NavDropdown.Divider />
