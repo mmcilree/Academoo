@@ -1,5 +1,6 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
+import { Link } from "react-router-dom";
 
 class Welcome extends React.Component {
   render() {
@@ -8,6 +9,9 @@ class Welcome extends React.Component {
         <Card.Body>
           <h1>Welcome to Academoo!</h1>
           <p>There's not much here yet... </p>
+          <Link to="/moosfeed" className="btn btn-secondary">
+            Go to Moosfeed
+          </Link>
         </Card.Body>
       </Card>
     );
