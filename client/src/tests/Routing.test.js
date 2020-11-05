@@ -9,6 +9,10 @@ import Welcome from "../components/Welcome";
 import PostsViewer from "../components/PostsViewer";
 import CommentsViewer from "../components/CommentsViewer";
 import PostCreator from "../components/PostCreator";
+import UserSettings from "../components/UserSettings";
+import UserProfile from "../components/UserProfile";
+import Login from "../components/Login";
+import SignUp from "../components/SignUp";
 
 import { MemoryRouter as Router, Route } from "react-router-dom";
 
@@ -55,4 +59,40 @@ it("Routes to Comments page for parent post id", () => {
     </Router>
   );
   expect(wrapper.find(CommentsViewer)).toHaveLength(1);
+});
+
+it("Routes to User-Profile page", () => {
+  const wrapper = mount(
+    <Router initialEntries={["/user-profile"]}>
+      <App />
+    </Router>
+  );
+  expect(wrapper.find(UserProfile)).toHaveLength(1);
+});
+
+it("Routes to User-Settings page", () => {
+  const wrapper = mount(
+    <Router initialEntries={["/user-settings"]}>
+      <App />
+    </Router>
+  );
+  expect(wrapper.find(UserSettings)).toHaveLength(1);
+});
+
+it("Routes to Login page", () => {
+  const wrapper = mount(
+    <Router initialEntries={["/login"]}>
+      <App />
+    </Router>
+  );
+  expect(wrapper.find(Login)).toHaveLength(1);
+});
+
+it("Routes to Sign-Up page", () => {
+  const wrapper = mount(
+    <Router initialEntries={["/sign-up"]}>
+      <App />
+    </Router>
+  );
+  expect(wrapper.find(SignUp)).toHaveLength(1);
 });
