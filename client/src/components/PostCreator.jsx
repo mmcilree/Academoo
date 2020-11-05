@@ -24,10 +24,9 @@ class PostCreator extends React.Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(
                 {
-                    id: "dafca76d-5883-4eff-959a-d32bc9f72e1a",
                     parent: 'dafca76d-5883-4eff-959a-d32bc9f72e1a',
                     title: this.state.title,
-                    content_type: 'text',
+                    contentType: 'text',
                     body: this.state.body,
                     author: {
                         id: 'coolperson123',
