@@ -36,7 +36,7 @@ class PostCreator extends React.Component {
             )
         };
 
-        fetch('/posts', requestOptions);
+        fetch('/api/posts', requestOptions);
     }
 
     render() {

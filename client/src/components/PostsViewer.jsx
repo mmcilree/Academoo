@@ -16,7 +16,7 @@ class PostsViewer extends Component {
   }
 
   fetchPosts() {
-    fetch('/posts')
+    fetch('/api/posts')
       .then(response => response.json())
       .then(data =>
         this.setState({ 
