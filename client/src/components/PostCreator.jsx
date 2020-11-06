@@ -36,7 +36,7 @@ class PostCreator extends React.Component {
             )
         };
 
-        fetch('http://localhost:5000/posts', requestOptions);
+        fetch('/posts', requestOptions);
     }
 
     render() {
