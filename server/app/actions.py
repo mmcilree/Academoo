@@ -8,7 +8,7 @@ def createUser(email, password):
     if db.session.query(User).filter_by(email=email).count() < 1:
         db.session.add(User(
           email=email,
-          password=guard.hash_password(password),
+          password_hash=guard.hash_password(password),
           host="localhost",
         ))
         db.session.commit()

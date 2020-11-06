@@ -19,7 +19,7 @@ class User(db.Model):
     posts_created = db.relationship('Post', backref='author')
     host = db.Column(db.String(1000), nullable=False)
     email = db.Column(db.String(1000))
-    password = db.Column(db.String(128))
+    password_hash = db.Column(db.String(128))
     admin_of = db.relationship('Community', secondary=administrating, backref='admins')
 
     @property
@@ -40,6 +40,10 @@ class User(db.Model):
     @property
     def identity(self):
         return self.user_id
+    
+    @property
+    def password(self):
+        return self.password_hash
 
 class Community(db.Model):
     id = db.Column(db.String(1000), primary_key=True)
