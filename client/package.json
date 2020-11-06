@@ -13,7 +13,8 @@
     "react-bootstrap-icons": "^1.1.0",
     "react-dom": "^16.14.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3",
+    "react-scripts": "^4.0.0",
+    "react-token-auth": "^1.1.7",
     "serve": "^11.3.2",
     "test": "^0.6.0"
   },
