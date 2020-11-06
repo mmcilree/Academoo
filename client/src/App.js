@@ -8,8 +8,18 @@ import UserSettings from "./components/UserSettings";
 import UserProfile from "./components/UserProfile";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
+import { useAuth } from "./auth"
 
+const PrivateRoute = ({ component: Component, ...rest }) => {
+  const [logged] = useAuth();
+
+  return <Route {...rest} render={(props) => (
+    logged
+      ? <Component {...props} />
+      : <Redirect to='/login' />
+  )} />
+}
 class App extends React.Component {
   render() {
     return (
@@ -27,6 +37,7 @@ class App extends React.Component {
               <Route path="/user-profile" component={UserProfile} />
               <Route path="/login" component={Login} />
               <Route path="/sign-up" component={SignUp} />
+              <PrivateRoute path="/gucci-gang" component={Welcome} />
             </Switch>
           </div>
         </div>
