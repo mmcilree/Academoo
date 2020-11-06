@@ -1,8 +1,21 @@
-from app import db
+from app import db, guard
 from app.models import User, Community, Post
 import json
 from uuid import UUID
 import re
+
+def createUser(email, password):
+    if db.session.query(User).filter_by(email=email).count() < 1:
+        db.session.add(User(
+          email=email,
+          password=guard.hash_password(password),
+          host="localhost",
+        ))
+        db.session.commit()
+
+        return True
+    
+    return False
 
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]
