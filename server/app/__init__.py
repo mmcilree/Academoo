@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -19,4 +20,5 @@ from app.models import User, Community, Post
 guard = Praetorian()
 guard.init_app(app, User)
 
-from app import routes, models 
+from app import routes, models
+app.register_blueprint(routes.bp, url_prefix="/" if os.environ.get("FLASK_ENV") == "production" else "/api")
