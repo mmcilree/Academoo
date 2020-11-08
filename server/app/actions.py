@@ -1,8 +1,21 @@
-from app import db
+from app import db, guard
 from app.models import User, Community, Post
 import json
 from uuid import UUID
 import re
+
+def createUser(email, password):
+    if db.session.query(User).filter_by(email=email).count() < 1:
+        db.session.add(User(
+          email=email,
+          password_hash=guard.hash_password(password),
+          host="localhost",
+        ))
+        db.session.commit()
+
+        return True
+    
+    return False
 
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]
@@ -19,7 +32,7 @@ def getAllCommunityPostsTimeModified(community_id):
 
 def getFilteredPosts(limit, community_id, min_date):
     posts = Post.query.filter(Post.created >= min_date, Post.community == community_id).limit(limit)
-    post_dicts = [{"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created} for post in posts]
+    post_dicts = [{"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id if post.author else "Guest", "host": post.author.host if post.author else "Narnia"}, "modified": post.modified, "created": post.created} for post in posts]
     return post_dicts
 
 def createPost(post_data):

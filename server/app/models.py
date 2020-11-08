@@ -5,28 +5,33 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import time
 import uuid
 
+
+def getUUID():
+    return str(uuid.uuid4())
+
 administrating = db.Table('administrating',
     db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
     db.Column('community_id', db.String(1000), db.ForeignKey('community.id'))
     )
 
 class User(db.Model):
-    user_id = db.Column(db.String(50), primary_key=True)
+    user_id = db.Column(db.String(50), primary_key=True, default=getUUID)
     posts_created = db.relationship('Post', backref='author')
     host = db.Column(db.String(1000), nullable=False)
     email = db.Column(db.String(1000))
     password_hash = db.Column(db.String(128))
     admin_of = db.relationship('Community', secondary=administrating, backref='admins')
 
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+    @property
+    def rolenames(self):
+        try:
+            return self.admin_of.split(',')
+        except Exception:
+            return []
 
     @classmethod
-    def lookup(cls, username):
-        return cls.query.filter_by(username=username).one_or_none()
+    def lookup(cls, email):
+        return cls.query.filter_by(email=email).one_or_none()
 
     @classmethod
     def identify(cls, id):
@@ -35,6 +40,10 @@ class User(db.Model):
     @property
     def identity(self):
         return self.user_id
+    
+    @property
+    def password(self):
+        return self.password_hash
 
 class Community(db.Model):
     id = db.Column(db.String(1000), primary_key=True)
@@ -43,8 +52,6 @@ class Community(db.Model):
     posts = db.relationship('Post', backref='community')
     administrators = db.relationship("User", secondary=administrating, backref='communities')
 
-def getUUID():
-    return str(uuid.uuid4())
 class Post(db.Model):
     id = db.Column(db.String(1000), primary_key=True, default=getUUID)
     title = db.Column(db.String(1000))
