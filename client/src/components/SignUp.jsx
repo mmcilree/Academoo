@@ -1,20 +1,21 @@
 import React from "react";
-import { Button, FormGroup, FormControl, Form, Card} from "react-bootstrap";
+import { Button, FormGroup, FormControl, Form, Card } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 class SignUp extends React.Component {
   render() {
     return (
       <Card className="mt-4">
-        <Card.Body>
-          <div className="SignUp">
+        <Card.Body className="mx-auto">
+          <div>
             <p>Sign up for your Academoo account here. </p>
-            <form>
+            <Form>
               <FormGroup controlId="firstName" bsSize="large">
                 <Form.Label>First Name</Form.Label>
                 <FormControl
                   autoFocus
                   type="text"
-                //value={email}
+                  value={this.state.firstName}
                 />
               </FormGroup>
               <FormGroup controlId="secondName" bsSize="large">
@@ -47,10 +48,10 @@ class SignUp extends React.Component {
                   type="password"
                 />
               </FormGroup>
-              <Button variant="primary" block bsSize="large" type="submit">
-                Register
-          </Button>
-            </form>
+              <Link to="/moosfeed" className="btn btn-secondary">
+                Register now
+          </Link>
+            </Form>
           </div>
         </Card.Body>
       </Card>

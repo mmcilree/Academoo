@@ -11,6 +11,7 @@ import SignUp from "./components/SignUp";
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import { useAuth } from "./auth"
 
+
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const [logged] = useAuth();
 
@@ -20,21 +21,22 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
       : <Redirect to='/login' />
   )} />
 }
+
 class App extends React.Component {
   render() {
     return (
       <Router>
         <div className="App">
-          <HeaderBar />
+          <PrivateRoute component={HeaderBar}/>
           <div className="container-md">
             <Switch>
-              <Route exact path="/" component={Welcome} />
-              <Route path="/home" component={Welcome} />
-              <Route exact path="/moosfeed" component={PostsViewer} />
-              <Route path="/create-post" component={PostCreator} />
-              <Route path="/moosfeed/comments/:id" component={CommentsViewer} />
-              <Route path="/user-settings" component={UserSettings} />
-              <Route path="/user-profile" component={UserProfile} />
+              <PrivateRoute exact path="/" component={Welcome} />
+              <PrivateRoute path="/home" component={Welcome} />
+              <PrivateRoute exact path="/moosfeed" component={PostsViewer} />
+              <PrivateRoute path="/create-post" component={PostCreator} />
+              <PrivateRoute path="/moosfeed/comments/:id" component={CommentsViewer} />
+              <PrivateRoute path="/user-settings" component={UserSettings} />
+              <PrivateRoute path="/user-profile" component={UserProfile} />
               <Route path="/login" component={Login} />
               <Route path="/sign-up" component={SignUp} />
               <PrivateRoute path="/gucci-gang" component={Welcome} />
