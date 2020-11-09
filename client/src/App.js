@@ -10,6 +10,7 @@ import Login from "./components/Login";
 import SignUp from "./components/SignUp";
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import { useAuth } from "./auth"
+import CommunityCreator from "./components/CommunityCreator";
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const [logged] = useAuth();
@@ -38,6 +39,8 @@ class App extends React.Component {
               <Route path="/login" component={Login} />
               <Route path="/sign-up" component={SignUp} />
               <PrivateRoute path="/gucci-gang" component={Welcome} />
+
+              <Route path="/create-community" component={CommunityCreator} />
             </Switch>
           </div>
         </div>
