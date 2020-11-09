@@ -12,13 +12,32 @@ app.config.from_object(Config)
 
 CORS(app)
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
-
-from app.models import User, Community, Post
+db = SQLAlchemy()
+migrate = Migrate()
 guard = Praetorian()
-guard.init_app(app, User)
 
-from app import routes, models
-app.register_blueprint(routes.bp, url_prefix="/" if os.environ.get("FLASK_ENV") == "production" else "/api")
+from app.models import User
+
+ 
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
+
+    db.init_app(app)
+    migrate.init_app(app, db)
+    guard.init_app(app, User)
+
+    url_prefix = "/" if os.environ.get("FLASK_ENV") == "production" else "/api"
+
+    from app.auth import bp as auth_bp
+    app.register_blueprint(auth_bp, url_prefix=url_prefix)
+
+    from app.main import bp as main_bp
+    app.register_blueprint(main_bp)
+
+    from app.supergroup_protocol import bp as protocol_bp
+    app.register_blueprint(protocol_bp, url_prefix=url_prefix)
+
+    return app
+
+from app import models

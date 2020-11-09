@@ -1,44 +1,6 @@
-from flask import jsonify, g, request, Response, Blueprint
-from app import app, db, actions, guard
-from flask_praetorian import auth_required, current_user
-
-# TODO: Error handling with invalid data
-# TODO: Testing
-
-bp = Blueprint("bp", __name__)
-
-@bp.route("/")
-def index():
-    return "Hello World! The backend server is currently active."
-
-@bp.route("/register", methods=["POST"])
-def register():
-    req = request.json
-    email = req.get('email')
-    password = req.get('password')
-
-    return Response(status=200) if actions.createUser(email, password) else Response(status=400)
-
-@bp.route("/login", methods=["POST"])
-def login():
-    req = request.json
-    email = req.get('email')
-    password = req.get('password')
-
-    user = guard.authenticate(email, password)
-    return {'access_token': guard.encode_jwt_token(user)}
-
-@bp.route("/refresh", methods=["POST"])
-def refresh():
-    _, old_token = request.headers["Authorization"].split(" ")
-    new_token = guard.refresh_jwt_token(old_token)
-    ret = {'access_token': new_token}
-    return ret, 200
-
-@bp.route("/protected")
-@auth_required
-def protected():
-    return f"Congrats, you've logged in to {current_user().email}"
+from app import actions
+from app.supergroup_protocol import bp
+from flask import jsonify, request, Response
 
 # Community
 @bp.route("/communities", methods=["GET"])
