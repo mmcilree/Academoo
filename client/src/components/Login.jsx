@@ -1,7 +1,8 @@
 import React from "react";
 import { Button, FormGroup, FormControl, Form, Card,Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { login } from "../auth"
+import { login } from "../auth";
+import { Route } from 'react-router-dom';
 
 class Login extends React.Component {
 
@@ -40,6 +41,7 @@ handleChange(event) {
           this.setState({isIncorrect:false})
           login(token)
           console.log(token) 
+          this.props.history.push('/');
         }
         else {
           this.setState({
@@ -78,9 +80,14 @@ handleChange(event) {
               </FormGroup>
 
               {this.state.isIncorrect ? ( <Alert variant='warning'> Username or password not recognised.</Alert>):null}
-              <Button type="submit" className="btn">
-                Login
-              </Button>
+              <Route render={({ history }) => (
+                <Button
+                  type='submit'
+                  onClick={this.handleSubmit.bind(this)}
+                >
+                  Login
+                </Button>
+              )} />
               <br></br>
               <Link to="/sign-up" className="btn btn-link">
                 Sign up for Academoo

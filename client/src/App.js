@@ -6,6 +6,7 @@ import PostsViewer from "./components/PostsViewer";
 import CommentsViewer from "./components/CommentsViewer";
 import UserSettings from "./components/UserSettings";
 import UserProfile from "./components/UserProfile";
+import PageNotFound from "./components/PageNotFound";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
@@ -39,7 +40,7 @@ class App extends React.Component {
               <PrivateRoute path="/user-profile" component={UserProfile} />
               <Route path="/login" component={Login} />
               <Route path="/sign-up" component={SignUp} />
-              <PrivateRoute path="/gucci-gang" component={Welcome} />
+              <Route component={PageNotFound} />
             </Switch>
           </div>
         </div>
