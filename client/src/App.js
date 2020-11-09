@@ -11,6 +11,7 @@ import Login from "./components/Login";
 import SignUp from "./components/SignUp";
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import { useAuth } from "./auth"
+import CommunityCreator from "./components/CommunityCreator";
 
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
