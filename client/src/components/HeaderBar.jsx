@@ -4,7 +4,7 @@ import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Dropdownbutton from "react-bootstrap/DropdownButton";
 import Image from "react-bootstrap/Image";
-
+import {logout} from "../auth";
 import defaultProfile from "../images/default_profile.png";
 import logo from "../images/logo.svg";
 // import logo from "../images/logo.png";
@@ -19,6 +19,10 @@ import {
 import { Link } from "react-router-dom";
 
 class HeaderBar extends React.Component {
+  handleLogout(event) {
+    logout();
+  }
+  
   render() {
     return (
       <Navbar bg="primary" variant="dark" expand="lg">
@@ -72,7 +76,7 @@ class HeaderBar extends React.Component {
                 <Gear /> Settings
               </NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
+              <NavDropdown.Item onClick={this.handleLogout}>
                 <BoxArrowRight /> Log Out{" "}
               </NavDropdown.Item>
             </Dropdownbutton>
