@@ -6,7 +6,7 @@ import Card from 'react-bootstrap/Card';
 class CommunityCreator extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { id: "", title: "", description: "", admins: "" };
+        this.state = { id: "", title: "", description: "", administrators: "" };
     }
 
     handleChange(event) {
@@ -28,7 +28,7 @@ class CommunityCreator extends React.Component {
                     id: this.state.id,
                     title: this.state.title,
                     description: this.state.description,
-                    admins: this.state.admins,
+                    admins: this.state.administrators,
                 }
             )
         };
@@ -66,7 +66,6 @@ class CommunityCreator extends React.Component {
                         <Form.Group controlId="createCommunityDescription">
                             <Form.Label>Description</Form.Label>
                             <Form.Control as="textarea" 
-                                placeholder="Description" 
                                 name="description"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.description} />
@@ -75,10 +74,10 @@ class CommunityCreator extends React.Component {
                         <Form.Group controlId="createCommunityAdministrators">
                             <Form.Label>Administrators</Form.Label>
                             <Form.Control as="textarea" 
-                                placeholder="Administrators (comma-separated emails)" 
+                                placeholder="Comma-separated emails" 
                                 name="administrators"
                                 onChange={this.handleChange.bind(this)}
-                                value={this.state.admins} />
+                                value={this.state.administrators} />
                         </Form.Group>
 
 

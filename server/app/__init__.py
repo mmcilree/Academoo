@@ -33,7 +33,7 @@ def create_app(config_class=Config):
     app.register_blueprint(auth_bp, url_prefix=url_prefix)
 
     from app.main import bp as main_bp
-    app.register_blueprint(main_bp)
+    app.register_blueprint(main_bp, url_prefix=url_prefix)
 
     from app.supergroup_protocol import bp as protocol_bp
     app.register_blueprint(protocol_bp, url_prefix=url_prefix)
