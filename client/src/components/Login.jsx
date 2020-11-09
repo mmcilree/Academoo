@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, FormGroup, FormControl, Form, Card,Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { login, useAuth, logout } from "../auth"
+import { login } from "../auth"
 
 class Login extends React.Component {
 
@@ -42,7 +42,11 @@ handleChange(event) {
           console.log(token) 
         }
         else {
-          this.setState({isIncorrect:true})
+          this.setState({
+            email: "", 
+            password: "",
+            isIncorrect: true
+          });
         }
     })
   }
@@ -50,9 +54,9 @@ handleChange(event) {
   render() {
     return (
       <Card className="mt-4">
-        <Card.Body className="mx-auto">
+        <Card.Body>
           <div>
-            <Form className="mx-auto" onSubmit={this.handleSubmit.bind(this)}>
+            <Form className="mx-auto" width='800' onSubmit={this.handleSubmit.bind(this)}>
               <FormGroup controlId="email" bsSize="large">
                 <Form.Label>Email</Form.Label>
                 <FormControl
@@ -74,10 +78,8 @@ handleChange(event) {
               </FormGroup>
 
               {this.state.isIncorrect ? ( <Alert variant='warning'> Username or password not recognised.</Alert>):null}
-              <Button type="submit" >
-              <Link to="/moosfeed" >
+              <Button type="submit" className="btn">
                 Login
-              </Link>
               </Button>
               <br></br>
               <Link to="/sign-up" className="btn btn-link">
