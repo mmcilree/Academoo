@@ -1,5 +1,6 @@
 from app import db, guard
 from app.models import User, Community, Post
+from sqlalchemy import desc
 import json
 from uuid import UUID
 import re
@@ -19,7 +20,7 @@ def createUser(email, password):
         db.session.add(User(
           email=email,
           password_hash=guard.hash_password(password),
-          host="localhost",
+          host="Academoo",
         ))
         db.session.commit()
 
@@ -41,8 +42,8 @@ def getAllCommunityPostsTimeModified(community_id):
     return post_dicts
 
 def getFilteredPosts(limit, community_id, min_date):
-    posts = Post.query.filter(Post.created >= min_date, Post.community == community_id).limit(limit)
-    post_dicts = [{"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id if post.author else "Guest", "host": post.author.host if post.author else "Narnia"}, "modified": post.modified, "created": post.created} for post in posts]
+    posts = Post.query.filter(Post.created >= min_date, Post.community == community_id).order_by(desc(Post.created)).limit(limit)
+    post_dicts = [{"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.email if post.author else "Guest", "host": post.author.host if post.author else "Narnia"}, "modified": post.modified, "created": post.created} for post in posts]
     return post_dicts
 
 def createPost(post_data):
@@ -75,14 +76,15 @@ def createPost(post_data):
 
 def getPost(post_id):
     post = Post.query.filter_by(id = post_id).first()
+    
     is_comment = True
     if re.match("$^[a-zA-Z0-9-_]{1,24}$", post_id):
         is_comment = False
 
     if is_comment:
-        post_dict = {"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
+        post_dict = {"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.email, "host": post.author.host}, "modified": post.modified, "created": post.created}
     else:
-        post_dict = {"id": post.id, "parent": post.community_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
+        post_dict = {"id": post.id, "parent": post.community_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.email, "host": post.author.host}, "modified": post.modified, "created": post.created}
 
     return json.dumps(post_dict)
 

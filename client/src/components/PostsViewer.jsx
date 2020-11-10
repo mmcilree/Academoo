@@ -41,7 +41,7 @@ class PostsViewer extends Component {
               <Card.Body>
                 {error ? <p>{error.message}</p> : null}
                 {!isLoading ? (
-                  posts.slice(0).reverse().map(data => {
+                  posts.map(data => {
                     const {parent, id} = data;
                     return (
                       parent === currentCommunity ? (

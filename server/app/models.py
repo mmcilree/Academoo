@@ -9,6 +9,9 @@ import uuid
 def getUUID():
     return str(uuid.uuid4())
 
+def getTime():
+    return int(datetime.utcnow().timestamp())
+
 administrating = db.Table('administrating',
     db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
     db.Column('community_id', db.String(1000), db.ForeignKey('community.id'))
@@ -58,8 +61,8 @@ class Post(db.Model):
     author_id = db.Column(db.String(50), db.ForeignKey('user.user_id'))
     content_type = db.Column(db.String(50))
     body = db.Column(db.String(1000))
-    created = db.Column(db.BigInteger, default=int(time.time()))
-    modified = db.Column(db.BigInteger, default=int(time.time()), onupdate=int(time.time()))
+    created = db.Column(db.BigInteger, default=getTime)
+    modified = db.Column(db.BigInteger, default=getTime, onupdate=getTime)
     parent_id = db.Column(db.String(1000), db.ForeignKey('post.id'))
     parent = db.relationship('Post', remote_side=[id], backref='comments')
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
