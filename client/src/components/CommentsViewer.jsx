@@ -80,9 +80,12 @@ class CommentsViewer extends React.Component {
                   <Post postData={this.state.parentPost} />
                   <Button variant="primary" onClick={this.handleOpenCommentEditor.bind(this)}>Leave a comment</Button>
                   <Modal show={this.state.showCommentEditor} onHide={this.handleCloseCommentEditor.bind(this)}>
-                    <CommentCreator />
+                    <Modal.Header closeButton />
+                    <Modal.Body>
+                      <CommentCreator />
+                    </Modal.Body>
                   </Modal>
-                  
+
                 </Card.Body>
               </Card>
               {this.state.children.map((child) =>

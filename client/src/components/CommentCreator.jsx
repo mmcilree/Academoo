@@ -1,7 +1,7 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
+import Modal from 'react-bootstrap/Modal';
 import { authFetch } from '../auth';
 
 class CommentCreator extends React.Component {
@@ -62,8 +62,8 @@ class CommentCreator extends React.Component {
 
     render() {
         return (
-            <Card className="mt-4">
-                <Card.Body>
+            <React.Fragment >
+                <Modal.Body>
                     <Form onSubmit={this.handleSubmit.bind(this)}>
 
                         <Form.Group controlId="createPostText">
@@ -78,8 +78,8 @@ class CommentCreator extends React.Component {
                             Post
                         </Button>
                     </Form>
-                </Card.Body>
-            </Card>
+                </Modal.Body>
+            </React.Fragment>
         )
     }
 }
