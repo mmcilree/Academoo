@@ -39,6 +39,7 @@ class App extends React.Component {
               <PrivateRoute path="/moosfeed/comments/:id" component={CommentsViewer} />
               <PrivateRoute path="/user-settings" component={UserSettings} />
               <PrivateRoute path="/user-profile" component={UserProfile} />
+              <PrivateRoute path="/create-community" component={CommunityCreator} />
               <Route path="/login" component={Login} />
               <Route path="/sign-up" component={SignUp} />
               <Route component={PageNotFound} />

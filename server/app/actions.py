@@ -5,7 +5,14 @@ from uuid import UUID
 import re
 
 def createCommunity(id, title, description, admins):
-    pass
+    community = Community(id=id, title=title, description=description)
+    db.session.add(community)
+
+    db.session.commit()
+
+    # TODO: link admins to the community
+
+    return True
 
 def createUser(email, password):
     if db.session.query(User).filter_by(email=email).count() < 1:
