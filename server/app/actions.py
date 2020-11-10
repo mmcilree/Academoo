@@ -57,7 +57,7 @@ def createPost(post_data):
     author_id = author_dict["id"]
     author_host = author_dict["host"]
 
-    if User.query.filter_by(user_id = author_id).scalar() is not None:
+    if not User.query.filter_by(user_id = author_id).scalar():
         user = User(user_id = author_id, host = author_host)
         db.session.add(user)
         db.session.commit()

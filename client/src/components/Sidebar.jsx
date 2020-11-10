@@ -38,10 +38,6 @@ class Sidebar extends Component {
             )
     }
 
-    updateCommunity(community) {
-        this.props.changeCommunity(community);
-    }
-
     render() {
         const {data, communities} = this.state;
         
@@ -51,7 +47,7 @@ class Sidebar extends Component {
                     <h3>{ data.title }</h3>
 
                     <DropdownButton variant="secondary" size="md" title={ data.id } onSelect={
-                        (community) => this.updateCommunity(community)
+                        (community) => this.props.changeCommunity(community)
                     }>
                         {communities.map(function(name, index) {
                             return <Dropdown.Item key={ index } eventKey={ name }>{ name }</Dropdown.Item>
