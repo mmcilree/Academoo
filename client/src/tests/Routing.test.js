@@ -15,6 +15,7 @@ import Login from "../components/Login";
 import SignUp from "../components/SignUp";
 
 import { MemoryRouter as Router, Route } from "react-router-dom";
+import { login } from "../auth";
 
 it("Routes to default page", () => {
   const wrapper = mount(
@@ -22,64 +23,10 @@ it("Routes to default page", () => {
       <App />
     </Router>
   );
-  expect(wrapper.find(Welcome)).toHaveLength(1);
+  expect(wrapper.find(Login)).toHaveLength(1);
 });
 
-it("Routes to welcome page", () => {
-  const wrapper = mount(
-    <Router initialEntries={["/home"]}>
-      <App />
-    </Router>
-  );
-  expect(wrapper.find(Welcome)).toHaveLength(1);
-});
-
-it("Routes to Moosfeed page", () => {
-  const wrapper = mount(
-    <Router initialEntries={["/moosfeed"]}>
-      <App />
-    </Router>
-  );
-  expect(wrapper.find(PostsViewer)).toHaveLength(1);
-});
-
-it("Routes to Create-Post page", () => {
-  const wrapper = mount(
-    <Router initialEntries={["/create-post"]}>
-      <App />
-    </Router>
-  );
-  expect(wrapper.find(PostCreator)).toHaveLength(1);
-});
-
-it("Routes to Comments page for parent post id", () => {
-  const wrapper = mount(
-    <Router initialEntries={["/moosfeed/comments/post1"]}>
-      <App />
-    </Router>
-  );
-  expect(wrapper.find(CommentsViewer)).toHaveLength(1);
-});
-
-it("Routes to User-Profile page", () => {
-  const wrapper = mount(
-    <Router initialEntries={["/user-profile"]}>
-      <App />
-    </Router>
-  );
-  expect(wrapper.find(UserProfile)).toHaveLength(1);
-});
-
-it("Routes to User-Settings page", () => {
-  const wrapper = mount(
-    <Router initialEntries={["/user-settings"]}>
-      <App />
-    </Router>
-  );
-  expect(wrapper.find(UserSettings)).toHaveLength(1);
-});
-
-it("Routes to Login page", () => {
+it("Routes to login page", () => {
   const wrapper = mount(
     <Router initialEntries={["/login"]}>
       <App />
@@ -88,7 +35,7 @@ it("Routes to Login page", () => {
   expect(wrapper.find(Login)).toHaveLength(1);
 });
 
-it("Routes to Sign-Up page", () => {
+it("Routes to sign-up page", () => {
   const wrapper = mount(
     <Router initialEntries={["/sign-up"]}>
       <App />
@@ -96,3 +43,59 @@ it("Routes to Sign-Up page", () => {
   );
   expect(wrapper.find(SignUp)).toHaveLength(1);
 });
+
+
+it("Routes to welcome page", () => {
+  const wrapper = mount(
+    <Router initialEntries={["/home"]}>
+      <App />
+    </Router>
+  );
+  expect(wrapper.find(Login)).toHaveLength(1);
+});
+
+it("Routes to Moosfeed page", () => {
+  const wrapper = mount(
+    <Router initialEntries={["/moosfeed"]}>
+      <App />
+    </Router>
+  );
+  expect(wrapper.find(Login)).toHaveLength(1);
+});
+
+it("Routes to Create-Post page", () => {
+  const wrapper = mount(
+    <Router initialEntries={["/create-post"]}>
+      <App />
+    </Router>
+  );
+  expect(wrapper.find(Login)).toHaveLength(1);
+});
+
+it("Routes to Comments page for parent post id", () => {
+  const wrapper = mount(
+    <Router initialEntries={["/moosfeed/comments/post1"]}>
+      <App />
+    </Router>
+  );
+  expect(wrapper.find(Login)).toHaveLength(1);
+});
+
+it("Routes to User-Profile page", () => {
+  const wrapper = mount(
+    <Router initialEntries={["/user-profile"]}>
+      <App />
+    </Router>
+  );
+  expect(wrapper.find(Login)).toHaveLength(1);
+});
+
+it("Routes to User-Settings page", () => {
+  const wrapper = mount(
+    <Router initialEntries={["/user-settings"]}>
+      <App />
+    </Router>
+  );
+  expect(wrapper.find(Login)).toHaveLength(1);
+});
+

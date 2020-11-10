@@ -59,7 +59,7 @@ handleChange(event) {
         <Card.Body>
           <div>
             <Form className="mx-auto" width='800' onSubmit={this.handleSubmit.bind(this)}>
-              <FormGroup controlId="email" bsSize="large">
+              <FormGroup controlId="email" bssize="large">
                 <Form.Label>Email</Form.Label>
                 <FormControl
                   autoFocus
@@ -69,7 +69,7 @@ handleChange(event) {
                   name="email"
                 />
               </FormGroup>
-              <FormGroup controlId="password" bsSize="large">
+              <FormGroup controlId="password" bssize="large">
                 <Form.Label>Password</Form.Label>
                 <FormControl
                   onChange={this.handleChange.bind(this)}

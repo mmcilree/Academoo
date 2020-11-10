@@ -53,7 +53,7 @@ class SignUp extends React.Component {
           <div>
             <p>Sign up for your Academoo account here. </p>
             <Form>
-              <FormGroup controlId="firstName" bsSize="large">
+              <FormGroup controlId="firstName" bssize="large">
                 <Form.Label>First Name</Form.Label>
                 <FormControl
                   autoFocus
@@ -63,7 +63,7 @@ class SignUp extends React.Component {
                   name="firstName"
                 />
               </FormGroup>
-              <FormGroup controlId="secondName" bsSize="large">
+              <FormGroup controlId="secondName" bssize="large">
                 <Form.Label>Second Name</Form.Label>
                 <FormControl
                   autoFocus
@@ -73,7 +73,7 @@ class SignUp extends React.Component {
                   name="secondName"
                 />
               </FormGroup>
-              <FormGroup controlId="email" bsSize="large">
+              <FormGroup controlId="email" bssize="large">
                 <Form.Label>Email</Form.Label>
                 <FormControl
                   autoFocus
@@ -83,7 +83,7 @@ class SignUp extends React.Component {
                   name="email"
                 />
               </FormGroup>
-              <FormGroup controlId="password" bsSize="large">
+              <FormGroup controlId="password" bssize="large">
                 <Form.Label>Password</Form.Label>
                 <FormControl
                   onChange={this.handleChange.bind(this)}
@@ -93,7 +93,7 @@ class SignUp extends React.Component {
                 />
               </FormGroup>
               {this.state.isIncorrect ? (<Alert variant='warning'> Passwords do not match.</Alert>) : null}
-              <FormGroup controlId="confirmPassword" bsSize="large">
+              <FormGroup controlId="confirmPassword" bssize="large">
                 <Form.Label>Confirm Password</Form.Label>
                 <FormControl
                   onChange={this.handleChange.bind(this)}
