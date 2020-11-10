@@ -42,15 +42,19 @@ def getAllCommunityPostsTimeModified(community_id):
     return post_dicts
 
 def getFilteredPosts(limit, community_id, min_date):
-    posts = Post.query.filter(Post.created >= min_date, Post.community == community_id).order_by(desc(Post.created)).limit(limit)
+    is_comment = not re.match("$^[a-zA-Z0-9-_]{1,24}$", community_id)
+
+    if is_comment:
+        posts = Post.query.filter(Post.created >= min_date, Post.parent_id == community_id).order_by(desc(Post.created)).limit(limit)
+    else:
+        posts = Post.query.filter(Post.created >= min_date, Post.community_id == community_id).order_by(desc(Post.created)).limit(limit)
+    
     post_dicts = [{"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.email if post.author else "Guest", "host": post.author.host if post.author else "Narnia"}, "modified": post.modified, "created": post.created} for post in posts]
     return post_dicts
 
 def createPost(post_data):
     post_parent = post_data["parent"]
-    is_comment = True
-    if re.match("$^[a-zA-Z0-9-_]{1,24}$", post_parent):
-        is_comment = False
+    is_comment = not re.match("$^[a-zA-Z0-9-_]{1,24}$", post_parent)
     post_title = post_data["title"]
     post_content_type = post_data["contentType"]
     post_body = post_data["body"]

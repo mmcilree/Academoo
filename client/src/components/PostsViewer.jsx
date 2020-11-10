@@ -9,16 +9,33 @@ class PostsViewer extends Component {
   state = {
     isLoading: true,
     posts: [],
-    currentCommunity: "cows",
+    currentCommunity: null,
     error: null
   }
 
   componentDidMount() {
+    this.fetchCommunity();
+  }
+  
+  componentDidUpdate() {
+    if(this.state.isLoading) {
+      this.fetchPosts();
+    }
+  }
+
+  async fetchCommunity() {
+    await fetch('/api/communities').then(response => response.json())
+      .then(data =>
+          this.setState({
+            currentCommunity: data.length > 0 ? data[0] : "?"
+          })
+      )
+    
     this.fetchPosts();
   }
 
   fetchPosts() {
-    fetch('/api/posts')
+    fetch('/api/posts?community=' + this.state.currentCommunity)
       .then(response => response.json())
       .then(data =>
         this.setState({ 
@@ -33,7 +50,7 @@ class PostsViewer extends Component {
     console.log(this.state.posts);
     const { isLoading, posts, error, currentCommunity } = this.state;
 
-    return (
+    return currentCommunity && (
       <Container>
         <Row>
           <Col xs={8}>
@@ -65,7 +82,11 @@ class PostsViewer extends Component {
             </Card>
           </Col>
           <Col>
-            <Sidebar currentCommunity={ currentCommunity } changeCommunity={(community) => this.setState({currentCommunity: community})} />
+            <Sidebar currentCommunity={ currentCommunity } 
+              changeCommunity={(community) => this.setState({
+                  currentCommunity: community,
+                  isLoading: true
+                })} />
           </Col>
         </Row>
       </Container>
