@@ -41,27 +41,26 @@ class Sidebar extends Component {
     render() {
         const {data, communities} = this.state;
         
-        return (data && communities) ? (
+        return data && communities && (
             <Card className="mt-4">
                 <Card.Header>
                     <h3>{ data.title }</h3>
 
-                    <DropdownButton variant="secondary" size="md" title={ data.id } onSelect={
-                        (community) => this.props.changeCommunity(community)
-                    }>
+                    <DropdownButton variant="secondary" size="md" title={ data.id } 
+                        onSelect={(community) => this.props.changeCommunity(community)}>
+
                         {communities.map(function(name, index) {
                             return <Dropdown.Item key={ index } eventKey={ name }>{ name }</Dropdown.Item>
                         })}
+                        
                     </DropdownButton>
-
                 </Card.Header>
+
                 <Card.Body>
                     { data.description }
                 </Card.Body>
             </Card>
-        ) : (
-            <span>Loading community information...</span>
-        )
+        );
     }
 }
 
