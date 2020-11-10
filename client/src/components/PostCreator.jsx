@@ -2,11 +2,38 @@ import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import { authFetch } from '../auth';
 
 class PostCreator extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { title: "", body: "" };
+        this.state = { email: "", host: "", title: "", body: "", selectedCommunity: null, communities: null };
+    }
+
+    componentDidMount() {
+        this.fetchCommunities();
+        this.fetchUserDetails();
+    }
+
+    fetchUserDetails() {
+        authFetch("/api/get-user").then(response => response.json())
+            .then(data =>
+                this.setState({
+                    user_id: data.id,
+                    email: data.email,
+                    host: data.host
+                })
+            )
+    }
+
+    fetchCommunities() {
+        fetch('/api/communities').then(response => response.json())
+            .then(data =>
+                this.setState({ 
+                    communities: data,
+                    selectedCommunity: (data.length > 0 ? data[0] : null)
+                })
+            )        
     }
 
     handleChange(event) {
@@ -24,13 +51,13 @@ class PostCreator extends React.Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(
                 {
-                    parent: 'dafca76d-5883-4eff-959a-d32bc9f72e1a',
+                    parent: this.state.selectedCommunity,
                     title: this.state.title,
                     contentType: 'text',
                     body: this.state.body,
                     author: {
-                        id: 'coolperson123',
-                        host: 'cooldomain.edu'
+                        id: this.state.user_id,
+                        host: this.state.host
                     }
                 }
             )
@@ -40,7 +67,7 @@ class PostCreator extends React.Component {
     }
 
     render() {
-        return (
+        return this.state.communities && (
             <Card className="mt-4">
                 <Card.Body>
                     <Form onSubmit={this.handleSubmit.bind(this)}>
@@ -60,6 +87,16 @@ class PostCreator extends React.Component {
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.body} />
                         </Form.Group>
+
+                        <Form.Group controlId="createPostCommunity">
+                            <Form.Label>Select a community</Form.Label>
+                            <Form.Control as="select" name="selectedCommunity" onChange={this.handleChange.bind(this)}>
+                                {this.state.communities.map(function(name, index) {
+                                    return <option key={ index }>{ name }</option>
+                                })}
+                            </Form.Control>    
+                        </Form.Group> 
+
                         <Button variant="primary" type="submit">
                             Post
                         </Button>
