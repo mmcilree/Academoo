@@ -78,7 +78,7 @@ class PostsViewer extends Component {
                   ) : (
                     <h3>Loading Posts...</h3>
                 )}
-                {posts.length == 0 ? <p>There's no posts yet!</p> : null}
+                {!isLoading && posts.length == 0 ? <h4>There's no posts yet :-(</h4> : null}
               </Card.Body>
             </Card>
           </Col>

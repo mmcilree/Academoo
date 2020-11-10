@@ -7,7 +7,7 @@ class Post extends Component {
     return (
       <React.Fragment>
         <Card.Title>{this.props.postData.title}</Card.Title>
-        <Card.Subtitle>
+        <Card.Subtitle className="text-muted">
           Written by {this.props.postData.author.id} from{" "}
           {this.props.postData.author.host}
         </Card.Subtitle>
