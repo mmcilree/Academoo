@@ -26,9 +26,8 @@ class CommentsViewer extends React.Component {
   }
 
   handleCloseCommentEditor() {
-    this.setState({ showCommentEditor: false });
+    this.setState({ showCommentEditor: false, children: [], isLoading: true});
     this.fetchChildren();
-    this.forceUpdate();
   }
 
 
@@ -45,7 +44,7 @@ class CommentsViewer extends React.Component {
       this.fetchChildren() : this.setState({ isLoading: false });
   }
 
-  fetchChildren() {
+fetchChildren() {
     const parentPost = this.state.parentPost;
     console.log(parentPost.id);
     parentPost.children.map((childId) => {
@@ -98,6 +97,8 @@ class CommentsViewer extends React.Component {
                   </Card>
                 ) : null
               )}
+              {this.state.children.length == 0 ? 
+                <p className="mt-4 ml-4 comment">No comments to show.</p> : null}
 
             </Card.Body>) :
             <Card.Body><h3>Loading Post...</h3></Card.Body>}
