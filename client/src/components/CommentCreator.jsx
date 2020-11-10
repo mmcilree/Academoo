@@ -8,10 +8,11 @@ class CommentCreator extends React.Component {
     constructor(props) {
         super(props);
         this.state = { 
+            title: "",
             email: "", 
             host: "", 
             body: "",
-            parentPost: null
+            parentPost: this.props.parentPost
         };
     }
 
@@ -42,7 +43,7 @@ class CommentCreator extends React.Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(
                 {
-                    parent: this.state.parentPost,
+                    parent: this.state.parentPost.id,
                     title: this.state.title,
                     contentType: 'text',
                     body: this.state.body,
@@ -58,6 +59,12 @@ class CommentCreator extends React.Component {
         this.setState(
             { email: "", host: "", title: "", body: ""}
         );
+
+        this.props.onSubmit();
+    }
+
+    componentDidMount() {
+        this.fetchUserDetails();
     }
 
     render() {

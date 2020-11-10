@@ -27,6 +27,8 @@ class CommentsViewer extends React.Component {
 
   handleCloseCommentEditor() {
     this.setState({ showCommentEditor: false });
+    this.fetchChildren();
+    this.forceUpdate();
   }
 
 
@@ -38,7 +40,6 @@ class CommentsViewer extends React.Component {
           parentPost: data,
         })
       );
-    console.log(this.state.parentPost);
 
     this.state.parentPost.children.length != 0 ?
       this.fetchChildren() : this.setState({ isLoading: false });
@@ -82,7 +83,7 @@ class CommentsViewer extends React.Component {
                   <Modal show={this.state.showCommentEditor} onHide={this.handleCloseCommentEditor.bind(this)}>
                     <Modal.Header closeButton />
                     <Modal.Body>
-                      <CommentCreator />
+                      <CommentCreator parentPost={this.state.parentPost} onSubmit={this.handleCloseCommentEditor.bind(this)}/>
                     </Modal.Body>
                   </Modal>
 
