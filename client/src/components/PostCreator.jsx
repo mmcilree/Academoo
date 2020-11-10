@@ -7,7 +7,13 @@ import { authFetch } from '../auth';
 class PostCreator extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { email: "", host: "", title: "", body: "", selectedCommunity: null, communities: null };
+        this.state = { 
+            email: "", 
+            host: "", 
+            title: "", 
+            body: "", 
+            selectedCommunity: null,
+            communities: null };
     }
 
     componentDidMount() {
@@ -44,6 +50,7 @@ class PostCreator extends React.Component {
             [name]: value
         });
     }
+
     handleSubmit(event) {
         event.preventDefault();
         const requestOptions = {
@@ -64,6 +71,9 @@ class PostCreator extends React.Component {
         };
 
         fetch('/api/posts', requestOptions);
+        this.setState(
+            { email: "", host: "", title: "", body: ""}
+        );
     }
 
     render() {

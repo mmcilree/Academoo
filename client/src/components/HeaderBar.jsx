@@ -48,7 +48,7 @@ class HeaderBar extends React.Component {
             </Nav.Link>
             <Nav.Link as={Link} to="/create-community">
               <PlusCircle className="mb-1" />
-              <span> New Community</span>
+              <span> New Commoonity</span>
             </Nav.Link>
           </Nav>
 
