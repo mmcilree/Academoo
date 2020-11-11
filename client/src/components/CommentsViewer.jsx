@@ -100,7 +100,7 @@ class CommentsViewer extends React.Component {
 
                 </Card.Body>
               </Card>
-              {this.state.children.sort(comment => comment.created).map((child) =>
+              {this.state.children.sort(comment => comment.created).reverse().map((child) =>
                 child ? (
                   <Card key={child.id} className="mt-4 ml-4 comment">
                     <Card.Body>
