@@ -10,6 +10,7 @@ export const [useAuth, authFetch, login, logout] =
         .then(r => r.json())
     });
 
+// NOTE: We won't need get user anymore when we convert to authenticated endpoints. The backend should retrieve user information.
 
 /*
 import {login, useAuth, logout} from "./auth"
