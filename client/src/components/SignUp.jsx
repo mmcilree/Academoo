@@ -8,6 +8,7 @@ class SignUp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      email: "",
       username: "",
       password: "",
       passwordConfirm: "",
@@ -34,6 +35,7 @@ class SignUp extends React.Component {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(
           {
+            email: this.state.email,
             username: this.state.username,
             password: this.state.password
           }
@@ -51,9 +53,19 @@ class SignUp extends React.Component {
           <div>
             <p>Sign up for your Academoo account here. </p>
             <Form>
-              
+
+              <FormGroup controlId="email" bsSize="large">
+                <Form.Label>Email</Form.Label>
+                <FormControl
+                  autoFocus
+                  onChange={this.handleChange.bind(this)}
+                  type="email"
+                  value={this.state.email}
+                  name="email"
+                />
+              </FormGroup>
               <FormGroup controlId="username" bsSize="large">
-                <Form.Label>Username</Form.Label>
+                <Form.Label>Create a username</Form.Label>
                 <FormControl
                   autoFocus
                   onChange={this.handleChange.bind(this)}

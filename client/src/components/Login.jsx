@@ -56,9 +56,9 @@ handleChange(event) {
   render() {
     return (
       <Card className="mt-4">
-        <Card.Body>
+        <Card.Body className="mx-auto">
           <div>
-            <Form className="mx-auto" width='800' onSubmit={this.handleSubmit.bind(this)}>
+            <Form  onSubmit={this.handleSubmit.bind(this)}>
               <FormGroup controlId="username" bsSize="large">
                 <Form.Label>Username</Form.Label>
                 <FormControl
@@ -88,7 +88,6 @@ handleChange(event) {
                   Login
                 </Button>
               )} />
-              <br></br>
               <Link to="/sign-up" className="btn btn-link">
                 Sign up for Academoo
               </Link>
