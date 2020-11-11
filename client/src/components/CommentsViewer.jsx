@@ -3,7 +3,7 @@ import Post from "./Post";
 import Card from "react-bootstrap/Card";
 import { posts } from "./test_post_json";
 import Button from "react-bootstrap/Button";
-import { ArrowReturnLeft } from "react-bootstrap-icons";
+import { ArrowReturnLeft, ChatRight } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import CommentCreator from "./CommentCreator";
@@ -87,7 +87,10 @@ class CommentsViewer extends React.Component {
               <Card className="mt-4">
                 <Card.Body>
                   <Post postData={this.state.parentPost} />
-                  <Button variant="primary" onClick={this.handleOpenCommentEditor.bind(this)}>Leave a comment</Button>
+                  <Button variant="primary" onClick={this.handleOpenCommentEditor.bind(this)}>
+                    Leave a comment
+                    {" "} <ChatRight />
+                  </Button>
                   <Modal show={this.state.showCommentEditor} onHide={() => this.setState({ showCommentEditor: false })}>
                     <Modal.Header closeButton />
                     <Modal.Body>
@@ -97,7 +100,7 @@ class CommentsViewer extends React.Component {
 
                 </Card.Body>
               </Card>
-              {this.state.children.sort(comment => comment.created).map((child) =>
+              {this.state.children.sort(comment => comment.created).reverse().map((child) =>
                 child ? (
                   <Card key={child.id} className="mt-4 ml-4 comment">
                     <Card.Body>

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import Post from "./Post";
-import CommentsViewer from "./CommentsViewer";
 import Sidebar from "./Sidebar";
 import { Card, Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
