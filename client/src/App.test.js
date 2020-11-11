@@ -12,6 +12,12 @@ import CommentsViewer from "./components/CommentsViewer";
 import HeaderBar from './components/HeaderBar';
 import PostCreator from './components/PostCreator';
 import { MemoryRouter as Router } from "react-router-dom";
+import Login from "./components/Login";
+import SignUp from "./components/SignUp";
+import UserProfile from "./components/UserProfile";
+import UserSettings from "./components/UserSettings";
+import Welcome from "./components/Welcome";
+import PageNotFound from "./components/PageNotFound";
 
 it("App renders without crashing", () => {
   shallow(<App />);
@@ -36,6 +42,10 @@ it("App renders without crashing", () => {
   shallow(<App />);
 });
 
+it("Welcome page renders without crashing", () => {
+  shallow(<Welcome />);
+});
+
 describe("", () => {
   it("Post accepts data props", () => {
     const wrapper = mount(<Post postData={test_data} />);
@@ -53,4 +63,24 @@ it("HeaderBar renders without crashing", () => {
 
 it("PostCreator renders without crashing", () => {
   shallow(<PostCreator />);
+});
+
+it("Login renders without crashing", () => {
+  shallow(<Login />);
+});
+
+it("SignUp renders without crashing", () => {
+  shallow(<SignUp />);
+});
+
+it("Profile renders without crashing", () => {
+  shallow(<UserProfile />);
+});
+
+it("User Settings renders without crashing", () => {
+  shallow(<UserSettings />);
+});
+
+it("PageNotFound Settings renders without crashing", () => {
+  shallow(<PageNotFound />);
 });
