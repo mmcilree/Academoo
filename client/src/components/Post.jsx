@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Card from "react-bootstrap/Card";
+import timeSince from "../util/timeSince";
 
 class Post extends Component {
   render() {
@@ -10,6 +11,7 @@ class Post extends Component {
         <Card.Subtitle className="text-muted">
           Written by {this.props.postData.author.id} from{" "}
           {this.props.postData.author.host}
+          {" "} {timeSince(this.props.postData.created)} ago
         </Card.Subtitle>
         <ContentTypeComponent
           contentType={this.props.postData.contentType}
