@@ -12,7 +12,8 @@ class SignUp extends React.Component {
       username: "",
       password: "",
       passwordConfirm: "",
-      isIncorrect: false
+      isNonMatching: false,
+      isNonUnique: false,
     };
   }
 
@@ -25,10 +26,10 @@ class SignUp extends React.Component {
     });
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
-    if (this.state.password != this.state.passwordConfirm) {
-      this.setState({ isIncorrect: true });
+    if (this.state.password !== this.state.passwordConfirm) {
+      this.setState({ isNonMatching: true });
     } else {
       const opt = {
         method: 'POST',
@@ -41,8 +42,12 @@ class SignUp extends React.Component {
           }
         )
       };
-      fetch('/api/register', opt);
-      this.props.history.push('/login');
+      await fetch('/api/register', opt).then(response => response.json())
+      .then(data => data)
+      .catch(error => this.setState({ isNonUnique: true}));
+      
+      
+      !this.state.isNonUnique && this.props.history.push('/login');
     }
   }
 
@@ -54,7 +59,7 @@ class SignUp extends React.Component {
             <p>Sign up for your Academoo account here. </p>
             <Form>
 
-              <FormGroup controlId="email" bsSize="large">
+              <FormGroup controlId="email" bssize="large">
                 <Form.Label>Email</Form.Label>
                 <FormControl
                   autoFocus
@@ -64,16 +69,16 @@ class SignUp extends React.Component {
                   name="email"
                 />
               </FormGroup>
-              <FormGroup controlId="username" bsSize="large">
+              <FormGroup controlId="username" bssize="large">
                 <Form.Label>Create a username</Form.Label>
                 <FormControl
-                  autoFocus
                   onChange={this.handleChange.bind(this)}
                   type="text"
                   value={this.state.username}
                   name="username"
                 />
               </FormGroup>
+              {this.state.isNonUnique ? (<Alert variant='warning'> Username or email already registered.</Alert>) : null}
               <FormGroup controlId="password" bssize="large">
                 <Form.Label>Password</Form.Label>
                 <FormControl
@@ -83,7 +88,9 @@ class SignUp extends React.Component {
                   type="password"
                 />
               </FormGroup>
-              {this.state.isIncorrect ? (<Alert variant='warning'> Passwords do not match.</Alert>) : null}
+
+              {this.state.isNonMatching ? (<Alert variant='warning'> Passwords do not match.</Alert>) : null}
+              
               <FormGroup controlId="confirmPassword" bssize="large">
                 <Form.Label>Confirm Password</Form.Label>
                 <FormControl
