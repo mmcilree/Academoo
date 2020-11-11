@@ -36,7 +36,7 @@ class CommentCreator extends React.Component {
         });
     }
 
-    handleSubmit(event) {
+    async handleSubmit(event) {
         event.preventDefault();
         const requestOptions = {
             method: 'POST',
@@ -55,7 +55,7 @@ class CommentCreator extends React.Component {
             )
         };
 
-        fetch('/api/posts', requestOptions);
+        await fetch('/api/posts', requestOptions);
         this.setState(
             { email: "", host: "", title: "", body: ""}
         );

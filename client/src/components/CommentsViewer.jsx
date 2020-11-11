@@ -26,8 +26,7 @@ class CommentsViewer extends React.Component {
   }
 
   handleCloseCommentEditor() {
-    this.setState({ showCommentEditor: false, children: [], isLoading: true});
-    this.fetchChildren();
+    this.setState({ showCommentEditor: false, children: [], isLoading: true, parentPost: null});
   }
 
 
@@ -40,28 +39,36 @@ class CommentsViewer extends React.Component {
         })
       );
 
-    this.state.parentPost.children.length != 0 ?
-      this.fetchChildren() : this.setState({ isLoading: false });
+    this.fetchChildren();
   }
 
-fetchChildren() {
+  async fetchChildren() {
     const parentPost = this.state.parentPost;
+
     console.log(parentPost.id);
-    parentPost.children.map((childId) => {
-      fetch('/api/posts/' + childId)
-        .then(response => response.json())
-        .then(data =>
-          this.setState({
-            children: [...this.state.children, data],
-            isLoading: false
-          })
-        )
-        .catch(error => this.setState({ error, isLoading: false }));
-    });
+
+    const new_children = await Promise.all(parentPost.children.map(
+      (childId) => {
+        return fetch('/api/posts/' + childId)
+          .then(response => response.json())
+          .then(data => data)
+          .catch(error => this.setState({ error, isLoading: false }));
+      }));
+
+    this.setState({ isLoading: false, children: new_children })
   }
 
   componentDidMount() {
     this.fetchParentPost();
+  }
+
+  componentDidUpdate() {
+    if(!this.state.parentPost) {
+      this.fetchParentPost();
+    }
+
+    console.log(this.state);
+    console.log(this.state.children.length);
   }
 
   render() {
@@ -88,7 +95,7 @@ fetchChildren() {
 
                 </Card.Body>
               </Card>
-              {this.state.children.map((child) =>
+              {this.state.children.sort(comment => comment.created).map((child) =>
                 child ? (
                   <Card key={child.id} className="mt-4 ml-4 comment">
                     <Card.Body>
