@@ -8,9 +8,7 @@ class SignUp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      firstName: "",
-      secondName: "",
-      email: "",
+      username: "",
       password: "",
       passwordConfirm: "",
       isIncorrect: false
@@ -36,7 +34,7 @@ class SignUp extends React.Component {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(
           {
-            email: this.state.email,
+            username: this.state.username,
             password: this.state.password
           }
         )
@@ -53,34 +51,15 @@ class SignUp extends React.Component {
           <div>
             <p>Sign up for your Academoo account here. </p>
             <Form>
-              <FormGroup controlId="firstName" bssize="large">
-                <Form.Label>First Name</Form.Label>
+              
+              <FormGroup controlId="username" bsSize="large">
+                <Form.Label>Username</Form.Label>
                 <FormControl
                   autoFocus
                   onChange={this.handleChange.bind(this)}
                   type="text"
-                  value={this.state.firstName}
-                  name="firstName"
-                />
-              </FormGroup>
-              <FormGroup controlId="secondName" bssize="large">
-                <Form.Label>Second Name</Form.Label>
-                <FormControl
-                  autoFocus
-                  onChange={this.handleChange.bind(this)}
-                  type="text"
-                  value={this.state.secondName}
-                  name="secondName"
-                />
-              </FormGroup>
-              <FormGroup controlId="email" bssize="large">
-                <Form.Label>Email</Form.Label>
-                <FormControl
-                  autoFocus
-                  onChange={this.handleChange.bind(this)}
-                  type="email"
-                  value={this.state.email}
-                  name="email"
+                  value={this.state.username}
+                  name="username"
                 />
               </FormGroup>
               <FormGroup controlId="password" bssize="large">

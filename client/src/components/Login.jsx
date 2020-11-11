@@ -9,7 +9,7 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = { 
-      email: "", 
+      username: "", 
       password: "",
       isIncorrect: false
   };
@@ -31,7 +31,7 @@ handleChange(event) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(
         {
-          email: this.state.email,
+          username: this.state.username,
           password: this.state.password,
         }
       )
@@ -45,7 +45,7 @@ handleChange(event) {
         }
         else {
           this.setState({
-            email: "", 
+            username: "", 
             password: "",
             isIncorrect: true
           });
@@ -59,14 +59,14 @@ handleChange(event) {
         <Card.Body>
           <div>
             <Form className="mx-auto" width='800' onSubmit={this.handleSubmit.bind(this)}>
-              <FormGroup controlId="email" bssize="large">
-                <Form.Label>Email</Form.Label>
+              <FormGroup controlId="username" bsSize="large">
+                <Form.Label>Username</Form.Label>
                 <FormControl
                   autoFocus
                   onChange={this.handleChange.bind(this)}
                   type="text"
-                  value={this.state.email}
-                  name="email"
+                  value={this.state.username}
+                  name="username"
                 />
               </FormGroup>
               <FormGroup controlId="password" bssize="large">
