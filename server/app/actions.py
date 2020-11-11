@@ -15,12 +15,13 @@ def createCommunity(id, title, description, admins):
 
     return True
 
-def createUser(email, password):
-    if db.session.query(User).filter_by(email=email).count() < 1:
+def createUser(username, email, password):
+    if db.session.query(User).filter_by(username=username).count() < 1 and db.session.query(User).filter_by(email=email).count() < 1:
         db.session.add(User(
-          email=email,
-          password_hash=guard.hash_password(password),
-          host="Academoo",
+            username=username,
+            email=email,
+            password_hash=guard.hash_password(password),
+            host="Academoo",
         ))
         db.session.commit()
 
@@ -42,14 +43,17 @@ def getAllCommunityPostsTimeModified(community_id):
     return post_dicts
 
 def getFilteredPosts(limit, community_id, min_date):
-    is_comment = not re.match("$^[a-zA-Z0-9-_]{1,24}$", community_id)
+    if community_id:
+        is_comment = not re.match("$^[a-zA-Z0-9-_]{1,24}$", community_id)
 
-    if is_comment:
-        posts = Post.query.filter(Post.created >= min_date, Post.parent_id == community_id).order_by(desc(Post.created)).limit(limit)
+        if is_comment:
+            posts = Post.query.filter(Post.created >= min_date, Post.parent_id == community_id).order_by(desc(Post.created)).limit(limit)
+        else:
+            posts = Post.query.filter(Post.created >= min_date, Post.community_id == community_id).order_by(desc(Post.created)).limit(limit)
     else:
-        posts = Post.query.filter(Post.created >= min_date, Post.community_id == community_id).order_by(desc(Post.created)).limit(limit)
+        posts = Post.query.filter(Post.created >= min_date).order_by(desc(Post.created)).limit(limit)
     
-    post_dicts = [{"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.email if post.author else "Guest", "host": post.author.host if post.author else "Narnia"}, "modified": post.modified, "created": post.created} for post in posts]
+    post_dicts = [{"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id if post.author else "Guest", "host": post.author.host if post.author else "Narnia"}, "modified": post.modified, "created": post.created} for post in posts]
     return post_dicts
 
 def createPost(post_data):
@@ -86,9 +90,9 @@ def getPost(post_id):
         is_comment = False
 
     if is_comment:
-        post_dict = {"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.email, "host": post.author.host}, "modified": post.modified, "created": post.created}
+        post_dict = {"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
     else:
-        post_dict = {"id": post.id, "parent": post.community_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.email, "host": post.author.host}, "modified": post.modified, "created": post.created}
+        post_dict = {"id": post.id, "parent": post.community_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
 
     return post_dict
 
