@@ -17,7 +17,8 @@ class CommentsViewer extends React.Component {
       children: [],
       isLoading: true,
       error: null,
-      showCommentEditor: false
+      showCommentEditor: false,
+      needsUpdate: false,
     }
   }
 
@@ -26,7 +27,7 @@ class CommentsViewer extends React.Component {
   }
 
   handleCloseCommentEditor() {
-    this.setState({ showCommentEditor: false, children: [], isLoading: true, parentPost: null});
+    this.setState({ showCommentEditor: false, needsUpdate: true });
   }
 
 
@@ -55,7 +56,7 @@ class CommentsViewer extends React.Component {
           .catch(error => this.setState({ error, isLoading: false }));
       }));
 
-    this.setState({ isLoading: false, children: new_children })
+    this.setState({ isLoading: false, children: new_children, needsUpdate: false })
   }
 
   componentDidMount() {
@@ -63,12 +64,9 @@ class CommentsViewer extends React.Component {
   }
 
   componentDidUpdate() {
-    if(!this.state.parentPost) {
+    if(this.state.needsUpdate) {
       this.fetchParentPost();
     }
-
-    console.log(this.state);
-    console.log(this.state.children.length);
   }
 
   render() {
