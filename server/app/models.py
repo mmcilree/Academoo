@@ -18,7 +18,7 @@ administrating = db.Table('administrating',
     )
 
 class User(db.Model):
-    user_id = db.Column(db.String(50), primary_key=True, default=getUUID)
+    user_id = db.Column(db.String(50), primary_key=True)
     posts_created = db.relationship('Post', backref='author')
     host = db.Column(db.String(1000), nullable=False)
     email = db.Column(db.String(1000))
@@ -33,8 +33,8 @@ class User(db.Model):
             return []
 
     @classmethod
-    def lookup(cls, email):
-        return cls.query.filter_by(email=email).one_or_none()
+    def lookup(cls, username):
+        return cls.query.filter_by(user_id=username).one_or_none()
 
     @classmethod
     def identify(cls, id):
