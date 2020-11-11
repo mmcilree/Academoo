@@ -16,9 +16,9 @@ def createCommunity(id, title, description, admins):
     return True
 
 def createUser(username, email, password):
-    if db.session.query(User).filter_by(username=username).count() < 1 and db.session.query(User).filter_by(email=email).count() < 1:
+    if db.session.query(User).filter_by(user_id=username).count() < 1 and db.session.query(User).filter_by(email=email).count() < 1:
         db.session.add(User(
-            username=username,
+            user_id=username,
             email=email,
             password_hash=guard.hash_password(password),
             host="Academoo",
