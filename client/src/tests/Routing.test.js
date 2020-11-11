@@ -13,9 +13,11 @@ import UserSettings from "../components/UserSettings";
 import UserProfile from "../components/UserProfile";
 import Login from "../components/Login";
 import SignUp from "../components/SignUp";
-
 import { MemoryRouter as Router, Route } from "react-router-dom";
-import { login } from "../auth";
+
+
+
+// const App = require('../App').default;
 
 it("Routes to default page", () => {
   const wrapper = mount(

@@ -10,19 +10,9 @@ import PageNotFound from "./components/PageNotFound";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
-import { useAuth } from "./auth"
+import { PrivateRoute } from "./components/PrivateRoute";
 import CommunityCreator from "./components/CommunityCreator";
 
-
-const PrivateRoute = ({ component: Component, ...rest }) => {
-  const [logged] = useAuth();
-
-  return <Route {...rest} render={(props) => (
-    logged
-      ? <Component {...props} />
-      : <Redirect to='/login' />
-  )} />
-}
 
 class App extends React.Component {
   render() {
@@ -32,8 +22,6 @@ class App extends React.Component {
           <Route component={HeaderBar}/>
           <div className="container-md">
             <Switch>
-              <Route path="/login" component={Login} />
-              <Route path="/sign-up" component={SignUp} />
               <PrivateRoute exact path="/" component={Welcome} />
               <PrivateRoute path="/home" component={Welcome} />
               <PrivateRoute exact path="/moosfeed" component={PostsViewer} />
@@ -41,6 +29,8 @@ class App extends React.Component {
               <PrivateRoute path="/moosfeed/comments/:id" component={CommentsViewer} />
               <PrivateRoute path="/user-settings" component={UserSettings} />
               <PrivateRoute path="/user-profile" component={UserProfile} />
+              <Route path="/login" component={Login} />
+              <Route path="/sign-up" component={SignUp} />
               <Route component={PageNotFound} />
             </Switch>
           </div>
