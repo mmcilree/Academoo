@@ -14,10 +14,15 @@ class CommentsViewer extends React.Component {
     this.state = {
       parentPost: null,
       parentPostId: this.props.match.params.id,
+
       children: [],
+      fetchedChildren: new Set(),
+      
       isLoading: true,
+      needsUpdate: false,
+
       error: null,
-      showCommentEditor: false
+      showCommentEditor: false,
     }
   }
 
@@ -26,8 +31,7 @@ class CommentsViewer extends React.Component {
   }
 
   handleCloseCommentEditor() {
-    this.setState({ showCommentEditor: false, children: [], isLoading: true});
-    this.fetchChildren();
+    this.setState({ showCommentEditor: false, needsUpdate: true });
   }
 
 
@@ -37,31 +41,36 @@ class CommentsViewer extends React.Component {
       .then(data =>
         this.setState({
           parentPost: data,
+          needsUpdate: false
         })
       );
-
-    this.state.parentPost.children.length != 0 ?
-      this.fetchChildren() : this.setState({ isLoading: false });
+    
+    this.fetchChildren();
   }
 
-fetchChildren() {
-    const parentPost = this.state.parentPost;
-    console.log(parentPost.id);
-    parentPost.children.map((childId) => {
-      fetch('/api/posts/' + childId)
-        .then(response => response.json())
-        .then(data =>
-          this.setState({
-            children: [...this.state.children, data],
-            isLoading: false
-          })
-        )
-        .catch(error => this.setState({ error, isLoading: false }));
-    });
+  async fetchChildren() {
+    const { parentPost, fetchedChildren, children } = this.state;
+
+    const new_children = await Promise.all(parentPost.children.filter(childId => !fetchedChildren.has(childId)).map(
+      async (childId) => {
+        fetchedChildren.add(childId);
+        return fetch('/api/posts/' + childId)
+          .then(response => response.json())
+          .then(data => data)
+          .catch(error => this.setState({ error, isLoading: false }));
+      }));
+    
+    this.setState({ isLoading: false, children: [...children, ...new_children] })
   }
 
   componentDidMount() {
     this.fetchParentPost();
+  }
+
+  componentDidUpdate() {
+    if(this.state.needsUpdate) {
+      this.fetchParentPost();
+    }
   }
 
   render() {
@@ -79,7 +88,7 @@ fetchChildren() {
                 <Card.Body>
                   <Post postData={this.state.parentPost} />
                   <Button variant="primary" onClick={this.handleOpenCommentEditor.bind(this)}>Leave a comment</Button>
-                  <Modal show={this.state.showCommentEditor} onHide={this.handleCloseCommentEditor.bind(this)}>
+                  <Modal show={this.state.showCommentEditor} onHide={() => this.setState({ showCommentEditor: false })}>
                     <Modal.Header closeButton />
                     <Modal.Body>
                       <CommentCreator parentPost={this.state.parentPost} onSubmit={this.handleCloseCommentEditor.bind(this)}/>
@@ -88,7 +97,7 @@ fetchChildren() {
 
                 </Card.Body>
               </Card>
-              {this.state.children.map((child) =>
+              {this.state.children.sort(comment => comment.created).map((child) =>
                 child ? (
                   <Card key={child.id} className="mt-4 ml-4 comment">
                     <Card.Body>

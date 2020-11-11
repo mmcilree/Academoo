@@ -69,7 +69,7 @@ handleChange(event) {
                   name="username"
                 />
               </FormGroup>
-              <FormGroup controlId="password" bsSize="large">
+              <FormGroup controlId="password" bssize="large">
                 <Form.Label>Password</Form.Label>
                 <FormControl
                   onChange={this.handleChange.bind(this)}

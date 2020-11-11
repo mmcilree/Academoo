@@ -22,7 +22,7 @@ def login():
 
 @bp.route("/refresh", methods=["POST"])
 def refresh():
-    _, old_token = request.headers["Authorization"].split(" ")
+    old_token = request.get_data()
     new_token = guard.refresh_jwt_token(old_token)
     ret = {'access_token': new_token}
     return ret, 200

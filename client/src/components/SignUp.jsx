@@ -62,7 +62,7 @@ class SignUp extends React.Component {
                   name="username"
                 />
               </FormGroup>
-              <FormGroup controlId="password" bsSize="large">
+              <FormGroup controlId="password" bssize="large">
                 <Form.Label>Password</Form.Label>
                 <FormControl
                   onChange={this.handleChange.bind(this)}
@@ -72,7 +72,7 @@ class SignUp extends React.Component {
                 />
               </FormGroup>
               {this.state.isIncorrect ? (<Alert variant='warning'> Passwords do not match.</Alert>) : null}
-              <FormGroup controlId="confirmPassword" bsSize="large">
+              <FormGroup controlId="confirmPassword" bssize="large">
                 <Form.Label>Confirm Password</Form.Label>
                 <FormControl
                   onChange={this.handleChange.bind(this)}
