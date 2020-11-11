@@ -1,24 +1,19 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
+import Modal from 'react-bootstrap/Modal';
 import { authFetch } from '../auth';
 
-class PostCreator extends React.Component {
+class CommentCreator extends React.Component {
     constructor(props) {
         super(props);
         this.state = { 
+            title: "",
             email: "", 
             host: "", 
-            title: "", 
-            body: "", 
-            selectedCommunity: null,
-            communities: null };
-    }
-
-    componentDidMount() {
-        this.fetchCommunities();
-        this.fetchUserDetails();
+            body: "",
+            parentPost: this.props.parentPost
+        };
     }
 
     fetchUserDetails() {
@@ -30,16 +25,6 @@ class PostCreator extends React.Component {
                     host: data.host
                 })
             )
-    }
-
-    fetchCommunities() {
-        fetch('/api/communities').then(response => response.json())
-            .then(data =>
-                this.setState({ 
-                    communities: data,
-                    selectedCommunity: (data.length > 0 ? data[0] : null)
-                })
-            )        
     }
 
     handleChange(event) {
@@ -58,7 +43,7 @@ class PostCreator extends React.Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(
                 {
-                    parent: this.state.selectedCommunity,
+                    parent: this.state.parentPost.id,
                     title: this.state.title,
                     contentType: 'text',
                     body: this.state.body,
@@ -74,47 +59,36 @@ class PostCreator extends React.Component {
         this.setState(
             { email: "", host: "", title: "", body: ""}
         );
+
+        this.props.onSubmit();
+    }
+
+    componentDidMount() {
+        this.fetchUserDetails();
     }
 
     render() {
-        return this.state.communities && (
-            <Card className="mt-4">
-                <Card.Body>
+        return (
+            <React.Fragment >
+                <Modal.Body>
                     <Form onSubmit={this.handleSubmit.bind(this)}>
-                        <Form.Group controlId="createPostTitle">
-                            <Form.Label>Create a new post</Form.Label>
-                            <Form.Control type="input" 
-                                placeholder="Title (e.g. 'Moo')"
-                                name="title" 
-                                onChange={this.handleChange.bind(this)}
-                                value={this.state.title} />
-                        </Form.Group>
 
                         <Form.Group controlId="createPostText">
                             <Form.Control as="textarea" 
-                                placeholder="Text (e.g. 'Moooo')" 
+                                placeholder="Write a comment..." 
                                 name="body"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.body} />
                         </Form.Group>
 
-                        <Form.Group controlId="createPostCommunity">
-                            <Form.Label>Select a community</Form.Label>
-                            <Form.Control as="select" name="selectedCommunity" onChange={this.handleChange.bind(this)}>
-                                {this.state.communities.map(function(name, index) {
-                                    return <option key={ index }>{ name }</option>
-                                })}
-                            </Form.Control>    
-                        </Form.Group> 
-
                         <Button variant="primary" type="submit">
                             Post
                         </Button>
                     </Form>
-                </Card.Body>
-            </Card>
+                </Modal.Body>
+            </React.Fragment>
         )
     }
 }
 
-export default PostCreator;
+export default CommentCreator;

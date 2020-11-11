@@ -90,7 +90,7 @@ def getPost(post_id):
     else:
         post_dict = {"id": post.id, "parent": post.community_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.email, "host": post.author.host}, "modified": post.modified, "created": post.created}
 
-    return json.dumps(post_dict)
+    return post_dict
 
 def editPost(post_id, post_data):
     update_title = post_data["title"]

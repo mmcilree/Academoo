@@ -57,7 +57,7 @@ class PostsViewer extends Component {
             <Card className="mt-4">
               <Card.Body>
                 {error ? <p>{error.message}</p> : null}
-                {!isLoading ? (
+                {!isLoading ? ( 
                   posts.map(data => {
                     const {parent, id} = data;
                     return (
@@ -78,6 +78,7 @@ class PostsViewer extends Component {
                   ) : (
                     <h3>Loading Posts...</h3>
                 )}
+                {!isLoading && posts.length == 0 ? <h4>There's no posts yet :-(</h4> : null}
               </Card.Body>
             </Card>
           </Col>

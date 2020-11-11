@@ -1,47 +1,110 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Post from "./Post";
 import Card from "react-bootstrap/Card";
 import { posts } from "./test_post_json";
-import Button from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
 import { ArrowReturnLeft } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
+import Modal from "react-bootstrap/Modal";
+import CommentCreator from "./CommentCreator";
 
-function CommentsViewer({ match }) {
-  const parentPostId = match.params.id;
+class CommentsViewer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      parentPost: null,
+      parentPostId: this.props.match.params.id,
+      children: [],
+      isLoading: true,
+      error: null,
+      showCommentEditor: false
+    }
+  }
 
-  // const allPosts = props.allPosts;
-  const parentPost = posts.filter((data) => data.id === parentPostId)[0];
+  handleOpenCommentEditor() {
+    this.setState({ showCommentEditor: true });
+  }
 
-  const children = [];
-  parentPost.children.map((childId) => {
-    const child = posts.filter((data) => childId === data.id)[0];
-    children.push(child);
-  });
+  handleCloseCommentEditor() {
+    this.setState({ showCommentEditor: false, children: [], isLoading: true});
+    this.fetchChildren();
+  }
 
-  return (
-    <div className="container-md comments_view">
-      <Card className="mt-4">
-        <Card.Body>
-          <Link to="/moosfeed" className="btn btn-secondary">
-            Back to Moosfeed <ArrowReturnLeft />
-          </Link>
-          <Card className="mt-4">
+
+  async fetchParentPost() {
+    await fetch('/api/posts/' + this.state.parentPostId)
+      .then(response => response.json())
+      .then(data =>
+        this.setState({
+          parentPost: data,
+        })
+      );
+
+    this.state.parentPost.children.length != 0 ?
+      this.fetchChildren() : this.setState({ isLoading: false });
+  }
+
+fetchChildren() {
+    const parentPost = this.state.parentPost;
+    console.log(parentPost.id);
+    parentPost.children.map((childId) => {
+      fetch('/api/posts/' + childId)
+        .then(response => response.json())
+        .then(data =>
+          this.setState({
+            children: [...this.state.children, data],
+            isLoading: false
+          })
+        )
+        .catch(error => this.setState({ error, isLoading: false }));
+    });
+  }
+
+  componentDidMount() {
+    this.fetchParentPost();
+  }
+
+  render() {
+    const { isLoading } = this.state;
+
+    return (
+      <div className="container-md comments_view">
+        <Card className="mt-4">
+          {!isLoading ? (
             <Card.Body>
-              <Post postData={parentPost} />
-            </Card.Body>
-          </Card>
-          {children.map((child) =>
-            child ? (
-              <Card key={child.id} className="mt-4 ml-4 comment">
+              <Link to="/moosfeed" className="btn btn-secondary">
+                Back to Moosfeed <ArrowReturnLeft />
+              </Link>
+              <Card className="mt-4">
                 <Card.Body>
-                  <Post postData={child} />
+                  <Post postData={this.state.parentPost} />
+                  <Button variant="primary" onClick={this.handleOpenCommentEditor.bind(this)}>Leave a comment</Button>
+                  <Modal show={this.state.showCommentEditor} onHide={this.handleCloseCommentEditor.bind(this)}>
+                    <Modal.Header closeButton />
+                    <Modal.Body>
+                      <CommentCreator parentPost={this.state.parentPost} onSubmit={this.handleCloseCommentEditor.bind(this)}/>
+                    </Modal.Body>
+                  </Modal>
+
                 </Card.Body>
               </Card>
-            ) : null
-          )}
-        </Card.Body>
-      </Card>
-    </div>
-  );
+              {this.state.children.map((child) =>
+                child ? (
+                  <Card key={child.id} className="mt-4 ml-4 comment">
+                    <Card.Body>
+                      <Post postData={child} />
+                    </Card.Body>
+                  </Card>
+                ) : null
+              )}
+              {this.state.children.length == 0 ? 
+                <p className="mt-4 ml-4 comment">No comments to show.</p> : null}
+
+            </Card.Body>) :
+            <Card.Body><h3>Loading Post...</h3></Card.Body>}
+        </Card>
+      </div>
+    );
+  }
 }
 export default CommentsViewer;

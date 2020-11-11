@@ -8,7 +8,7 @@ class Welcome extends React.Component {
       <Card className="mt-4">
         <Card.Body>
           <h1>Welcome to Academoo!</h1>
-          <p>There's not much here yet... </p>
+          <p>Part of a new federated social media platform for universities... </p>
           <Link to="/moosfeed" className="btn btn-secondary">
             Go to Moosfeed
           </Link>
