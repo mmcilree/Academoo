@@ -13,3 +13,13 @@ class Instance(object):
     def get_posts(self, community):
         ret = requests.get(urljoin(self.url, f"/api/posts?community={community}"))
         return ret.json()
+
+    def get_communities(self, id=None):
+        if id:
+            ret = requests.get(urljoin(self.url, f"/api/communities/{id}"))
+        else:
+            ret = requests.get(urljoin(self.url, "/api/communities"))
+
+        return ret.json()
+    
+    # TODO: creating, editing and deleting posts
