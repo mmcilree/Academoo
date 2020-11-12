@@ -5,6 +5,13 @@ import json
 from uuid import UUID
 import re
 
+def isUUID(val):
+    try:
+        UUID(val)
+        return True
+    except ValueError:
+        return False
+
 def createCommunity(id, title, description, admins):
     community = Community(id=id, title=title, description=description)
     db.session.add(community)
@@ -39,12 +46,13 @@ def getCommunity(community_id):
     return community_dict
 
 def getAllCommunityPostsTimeModified(community_id):
-    post_dicts = [{"id":post.id, "modified":post.modified} for post in Post.query.filter_by(community = community_id)]
+    # NOTE: shouldn't this return for all posts? Also, when we add comments to a post, then that parent post should have modified time updated as well?
+    post_dicts = [{"id":post.id, "modified":post.modified} for post in Post.query.filter_by(community_id = community_id)]
     return post_dicts
 
 def getFilteredPosts(limit, community_id, min_date):
     if community_id:
-        is_comment = not re.match("$^[a-zA-Z0-9-_]{1,24}$", community_id)
+        is_comment = isUUID(community_id)
 
         if is_comment:
             posts = Post.query.filter(Post.created >= min_date, Post.parent_id == community_id).order_by(desc(Post.created)).limit(limit)
@@ -53,12 +61,12 @@ def getFilteredPosts(limit, community_id, min_date):
     else:
         posts = Post.query.filter(Post.created >= min_date).order_by(desc(Post.created)).limit(limit)
     
-    post_dicts = [{"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id if post.author else "Guest", "host": post.author.host if post.author else "Narnia"}, "modified": post.modified, "created": post.created} for post in posts]
+    post_dicts = [{"id": post.id, "parent": post.parent_id if post.parent_id else post.community_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id if post.author else "Guest", "host": post.author.host if post.author else "Narnia"}, "modified": post.modified, "created": post.created} for post in posts]
     return post_dicts
 
 def createPost(post_data):
     post_parent = post_data["parent"]
-    is_comment = not re.match("$^[a-zA-Z0-9-_]{1,24}$", post_parent)
+    is_comment = isUUID(post_parent)
     post_title = post_data["title"]
     post_content_type = post_data["contentType"]
     post_body = post_data["body"]
@@ -71,8 +79,6 @@ def createPost(post_data):
         db.session.add(user)
         db.session.commit()
     
-    post_author = User.query.filter_by(user_id = author_id).first()
-
     if is_comment:
         post = Post(title=post_title, author_id=author_id, content_type=post_content_type, body=post_body, parent_id=post_parent)
     else:
@@ -85,9 +91,7 @@ def createPost(post_data):
 def getPost(post_id):
     post = Post.query.filter_by(id = post_id).first()
     
-    is_comment = True
-    if re.match("$^[a-zA-Z0-9-_]{1,24}$", post_id):
-        is_comment = False
+    is_comment = isUUID(post_id)
 
     if is_comment:
         post_dict = {"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
