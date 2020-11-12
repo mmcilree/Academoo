@@ -1,5 +1,5 @@
 from flask_praetorian.decorators import auth_required
-from app import actions
+from app import actions, federation
 from app.main import bp
 from flask import request, Response, jsonify
 from flask_praetorian import current_user, auth_required
@@ -23,3 +23,13 @@ def create_community():
 def get_user():
     u = current_user()
     return jsonify({"id": u.user_id, "email": u.email, "host": u.host})
+
+@bp.route("/add-instance", methods=["POST"])
+def add_instance():
+    req = request.json
+    host = req["host"]
+    url = req["url"]
+
+    federation.add_instance(host, url)
+
+    return Response(status=200)
