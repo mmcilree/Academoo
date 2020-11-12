@@ -22,12 +22,16 @@ class SignUp extends React.Component {
     const value = target.value;
     const name = target.name;
     this.setState({
-      [name]: value
+      [name]: value,
     });
   }
 
-  async handleSubmit(event) {
+  handleSubmit(event) {
     event.preventDefault();
+    this.setState({
+      isNonUnique: false
+    });
+
     if (this.state.password !== this.state.passwordConfirm) {
       this.setState({ isNonMatching: true });
     } else {
@@ -42,12 +46,19 @@ class SignUp extends React.Component {
           }
         )
       };
-      await fetch('/api/register', opt).then(response => response.json())
-      .then(data => data)
-      .catch(error => this.setState({ isNonUnique: true}));
-      
-      
-      !this.state.isNonUnique && this.props.history.push('/login');
+
+      // To improve once we have a better way to check unique usernames.
+      fetch('/api/register', opt).then( ((response) => {
+        if (!response.ok) {
+          throw new Error();
+        }
+        return response;
+      }).bind(this)).then(((response) => {
+        this.props.history.push('/login')
+      }).bind(this))
+      .catch((error) => {
+        this.setState({isNonUnique: true})
+      })
     }
   }
 
@@ -90,7 +101,7 @@ class SignUp extends React.Component {
               </FormGroup>
 
               {this.state.isNonMatching ? (<Alert variant='warning'> Passwords do not match.</Alert>) : null}
-              
+
               <FormGroup controlId="confirmPassword" bssize="large">
                 <Form.Label>Confirm Password</Form.Label>
                 <FormControl
