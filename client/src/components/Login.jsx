@@ -40,7 +40,6 @@ handleChange(event) {
         if (token.access_token){
           this.setState({isIncorrect:false})
           login(token)
-          console.log(token) 
           this.props.history.push('/');
         }
         else {
