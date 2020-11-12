@@ -5,6 +5,7 @@ import json
 from uuid import UUID
 import re
 
+# NOTE: Should move to utils.py later when we refactor the code
 def isUUID(val):
     try:
         UUID(val)
