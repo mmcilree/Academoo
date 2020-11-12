@@ -40,7 +40,6 @@ handleChange(event) {
         if (token.access_token){
           this.setState({isIncorrect:false})
           login(token)
-          console.log(token) 
           this.props.history.push('/');
         }
         else {
@@ -59,7 +58,7 @@ handleChange(event) {
         <Card.Body className="mx-auto">
           <div>
             <Form  onSubmit={this.handleSubmit.bind(this)}>
-              <FormGroup controlId="username" bsSize="large">
+              <FormGroup controlId="username" bssize="large">
                 <Form.Label>Username</Form.Label>
                 <FormControl
                   autoFocus

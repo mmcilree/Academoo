@@ -6,7 +6,7 @@ class UserSettings extends Component {
     return (
       <Card className="mt-4">
         <Card.Body>
-          <Card.Title>Settings</Card.Title>
+          <h3>Settings</h3>
         </Card.Body>
       </Card>
     );

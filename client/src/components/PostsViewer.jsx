@@ -46,7 +46,6 @@ class PostsViewer extends Component {
   }
 
   render() {
-    console.log(this.state.posts);
     const { isLoading, posts, error, currentCommunity } = this.state;
 
     return currentCommunity && (
@@ -68,7 +67,7 @@ class PostsViewer extends Component {
                               to={`/moosfeed/comments/${id}`}
                               className="btn btn-primary stretched-link"
                           >
-                              View Comments
+                              View Comments ({data.children.length})
                           </Link>
                           </Card.Body>
                         </Card>
