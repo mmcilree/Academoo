@@ -1,4 +1,4 @@
-from app import actions
+from app import actions, federation
 from app.supergroup_protocol import bp
 from flask import jsonify, request, Response
 
@@ -28,7 +28,7 @@ def get_all_posts():
     if not external:
         return jsonify(actions.getFilteredPosts(limit, community, min_date))
     else:
-        return "YOLO"
+        return jsonify(federation.get_posts(external, community))
 
 @bp.route("/posts/<id>", methods=["GET"])
 def get_post_by_id(id):

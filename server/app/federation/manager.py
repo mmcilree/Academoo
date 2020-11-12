@@ -17,7 +17,10 @@ class Manager(object):
     def get_posts(self, host, community):
          timestamp = self._get_latest_timestamp(host, community)
          return self._get_posts(host, community, timestamp)
-        
+    
+    def get_instances(self):
+        return self.instances
+
     def add_instance(self, host, url):
         if host in self.instances: return False
 

@@ -33,3 +33,7 @@ def add_instance():
     federation.add_instance(host, url)
 
     return Response(status=200)
+
+@bp.route("/get-instances", methods=["GET"])
+def get_all_instances():
+    return jsonify(federation.get_instances())
