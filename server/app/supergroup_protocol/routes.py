@@ -23,7 +23,12 @@ def get_all_posts():
     community = request.args.get("community")
     min_date = request.args.get("min_date", 0)
 
-    return jsonify(actions.getFilteredPosts(limit, community, min_date))
+    external = request.args.get("external")
+
+    if not external:
+        return jsonify(actions.getFilteredPosts(limit, community, min_date))
+    else:
+        return "YOLO"
 
 @bp.route("/posts/<id>", methods=["GET"])
 def get_post_by_id(id):
