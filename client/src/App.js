@@ -12,31 +12,42 @@ import SignUp from "./components/SignUp";
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import { PrivateRoute } from "./components/PrivateRoute";
 import CommunityCreator from "./components/CommunityCreator";
-
+import { HostContext } from "./components/HostContext";
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    
+    this.state = {
+      host: null,
+      setHost: (value) => this.setState({ host: value })
+    };
+  }
+
   render() {
     return (
-      <Router>
-        <div className="App">
-          <Route component={HeaderBar}/>
-          <div className="container-md">
-            <Switch>
-              <PrivateRoute exact path="/" component={Welcome} />
-              <PrivateRoute path="/home" component={Welcome} />
-              <PrivateRoute exact path="/moosfeed" component={PostsViewer} />
-              <PrivateRoute path="/create-post" component={PostCreator} />
-              <PrivateRoute path="/moosfeed/comments/:id" component={CommentsViewer} />
-              <PrivateRoute path="/user-settings" component={UserSettings} />
-              <PrivateRoute path="/user-profile" component={UserProfile} />
-              <PrivateRoute path="/create-community" component={CommunityCreator} />
-              <Route path="/login" component={Login} />
-              <Route path="/sign-up" component={SignUp} />
-              <Route component={PageNotFound} />
-            </Switch>
+      <HostContext.Provider value={this.state}>
+        <Router>
+          <div className="App">
+            <Route component={HeaderBar}/>
+            <div className="container-md">
+              <Switch>
+                <PrivateRoute exact path="/" component={Welcome} />
+                <PrivateRoute path="/home" component={Welcome} />
+                <PrivateRoute exact path="/moosfeed" component={PostsViewer} />
+                <PrivateRoute path="/create-post" component={PostCreator} />
+                <PrivateRoute path="/moosfeed/comments/:id" component={CommentsViewer} />
+                <PrivateRoute path="/user-settings" component={UserSettings} />
+                <PrivateRoute path="/user-profile" component={UserProfile} />
+                <PrivateRoute path="/create-community" component={CommunityCreator} />
+                <Route path="/login" component={Login} />
+                <Route path="/sign-up" component={SignUp} />
+                <Route component={PageNotFound} />
+              </Switch>
+            </div>
           </div>
-        </div>
-      </Router>
+        </Router>
+      </HostContext.Provider>
     );
   }
 }

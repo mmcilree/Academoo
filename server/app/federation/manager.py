@@ -28,7 +28,7 @@ class Manager(object):
         return self.instances[host].get_communities(id=id)
 
     def get_instances(self):
-        return self.instances
+        return list(self.instances.keys())
 
     def add_instance(self, host, url):
         if host in self.instances:
