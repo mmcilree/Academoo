@@ -1,10 +1,11 @@
 from app import db, guard
-from app.models import User, Community, Post
+from app.models import User, Community, Post, getTime
 from sqlalchemy import desc
 import json
 from uuid import UUID
 import re
 
+# NOTE: Should move to utils.py later when we refactor the code
 def isUUID(val):
     try:
         UUID(val)
@@ -81,6 +82,9 @@ def createPost(post_data):
     
     if is_comment:
         post = Post(title=post_title, author_id=author_id, content_type=post_content_type, body=post_body, parent_id=post_parent)
+
+        parentPost = Post.query.filter_by(id=post_parent).first()
+        parentPost.modified = getTime()
     else:
         post = Post(title=post_title, author_id=author_id, content_type=post_content_type, body=post_body, community_id=post_parent)
 
@@ -89,14 +93,8 @@ def createPost(post_data):
         
 
 def getPost(post_id):
-    post = Post.query.filter_by(id = post_id).first()
-    
-    is_comment = isUUID(post_id)
-
-    if is_comment:
-        post_dict = {"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
-    else:
-        post_dict = {"id": post.id, "parent": post.community_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
+    post = Post.query.filter_by(id = post_id).first()    
+    post_dict = {"id": post.id, "parent": post.parent_id if post.parent_id else post.community_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
 
     return post_dict
 

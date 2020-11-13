@@ -1,15 +1,25 @@
-from app import actions
+from app import actions, federation
 from app.supergroup_protocol import bp
 from flask import jsonify, request, Response
 
 # Community
 @bp.route("/communities", methods=["GET"])
 def get_all_communities():
-    return jsonify(actions.getCommunityIDs())
+    external = request.args.get("external")
+
+    if not external:
+        return jsonify(actions.getCommunityIDs())
+    else:
+        return jsonify(federation.get_communities(external))
 
 @bp.route("/communities/<id>", methods=["GET"])
 def get_community_by_id(id):
-    return jsonify(actions.getCommunity(id))
+    external = request.args.get("external")
+
+    if not external:
+        return jsonify(actions.getCommunity(id))
+    else:
+        return jsonify(federation.get_communities(external, id=id))
 
 @bp.route("/communities/<id>/timestamps")
 def get_community_timestamps(id):
@@ -23,15 +33,28 @@ def get_all_posts():
     community = request.args.get("community")
     min_date = request.args.get("min_date", 0)
 
-    return jsonify(actions.getFilteredPosts(limit, community, min_date))
+    external = request.args.get("external")
+
+    if not external:
+        return jsonify(actions.getFilteredPosts(limit, community, min_date))
+    else:
+        return jsonify(federation.get_posts(external, community))
 
 @bp.route("/posts/<id>", methods=["GET"])
 def get_post_by_id(id):
-    return jsonify(actions.getPost(id))
+    external = request.args.get("external")
+
+    if not external:
+        return jsonify(actions.getPost(id))
+    else:
+        return jsonify(federation.get_post_by_id(external, id))
 
 @bp.route("/posts", methods=["POST"])
 def create_post():
-    actions.createPost(request.json)
+    if (host := request.json.get("external")):
+        federation.create_post(host, request.json)
+    else:
+        actions.createPost(request.json)
 
     return Response(status = 200)
 

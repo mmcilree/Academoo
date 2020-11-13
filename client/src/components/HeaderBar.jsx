@@ -2,12 +2,15 @@ import React from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import Dropdownbutton from "react-bootstrap/DropdownButton";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import Dropdown from "react-bootstrap/Dropdown";
 import Image from "react-bootstrap/Image";
 import {logout, useAuth} from "../auth";
 import defaultProfile from "../images/default_profile.png";
 import logo from "../images/logo.svg";
 // import logo from "../images/logo.png";
+import { HostContext } from './HostContext';
+import { useState, useEffect, useContext } from "react";
 
 import {
   PlusCircle,
@@ -20,6 +23,18 @@ import { Link } from "react-router-dom";
 
 function HeaderBar() {
   const [logged] = useAuth();
+  const [instances, setInstances] = useState(null);
+
+  const context = useContext(HostContext);
+
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetch("/api/get-instances");
+      res.json().then(res => setInstances(["local", ...res]));
+    }
+
+    fetchData();
+  }, []);
 
   return (
     <Navbar bg="primary" variant="dark" expand="lg" {...(!logged ? {className: 'justify-content-center'} : {})}>
@@ -34,7 +49,7 @@ function HeaderBar() {
         Academoo
       </Navbar.Brand>
 
-      {logged && (
+      {logged && (instances !== null) && (
         <React.Fragment>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
@@ -46,14 +61,27 @@ function HeaderBar() {
                 <PlusCircle className="mb-1" />
                 <span> New Moo</span>
               </Nav.Link>
-              <Nav.Link as={Link} to="/create-community">
+              {context.host === null && <Nav.Link as={Link} to="/create-community">
                 <PlusCircle className="mb-1" />
                 <span> New Commoonity</span>
-              </Nav.Link>
+              </Nav.Link>}
             </Nav>
 
             <Nav>
-              <Dropdownbutton
+              <HostContext.Consumer>
+                {({host, setHost}) => (
+                  <DropdownButton title={"Current Instance: " + (host ? host : "local")} className="mr-5">
+                  {
+                    instances.map(name => {
+                      return <Dropdown.Item as="button" key={name} onClick={() => setHost((name === "local" ? null : name))}>{name}</Dropdown.Item>
+                    })
+                  }
+                  </DropdownButton>
+                )}
+              </HostContext.Consumer>
+              
+
+              <DropdownButton
                 // as={Link}
                 // to="/user-profile"
                 variant="outline-light"
@@ -79,11 +107,12 @@ function HeaderBar() {
                 <NavDropdown.Item as={Link} to="/user-settings">
                   <Gear /> Settings
                 </NavDropdown.Item>
+
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={logout}>
                   <BoxArrowRight /> Log Out{" "}
                 </NavDropdown.Item>
-              </Dropdownbutton>
+              </DropdownButton>
             </Nav>
           </Navbar.Collapse>
         </React.Fragment>

@@ -3,6 +3,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { authFetch } from '../auth';
+import { HostContext } from "./HostContext";
 
 class CommentCreator extends React.Component {
     constructor(props) {
@@ -15,6 +16,8 @@ class CommentCreator extends React.Component {
             parentPost: this.props.parentPost
         };
     }
+
+    static contextType = HostContext;
 
     fetchUserDetails() {
         authFetch("/api/get-user").then(response => response.json())
@@ -41,8 +44,7 @@ class CommentCreator extends React.Component {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(
-                {
+            body: {
                     parent: this.state.parentPost.id,
                     title: this.state.title,
                     contentType: 'text',
@@ -52,9 +54,14 @@ class CommentCreator extends React.Component {
                         host: this.state.host
                     }
                 }
-            )
         };
 
+        if (this.context.host !== null) {
+            requestOptions.body.external = this.context.host
+        }
+
+        requestOptions.body = JSON.stringify(requestOptions.body);
+        
         await fetch('/api/posts', requestOptions);
         this.setState(
             { email: "", host: "", title: "", body: ""}

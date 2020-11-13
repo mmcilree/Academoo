@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_praetorian import Praetorian
+from app.federation.manager import Manager
 
 from config import Config
 
@@ -15,6 +16,7 @@ CORS(app)
 db = SQLAlchemy()
 migrate = Migrate()
 guard = Praetorian()
+federation = Manager()
 
 from app.models import User
 
