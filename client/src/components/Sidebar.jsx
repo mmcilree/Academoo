@@ -1,12 +1,16 @@
 import React, { Component } from "react";
 import {Dropdown, DropdownButton, Card} from "react-bootstrap";
+import { HostContext } from "./HostContext";
 
 class Sidebar extends Component {
     state = {
         data: null,
         currentCommunity: null,
-        communities: []
+        communities: [],
+        host: null
     }
+
+    static contextType = HostContext;
 
     componentDidMount() {
         this.fetchCommunities();
@@ -14,22 +18,30 @@ class Sidebar extends Component {
     }
 
     componentDidUpdate() {
+        if(this.context.host !== this.state.host) {
+            this.fetchCommunities();
+            this.fetchCommunityDetails();
+        }
+
         if(this.props.currentCommunity !== this.state.currentCommunity) {
             this.fetchCommunityDetails();
         }
     }
 
     fetchCommunities() {
-        fetch('/api/communities').then(response => response.json())
+        fetch('/api/communities' + (this.context.host !== null ? "?external=" + this.context.host : ""))
+            .then(response => response.json())
             .then(data =>
                 this.setState({ 
-                    communities: data
+                    communities: data,
+                    host: this.context.host
                 })
             )
     }
 
     fetchCommunityDetails() {
-        fetch('/api/communities/' + this.props.currentCommunity).then(response => response.json())
+        fetch('/api/communities/' + this.props.currentCommunity + (this.context.host !== null ? "?external=" + this.context.host : ""))
+            .then(response => response.json())
             .then(data =>
                 this.setState({ 
                     data: data,

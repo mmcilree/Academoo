@@ -9,7 +9,7 @@ import {logout, useAuth} from "../auth";
 import defaultProfile from "../images/default_profile.png";
 import logo from "../images/logo.svg";
 // import logo from "../images/logo.png";
-import {HostContext} from './HostContext';
+import { HostContext } from './HostContext';
 import { useState, useEffect } from "react";
 
 import {
@@ -71,7 +71,7 @@ function HeaderBar() {
                   <DropdownButton title={"Current Instance: " + (host ? host : "local")} className="mr-5">
                   {
                     instances.map(name => {
-                      return <Dropdown.Item as="button" key={name} onClick={() => setHost(name)}>{name}</Dropdown.Item>
+                      return <Dropdown.Item as="button" key={name} onClick={() => setHost((name === "local" ? null : name))}>{name}</Dropdown.Item>
                     })
                   }
                   </DropdownButton>

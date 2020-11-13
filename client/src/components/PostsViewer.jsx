@@ -1,29 +1,36 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
 import Post from "./Post";
 import Sidebar from "./Sidebar";
 import { Card, Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { HostContext } from "./HostContext";
 
 class PostsViewer extends Component {
   state = {
     isLoading: true,
     posts: [],
     currentCommunity: null,
-    error: null
+    error: null,
+    host: null
   }
+
+  static contextType = HostContext;
 
   componentDidMount() {
     this.fetchCommunity();
   }
   
   componentDidUpdate() {
-    if(this.state.isLoading) {
+    if(this.context.host !== this.state.host) {
+      this.fetchCommunity();
+    } else if(this.state.isLoading) {
       this.fetchPosts();
     }
   }
 
   async fetchCommunity() {
-    await fetch('/api/communities').then(response => response.json())
+    await fetch('/api/communities' + (this.context.host !== null ? "?external=" + this.context.host : ""))
+      .then(response => response.json())
       .then(data =>
           this.setState({
             currentCommunity: data.length > 0 ? data[0] : "?"
@@ -34,12 +41,13 @@ class PostsViewer extends Component {
   }
 
   fetchPosts() {
-    fetch('/api/posts?community=' + this.state.currentCommunity)
+    fetch('/api/posts?community=' + this.state.currentCommunity + (this.context.host !== null ? "&external=" + this.context.host : ""))
       .then(response => response.json())
       .then(data =>
         this.setState({ 
           posts: data,
-          isLoading: false 
+          isLoading: false,
+          host: this.context.host
         })
       )
       .catch(error => this.setState({ error, isLoading: false }));
@@ -47,6 +55,7 @@ class PostsViewer extends Component {
 
   render() {
     const { isLoading, posts, error, currentCommunity } = this.state;
+    console.log(currentCommunity);
 
     return currentCommunity && (
       <Container>
