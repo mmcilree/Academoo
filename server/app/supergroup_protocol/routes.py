@@ -5,11 +5,21 @@ from flask import jsonify, request, Response
 # Community
 @bp.route("/communities", methods=["GET"])
 def get_all_communities():
-    return jsonify(actions.getCommunityIDs())
+    external = request.args.get("external")
+
+    if not external:
+        return jsonify(actions.getCommunityIDs())
+    else:
+        return jsonify(federation.get_communities(external))
 
 @bp.route("/communities/<id>", methods=["GET"])
 def get_community_by_id(id):
-    return jsonify(actions.getCommunity(id))
+    external = request.args.get("external")
+
+    if not external:
+        return jsonify(actions.getCommunity(id))
+    else:
+        return jsonify(federation.get_communities(external, id=id))
 
 @bp.route("/communities/<id>/timestamps")
 def get_community_timestamps(id):

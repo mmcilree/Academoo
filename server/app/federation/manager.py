@@ -1,5 +1,4 @@
 import functools
-import requests
 from app.federation.instance import Instance
 
 class Manager(object):
@@ -17,6 +16,9 @@ class Manager(object):
     def get_posts(self, host, community):
          timestamp = self._get_latest_timestamp(host, community)
          return self._get_posts(host, community, timestamp)
+
+    def get_communities(self, host, id=None):
+        return self.instances[host].get_communities(id=id)
     
     def get_instances(self):
         return self.instances
