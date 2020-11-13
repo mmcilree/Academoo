@@ -55,7 +55,6 @@ class PostsViewer extends Component {
 
   render() {
     const { isLoading, posts, error, currentCommunity } = this.state;
-    console.log(currentCommunity);
 
     return currentCommunity && (
       <Container>

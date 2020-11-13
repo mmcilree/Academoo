@@ -1,5 +1,5 @@
 from app import db, guard
-from app.models import User, Community, Post
+from app.models import User, Community, Post, getTime
 from sqlalchemy import desc
 import json
 from uuid import UUID
@@ -82,6 +82,9 @@ def createPost(post_data):
     
     if is_comment:
         post = Post(title=post_title, author_id=author_id, content_type=post_content_type, body=post_body, parent_id=post_parent)
+
+        parentPost = Post.query.filter_by(id=post_parent).first()
+        parentPost.modified = getTime()
     else:
         post = Post(title=post_title, author_id=author_id, content_type=post_content_type, body=post_body, community_id=post_parent)
 

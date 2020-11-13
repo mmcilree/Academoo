@@ -6,7 +6,7 @@ class Manager(object):
     def __init__(self):
         # host name : <Instance Objects>
         self.instances = {
-            "test": Instance("https://nnv2.host.cs.st-andrews.ac.uk/")
+            "nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/")
         }
 
     def create_post(self, host, data):
@@ -19,7 +19,6 @@ class Manager(object):
     def _get_posts(self, host, community, _timestamp):
         return self.instances[host].get_posts(community)
 
-    @functools.lru_cache()
     def get_post_by_id(self, host, id):
         return self.instances[host].get_post_by_id(id=id)
 
