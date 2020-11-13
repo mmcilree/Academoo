@@ -51,7 +51,8 @@ def get_post_by_id(id):
 
 @bp.route("/posts", methods=["POST"])
 def create_post():
-    if (host := request.json.get("external")):
+    host = request.json.get("external")
+    if host:
         federation.create_post(host, request.json)
     else:
         actions.createPost(request.json)
