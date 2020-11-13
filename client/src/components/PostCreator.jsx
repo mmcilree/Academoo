@@ -3,6 +3,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { authFetch } from '../auth';
+import { HostContext } from "./HostContext";
 
 class PostCreator extends React.Component {
     constructor(props) {
@@ -15,6 +16,8 @@ class PostCreator extends React.Component {
             selectedCommunity: null,
             communities: null };
     }
+
+    static contextType = HostContext;
 
     componentDidMount() {
         this.fetchCommunities();
@@ -33,7 +36,7 @@ class PostCreator extends React.Component {
     }
 
     fetchCommunities() {
-        fetch('/api/communities').then(response => response.json())
+        fetch('/api/communities' + (this.context.host !== null ? "?external=" + this.context.host : "")).then(response => response.json())
             .then(data =>
                 this.setState({ 
                     communities: data,
@@ -56,8 +59,7 @@ class PostCreator extends React.Component {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(
-                {
+            body: {
                     parent: this.state.selectedCommunity,
                     title: this.state.title,
                     contentType: 'text',
@@ -67,8 +69,13 @@ class PostCreator extends React.Component {
                         host: this.state.host
                     }
                 }
-            )
         };
+
+        if (this.context.host !== null) {
+            requestOptions.body.external = this.context.host
+        }
+
+        requestOptions.body = JSON.stringify(requestOptions.body);
 
         fetch('/api/posts', requestOptions);
         this.setState(

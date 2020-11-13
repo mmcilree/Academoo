@@ -27,6 +27,6 @@ class Instance(object):
         return ret.json()
 
     def create_post(self, data):
-        requests.post(urljoin(self.url, f"/api/posts"), json=data)
+        print(requests.post(urljoin(self.url, f"/api/posts"), json=data))
     
     # TODO: editing and deleting posts

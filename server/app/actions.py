@@ -90,14 +90,8 @@ def createPost(post_data):
         
 
 def getPost(post_id):
-    post = Post.query.filter_by(id = post_id).first()
-    
-    is_comment = isUUID(post_id)
-
-    if is_comment:
-        post_dict = {"id": post.id, "parent": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
-    else:
-        post_dict = {"id": post.id, "parent": post.community_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
+    post = Post.query.filter_by(id = post_id).first()    
+    post_dict = {"id": post.id, "parent": post.parent_id if post.parent_id else post.community_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
 
     return post_dict
 

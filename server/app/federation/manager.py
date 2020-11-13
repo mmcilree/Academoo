@@ -9,6 +9,9 @@ class Manager(object):
             "test": Instance("https://nnv2.host.cs.st-andrews.ac.uk/")
         }
 
+    def create_post(self, host, data):
+        self.instances[host].create_post(data)
+
     def _get_latest_timestamp(self, host, community):
         return max([x["modified"] for x in self.instances[host].get_timestamps(community)] + [0])
 
