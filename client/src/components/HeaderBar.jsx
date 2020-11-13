@@ -10,7 +10,7 @@ import defaultProfile from "../images/default_profile.png";
 import logo from "../images/logo.svg";
 // import logo from "../images/logo.png";
 import { HostContext } from './HostContext';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import {
   PlusCircle,
@@ -24,6 +24,8 @@ import { Link } from "react-router-dom";
 function HeaderBar() {
   const [logged] = useAuth();
   const [instances, setInstances] = useState(null);
+
+  const context = useContext(HostContext);
 
   useEffect(() => {
     async function fetchData() {
@@ -59,10 +61,10 @@ function HeaderBar() {
                 <PlusCircle className="mb-1" />
                 <span> New Moo</span>
               </Nav.Link>
-              <Nav.Link as={Link} to="/create-community">
+              {context.host === null && <Nav.Link as={Link} to="/create-community">
                 <PlusCircle className="mb-1" />
                 <span> New Commoonity</span>
-              </Nav.Link>
+              </Nav.Link>}
             </Nav>
 
             <Nav>

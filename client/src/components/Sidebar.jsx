@@ -20,7 +20,7 @@ class Sidebar extends Component {
     componentDidUpdate() {
         if(this.context.host !== this.state.host) {
             this.fetchCommunities();
-            this.fetchCommunityDetails();
+            // this.fetchCommunityDetails();
         }
 
         if(this.props.currentCommunity !== this.state.currentCommunity) {
