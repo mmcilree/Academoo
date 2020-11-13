@@ -14,6 +14,10 @@ class Instance(object):
         ret = requests.get(urljoin(self.url, f"/api/posts?community={community}"))
         return ret.json()
 
+    def get_post_by_id(self, id):
+        ret = requests.get(urljoin(self.url, f"/api/posts/{id}")) 
+        return ret.json()
+
     def get_communities(self, id=None):
         if id:
             ret = requests.get(urljoin(self.url, f"/api/communities/{id}"))
@@ -21,5 +25,8 @@ class Instance(object):
             ret = requests.get(urljoin(self.url, "/api/communities"))
 
         return ret.json()
+
+    def create_post(self, data):
+        requests.post(urljoin(self.url, f"/api/posts"), json=data)
     
-    # TODO: creating, editing and deleting posts
+    # TODO: editing and deleting posts
