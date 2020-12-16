@@ -38,4 +38,14 @@ We are using the react naming conventions similar to those adoped by [Airbnb](ht
 - **Quotes**: Double Quotes ("") for all JSX attributes and Single Quotes ('') for all other JS. 
 - **Spacing**: Single space in <SelfClosing /> tags. Embedded JS should be {unpadded}
 
+## When starting the backend for the first time:
+
+```
+python3 -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
+
+flask db init
+flask db upgrade
+```
 to be continued...
