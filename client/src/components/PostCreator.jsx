@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { authFetch } from '../auth';
 import { HostContext } from "./HostContext";
+import { Route } from 'react-router-dom';
 
 class PostCreator extends React.Component {
     constructor(props) {
@@ -81,6 +82,7 @@ class PostCreator extends React.Component {
         this.setState(
             { email: "", host: "", title: "", body: ""}
         );
+        this.props.history.push('/moosfeed');
     }
 
     render() {
@@ -113,10 +115,11 @@ class PostCreator extends React.Component {
                                 })}
                             </Form.Control>    
                         </Form.Group> 
-
+                        <Route render={({ history }) => (
                         <Button variant="primary" type="submit">
                             Post
                         </Button>
+                        )} />
                     </Form>
                 </Card.Body>
             </Card>
