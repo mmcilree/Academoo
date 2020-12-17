@@ -17,6 +17,14 @@ class SignUp extends React.Component {
   }
   validateForm() {
     const errors = [];
+
+    if(this.state.username.length == 0 || 
+      this.state.email.length == 0 || 
+      this.state.password.length == 0 ||
+      this.state.passwordConfirm.length == 0) {
+        errors.push("Required fields have been left blank.");
+        return errors;
+      }
     if (this.state.username.length < 3) {
       errors.push("Username must be at least 3 characters");
     }
@@ -28,8 +36,14 @@ class SignUp extends React.Component {
     if (this.state.password !== this.state.passwordConfirm) {
       errors.push("Passwords do not match");
     }
-    if (this.state.password.length < 6) {
-      errors.push("Password should be at least 6 characters long");
+    if (!this.state.password.match("^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")) {
+      errors.push(
+        <p>Password should have:
+          <ul> 
+            <li> Minimum eight characters</li> 
+            <li> At least one number</li>
+          </ul>
+        </p>);
     }
 
     return errors;
@@ -85,7 +99,7 @@ class SignUp extends React.Component {
   render() {
     const {errors} = this.state;
     return (
-      <Card className="mt-4">
+      <Card className="mt-4 mb-4">
         <Card.Body className="mx-auto" onSubmit={this.handleSubmit.bind(this)}>
           <div>
             <p>Sign up for your Academoo account here. </p>
@@ -100,6 +114,7 @@ class SignUp extends React.Component {
                   value={this.state.email}
                   name="email"
                   autoComplete="new-password"
+                  required
                 />
               </FormGroup>
               <FormGroup controlId="username" bssize="large">
@@ -124,10 +139,6 @@ class SignUp extends React.Component {
                 />
               </FormGroup>
 
-              {errors.map(error => (
-                <Alert variant='warning' key={error}>{error}</Alert>
-              ))}
-
               <FormGroup controlId="confirmPassword" bssize="large">
                 <Form.Label>Confirm Password</Form.Label>
                 <FormControl
@@ -138,6 +149,9 @@ class SignUp extends React.Component {
                   autoComplete="new-password"
                 />
               </FormGroup>
+              {errors.map(error => (
+                <Alert variant='warning' key={error}>{error}</Alert>
+              ))}
               <Route render={({ history }) => (
                 <Button
                   type='submit'
