@@ -27,6 +27,7 @@ class Instance(object):
         return ret.json()
 
     def create_post(self, data):
+        data.pop("external")
         print(requests.post(urljoin(self.url, f"/fed/posts"), json=data))
     
     # TODO: editing and deleting posts
