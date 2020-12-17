@@ -78,6 +78,7 @@ class SignUp extends React.Component {
                   type="email"
                   value={this.state.email}
                   name="email"
+                  autoComplete="new-password"
                 />
               </FormGroup>
               <FormGroup controlId="username" bssize="large">
@@ -87,6 +88,7 @@ class SignUp extends React.Component {
                   type="text"
                   value={this.state.username}
                   name="username"
+                  autoComplete="new-password"
                 />
               </FormGroup>
               {this.state.isNonUnique ? (<Alert variant='warning'> Username or email already registered.</Alert>) : null}
@@ -96,7 +98,8 @@ class SignUp extends React.Component {
                   onChange={this.handleChange.bind(this)}
                   value={this.state.password}
                   name="password"
-                  type="password"
+                  type="text"
+                  autoComplete="new-password"
                 />
               </FormGroup>
 
@@ -109,6 +112,7 @@ class SignUp extends React.Component {
                   value={this.state.passwordConfirm}
                   name="passwordConfirm"
                   type="password"
+                  autoComplete="new-password"
                 />
               </FormGroup>
               <Route render={({ history }) => (
