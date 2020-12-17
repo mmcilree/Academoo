@@ -12,12 +12,34 @@ class SignUp extends React.Component {
       username: "",
       password: "",
       passwordConfirm: "",
-      isNonMatching: false,
-      isNonUnique: false,
+      errors: [],
     };
   }
+  validateForm() {
+    const errors = [];
+    if (this.state.username.length < 3) {
+      errors.push("Username must be at least 3 characters");
+    }
 
+    if (this.state.email.split("").filter(x => x === "@").length !== 1) {
+      errors.push("Email should contain the @ symbol");
+    }
+
+    if (this.state.password !== this.state.passwordConfirm) {
+      errors.push("Passwords do not match");
+    }
+    if (this.state.password.length < 6) {
+      errors.push("Password should be at least 6 characters long");
+    }
+
+    return errors;
+  }
+  handlePasswordChange(event) {
+    this.handleChange(event);
+    console.log("password changed");
+  }
   handleChange(event) {
+    console.log("changed");
     const target = event.target;
     const value = target.value;
     const name = target.name;
@@ -28,41 +50,40 @@ class SignUp extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    this.setState({
-      isNonUnique: false
-    });
 
-    if (this.state.password !== this.state.passwordConfirm) {
-      this.setState({ isNonMatching: true });
-    } else {
-      const opt = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(
-          {
-            email: this.state.email,
-            username: this.state.username,
-            password: this.state.password
-          }
-        )
-      };
-
-      // To improve once we have a better way to check unique usernames.
-      fetch('/api/register', opt).then( ((response) => {
-        if (!response.ok) {
-          throw new Error();
-        }
-        return response;
-      }).bind(this)).then(((response) => {
-        this.props.history.push('/login')
-      }).bind(this))
-      .catch((error) => {
-        this.setState({isNonUnique: true})
-      })
+    const errors = this.validateForm();
+    if(errors.length > 0) {
+      this.setState({errors});
+      return;
     }
+    const opt = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(
+        {
+          email: this.state.email,
+          username: this.state.username,
+          password: this.state.password
+        }
+      )}
+
+    // To improve once we have a better way to check unique usernames.
+    fetch('/api/register', opt).then( ((response) => {
+      if (!response.ok) {
+        throw new Error();
+      }
+      return response;
+      }).bind(this))
+    .then(((response) => {
+      this.props.history.push('/login')
+      }).bind(this))
+    .catch((error) => {
+      this.setState({isNonUnique: true})
+      })
   }
 
   render() {
+    const {errors} = this.state;
     return (
       <Card className="mt-4">
         <Card.Body className="mx-auto" onSubmit={this.handleSubmit.bind(this)}>
@@ -95,7 +116,7 @@ class SignUp extends React.Component {
               <FormGroup controlId="password" bssize="large">
                 <Form.Label>Password</Form.Label>
                 <FormControl
-                  onChange={this.handleChange.bind(this)}
+                  onChange={this.handlePasswordChange.bind(this)}
                   value={this.state.password}
                   name="password"
                   type="text"
@@ -103,7 +124,9 @@ class SignUp extends React.Component {
                 />
               </FormGroup>
 
-              {this.state.isNonMatching ? (<Alert variant='warning'> Passwords do not match.</Alert>) : null}
+              {errors.map(error => (
+                <Alert variant='warning' key={error}>{error}</Alert>
+              ))}
 
               <FormGroup controlId="confirmPassword" bssize="large">
                 <Form.Label>Confirm Password</Form.Label>
