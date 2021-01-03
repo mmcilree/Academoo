@@ -69,7 +69,9 @@ class PostsViewer extends Component {
                       <FormControl type="text" placeholder="Create your own post: " className="mr-2" />
                     </Form.Group>
                     <Form.Group as={Col} xs={12} sm={6} md={5} lg={3}>
+                    <Link to="/create-post">
                       <Button variant="outline-secondary" className="w-100" > <PlusCircle className="mb-1" /> New Moo</Button>
+                    </Link>
                     </Form.Group>
                   </Form.Row>
                 </Form>
