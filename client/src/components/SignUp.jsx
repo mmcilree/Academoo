@@ -101,7 +101,7 @@ class SignUp extends React.Component {
         <Card.Body className="mx-auto" onSubmit={this.handleSubmit.bind(this)}>
           <div>
             <p>Sign up for your Academoo account here. </p>
-            <Form autoomplete="off">
+            <Form autocomplete="off">
 
               <FormGroup controlId="email" bssize="large">
                 <Form.Label>Email</Form.Label>
