@@ -23,9 +23,9 @@ class PostCreator extends React.Component {
     componentDidMount() {
         this.fetchCommunities();
         this.fetchUserDetails();
-        const {body} = this.props.location.state;
         this.setState({
-            body: body ? body : "",
+
+            body: this.props.location ? this.props.location.state.body : "",
         })
     }
 
