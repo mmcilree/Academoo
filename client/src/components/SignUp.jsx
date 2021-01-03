@@ -18,10 +18,10 @@ class SignUp extends React.Component {
   validateForm() {
     const errors = [];
 
-    if(this.state.username.length == 0 || 
-      this.state.email.length == 0 || 
-      this.state.password.length == 0 ||
-      this.state.passwordConfirm.length == 0) {
+    if(this.state.username.length === 0 || 
+      this.state.email.length === 0 || 
+      this.state.password.length === 0 ||
+      this.state.passwordConfirm.length === 0) {
         errors.push("Required fields have been left blank.");
         return errors;
       }
@@ -36,7 +36,7 @@ class SignUp extends React.Component {
     if (this.state.password !== this.state.passwordConfirm) {
       errors.push("Passwords do not match");
     }
-    if (!this.state.password.match("^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")) {
+    if (!this.state.password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
       errors.push(
         <p>Password should have:
           <ul> 
@@ -85,10 +85,10 @@ class SignUp extends React.Component {
         throw new Error();
       }
       return response;
-      }).bind(this))
+      }))
     .then(((response) => {
       this.props.history.push('/login')
-      }).bind(this))
+      }))
     .catch((error) => {
       this.setState({isNonUnique: true})
       })
@@ -101,7 +101,7 @@ class SignUp extends React.Component {
         <Card.Body className="mx-auto" onSubmit={this.handleSubmit.bind(this)}>
           <div>
             <p>Sign up for your Academoo account here. </p>
-            <Form>
+            <Form autoomplete="off">
 
               <FormGroup controlId="email" bssize="large">
                 <Form.Label>Email</Form.Label>
@@ -132,7 +132,7 @@ class SignUp extends React.Component {
                   onChange={this.handlePasswordChange.bind(this)}
                   value={this.state.password}
                   name="password"
-                  type="text"
+                  type="password"
                   autoComplete="new-password"
                 />
               </FormGroup>
