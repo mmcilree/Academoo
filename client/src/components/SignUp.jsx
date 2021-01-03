@@ -50,10 +50,8 @@ class SignUp extends React.Component {
   }
   handlePasswordChange(event) {
     this.handleChange(event);
-    console.log("password changed");
   }
   handleChange(event) {
-    console.log("changed");
     const target = event.target;
     const value = target.value;
     const name = target.name;

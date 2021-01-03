@@ -79,6 +79,7 @@ handleChange(event) {
               </FormGroup>
 
               {this.state.isIncorrect ? ( <Alert variant='warning'> Username or password not recognised.</Alert>):null}
+              {this.state.hasError ? (<Alert variant='error'>Oops, there was an error submitting your login. Please try again later.</Alert>) : null }
               <Route render={({ history }) => (
                 <Button
                   type='submit'
