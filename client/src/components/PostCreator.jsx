@@ -23,9 +23,10 @@ class PostCreator extends React.Component {
     componentDidMount() {
         this.fetchCommunities();
         this.fetchUserDetails();
+
         this.setState({
 
-            body: this.props.location ? this.props.location.state.body : "",
+            body: this.props.location && this.props.location.state ? this.props.location.state.body : "",
         })
     }
 
@@ -45,7 +46,7 @@ class PostCreator extends React.Component {
             .then(data =>
                 this.setState({ 
                     communities: data,
-                    selectedCommunity: this.props.location.state.community ? 
+                    selectedCommunity: this.props.location && this.props.location.state ? 
                         this.props.location.state.community : 
                         (data.length > 0 ? data[0] : null)
                 })
@@ -116,7 +117,7 @@ class PostCreator extends React.Component {
                         <Form.Group controlId="createPostCommunity">
                             <Form.Label>Select a community</Form.Label>
                             <Form.Control as="select" name="selectedCommunity" onChange={this.handleChange.bind(this)}
-                            value={this.props.location.state.community}>
+                            value={(this.props.location && this.props.location.state) ? this.props.location.state.community : null }>
                                 {this.state.communities.map(function(name, index) {
                                     return <option key={ index } value={name}>{name}</option>
                                 })}

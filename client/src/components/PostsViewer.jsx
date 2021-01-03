@@ -64,6 +64,10 @@ class PostsViewer extends Component {
         });
   }
 
+  handleSubmit(event) {
+    event.preventDefault();
+  }
+
   render() {
     const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
 
@@ -73,7 +77,7 @@ class PostsViewer extends Component {
           <Col xs={8}>
             <Card className="mt-4">
               <Card.Body>
-                <Form >
+                <Form onSubmit={this.handleSubmit.bind(this)}>
                   <Form.Row>
                     <Form.Group as={Col} className="d-none d-sm-flex" sm={6} md={7} lg={9}>
                       <FormControl 
