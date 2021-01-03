@@ -55,7 +55,7 @@ class PostsViewer extends Component {
       .catch(error => this.setState({ error, isLoading: false }));
   }
 
-  handleChange() {
+  handleChange(event) {
     const target = event.target;
         const value = target.value;
         const name = target.name;
