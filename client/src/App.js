@@ -11,6 +11,7 @@ import Login from "./components/Login";
 import SignUp from "./components/SignUp";
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import { PrivateRoute } from "./components/PrivateRoute";
+import { LoggedOutRoute } from "./components/LoggedOutRoute";
 import CommunityCreator from "./components/CommunityCreator";
 import { HostContext } from "./components/HostContext";
 
@@ -40,8 +41,8 @@ class App extends React.Component {
                 <PrivateRoute path="/user-settings" component={UserSettings} />
                 <PrivateRoute path="/user-profile" component={UserProfile} />
                 <PrivateRoute path="/create-community" component={CommunityCreator} />
-                <Route path="/login" component={Login} />
-                <Route path="/sign-up" component={SignUp} />
+                <LoggedOutRoute path="/login" component={Login} />
+                <LoggedOutRoute path="/sign-up" component={SignUp} />
                 <Route component={PageNotFound} />
               </Switch>
             </div>
