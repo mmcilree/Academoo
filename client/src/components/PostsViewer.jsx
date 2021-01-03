@@ -12,7 +12,8 @@ class PostsViewer extends Component {
     posts: [],
     currentCommunity: null,
     error: null,
-    host: null
+    host: null,
+    newPostText: ""
   }
 
   static contextType = HostContext;
@@ -54,8 +55,17 @@ class PostsViewer extends Component {
       .catch(error => this.setState({ error, isLoading: false }));
   }
 
+  handleChange() {
+    const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        this.setState({
+            [name]: value
+        });
+  }
+
   render() {
-    const { isLoading, posts, error, currentCommunity } = this.state;
+    const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
 
     return currentCommunity && (
       <Container>
@@ -66,12 +76,26 @@ class PostsViewer extends Component {
                 <Form >
                   <Form.Row>
                     <Form.Group as={Col} className="d-none d-sm-flex" sm={6} md={7} lg={9}>
-                      <FormControl type="text" placeholder="Create your own post: " className="mr-2" />
+                      <FormControl 
+                        type="text" 
+                        placeholder="Create your own post: " 
+                        name="newPostText" 
+                        className="mr-2" 
+                        onChange={this.handleChange.bind(this)} />
+
                     </Form.Group>
                     <Form.Group as={Col} xs={12} sm={6} md={5} lg={3}>
-                    <Link to="/create-post">
-                      <Button variant="outline-secondary" className="w-100" > <PlusCircle className="mb-1" /> New Moo</Button>
-                    </Link>
+                      <Link to={
+                        {
+                          pathname: "/create-post",
+                          state: {
+                            body: newPostText,
+                            community: currentCommunity
+                          }
+                        }
+                      }>
+                        <Button variant="outline-secondary" className="w-100" > <PlusCircle className="mb-1" /> New Moo</Button>
+                      </Link>
                     </Form.Group>
                   </Form.Row>
                 </Form>
