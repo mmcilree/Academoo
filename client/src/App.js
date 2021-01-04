@@ -4,7 +4,7 @@ import HeaderBar from "./components/HeaderBar";
 import Welcome from "./components/Welcome";
 import PostsViewer from "./components/PostsViewer";
 import CommentsViewer from "./components/CommentsViewer";
-import CommunityViewer from "./components/CommunityViewer";
+import CommunityExplorer from "./components/CommunityExplorer";
 import UserSettings from "./components/UserSettings";
 import UserProfile from "./components/UserProfile";
 import PageNotFound from "./components/PageNotFound";
@@ -41,7 +41,7 @@ class App extends React.Component {
                 <PrivateRoute path="/moosfeed/comments/:id" component={CommentsViewer} />
                 <PrivateRoute path="/user-settings" component={UserSettings} />
                 <PrivateRoute path="/user-profile" component={UserProfile} />
-                <PrivateRoute path="/explore" component={CommunityViewer} />
+                <PrivateRoute path="/explore" component={CommunityExplorer} />
                 <PrivateRoute path="/create-community" component={CommunityCreator} />
                 <LoggedOutRoute path="/login" component={Login} />
                 <LoggedOutRoute path="/sign-up" component={SignUp} />

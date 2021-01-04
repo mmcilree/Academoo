@@ -74,8 +74,11 @@ class PostsViewer extends Component {
     return currentCommunity && (
       <Container>
         <Row>
-          <Col xs={8}>
+          <Col xs={12}>
             <Card className="mt-4">
+              <Card.Header className="px-6">
+                <h2>{currentCommunity}</h2>
+              </Card.Header>
               <Card.Body>
                 <Form onSubmit={this.handleSubmit.bind(this)}>
                   <Form.Row>
@@ -129,13 +132,14 @@ class PostsViewer extends Component {
               </Card.Body>
             </Card>
           </Col>
-          <Col>
+          
+          {/*<Col>
             <Sidebar currentCommunity={currentCommunity}
               changeCommunity={(community) => this.setState({
                 currentCommunity: community,
                 isLoading: true
               })} />
-          </Col>
+            </Col>*/}
         </Row>
       </Container>
     );
