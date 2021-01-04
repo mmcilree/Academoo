@@ -57,7 +57,7 @@ function HeaderBar() {
               <Nav.Link as={Link} to="/moosfeed">
                 Moosfeed
               </Nav.Link>
-              <Nav.Link as={Link} to="/communities">
+              <Nav.Link as={Link} to="/explore">
                 Commoonities
               </Nav.Link>
               <Nav.Link as={Link} to="/create-post">
