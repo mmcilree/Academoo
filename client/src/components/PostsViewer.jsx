@@ -1,7 +1,7 @@
 import React, { Component, useContext } from "react";
 import Post from "./Post";
 import Sidebar from "./Sidebar";
-import { Card, Container, Row, Col, Form, FormControl, Button } from "react-bootstrap";
+import { Card, Container, Row, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { HostContext } from "./HostContext";
 import { PlusCircle } from "react-bootstrap-icons";
@@ -76,7 +76,7 @@ class PostsViewer extends Component {
         <Row>
           <Col xs={12}>
             <Card className="mt-4">
-              <Card.Header className="px-6">
+              <Card.Header className="pt-4">
                 <h2>{currentCommunity}</h2>
               </Card.Header>
               <Card.Body>
@@ -106,7 +106,7 @@ class PostsViewer extends Component {
                     </Form.Group>
                   </Form.Row>
                 </Form>
-                {error ? <p>{error.message}</p> : null}
+                {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
                 {!isLoading ? (
                   posts.map(data => {
                     const { parent, id } = data;
@@ -128,7 +128,7 @@ class PostsViewer extends Component {
                 ) : (
                     <h3>Loading Posts...</h3>
                   )}
-                {!isLoading && posts.length == 0 ? <h4>There's no posts yet :-(</h4> : null}
+                {!isLoading && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
               </Card.Body>
             </Card>
           </Col>

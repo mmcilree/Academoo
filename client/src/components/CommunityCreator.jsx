@@ -42,7 +42,7 @@ class CommunityCreator extends React.Component {
     render() {
         return (
             <Card className="mt-4">
-                <Card.Header>
+                <Card.Header className="pt-4">
                     <Card.Title>Create a community!</Card.Title>
                 </Card.Header>
 
