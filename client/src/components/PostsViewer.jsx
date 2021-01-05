@@ -10,7 +10,7 @@ class PostsViewer extends Component {
   state = {
     isLoading: true,
     posts: [],
-    currentCommunity: null,
+    currentCommunity: this.props.match.params.id,
     error: null,
     host: null,
     newPostText: ""
@@ -69,10 +69,9 @@ class PostsViewer extends Component {
   }
 
   render() {
-    const { isLoading, posts, error, currentCommunity, newPostText } = this.props;
+    const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
 
     return currentCommunity && (
-          <Col xs={8}>
             <Card className="mt-4">
               <Card.Header className="pt-4">
                 <h2>{currentCommunity}</h2>
@@ -129,7 +128,6 @@ class PostsViewer extends Component {
                 {!isLoading && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
               </Card.Body>
             </Card>
-          </Col>
     );
   }
 }
