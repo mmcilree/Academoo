@@ -19,26 +19,6 @@ class PostsViewer extends Component {
   static contextType = HostContext;
 
   componentDidMount() {
-    this.fetchCommunity();
-  }
-
-  componentDidUpdate() {
-    if (this.context.host !== this.state.host) {
-      this.fetchCommunity();
-    } else if (this.state.isLoading) {
-      this.fetchPosts();
-    }
-  }
-
-  async fetchCommunity() {
-    await fetch('/api/communities' + (this.context.host !== null ? "?external=" + this.context.host : ""))
-      .then(response => response.json())
-      .then(data =>
-        this.setState({
-          currentCommunity: data.length > 0 ? data[0] : "?"
-        })
-      )
-
     this.fetchPosts();
   }
 

@@ -3,7 +3,7 @@ import Accordion from "react-bootstrap/Accordion";
 import Card from "react-bootstrap/Card";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ListGroup from "react-bootstrap/ListGroup";
-import { useContext } from "react";
+import { Link } from "react-router-dom";
 
 import {
     CaretUpFill,
@@ -28,7 +28,7 @@ class CommunityList extends React.Component {
         fetch('/api/communities' + (this.props.instance !== "local" ? "?external=" + this.props.instance : ""))
             .then(response => response.json())
             .then(data =>
-                this.setState({ 
+                this.setState({
                     communities: data,
                     isLoading: false,
                 })
@@ -36,7 +36,7 @@ class CommunityList extends React.Component {
     }
 
     render() {
-        const {communities, isLoading} = this.state;
+        const { communities, isLoading } = this.state;
         console.log(communities);
         return (
             <Accordion defaultActiveKey="0">
@@ -49,9 +49,15 @@ class CommunityList extends React.Component {
                     <Accordion.Collapse eventKey="0">
                         <Card.Body className="px-0 py-1">
                             <ListGroup variant="flush">
-                                {!isLoading ? 
+                                {!isLoading ?
                                     communities.map((community) =>
-                                        community != "" && <ListGroup.Item>{community}</ListGroup.Item>)
+                                        community != "" &&
+                                        
+                                            <ListGroup.Item>
+                                                <Link to={"communities/" + community} >
+                                                {community}
+                                                </Link>
+                                            </ListGroup.Item>)
                                     : <ListGroup.Item>Loading Communities...</ListGroup.Item>
                                 }
                             </ListGroup>
