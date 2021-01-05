@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { HostContext } from "./HostContext";
 import { PlusCircle } from "react-bootstrap-icons";
 
-class PostsViewer extends Component {
+class CommunityFeed extends Component {
   state = {
     isLoading: true,
     posts: [],
@@ -69,9 +69,11 @@ class PostsViewer extends Component {
   }
 
   render() {
-    const { isLoading, posts, error, currentCommunity, newPostText } = this.props;
+    const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
 
     return currentCommunity && (
+      <Container>
+        <Row>
           <Col xs={8}>
             <Card className="mt-4">
               <Card.Header className="pt-4">
@@ -130,8 +132,18 @@ class PostsViewer extends Component {
               </Card.Body>
             </Card>
           </Col>
+          
+          <Col>
+            <Sidebar currentCommunity={currentCommunity}
+              changeCommunity={(community) => this.setState({
+                currentCommunity: community,
+                isLoading: true
+              })} />
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
 
-export default PostsViewer;
+export default CommunityFeed;

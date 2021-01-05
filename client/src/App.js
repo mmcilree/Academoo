@@ -2,7 +2,7 @@ import React from "react";
 import PostCreator from "./components/PostCreator";
 import HeaderBar from "./components/HeaderBar";
 import Welcome from "./components/Welcome";
-import PostsViewer from "./components/PostsViewer";
+import CommunityFeed from "./components/CommunityFeed";
 import CommentsViewer from "./components/CommentsViewer";
 import CommunityExplorer from "./components/CommunityExplorer";
 import UserSettings from "./components/UserSettings";
@@ -15,7 +15,7 @@ import { PrivateRoute } from "./components/PrivateRoute";
 import { LoggedOutRoute } from "./components/LoggedOutRoute";
 import CommunityCreator from "./components/CommunityCreator";
 import { HostContext } from "./components/HostContext";
-
+ 
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -36,7 +36,7 @@ class App extends React.Component {
               <Switch>
                 <PrivateRoute exact path="/" component={Welcome} />
                 <PrivateRoute path="/home" component={Welcome} />
-                <PrivateRoute exact path="/moosfeed" component={PostsViewer} />
+                <PrivateRoute exact path="/moosfeed" component={CommunityFeed} />
                 <PrivateRoute path="/create-post" component={PostCreator} />
                 <PrivateRoute path="/moosfeed/comments/:id" component={CommentsViewer} />
                 <PrivateRoute path="/user-settings" component={UserSettings} />
