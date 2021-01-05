@@ -37,7 +37,6 @@ class CommunityList extends React.Component {
 
     render() {
         const { communities, isLoading } = this.state;
-        console.log(communities);
         return (
             <Accordion defaultActiveKey="0">
                 <Card className="mt-4">
@@ -54,7 +53,8 @@ class CommunityList extends React.Component {
                                         community != "" &&
                                         
                                             <ListGroup.Item>
-                                                <Link to={"communities/" + community} >
+                                                <Link to={this.props.instance === "local" ? 
+                                                "communities/" + community : "communities/" + this.props.instance + "/" + community} >
                                                 {community}
                                                 </Link>
                                             </ListGroup.Item>)

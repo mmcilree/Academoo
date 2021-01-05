@@ -38,7 +38,8 @@ class App extends React.Component {
                 <PrivateRoute exact path="/" component={Welcome} />
                 <PrivateRoute path="/home" component={Welcome} />
                 <PrivateRoute exact path="/moosfeed" component={CommunityFeed} />
-                <PrivateRoute path="/communities/:id" component={PostsViewer} />
+                <PrivateRoute exact path="/communities/:id" component={PostsViewer} />
+                <PrivateRoute path="/communities/:instance/:id" component={PostsViewer} />
                 <PrivateRoute path="/create-post" component={PostCreator} />
                 <PrivateRoute path="/moosfeed/comments/:id" component={CommentsViewer} />
                 <PrivateRoute path="/user-settings" component={UserSettings} />

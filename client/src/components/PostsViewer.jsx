@@ -3,7 +3,7 @@ import Post from "./Post";
 import Sidebar from "./Sidebar";
 import { Card, Container, Row, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { HostContext } from "./HostContext";
+import { HostContext, setHost } from "./HostContext";
 import { PlusCircle } from "react-bootstrap-icons";
 
 class PostsViewer extends Component {
@@ -12,18 +12,17 @@ class PostsViewer extends Component {
     posts: [],
     currentCommunity: this.props.match.params.id,
     error: null,
-    host: null,
+    host: this.props.match.params.instance ? this.props.match.params.instance : "local",
     newPostText: ""
   }
-
-  static contextType = HostContext;
 
   componentDidMount() {
     this.fetchPosts();
   }
 
   fetchPosts() {
-    fetch('/api/posts?community=' + this.state.currentCommunity + (this.context.host !== null ? "&external=" + this.context.host : ""))
+    
+    fetch('/api/posts?community=' + this.state.currentCommunity + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
       .then(response => response.json())
       .then(data =>
         this.setState({
