@@ -1,9 +1,7 @@
-import React, { Component, useContext } from "react";
+import React, { Component } from "react";
 import Post from "./Post";
-import Sidebar from "./Sidebar";
-import { Card, Container, Row, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
+import { Card, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { HostContext, setHost } from "./HostContext";
 import { PlusCircle } from "react-bootstrap-icons";
 
 class PostsViewer extends Component {
