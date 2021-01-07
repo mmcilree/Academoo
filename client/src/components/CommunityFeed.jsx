@@ -1,26 +1,49 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
 import Post from "./Post";
-import { Card, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
+import Sidebar from "./Sidebar";
+import { Card, Container, Row, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { HostContext } from "./HostContext";
 import { PlusCircle } from "react-bootstrap-icons";
 
-class PostsViewer extends Component {
+class CommunityFeed extends Component {
   state = {
     isLoading: true,
     posts: [],
-    currentCommunity: this.props.match.params.id,
+    currentCommunity: null,
     error: null,
-    host: this.props.match.params.instance ? this.props.match.params.instance : "local",
+    host: null,
     newPostText: ""
   }
 
+  static contextType = HostContext;
+
   componentDidMount() {
+    this.fetchCommunity();
+  }
+
+  componentDidUpdate() {
+    if (this.context.host !== this.state.host) {
+      this.fetchCommunity();
+    } else if (this.state.isLoading) {
+      this.fetchPosts();
+    }
+  }
+
+  async fetchCommunity() {
+    await fetch('/api/communities' + (this.context.host !== null ? "?external=" + this.context.host : ""))
+      .then(response => response.json())
+      .then(data =>
+        this.setState({
+          currentCommunity: data.length > 0 ? data[0] : "?"
+        })
+      )
+
     this.fetchPosts();
   }
 
   fetchPosts() {
-    
-    fetch('/api/posts?community=' + this.state.currentCommunity + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
+    fetch('/api/posts?community=' + this.state.currentCommunity + (this.context.host !== null ? "&external=" + this.context.host : ""))
       .then(response => response.json())
       .then(data =>
         this.setState({
@@ -49,6 +72,9 @@ class PostsViewer extends Component {
     const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
 
     return currentCommunity && (
+      <Container>
+        <Row>
+          <Col xs={8}>
             <Card className="mt-4">
               <Card.Header className="pt-4">
                 <h2>{currentCommunity}</h2>
@@ -105,8 +131,19 @@ class PostsViewer extends Component {
                 {!isLoading && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
               </Card.Body>
             </Card>
+          </Col>
+          
+          <Col>
+            <Sidebar currentCommunity={currentCommunity}
+              changeCommunity={(community) => this.setState({
+                currentCommunity: community,
+                isLoading: true
+              })} />
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
 
-export default PostsViewer;
+export default CommunityFeed;

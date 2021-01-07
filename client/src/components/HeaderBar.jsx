@@ -57,6 +57,9 @@ function HeaderBar() {
               <Nav.Link as={Link} to="/moosfeed">
                 Moosfeed
               </Nav.Link>
+              <Nav.Link as={Link} to="/explore">
+                Commoonities
+              </Nav.Link>
               <Nav.Link as={Link} to="/create-post">
                 <PlusCircle className="mb-1" />
                 <span> New Moo</span>

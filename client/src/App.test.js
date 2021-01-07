@@ -7,7 +7,8 @@ import { posts } from "./components/test_post_json";
 
 import App from "./App";
 import Post from "./components/Post";
-import PostsViewer from "./components/PostsViewer";
+import CommunityFeed from "./components/CommunityFeed";
+import CommunityExplorer from "./components/CommunityExplorer";
 import CommentsViewer from "./components/CommentsViewer";
 import HeaderBar from './components/HeaderBar';
 import PostCreator from './components/PostCreator';
@@ -53,8 +54,12 @@ describe("", () => {
   });
 });
 
-it("PostsViewer renders without crashing", () => {
-  shallow(<PostsViewer />);
+it("CommunityFeed renders without crashing", () => {
+  shallow(<CommunityFeed />);
+});
+
+it("CommunityExplorer renders without crashing", () => {
+  shallow(<CommunityExplorer />);
 });
 
 it("HeaderBar renders without crashing", () => {
