@@ -18,6 +18,16 @@ class CommunityCreator extends React.Component {
         });
     }
 
+    handleNameChange(event) {
+        const target = event.target;
+        const value = target.value;
+        this.setState({
+            id: value.split(' ').join(''),
+            title: value
+        });
+        
+    }
+
     handleSubmit(event) {
         event.preventDefault();
         const requestOptions = {
@@ -53,7 +63,7 @@ class CommunityCreator extends React.Component {
                             <Form.Control type="input" 
                                 placeholder="Funny Cow Memes"
                                 name="title" 
-                                onChange={this.handleChange.bind(this)}
+                                onChange={this.handleNameChange.bind(this)}
                                 value={this.state.title} />
                             <small class="form-text text-muted">Give your new community a name.</small>
                         </Form.Group>
