@@ -48,39 +48,44 @@ class CommunityCreator extends React.Component {
 
                 <Card.Body>
                     <Form onSubmit={this.handleSubmit.bind(this)}>
-                        <Form.Group controlId="createCommunityId">
-                            <Form.Label>Community Identifier</Form.Label>
-                            <Form.Control type="input"
-                                placeholder="Community ID (e.g. 'cows')"
-                                name="id" 
-                                onChange={this.handleChange.bind(this)}
-                                value={this.state.id} />
-                        </Form.Group>
-
                         <Form.Group controlId="createCommunityTitle">
-                            <Form.Label>Title</Form.Label>
+                            <Form.Label>Community Name:</Form.Label>
                             <Form.Control type="input" 
-                                placeholder="Title (e.g. 'Funny Cow Memes')"
+                                placeholder="Funny Cow Memes"
                                 name="title" 
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.title} />
+                            <small class="form-text text-muted">Give your new community a name.</small>
+                        </Form.Group>
+
+                        <Form.Group controlId="createCommunityId">
+                            <Form.Label>Community ID:</Form.Label>
+                            <Form.Control type="input"
+                                placeholder="FunnyCowMemes"
+                                name="id" 
+                                onChange={this.handleChange.bind(this)}
+                                value={this.state.id} />
+                            <small class="form-text text-muted">Community IDs have to be unique, and can't include spaces or non alphabetic characters.</small>
                         </Form.Group>
 
                         <Form.Group controlId="createCommunityDescription">
-                            <Form.Label>Description</Form.Label>
+                            <Form.Label>Description:</Form.Label>
                             <Form.Control as="textarea" 
                                 name="description"
+                                placeholder="Moooo"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.description} />
+                            <small class="form-text text-muted">Tell everyone what your community is about!</small>
                         </Form.Group>
 
                         <Form.Group controlId="createCommunityAdministrators">
-                            <Form.Label>Administrators</Form.Label>
+                            <Form.Label>Administrators:</Form.Label>
                             <Form.Control as="textarea" 
-                                placeholder="Comma-separated emails" 
+                                placeholder="Comma-separated usernames" 
                                 name="administrators"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.administrators} />
+                            <small class="form-text text-muted">Who else should be in charge of this community?</small>
                         </Form.Group>
 
 

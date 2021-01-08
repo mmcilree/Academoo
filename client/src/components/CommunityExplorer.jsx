@@ -27,6 +27,7 @@ class CommunityExplorer extends React.Component {
       .catch(error => this.setState({ error, isLoading: false }));
   }
 
+  
   render() {
     const { isLoading, instances, error } = this.state;
     return (

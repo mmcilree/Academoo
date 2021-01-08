@@ -9,13 +9,14 @@ import { Route } from 'react-router-dom';
 class PostCreator extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            email: "", 
-            host: "", 
-            title: "", 
-            body: "", 
+        this.state = {
+            email: "",
+            host: "",
+            title: "",
+            body: "",
             selectedCommunity: null,
-            communities: null };
+            communities: null
+        };
     }
 
     static contextType = HostContext;
@@ -44,13 +45,13 @@ class PostCreator extends React.Component {
     fetchCommunities() {
         fetch('/api/communities' + (this.context.host !== null ? "?external=" + this.context.host : "")).then(response => response.json())
             .then(data =>
-                this.setState({ 
+                this.setState({
                     communities: data,
-                    selectedCommunity: this.props.location && this.props.location.state ? 
-                        this.props.location.state.community : 
+                    selectedCommunity: this.props.location && this.props.location.state ?
+                        this.props.location.state.community :
                         (data.length > 0 ? data[0] : null)
                 })
-            )        
+            )
     }
 
     handleChange(event) {
@@ -68,15 +69,15 @@ class PostCreator extends React.Component {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: {
-                    parent: this.state.selectedCommunity,
-                    title: this.state.title,
-                    contentType: 'text',
-                    body: this.state.body,
-                    author: {
-                        id: this.state.user_id,
-                        host: this.state.host
-                    }
+                parent: this.state.selectedCommunity,
+                title: this.state.title,
+                contentType: 'text',
+                body: this.state.body,
+                author: {
+                    id: this.state.user_id,
+                    host: this.state.host
                 }
+            }
         };
 
         if (this.context.host !== null) {
@@ -87,7 +88,7 @@ class PostCreator extends React.Component {
 
         fetch('/api/posts', requestOptions);
         this.setState(
-            { email: "", host: "", title: "", body: ""}
+            { email: "", host: "", title: "", body: "" }
         );
         this.props.history.push('/moosfeed');
     }
@@ -95,20 +96,22 @@ class PostCreator extends React.Component {
     render() {
         return this.state.communities && (
             <Card className="mt-4">
+                <Card.Header className="pt-4">
+                    <Card.Title>Create a post!</Card.Title>
+                </Card.Header>
                 <Card.Body>
                     <Form onSubmit={this.handleSubmit.bind(this)}>
                         <Form.Group controlId="createPostTitle">
-                            <Form.Label>Create a new post</Form.Label>
-                            <Form.Control type="input" 
+                            <Form.Control type="input"
                                 placeholder="Title (e.g. 'Moo')"
-                                name="title" 
+                                name="title"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.title} />
                         </Form.Group>
 
                         <Form.Group controlId="createPostText">
-                            <Form.Control as="textarea" 
-                                placeholder="Text (e.g. 'Moooo')" 
+                            <Form.Control as="textarea"
+                                placeholder="Text (e.g. 'Moooo')"
                                 name="body"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.body} />
@@ -117,16 +120,16 @@ class PostCreator extends React.Component {
                         <Form.Group controlId="createPostCommunity">
                             <Form.Label>Select a community</Form.Label>
                             <Form.Control as="select" name="selectedCommunity" onChange={this.handleChange.bind(this)}
-                            value={(this.props.location && this.props.location.state) ? this.props.location.state.community : null }>
-                                {this.state.communities.map(function(name, index) {
-                                    return <option key={ index } value={name}>{name}</option>
+                                value={(this.props.location && this.props.location.state) ? this.props.location.state.community : null}>
+                                {this.state.communities.map(function (name, index) {
+                                    return <option key={index} value={name}>{name}</option>
                                 })}
-                            </Form.Control>    
-                        </Form.Group> 
+                            </Form.Control>
+                        </Form.Group>
                         <Route render={({ history }) => (
-                        <Button variant="primary" type="submit">
-                            Post
-                        </Button>
+                            <Button variant="primary" type="submit">
+                                Post
+                            </Button>
                         )} />
                     </Form>
                 </Card.Body>
