@@ -65,7 +65,7 @@ class CommunityCreator extends React.Component {
                                 name="title" 
                                 onChange={this.handleNameChange.bind(this)}
                                 value={this.state.title} />
-                            <small class="form-text text-muted">Give your new community a name.</small>
+                            <small className="form-text text-muted">Give your new community a name.</small>
                         </Form.Group>
 
                         <Form.Group controlId="createCommunityId">
@@ -75,7 +75,7 @@ class CommunityCreator extends React.Component {
                                 name="id" 
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.id} />
-                            <small class="form-text text-muted">Community IDs have to be unique, and can't include spaces or non alphabetic characters.</small>
+                            <small className="form-text text-muted">Community IDs have to be unique, and can't include spaces or non alphabetic characters.</small>
                         </Form.Group>
 
                         <Form.Group controlId="createCommunityDescription">
@@ -85,7 +85,7 @@ class CommunityCreator extends React.Component {
                                 placeholder="Moooo"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.description} />
-                            <small class="form-text text-muted">Tell everyone what your community is about!</small>
+                            <small className="form-text text-muted">Tell everyone what your community is about!</small>
                         </Form.Group>
 
                         <Form.Group controlId="createCommunityAdministrators">

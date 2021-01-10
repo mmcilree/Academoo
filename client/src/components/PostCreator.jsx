@@ -3,9 +3,8 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { authFetch } from '../auth';
-import { HostContext } from "./HostContext";
 import { Route } from 'react-router-dom';
-import { Highlighter, Hint, Menu, MenuItem, Token, Typeahead } from 'react-bootstrap-typeahead';
+import {Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
 
 class PostCreator extends React.Component {
     constructor(props) {
@@ -42,28 +41,6 @@ class PostCreator extends React.Component {
             )
     }
 
-    /*renderMenu(results, menuProps, state) {
-        let index = 0;
-        const regions = groupBy(results, 'region');
-        const items = Object.keys(regions).sort().map((region) => (
-            <Fragment key={region}>
-                {index !== 0 && <Menu.Divider />}
-                <Menu.Header>{region}</Menu.Header>
-                {regions[region].map((i) => {
-                    const item =
-                        <MenuItem key={index} option={i} position={index}>
-                            <Highlighter search={state.text}>
-                                {i.name}
-                            </Highlighter>
-                        </MenuItem>;
-
-                    index += 1;
-                    return item;
-                })}
-            </Fragment>
-        ));
-    }*/
-
     async fetchInstances() {
         await fetch("/api/get-instances")
             .then(response => response.json())
@@ -72,7 +49,7 @@ class PostCreator extends React.Component {
                     instances: data,
                 })
             )
-        this.state.instances.map(host => { this.fetchCommunities(host) });
+        this.state.instances.map(host => ( this.fetchCommunities(host) ));
     }
 
     async fetchCommunities(host) {
@@ -162,7 +139,7 @@ class PostCreator extends React.Component {
                                 renderMenu={(results, menuProps) => (
                                     <Menu {...menuProps}>
                                       {results.map((result, index) => (
-                                        <MenuItem option={result} position={index}>
+                                        <MenuItem option={result} position={index} key={index}>
                                           <small className="text-muted">{result.host + ":  "}</small>
                                           {result.community}
                                         
@@ -176,12 +153,6 @@ class PostCreator extends React.Component {
                                 options={this.state.communities}
 
                             />
-                            {/*<Form.Control as="select" name="selectedCommunity" onChange={this.handleChange.bind(this)}
-                                value={(this.props.location && this.props.location.state) ? this.props.location.state.community : null}>
-                                {this.state.communities.map(function (name, index) {
-                                    return <option key={index} value={name}>{name}</option>
-                                })}
-                            </Form.Control>*/}
                         </Form.Group>
                         <Route render={({ history }) => (
                             <Button variant="primary" type="submit" className>
