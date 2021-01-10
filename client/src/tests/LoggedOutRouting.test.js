@@ -3,7 +3,6 @@ import { configure } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 configure({ adapter: new Adapter() });
 import { shallow, mount } from "enzyme";
-
 import App from "../App";
 import Welcome from "../components/Welcome";
 import PostsViewer from "../components/PostsViewer";
@@ -14,10 +13,6 @@ import UserProfile from "../components/UserProfile";
 import Login from "../components/Login";
 import SignUp from "../components/SignUp";
 import { MemoryRouter as Router, Route } from "react-router-dom";
-
-
-
-// const App = require('../App').default;
 
 it("Routes to default page", () => {
   const wrapper = mount(
@@ -47,7 +42,7 @@ it("Routes to sign-up page", () => {
 });
 
 
-it("Routes to welcome page", () => {
+it("Home reroutes to login page", () => {
   const wrapper = mount(
     <Router initialEntries={["/home"]}>
       <App />
@@ -56,7 +51,7 @@ it("Routes to welcome page", () => {
   expect(wrapper.find(Login)).toHaveLength(1);
 });
 
-it("Routes to Moosfeed page", () => {
+it("Moosfeed reroutes to login page", () => {
   const wrapper = mount(
     <Router initialEntries={["/moosfeed"]}>
       <App />
@@ -65,7 +60,7 @@ it("Routes to Moosfeed page", () => {
   expect(wrapper.find(Login)).toHaveLength(1);
 });
 
-it("Routes to Create-Post page", () => {
+it("Create-Post reroutes to login page", () => {
   const wrapper = mount(
     <Router initialEntries={["/create-post"]}>
       <App />
@@ -74,7 +69,7 @@ it("Routes to Create-Post page", () => {
   expect(wrapper.find(Login)).toHaveLength(1);
 });
 
-it("Routes to Comments page for parent post id", () => {
+it("Comments page reroutes to login page", () => {
   const wrapper = mount(
     <Router initialEntries={["/moosfeed/comments/post1"]}>
       <App />
@@ -83,7 +78,7 @@ it("Routes to Comments page for parent post id", () => {
   expect(wrapper.find(Login)).toHaveLength(1);
 });
 
-it("Routes to User-Profile page", () => {
+it("User-Profile page reroutes to login page", () => {
   const wrapper = mount(
     <Router initialEntries={["/user-profile"]}>
       <App />
@@ -92,7 +87,7 @@ it("Routes to User-Profile page", () => {
   expect(wrapper.find(Login)).toHaveLength(1);
 });
 
-it("Routes to User-Settings page", () => {
+it("User-Settings page reroutes to login page", () => {
   const wrapper = mount(
     <Router initialEntries={["/user-settings"]}>
       <App />
@@ -100,4 +95,8 @@ it("Routes to User-Settings page", () => {
   );
   expect(wrapper.find(Login)).toHaveLength(1);
 });
+
+
+
+
 
