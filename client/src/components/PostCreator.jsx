@@ -4,31 +4,32 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { authFetch } from '../auth';
 import { Route } from 'react-router-dom';
-import {Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
+import { Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
 
 class PostCreator extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             email: "",
-            host: "",
+            selectedHost: 
+                this.props.location && this.props.location.state ?
+                this.props.location.state.host : null,
             title: "",
-            body: "",
-            selectedCommunity: null,
+            body: 
+                this.props.location && this.props.location.state ?
+                this.props.location.state.body : "",
+            selectedCommunity: 
+                this.props.location && this.props.location.state ?
+                this.props.location.state.community : null,
             instances: [],
             communities: []
         };
+        
     }
 
     componentDidMount() {
         this.fetchInstances();
         this.fetchUserDetails();
-
-        this.setState({
-
-            body: this.props.location && this.props.location.state ? this.props.location.state.body : "",
-        })
-
     }
 
     fetchUserDetails() {
@@ -49,7 +50,7 @@ class PostCreator extends React.Component {
                     instances: ["local", ...data],
                 })
             )
-        this.state.instances.map(host => ( this.fetchCommunities(host) ));
+        this.state.instances.map(host => (this.fetchCommunities(host)));
     }
 
     async fetchCommunities(host) {
@@ -70,7 +71,6 @@ class PostCreator extends React.Component {
         this.setState({
             [name]: value
         });
-        console.log(this.state);
 
     }
 
@@ -86,20 +86,20 @@ class PostCreator extends React.Component {
                 body: this.state.body,
                 author: {
                     id: this.state.user_id,
-                    host: this.state.host
+                    host: "Academoo"
                 }
             }
         };
 
-        if (this.context.host !== null) {
-            requestOptions.body.external = this.context.host
+        if (this.selectedHost !== "local") {
+            requestOptions.body.external = this.selectedHost
         }
 
         requestOptions.body = JSON.stringify(requestOptions.body);
 
         fetch('/api/posts', requestOptions);
         this.setState(
-            { email: "", host: "", title: "", body: "" }
+            { email: "", selectedHost: "", title: "", body: "" }
         );
         this.props.history.push('/moosfeed');
     }
@@ -132,25 +132,44 @@ class PostCreator extends React.Component {
                         </Form.Group>
 
                         <Form.Group controlId="createPostCommunity">
-                            <Form.Label>Select a community</Form.Label>
+                            <Form.Label>Select a community:</Form.Label>
                             <Typeahead
                                 labelKey={option => `${option.community}`}
                                 id="community-choice"
+                                placeholder="Cows"
                                 renderMenu={(results, menuProps) => (
                                     <Menu {...menuProps} maxHeight="500%">
-                                      {results.map((result, index) => (
-                                        <MenuItem option={result} position={index} key={index}>
-                                          <small className="text-muted">{result.host + ":  "}</small>
-                                          {result.community}
-                                        
-                                        </MenuItem>
-                                      ))}
+                                        {results.map((result, index) => (
+                                            <MenuItem option={result} position={index} key={index}>
+                                                <small className="text-muted">{result.host + ":  "}</small>
+                                                {result.community}
+
+                                            </MenuItem>
+                                        ))}
                                     </Menu>
-                                  )}
+                                )}
+                                
+                                defaultInputValue= {this.state.selectedCommunity ? this.state.selectedCommunity : undefined}
+
                                 onChange={(selected) => {
-                                    // Handle selections...
+                                    console.log(selected);
+                                    if (selected.length !== 0) {
+                                        this.setState(
+                                            {
+                                                selectedCommunity: selected[0].community,
+                                                selectedHost: selected[0].host
+                                            });
+                                    } else {
+                                        this.setState(
+                                            {
+                                                selectedCommunity: null,
+                                                selectedHost: "local"
+                                            });
+                                    }
                                 }}
+
                                 options={this.state.communities}
+
 
                             />
                         </Form.Group>

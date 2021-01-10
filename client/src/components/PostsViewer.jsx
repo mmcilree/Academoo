@@ -26,7 +26,7 @@ class PostsViewer extends Component {
         this.setState({
           posts: data,
           isLoading: false,
-          host: this.context.host
+          host: this.state.host
         })
       )
       .catch(error => this.setState({ error, isLoading: false }));
@@ -46,7 +46,7 @@ class PostsViewer extends Component {
   }
 
   render() {
-    const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
+    const { isLoading, posts, error, currentCommunity, newPostText, host } = this.state;
 
     return currentCommunity && (
             <Card className="mt-4">
@@ -71,7 +71,8 @@ class PostsViewer extends Component {
                           pathname: "/create-post",
                           state: {
                             body: newPostText,
-                            community: currentCommunity
+                            community: currentCommunity,
+                            host: host
                           }
                         }
                       }>
