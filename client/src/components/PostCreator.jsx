@@ -5,6 +5,7 @@ import Card from 'react-bootstrap/Card';
 import { authFetch } from '../auth';
 import { HostContext } from "./HostContext";
 import { Route } from 'react-router-dom';
+import { Typeahead } from 'react-bootstrap-typeahead';
 
 class PostCreator extends React.Component {
     constructor(props) {
@@ -15,20 +16,20 @@ class PostCreator extends React.Component {
             title: "",
             body: "",
             selectedCommunity: null,
+            instances: [],
             communities: null
         };
     }
 
-    static contextType = HostContext;
-
     componentDidMount() {
-        this.fetchCommunities();
+        this.fetchInstances();
         this.fetchUserDetails();
 
         this.setState({
 
             body: this.props.location && this.props.location.state ? this.props.location.state.body : "",
         })
+        
     }
 
     fetchUserDetails() {
@@ -37,21 +38,30 @@ class PostCreator extends React.Component {
                 this.setState({
                     user_id: data.id,
                     email: data.email,
-                    host: data.host
                 })
             )
     }
 
-    fetchCommunities() {
-        fetch('/api/communities' + (this.context.host !== null ? "?external=" + this.context.host : "")).then(response => response.json())
+    async fetchInstances() {
+        await fetch("/api/get-instances")
+            .then(response => response.json())
+            .then(data => 
+                this.setState({
+                    instances: data,
+                })
+            )
+        this.state.instances.map(host => {this.fetchCommunities(host)});
+    }
+
+    async fetchCommunities(host) {
+        await fetch('/api/communities' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
             .then(data =>
                 this.setState({
-                    communities: data,
+                    communities: {...this.state.communities, [host]: data },
                     selectedCommunity: this.props.location && this.props.location.state ?
                         this.props.location.state.community :
                         (data.length > 0 ? data[0] : null)
-                })
-            )
+                }))  
     }
 
     handleChange(event) {
@@ -61,6 +71,7 @@ class PostCreator extends React.Component {
         this.setState({
             [name]: value
         });
+        console.log(this.state);
     }
 
     handleSubmit(event) {
@@ -101,6 +112,7 @@ class PostCreator extends React.Component {
                 </Card.Header>
                 <Card.Body>
                     <Form onSubmit={this.handleSubmit.bind(this)}>
+
                         <Form.Group controlId="createPostTitle">
                             <Form.Label>Post Title:</Form.Label>
                             <Form.Control type="input"
@@ -121,15 +133,21 @@ class PostCreator extends React.Component {
 
                         <Form.Group controlId="createPostCommunity">
                             <Form.Label>Select a community</Form.Label>
-                            <Form.Control as="select" name="selectedCommunity" onChange={this.handleChange.bind(this)}
+                            {/*<Typeahead
+                                onChange={(selected) => {
+                                    // Handle selections...
+                                }}
+                                options={this.state.communities}
+                            />*/}
+                            {/*<Form.Control as="select" name="selectedCommunity" onChange={this.handleChange.bind(this)}
                                 value={(this.props.location && this.props.location.state) ? this.props.location.state.community : null}>
                                 {this.state.communities.map(function (name, index) {
                                     return <option key={index} value={name}>{name}</option>
                                 })}
-                            </Form.Control>
+                            </Form.Control>*/}
                         </Form.Group>
                         <Route render={({ history }) => (
-                            <Button variant="primary" type="submit">
+                            <Button variant="primary" type="submit" className>
                                 Post
                             </Button>
                         )} />
