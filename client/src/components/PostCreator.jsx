@@ -91,12 +91,13 @@ class PostCreator extends React.Component {
             }
         };
 
-        if (this.selectedHost !== "local") {
-            requestOptions.body.external = this.selectedHost
+        if (!(this.selectedHost === "local")) {
+            requestOptions.body.external = this.state.selectedHost
         }
-
+        console.log(requestOptions.body);
         requestOptions.body = JSON.stringify(requestOptions.body);
-
+        console.log(this.state);
+        
         fetch('/api/posts', requestOptions);
         this.setState(
             { email: "", selectedHost: "", title: "", body: "" }
