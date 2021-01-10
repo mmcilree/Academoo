@@ -5,7 +5,7 @@ import Card from 'react-bootstrap/Card';
 import { authFetch } from '../auth';
 import { HostContext } from "./HostContext";
 import { Route } from 'react-router-dom';
-import { Typeahead } from 'react-bootstrap-typeahead';
+import { Highlighter, Hint, Menu, MenuItem, Token, Typeahead } from 'react-bootstrap-typeahead';
 
 class PostCreator extends React.Component {
     constructor(props) {
@@ -17,7 +17,7 @@ class PostCreator extends React.Component {
             body: "",
             selectedCommunity: null,
             instances: [],
-            communities: null
+            communities: []
         };
     }
 
@@ -29,7 +29,7 @@ class PostCreator extends React.Component {
 
             body: this.props.location && this.props.location.state ? this.props.location.state.body : "",
         })
-        
+
     }
 
     fetchUserDetails() {
@@ -42,26 +42,48 @@ class PostCreator extends React.Component {
             )
     }
 
+    /*renderMenu(results, menuProps, state) {
+        let index = 0;
+        const regions = groupBy(results, 'region');
+        const items = Object.keys(regions).sort().map((region) => (
+            <Fragment key={region}>
+                {index !== 0 && <Menu.Divider />}
+                <Menu.Header>{region}</Menu.Header>
+                {regions[region].map((i) => {
+                    const item =
+                        <MenuItem key={index} option={i} position={index}>
+                            <Highlighter search={state.text}>
+                                {i.name}
+                            </Highlighter>
+                        </MenuItem>;
+
+                    index += 1;
+                    return item;
+                })}
+            </Fragment>
+        ));
+    }*/
+
     async fetchInstances() {
         await fetch("/api/get-instances")
             .then(response => response.json())
-            .then(data => 
+            .then(data =>
                 this.setState({
                     instances: data,
                 })
             )
-        this.state.instances.map(host => {this.fetchCommunities(host)});
+        this.state.instances.map(host => { this.fetchCommunities(host) });
     }
 
     async fetchCommunities(host) {
         await fetch('/api/communities' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
             .then(data =>
                 this.setState({
-                    communities: {...this.state.communities, [host]: data },
+                    communities: [...this.state.communities, ...data.map(community => ({ host: host, community: community }))],
                     selectedCommunity: this.props.location && this.props.location.state ?
                         this.props.location.state.community :
                         (data.length > 0 ? data[0] : null)
-                }))  
+                }))
     }
 
     handleChange(event) {
@@ -72,6 +94,7 @@ class PostCreator extends React.Component {
             [name]: value
         });
         console.log(this.state);
+
     }
 
     handleSubmit(event) {
@@ -133,12 +156,26 @@ class PostCreator extends React.Component {
 
                         <Form.Group controlId="createPostCommunity">
                             <Form.Label>Select a community</Form.Label>
-                            {/*<Typeahead
+                            <Typeahead
+                                labelKey={option => `${option.community}`}
+                                id="community-choice"
+                                renderMenu={(results, menuProps) => (
+                                    <Menu {...menuProps}>
+                                      {results.map((result, index) => (
+                                        <MenuItem option={result} position={index}>
+                                          <small className="text-muted">{result.host + ":  "}</small>
+                                          {result.community}
+                                        
+                                        </MenuItem>
+                                      ))}
+                                    </Menu>
+                                  )}
                                 onChange={(selected) => {
                                     // Handle selections...
                                 }}
                                 options={this.state.communities}
-                            />*/}
+
+                            />
                             {/*<Form.Control as="select" name="selectedCommunity" onChange={this.handleChange.bind(this)}
                                 value={(this.props.location && this.props.location.state) ? this.props.location.state.community : null}>
                                 {this.state.communities.map(function (name, index) {
