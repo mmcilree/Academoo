@@ -137,7 +137,7 @@ class PostCreator extends React.Component {
                                 labelKey={option => `${option.community}`}
                                 id="community-choice"
                                 renderMenu={(results, menuProps) => (
-                                    <Menu {...menuProps}>
+                                    <Menu {...menuProps} maxHeight="500%">
                                       {results.map((result, index) => (
                                         <MenuItem option={result} position={index} key={index}>
                                           <small className="text-muted">{result.host + ":  "}</small>
