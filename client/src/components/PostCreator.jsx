@@ -46,7 +46,7 @@ class PostCreator extends React.Component {
             .then(response => response.json())
             .then(data =>
                 this.setState({
-                    instances: data,
+                    instances: ["local", ...data],
                 })
             )
         this.state.instances.map(host => ( this.fetchCommunities(host) ));
