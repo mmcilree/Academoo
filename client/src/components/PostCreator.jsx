@@ -102,16 +102,18 @@ class PostCreator extends React.Component {
                 <Card.Body>
                     <Form onSubmit={this.handleSubmit.bind(this)}>
                         <Form.Group controlId="createPostTitle">
+                            <Form.Label>Post Title:</Form.Label>
                             <Form.Control type="input"
-                                placeholder="Title (e.g. 'Moo')"
+                                placeholder="Moo"
                                 name="title"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.title} />
                         </Form.Group>
 
                         <Form.Group controlId="createPostText">
+                            <Form.Label>Post Content:</Form.Label>
                             <Form.Control as="textarea"
-                                placeholder="Text (e.g. 'Moooo')"
+                                placeholder="Moooo"
                                 name="body"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.body} />
