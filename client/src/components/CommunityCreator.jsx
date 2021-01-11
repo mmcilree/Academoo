@@ -1,6 +1,7 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
 
 class CommunityCreator extends React.Component {
@@ -17,6 +18,15 @@ class CommunityCreator extends React.Component {
     }
     validateForm() {
         const errors = [];
+        if (this.state.title.length === 0 ||
+            this.state.id.length === 0) {
+            errors.push("Required fields have been left blank.");
+            return errors;
+        }
+        if (this.state.administrators !== "" && !this.state.administrators.match(/[^,]+/)) {
+            errors.push("Administrators input is not a comma separated list.");
+            return errors;
+        }
 
         return errors;
     }
@@ -27,6 +37,12 @@ class CommunityCreator extends React.Component {
         this.setState({
             [name]: value
         });
+
+        if(name === "id") {
+            this.setState({
+                [name]: value.replace(/\s/g, '').replace(/\W/g, '').replace(/[0-9]/g, '')
+            });
+        }
     }
 
     handleNameChange(event) {
@@ -36,11 +52,15 @@ class CommunityCreator extends React.Component {
             id: value.split(' ').join(''),
             title: value
         });
-
     }
 
     handleSubmit(event) {
         event.preventDefault();
+        const errors = this.validateForm();
+        if (errors.length > 0) {
+            this.setState({ errors });
+            return;
+        }
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -61,6 +81,7 @@ class CommunityCreator extends React.Component {
     }
 
     render() {
+        const { errors } = this.state;
         return (
             <Card className="mt-4">
                 <Card.Header className="pt-4">
@@ -106,9 +127,11 @@ class CommunityCreator extends React.Component {
                                 name="administrators"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.administrators} />
-                            <small class="form-text text-muted">Who else should be in charge of this community?</small>
+                            <small className="form-text text-muted">Who else should be in charge of this community?</small>
                         </Form.Group>
-
+                        {errors.map(error => (
+                            <Alert variant='warning' key={error}>{error}</Alert>
+                        ))}
 
                         <Button variant="primary" type="submit">
                             Create Community

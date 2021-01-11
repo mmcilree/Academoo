@@ -23,7 +23,7 @@ class PostCreator extends React.Component {
                 host: this.props.location && this.props.location.state ?
                 this.props.location.state.host : null,
                 community: this.props.location && this.props.location.state ?
-                    this.props.location.state.community : null,
+                    this.props.location.state.community : "",
             }]
         };
 
