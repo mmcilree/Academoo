@@ -3,6 +3,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
+import { Route } from 'react-router-dom';
 
 class CommunityCreator extends React.Component {
     constructor(props) {
@@ -37,7 +38,7 @@ class CommunityCreator extends React.Component {
 
         return errors;
     }
-    
+
     fetchCommunities(host) {
         fetch('/api/communities').then(response => response.json())
             .then(data =>
@@ -54,7 +55,7 @@ class CommunityCreator extends React.Component {
             [name]: value
         });
 
-        if(name === "id") {
+        if (name === "id") {
             this.setState({
                 [name]: value.replace(/\s/g, '').replace(/\W/g, '').replace(/[0-9]/g, '')
             });
@@ -94,6 +95,7 @@ class CommunityCreator extends React.Component {
         this.setState(
             { id: "", title: "", description: "", administrators: "" }
         );
+        this.props.history.push('/explore');
     }
 
     render() {
@@ -149,9 +151,10 @@ class CommunityCreator extends React.Component {
                             <Alert variant='warning' key={error}>{error}</Alert>
                         ))}
 
-                        <Button variant="primary" type="submit">
-                            Create Community
-                        </Button>
+                        <Route render={({ history }) => (
+                            <Button variant="primary" type="submit">
+                                Create Community
+                            </Button>)} />
                     </Form>
                 </Card.Body>
             </Card>
