@@ -16,6 +16,9 @@ class CommunityCreator extends React.Component {
             communities: []
         };
     }
+    componentDidMount() {
+        this.fetchCommunities();
+    }
     validateForm() {
         const errors = [];
         if (this.state.title.length === 0 ||
@@ -27,9 +30,22 @@ class CommunityCreator extends React.Component {
             errors.push("Administrators input is not a comma separated list.");
             return errors;
         }
+        if (this.state.communities.includes(this.state.id)) {
+            errors.push("A community already exists with that ID. Please modify it.");
+            return errors;
+        }
 
         return errors;
     }
+    
+    fetchCommunities(host) {
+        fetch('/api/communities').then(response => response.json())
+            .then(data =>
+                this.setState({
+                    communities: data,
+                }))
+    }
+
     handleChange(event) {
         const target = event.target;
         const value = target.value;
