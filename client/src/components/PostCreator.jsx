@@ -2,6 +2,7 @@ import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import Alert from 'react-bootstrap/Alert';
 import { authFetch } from '../auth';
 import { Route } from 'react-router-dom';
 import { Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
@@ -11,22 +12,40 @@ class PostCreator extends React.Component {
         super(props);
         this.state = {
             email: "",
-            selectedHost: 
+            selectedHost:
                 this.props.location && this.props.location.state ?
-                this.props.location.state.host : null,
+                    this.props.location.state.host : null,
             title: "",
-            body: 
+            body:
                 this.props.location && this.props.location.state ?
-                this.props.location.state.body : "",
-            selectedCommunity: 
+                    this.props.location.state.body : "",
+            selectedCommunity:
                 this.props.location && this.props.location.state ?
-                this.props.location.state.community : null,
+                    this.props.location.state.community : null,
             instances: [],
-            communities: []
+            communities: [],
+            errors: []
         };
-        
+
     }
 
+    validateForm() {
+        const errors = [];
+        console.log(this.state.communities);
+        if (this.state.title.length === 0) {
+            errors.push("Title field cannot be empty")
+        }
+        if (this.state.selectedCommunity == null) {
+            errors.push("Community field cannot be empty")
+        } else if (!this.state.communities.find(o => o.community === this.state.selectedCommunity)) {
+            errors.push(<p>That community doesn't yet exist. You can create it <a href='./create-community'>here</a></p>)
+        }
+        if (this.state.title === "Moo" && this.state.body === "Moooo") {
+            errors.push("...really?")
+        }
+
+        return errors;
+    }
     componentDidMount() {
         this.fetchInstances();
         this.fetchUserDetails();
@@ -76,6 +95,13 @@ class PostCreator extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
+
+        const errors = this.validateForm();
+        if (errors.length > 0) {
+            this.setState({ errors });
+            return;
+        }
+
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -91,13 +117,13 @@ class PostCreator extends React.Component {
             }
         };
 
-        if (!(this.selectedHost === "local")) {
-            requestOptions.body.external = this.state.selectedHost
+        if (this.selectedHost !== "local") {
+            requestOptions.body.external = this.state.selectedHost;
         }
         console.log(requestOptions.body);
         requestOptions.body = JSON.stringify(requestOptions.body);
         console.log(this.state);
-        
+
         fetch('/api/posts', requestOptions);
         this.setState(
             { email: "", selectedHost: "", title: "", body: "" }
@@ -106,6 +132,7 @@ class PostCreator extends React.Component {
     }
 
     render() {
+        const { errors } = this.state;
         return this.state.communities && (
             <Card className="mt-4">
                 <Card.Header className="pt-4">
@@ -149,8 +176,8 @@ class PostCreator extends React.Component {
                                         ))}
                                     </Menu>
                                 )}
-                                
-                                defaultInputValue= {this.state.selectedCommunity ? this.state.selectedCommunity : undefined}
+
+                                defaultInputValue={this.state.selectedCommunity ? this.state.selectedCommunity : undefined}
 
                                 onChange={(selected) => {
                                     console.log(selected);
@@ -174,6 +201,9 @@ class PostCreator extends React.Component {
 
                             />
                         </Form.Group>
+                        {errors.map(error => (
+                            <Alert variant='warning' key={error}>{error}</Alert>
+                        ))}
                         <Route render={({ history }) => (
                             <Button variant="primary" type="submit" className>
                                 Post
