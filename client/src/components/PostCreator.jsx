@@ -12,33 +12,30 @@ class PostCreator extends React.Component {
         super(props);
         this.state = {
             email: "",
-            selectedHost:
-                this.props.location && this.props.location.state ?
-                    this.props.location.state.host : null,
             title: "",
             body:
                 this.props.location && this.props.location.state ?
                     this.props.location.state.body : "",
-            selectedCommunity:
-                this.props.location && this.props.location.state ?
-                    this.props.location.state.community : null,
             instances: [],
             communities: [],
-            errors: []
+            errors: [],
+            selected: [{
+                host: this.props.location && this.props.location.state ?
+                this.props.location.state.host : null,
+                community: this.props.location && this.props.location.state ?
+                    this.props.location.state.community : null,
+            }]
         };
 
     }
 
     validateForm() {
         const errors = [];
-        console.log(this.state.communities);
         if (this.state.title.length === 0) {
             errors.push("Title field cannot be empty")
         }
-        if (this.state.selectedCommunity == null) {
-            errors.push("Community field cannot be empty")
-        } else if (!this.state.communities.find(o => o.community === this.state.selectedCommunity)) {
-            errors.push(<p>That community doesn't yet exist. You can create it <a href='./create-community'>here</a></p>)
+        if (this.state.selected.length === 0) {
+            errors.push(<p>You haven't selected a pre-existing community. You can create new community <a href='./create-community'>here</a></p>)
         }
         if (this.state.title === "Moo" && this.state.body === "Moooo") {
             errors.push("...really?")
@@ -77,9 +74,6 @@ class PostCreator extends React.Component {
             .then(data =>
                 this.setState({
                     communities: [...this.state.communities, ...data.map(community => ({ host: host, community: community }))],
-                    selectedCommunity: this.props.location && this.props.location.state ?
-                        this.props.location.state.community :
-                        (data.length > 0 ? data[0] : null)
                 }))
     }
 
@@ -106,7 +100,7 @@ class PostCreator extends React.Component {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: {
-                parent: this.state.selectedCommunity,
+                parent: this.state.selected[0].community,
                 title: this.state.title,
                 contentType: 'text',
                 body: this.state.body,
@@ -116,17 +110,14 @@ class PostCreator extends React.Component {
                 }
             }
         };
-
-        if (this.selectedHost !== "local") {
-            requestOptions.body.external = this.state.selectedHost;
+        if (this.state.selected[0].host !== "local") {
+            requestOptions.body.external = this.state.selected[0].host;
         }
-        console.log(requestOptions.body);
         requestOptions.body = JSON.stringify(requestOptions.body);
-        console.log(this.state);
 
         fetch('/api/posts', requestOptions);
         this.setState(
-            { email: "", selectedHost: "", title: "", body: "" }
+            { email: "", selected: [{community: null, host: null}], title: "", body: "" }
         );
         this.props.history.push('/moosfeed');
     }
@@ -177,26 +168,14 @@ class PostCreator extends React.Component {
                                     </Menu>
                                 )}
 
-                                defaultInputValue={this.state.selectedCommunity ? this.state.selectedCommunity : undefined}
-
+                                defaultInputValue={this.state.selected.community ? this.state.selected.community : undefined}
+                                
                                 onChange={(selected) => {
-                                    console.log(selected);
-                                    if (selected.length !== 0) {
-                                        this.setState(
-                                            {
-                                                selectedCommunity: selected[0].community,
-                                                selectedHost: selected[0].host
-                                            });
-                                    } else {
-                                        this.setState(
-                                            {
-                                                selectedCommunity: null,
-                                                selectedHost: "local"
-                                            });
-                                    }
+                                    this.setState({selected : selected})
                                 }}
 
                                 options={this.state.communities}
+                                selected={this.state.selected}
 
 
                             />

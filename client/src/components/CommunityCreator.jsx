@@ -6,9 +6,20 @@ import Card from 'react-bootstrap/Card';
 class CommunityCreator extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { id: "", title: "", description: "", administrators: "" };
+        this.state = {
+            id: "",
+            title: "",
+            description: "",
+            administrators: "",
+            errors: [],
+            communities: []
+        };
     }
+    validateForm() {
+        const errors = [];
 
+        return errors;
+    }
     handleChange(event) {
         const target = event.target;
         const value = target.value;
@@ -25,7 +36,7 @@ class CommunityCreator extends React.Component {
             id: value.split(' ').join(''),
             title: value
         });
-        
+
     }
 
     handleSubmit(event) {
@@ -60,9 +71,9 @@ class CommunityCreator extends React.Component {
                     <Form onSubmit={this.handleSubmit.bind(this)}>
                         <Form.Group controlId="createCommunityTitle">
                             <Form.Label>Community Name:</Form.Label>
-                            <Form.Control type="input" 
+                            <Form.Control type="input"
                                 placeholder="Funny Cow Memes"
-                                name="title" 
+                                name="title"
                                 onChange={this.handleNameChange.bind(this)}
                                 value={this.state.title} />
                             <small className="form-text text-muted">Give your new community a name.</small>
@@ -72,7 +83,7 @@ class CommunityCreator extends React.Component {
                             <Form.Label>Community ID:</Form.Label>
                             <Form.Control type="input"
                                 placeholder="FunnyCowMemes"
-                                name="id" 
+                                name="id"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.id} />
                             <small className="form-text text-muted">Community IDs have to be unique, and can't include spaces or non alphabetic characters.</small>
@@ -80,7 +91,7 @@ class CommunityCreator extends React.Component {
 
                         <Form.Group controlId="createCommunityDescription">
                             <Form.Label>Description:</Form.Label>
-                            <Form.Control as="textarea" 
+                            <Form.Control as="textarea"
                                 name="description"
                                 placeholder="Moooo"
                                 onChange={this.handleChange.bind(this)}
@@ -90,8 +101,8 @@ class CommunityCreator extends React.Component {
 
                         <Form.Group controlId="createCommunityAdministrators">
                             <Form.Label>Administrators:</Form.Label>
-                            <Form.Control as="textarea" 
-                                placeholder="Comma-separated usernames" 
+                            <Form.Control as="textarea"
+                                placeholder="Comma-separated usernames"
                                 name="administrators"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.administrators} />
