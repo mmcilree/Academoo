@@ -15,7 +15,7 @@ app.config.from_object(Config)
 CORS(app)
 
 db = SQLAlchemy()
-migrate = Migrate()
+migrate = Migrate(compare_type=True)
 guard = Praetorian()
 federation = Manager()
 authorize = Authorize(current_user=current_user)

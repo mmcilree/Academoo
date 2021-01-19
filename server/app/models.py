@@ -2,10 +2,8 @@ from sqlalchemy.orm import backref
 from app import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_authorize import RestrictionsMixin, AllowancesMixin
 import time
 import uuid
-
 
 def getUUID():
     return str(uuid.uuid4())
@@ -13,16 +11,10 @@ def getUUID():
 def getTime():
     return int(datetime.utcnow().timestamp())
 
-administrating = db.Table('administrating',
+community_administrators = db.Table('community_administrators',
     db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
     db.Column('community_id', db.String(1000), db.ForeignKey('community.id'))
     )
-
-UserRole = db.Table(
-    'user_role', db.Model.metadata,
-    db.Column('user_id', db.Integer, db.ForeignKey('user.user_id')),
-    db.Column('role_id', db.Integer, db.ForeignKey('roles.id'))
-)
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -32,8 +24,7 @@ class User(db.Model):
     host = db.Column(db.String(1000), nullable=False)
     email = db.Column(db.String(1000))
     password_hash = db.Column(db.String(128))
-    admin_of = db.relationship('Community', secondary=administrating, backref='admins')
-    roles = db.relationship('Role', secondary=UserRole)
+    admin_of = db.relationship('Community', secondary=community_administrators, backref='admins')
 
     @property
     def rolenames(self):
@@ -41,6 +32,10 @@ class User(db.Model):
             return self.admin_of.split(',')
         except Exception:
             return []
+
+    @classmethod
+    def is_admin(self, community_id):
+        return len(self.query.join(self.admin_communities).filter_by(id=community_id).all()) != 0
 
     @classmethod
     def lookup(cls, username):
@@ -58,18 +53,12 @@ class User(db.Model):
     def password(self):
         return self.password_hash
 
-class Role(db.Model, AllowancesMixin):
-    __tablename__ = 'roles'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False, unique=True)
-
 class Community(db.Model):
     id = db.Column(db.String(1000), primary_key=True)
     title = db.Column(db.String(1000), nullable=False)
     description = db.Column(db.String(1000))
     posts = db.relationship('Post', backref='community')
-    administrators = db.relationship("User", secondary=administrating, backref='communities')
+    administrators = db.relationship("User", secondary=community_administrators, backref='admin_communities')
 
 class Post(db.Model):
     id = db.Column(db.String(1000), primary_key=True, default=getUUID)

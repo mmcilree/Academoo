@@ -1,5 +1,5 @@
 from app import db, guard, authorize
-from app.models import User, Role, Community, Post, getTime
+from app.models import User, Community, Post, getTime
 from sqlalchemy import desc
 import json
 from uuid import UUID
@@ -16,36 +16,30 @@ def isUUID(val):
 def createCommunity(id, title, description, admins):
     community = Community(id=id, title=title, description=description)
     db.session.add(community)
-
+    for admin in admins:
+        addAdmin(admin, id)
     db.session.commit()
-
-    # TODO: link admins to the community
 
     return True
 
+def addAdmin(username, community_id):
+    user = db.session.query(User).filter_by(user_id=username).first()
+
+    if not user.is_admin(community_id):
+        community = db.session.query(Community).filter_by(id=community_id).first()
+        community.admins.append(user)
+        db.session.commit()
+        return True
+
 def createUser(username, email, password):
     if db.session.query(User).filter_by(user_id=username).count() < 1 and db.session.query(User).filter_by(email=email).count() < 1:
-        if username == "academoo":
-            role = Role(
-                name='admin',
-            )
-            db.session.add(role)
-
-            db.session.add(User(
+        db.session.add(User(
             user_id=username,
             email=email,
             password_hash=guard.hash_password(password),
             host="Academoo",
-            roles=[role],
-            ))
-        else:
-            db.session.add(User(
-                user_id=username,
-                email=email,
-                password_hash=guard.hash_password(password),
-                host="Academoo",
-            ))
-
+        ))
+        
         db.session.commit()
 
         return True
