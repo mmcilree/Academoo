@@ -1,5 +1,5 @@
-from app import db, guard
-from app.models import User, Community, Post, getTime
+from app import db, guard, authorize
+from app.models import User, Role, Community, Post, getTime
 from sqlalchemy import desc
 import json
 from uuid import UUID
@@ -25,12 +25,27 @@ def createCommunity(id, title, description, admins):
 
 def createUser(username, email, password):
     if db.session.query(User).filter_by(user_id=username).count() < 1 and db.session.query(User).filter_by(email=email).count() < 1:
-        db.session.add(User(
+        if username == "academoo":
+            role = Role(
+                name='admin',
+            )
+            db.session.add(role)
+
+            db.session.add(User(
             user_id=username,
             email=email,
             password_hash=guard.hash_password(password),
             host="Academoo",
-        ))
+            roles=[role],
+            ))
+        else:
+            db.session.add(User(
+                user_id=username,
+                email=email,
+                password_hash=guard.hash_password(password),
+                host="Academoo",
+            ))
+
         db.session.commit()
 
         return True

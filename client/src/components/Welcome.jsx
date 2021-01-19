@@ -1,6 +1,8 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
+import { authFetch } from "../auth";
 
 class Welcome extends React.Component {
   render() {
@@ -12,9 +14,19 @@ class Welcome extends React.Component {
           <Link to="/moosfeed" className="btn btn-secondary">
             Go to Moosfeed
           </Link>
+
+          <Button onClick={this.handleClick.bind(this)}>ADMIN ONLY!!!</Button>
         </Card.Body>
       </Card>
     );
+  }
+
+  handleClick(){
+    authFetch("/api/secret").then(response => response.json())
+    .then(data =>
+      console.log(data)
+    );
+
   }
 }
 

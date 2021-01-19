@@ -1,5 +1,5 @@
 from flask_praetorian.decorators import auth_required
-from app import actions, federation
+from app import actions, federation, authorize
 from app.main import bp
 from flask import request, Response, jsonify
 from flask_praetorian import current_user, auth_required
@@ -7,6 +7,13 @@ from flask_praetorian import current_user, auth_required
 @bp.route("/")
 def index():
     return "Hello World!"
+
+
+@bp.route("/secret")
+@auth_required
+@authorize.has_role('admin')
+def view_secret():
+    return "Secret Stuff!"
 
 @bp.route("/create-community", methods=["POST"])
 def create_community():

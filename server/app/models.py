@@ -2,6 +2,7 @@ from sqlalchemy.orm import backref
 from app import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_authorize import RestrictionsMixin, AllowancesMixin
 import time
 import uuid
 
@@ -17,13 +18,22 @@ administrating = db.Table('administrating',
     db.Column('community_id', db.String(1000), db.ForeignKey('community.id'))
     )
 
+UserRole = db.Table(
+    'user_role', db.Model.metadata,
+    db.Column('user_id', db.Integer, db.ForeignKey('user.user_id')),
+    db.Column('role_id', db.Integer, db.ForeignKey('roles.id'))
+)
+
 class User(db.Model):
+    __tablename__ = 'user'
+
     user_id = db.Column(db.String(50), primary_key=True)
     posts_created = db.relationship('Post', backref='author')
     host = db.Column(db.String(1000), nullable=False)
     email = db.Column(db.String(1000))
     password_hash = db.Column(db.String(128))
     admin_of = db.relationship('Community', secondary=administrating, backref='admins')
+    roles = db.relationship('Role', secondary=UserRole)
 
     @property
     def rolenames(self):
@@ -47,6 +57,12 @@ class User(db.Model):
     @property
     def password(self):
         return self.password_hash
+
+class Role(db.Model, AllowancesMixin):
+    __tablename__ = 'roles'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False, unique=True)
 
 class Community(db.Model):
     id = db.Column(db.String(1000), primary_key=True)
