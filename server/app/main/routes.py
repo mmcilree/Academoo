@@ -13,7 +13,7 @@ def index():
 @auth_required
 @authorize.has_role('admin')
 def view_secret():
-    return "Secret Stuff!"
+    return jsonify({"Secret Stuff!": "secret"})
 
 @bp.route("/create-community", methods=["POST"])
 def create_community():
