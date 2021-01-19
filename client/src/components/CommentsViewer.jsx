@@ -15,7 +15,7 @@ class CommentsViewer extends React.Component {
     this.state = {
       parentPost: null,
       parentPostId: this.props.match.params.id,
-
+      host: this.props.match.params.instance ? this.props.match.params.instance : "local",
       children: [],
       fetchedChildren: new Set(),
       
@@ -24,6 +24,7 @@ class CommentsViewer extends React.Component {
 
       error: null,
       showCommentEditor: false,
+      
     }
   }
 
