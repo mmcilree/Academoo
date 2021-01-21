@@ -71,7 +71,7 @@ it("Create-Post reroutes to login page", () => {
 
 it("Comments page reroutes to login page", () => {
   const wrapper = mount(
-    <Router initialEntries={["/moosfeed/comments/post1"]}>
+    <Router initialEntries={["/comments/post1"]}>
       <App />
     </Router>
   );

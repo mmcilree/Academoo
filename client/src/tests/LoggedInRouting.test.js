@@ -88,7 +88,7 @@ it("Routes to Create-Post page", () => {
 
 it("Routes to Comments page for parent post id", () => {
     const wrapper = mount(
-        <Router initialEntries={["/moosfeed/comments/post1"]}>
+        <Router initialEntries={["/comments/post1"]}>
             <App />
         </Router>
     );
