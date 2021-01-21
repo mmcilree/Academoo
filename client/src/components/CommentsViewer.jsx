@@ -40,7 +40,7 @@ class CommentsViewer extends React.Component {
 
 
   async fetchParentPost() {
-    await fetch('/api/posts/' + this.state.parentPostId + (this.context.host !== null ? "?external=" + this.context.host : ""))
+    await fetch('/api/posts/' + this.state.parentPostId + (this.state.host !== "local" ? "?external=" + this.state.host : ""))
       .then(response => response.json())
       .then(data =>
         this.setState({
@@ -58,7 +58,7 @@ class CommentsViewer extends React.Component {
     const new_children = await Promise.all(parentPost.children.filter(childId => !fetchedChildren.has(childId)).map(
       async (childId) => {
         fetchedChildren.add(childId);
-        return fetch('/api/posts/' + childId + (this.context.host !== null ? "?external=" + this.context.host : ""))
+        return fetch('/api/posts/' + childId + (this.state.host !== "local" ? "?external=" + this.state.host : ""))
           .then(response => response.json())
           .then(data => data)
           .catch(error => this.setState({ error, isLoading: false }));
