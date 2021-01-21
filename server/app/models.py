@@ -29,8 +29,8 @@ class User(db.Model):
     host = db.Column(db.String(1000), nullable=False)
     email = db.Column(db.String(1000))
     password_hash = db.Column(db.String(128))
-    admin_of = db.relationship('Community', secondary=community_administrators, backref='admins')
-    guest_of = db.relationship('Community', secondary=community_guests, backref='guests')
+    admin_of = db.relationship('Community', secondary=community_administrators, backref='admin_users')
+    guest_of = db.relationship('Community', secondary=community_guests, backref='guest_users')
 
     @property
     def rolenames(self):

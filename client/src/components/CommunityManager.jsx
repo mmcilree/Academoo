@@ -7,7 +7,10 @@ import { Redirect } from "react-router-dom";
 class CommunityManager extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { isAdmin: false};
+        this.state = { 
+            isAdmin: null,
+            currentCommunity: this.props.match.params.id,
+        };
     }
 
     componentDidMount() {
@@ -18,14 +21,16 @@ class CommunityManager extends React.Component {
         authFetch("/api/get-user").then(response => response.json())
           .then(data =>
             this.setState({
-              isAdmin: data.adminOf.includes(this.state.currentCommunity)
+              isAdmin: data.adminOf.includes(this.state.currentCommunity),
             })
           )
       }
 
     render() {
+        console.log(this.state)
         return (
-            ! this.state.isAdmin ? <Redirect to='/forbidden' /> :
+            this.state.isAdmin == null ? <h3> Loading... </h3> : 
+             !this.state.isAdmin ? <Redirect to='/forbidden' /> :
             <Card className="mt-4">
                 <Card.Header className="pt-4">
                     <Card.Title>Manage your community</Card.Title>
