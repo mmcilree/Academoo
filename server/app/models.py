@@ -79,10 +79,11 @@ class User(db.Model):
             role_communities = self.prohibited_communities
 
                
-        for community in role_communities:
-            if community.id == community_id:
-                return True
-        return False
+        for list in role_communities:
+            for community in list:
+                if community.id == community_id:
+                    return True
+        return False        
 
     @classmethod
     def lookup(cls, username):
