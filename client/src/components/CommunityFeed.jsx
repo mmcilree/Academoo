@@ -57,11 +57,11 @@ class CommunityFeed extends Component {
 
   handleChange(event) {
     const target = event.target;
-        const value = target.value;
-        const name = target.name;
-        this.setState({
-            [name]: value
-        });
+    const value = target.value;
+    const name = target.name;
+    this.setState({
+      [name]: value
+    });
   }
 
   handleSubmit(event) {
@@ -73,6 +73,17 @@ class CommunityFeed extends Component {
 
     return currentCommunity && (
       <Container>
+        <Card className="mt-4">
+          <Card.Body>
+            <h3>You haven't yet subscribed to any communities!</h3>
+            <p>See what's available:</p>
+            <Link to="/explore" className="btn btn-secondary">
+            Explore Communities
+          </Link>
+          </Card.Body>
+
+        </Card>
+        {/*
         <Row>
           <Col xs={8}>
             <Card className="mt-4">
@@ -116,7 +127,7 @@ class CommunityFeed extends Component {
                           <Card.Body>
                             <Post postData={data} />
                             <Link
-                              to={`/moosfeed/comments/${id}`}
+                              to={this.state.host == "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
                               className="btn btn-primary stretched-link"
                             >
                               View Comments ({data.children.length})
@@ -140,7 +151,7 @@ class CommunityFeed extends Component {
                 isLoading: true
               })} />
           </Col>
-        </Row>
+            </Row>*/}
       </Container>
     );
   }

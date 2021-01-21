@@ -19,14 +19,13 @@ class PostsViewer extends Component {
   }
 
   fetchPosts() {
-    
     fetch('/api/posts?community=' + this.state.currentCommunity + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
       .then(response => response.json())
       .then(data =>
         this.setState({
           posts: data,
           isLoading: false,
-          host: this.context.host
+          host: this.state.host
         })
       )
       .catch(error => this.setState({ error, isLoading: false }));
@@ -46,7 +45,7 @@ class PostsViewer extends Component {
   }
 
   render() {
-    const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
+    const { isLoading, posts, error, currentCommunity, newPostText, host } = this.state;
 
     return currentCommunity && (
             <Card className="mt-4">
@@ -71,7 +70,8 @@ class PostsViewer extends Component {
                           pathname: "/create-post",
                           state: {
                             body: newPostText,
-                            community: currentCommunity
+                            community: currentCommunity,
+                            host: host
                           }
                         }
                       }>
@@ -90,7 +90,7 @@ class PostsViewer extends Component {
                           <Card.Body>
                             <Post postData={data} />
                             <Link
-                              to={`/moosfeed/comments/${id}`}
+                              to={this.state.host == "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
                               className="btn btn-primary stretched-link"
                             >
                               View Comments ({data.children.length})

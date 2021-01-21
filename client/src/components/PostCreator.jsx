@@ -2,32 +2,50 @@ import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import Alert from 'react-bootstrap/Alert';
 import { authFetch } from '../auth';
-import { HostContext } from "./HostContext";
 import { Route } from 'react-router-dom';
+import { Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
 
 class PostCreator extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { 
-            email: "", 
-            host: "", 
-            title: "", 
-            body: "", 
-            selectedCommunity: null,
-            communities: null };
+        this.state = {
+            email: "",
+            title: "",
+            body:
+                this.props.location && this.props.location.state ?
+                    this.props.location.state.body : "",
+            instances: [],
+            communities: [],
+            errors: [],
+            selected: [{
+                host: this.props.location && this.props.location.state ?
+                this.props.location.state.host : null,
+                community: this.props.location && this.props.location.state ?
+                    this.props.location.state.community : "",
+            }]
+        };
+
     }
 
-    static contextType = HostContext;
+    validateForm() {
+        const errors = [];
+        if (this.state.title.length === 0) {
+            errors.push("Title field cannot be empty")
+        }
+        if (this.state.selected.length === 0) {
+            errors.push(<p>You haven't selected a pre-existing community. You can create new community <a href='./create-community'>here</a></p>)
+        }
+        if (this.state.title === "Moo" && this.state.body === "Moooo") {
+            errors.push("...really?")
+        }
 
+        return errors;
+    }
     componentDidMount() {
-        this.fetchCommunities();
+        this.fetchInstances();
         this.fetchUserDetails();
-
-        this.setState({
-
-            body: this.props.location && this.props.location.state ? this.props.location.state.body : "",
-        })
     }
 
     fetchUserDetails() {
@@ -36,21 +54,27 @@ class PostCreator extends React.Component {
                 this.setState({
                     user_id: data.id,
                     email: data.email,
-                    host: data.host
                 })
             )
     }
 
-    fetchCommunities() {
-        fetch('/api/communities' + (this.context.host !== null ? "?external=" + this.context.host : "")).then(response => response.json())
+    async fetchInstances() {
+        await fetch("/api/get-instances")
+            .then(response => response.json())
             .then(data =>
-                this.setState({ 
-                    communities: data,
-                    selectedCommunity: this.props.location && this.props.location.state ? 
-                        this.props.location.state.community : 
-                        (data.length > 0 ? data[0] : null)
+                this.setState({
+                    instances: ["local", ...data],
                 })
-            )        
+            )
+        this.state.instances.map(host => (this.fetchCommunities(host)));
+    }
+
+    async fetchCommunities(host) {
+        await fetch('/api/communities' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
+            .then(data =>
+                this.setState({
+                    communities: [...this.state.communities, ...data.map(community => ({ host: host, community: community }))],
+                }))
     }
 
     handleChange(event) {
@@ -60,73 +84,109 @@ class PostCreator extends React.Component {
         this.setState({
             [name]: value
         });
+
     }
 
     handleSubmit(event) {
         event.preventDefault();
+
+        const errors = this.validateForm();
+        if (errors.length > 0) {
+            this.setState({ errors });
+            return;
+        }
+
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: {
-                    parent: this.state.selectedCommunity,
-                    title: this.state.title,
-                    contentType: 'text',
-                    body: this.state.body,
-                    author: {
-                        id: this.state.user_id,
-                        host: this.state.host
-                    }
+                parent: this.state.selected[0].community,
+                title: this.state.title,
+                contentType: 'text',
+                body: this.state.body,
+                author: {
+                    id: this.state.user_id,
+                    host: "Academoo"
                 }
+            }
         };
-
-        if (this.context.host !== null) {
-            requestOptions.body.external = this.context.host
+        if (this.state.selected[0].host !== "local") {
+            requestOptions.body.external = this.state.selected[0].host;
         }
-
         requestOptions.body = JSON.stringify(requestOptions.body);
 
         fetch('/api/posts', requestOptions);
         this.setState(
-            { email: "", host: "", title: "", body: ""}
+            { email: "", selected: [{community: null, host: null}], title: "", body: "" }
         );
         this.props.history.push('/moosfeed');
     }
 
     render() {
+        const { errors } = this.state;
         return this.state.communities && (
             <Card className="mt-4">
+                <Card.Header className="pt-4">
+                    <Card.Title>Create a post!</Card.Title>
+                </Card.Header>
                 <Card.Body>
                     <Form onSubmit={this.handleSubmit.bind(this)}>
+
                         <Form.Group controlId="createPostTitle">
-                            <Form.Label>Create a new post</Form.Label>
-                            <Form.Control type="input" 
-                                placeholder="Title (e.g. 'Moo')"
-                                name="title" 
+                            <Form.Label>Post Title:</Form.Label>
+                            <Form.Control type="input"
+                                placeholder="Moo"
+                                name="title"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.title} />
                         </Form.Group>
 
                         <Form.Group controlId="createPostText">
-                            <Form.Control as="textarea" 
-                                placeholder="Text (e.g. 'Moooo')" 
+                            <Form.Label>Post Content:</Form.Label>
+                            <Form.Control as="textarea"
+                                placeholder="Moooo"
                                 name="body"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.body} />
                         </Form.Group>
 
                         <Form.Group controlId="createPostCommunity">
-                            <Form.Label>Select a community</Form.Label>
-                            <Form.Control as="select" name="selectedCommunity" onChange={this.handleChange.bind(this)}
-                            value={(this.props.location && this.props.location.state) ? this.props.location.state.community : null }>
-                                {this.state.communities.map(function(name, index) {
-                                    return <option key={ index } value={name}>{name}</option>
-                                })}
-                            </Form.Control>    
-                        </Form.Group> 
+                            <Form.Label>Select a community:</Form.Label>
+                            <Typeahead
+                                labelKey={option => `${option.community}`}
+                                id="community-choice"
+                                placeholder="Cows"
+                                renderMenu={(results, menuProps) => (
+                                    <Menu {...menuProps} maxHeight="500%">
+                                        {results.map((result, index) => (
+                                            <MenuItem option={result} position={index} key={index}>
+                                                <small className="text-muted">{result.host + ":  "}</small>
+                                                {result.community}
+
+                                            </MenuItem>
+                                        ))}
+                                    </Menu>
+                                )}
+
+                                defaultInputValue={this.state.selected.community ? this.state.selected.community : undefined}
+                                
+                                onChange={(selected) => {
+                                    this.setState({selected : selected})
+                                }}
+
+                                options={this.state.communities}
+                                selected={this.state.selected}
+
+
+                            />
+                        </Form.Group>
+                        {errors.map(error => (
+                            <Alert variant='warning' key={error}>{error}</Alert>
+                        ))}
                         <Route render={({ history }) => (
-                        <Button variant="primary" type="submit">
-                            Post
-                        </Button>
+                            <Button variant="primary" type="submit" className>
+                                Post
+                            </Button>
                         )} />
                     </Form>
                 </Card.Body>

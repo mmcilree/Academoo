@@ -40,7 +40,7 @@ it("Routes to default page", () => {
     expect(wrapper.find(Welcome)).toHaveLength(1);
 });
 
-it("Routes to login page", () => {
+it("Login page reroutes to welcome page", () => {
     const wrapper = mount(
         <Router initialEntries={["/login"]}>
             <App />
@@ -49,7 +49,7 @@ it("Routes to login page", () => {
     expect(wrapper.find(Welcome)).toHaveLength(1);
 });
 
-it("Routes to sign-up page", () => {
+it("Sign-up page reroutes to welcome page", () => {
     const wrapper = mount(
         <Router initialEntries={["/sign-up"]}>
             <App />
@@ -88,7 +88,7 @@ it("Routes to Create-Post page", () => {
 
 it("Routes to Comments page for parent post id", () => {
     const wrapper = mount(
-        <Router initialEntries={["/moosfeed/comments/post1"]}>
+        <Router initialEntries={["/comments/post1"]}>
             <App />
         </Router>
     );
