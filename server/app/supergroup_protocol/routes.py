@@ -57,7 +57,7 @@ def create_post():
     user = User.lookup(user_id)
     community_id = request.json["parent"]
 
-    if not user.is_admin(community_id):
+    if user.has_role(community_id, "guest"):
         return Response(status = 403)
 
     if host:

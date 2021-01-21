@@ -25,7 +25,7 @@ def createCommunity(id, title, description, admins):
 def addAdmin(username, community_id):
     user = db.session.query(User).filter_by(user_id=username).first()
 
-    if not user.is_admin(community_id):
+    if not user.has_role(community_id, "admin"):
         community = db.session.query(Community).filter_by(id=community_id).first()
         community.admins.append(user)
         db.session.commit()

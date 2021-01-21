@@ -16,6 +16,11 @@ community_administrators = db.Table('community_administrators',
     db.Column('community_id', db.String(1000), db.ForeignKey('community.id'))
     )
 
+community_guests = db.Table('community_guests',
+    db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
+    db.Column('community_id', db.String(1000), db.ForeignKey('community.id'))
+    )
+
 class User(db.Model):
     __tablename__ = 'user'
 
@@ -25,6 +30,7 @@ class User(db.Model):
     email = db.Column(db.String(1000))
     password_hash = db.Column(db.String(128))
     admin_of = db.relationship('Community', secondary=community_administrators, backref='admins')
+    guest_of = db.relationship('Community', secondary=community_guests, backref='guests')
 
     @property
     def rolenames(self):
@@ -34,11 +40,17 @@ class User(db.Model):
             return []
 
     # Replace with switch statement for the different roles
-    def is_admin(self, community_id):
+    def has_role(self, community_id, role):
         print(community_id)
         print(self.admin_communities)
-
-        for community in self.admin_communities:
+        role_communities = []
+        
+        if role == "admin":
+            role_communities = self.admin_communities
+        elif role == "guest":
+            role_communities = self.guest_communities
+               
+        for community in role_communities:
             if community.id == community_id:
                 return True
         return False
@@ -65,6 +77,7 @@ class Community(db.Model):
     description = db.Column(db.String(1000))
     posts = db.relationship('Post', backref='community')
     administrators = db.relationship("User", secondary=community_administrators, backref='admin_communities')
+    guests = db.relationship("User", secondary=community_guests, backref='guest_communities')
 
 
 class Post(db.Model):
