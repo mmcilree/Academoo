@@ -3,6 +3,7 @@ import Post from "./Post";
 import { Card, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { PlusCircle } from "react-bootstrap-icons";
+import { authFetch } from '../auth';
 
 class PostsViewer extends Component {
   state = {
@@ -11,11 +12,22 @@ class PostsViewer extends Component {
     currentCommunity: this.props.match.params.id,
     error: null,
     host: this.props.match.params.instance ? this.props.match.params.instance : "local",
-    newPostText: ""
+    newPostText: "",
+    isAdmin: false
   }
 
   componentDidMount() {
     this.fetchPosts();
+    this.fetchUserDetails();
+  }
+
+  fetchUserDetails() {
+    authFetch("/api/get-user").then(response => response.json())
+      .then(data =>
+        this.setState({
+          isAdmin: data.adminOf.includes(this.state.currentCommunity)
+        })
+      )
   }
 
   fetchPosts() {
@@ -54,6 +66,7 @@ class PostsViewer extends Component {
                 <h2>{currentCommunity}</h2>
               </Card.Header>
               <Card.Body>
+                {this.state.isAdmin && <Alert variant="primary">You are an admin!</Alert>}
                 <Form onSubmit={this.handleSubmit.bind(this)}>
                   <Form.Row>
                     <Form.Group as={Col} className="d-none d-sm-flex" sm={6} md={7} lg={9}>

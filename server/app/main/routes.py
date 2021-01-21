@@ -22,7 +22,11 @@ def create_community():
 @auth_required
 def get_user():
     u = current_user()
-    return jsonify({"id": u.user_id, "email": u.email, "host": u.host})
+    adminOf = []
+    for community in u.admin_of:
+        adminOf.append(community.id)
+
+    return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "adminOf": adminOf})
 
 @bp.route("/add-instance", methods=["POST"])
 def add_instance():
