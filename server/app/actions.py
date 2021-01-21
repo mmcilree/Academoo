@@ -1,4 +1,4 @@
-from app import db, guard, authorize
+from app import db, guard
 from app.models import User, Community, Post, getTime
 from sqlalchemy import desc
 import json

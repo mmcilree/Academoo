@@ -1,6 +1,7 @@
 from app import actions, federation
 from app.supergroup_protocol import bp
 from flask import jsonify, request, Response
+from app.models import User
 
 # Community
 @bp.route("/communities", methods=["GET"])
@@ -52,6 +53,13 @@ def get_post_by_id(id):
 @bp.route("/posts", methods=["POST"])
 def create_post():
     host = request.json.get("external")
+    user_id = request.headers.get("UserIDHeader")
+    user = User.lookup(user_id)
+    community_id = request.json["parent"]
+    
+    if not user.is_admin(community_id):
+        return Response(status = 403)
+
     if host:
         federation.create_post(host, request.json)
     else:

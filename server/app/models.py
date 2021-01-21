@@ -33,9 +33,14 @@ class User(db.Model):
         except Exception:
             return []
 
-    @classmethod
     def is_admin(self, community_id):
-        return len(self.query.join(self.admin_communities).filter_by(id=community_id).all()) != 0
+        print(community_id)
+        print(self.admin_communities)
+
+        for community in self.admin_communities:
+            if community.id == community_id:
+                return True
+        return False
 
     @classmethod
     def lookup(cls, username):
@@ -59,6 +64,7 @@ class Community(db.Model):
     description = db.Column(db.String(1000))
     posts = db.relationship('Post', backref='community')
     administrators = db.relationship("User", secondary=community_administrators, backref='admin_communities')
+
 
 class Post(db.Model):
     id = db.Column(db.String(1000), primary_key=True, default=getUUID)
