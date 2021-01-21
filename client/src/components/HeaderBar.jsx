@@ -71,7 +71,7 @@ function HeaderBar() {
             </Nav>
 
             <Nav>
-              <HostContext.Consumer>
+              {/*<HostContext.Consumer>
                 {({host, setHost}) => (
                   <DropdownButton title={"Current Instance: " + (host ? host : "local")} className="mr-5">
                   {
@@ -81,7 +81,7 @@ function HeaderBar() {
                   }
                   </DropdownButton>
                 )}
-              </HostContext.Consumer>
+                </HostContext.Consumer>*/}
               
 
               <DropdownButton

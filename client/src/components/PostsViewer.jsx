@@ -19,7 +19,6 @@ class PostsViewer extends Component {
   }
 
   fetchPosts() {
-    
     fetch('/api/posts?community=' + this.state.currentCommunity + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
       .then(response => response.json())
       .then(data =>
@@ -91,7 +90,7 @@ class PostsViewer extends Component {
                           <Card.Body>
                             <Post postData={data} />
                             <Link
-                              to={`/moosfeed/comments/${id}`}
+                              to={this.state.host == "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
                               className="btn btn-primary stretched-link"
                             >
                               View Comments ({data.children.length})
