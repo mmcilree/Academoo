@@ -56,7 +56,7 @@ def create_post():
     user_id = request.headers.get("UserIDHeader")
     user = User.lookup(user_id)
     community_id = request.json["parent"]
-    
+
     if not user.is_admin(community_id):
         return Response(status = 403)
 

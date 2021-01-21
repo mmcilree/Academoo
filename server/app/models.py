@@ -33,6 +33,7 @@ class User(db.Model):
         except Exception:
             return []
 
+    # Replace with switch statement for the different roles
     def is_admin(self, community_id):
         print(community_id)
         print(self.admin_communities)
