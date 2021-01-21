@@ -3,6 +3,25 @@ from app.supergroup_protocol import bp
 from flask import jsonify, request, Response
 from app.models import User
 
+# User
+@bp.route("/users", methods=["GET"])
+def get_all_users():
+    external = request.args.get("external")
+
+    if not external:
+        return jsonify(actions.getUserIDs())
+    else:
+        return jsonify(federation.get_users(external))
+
+@bp.route("/users/<id>", methods=["GET"])
+def get_user_by_id(id):
+    external = request.args.get("external")
+
+    if not external:
+        return jsonify(actions.getUser(id))
+    else:
+        return jsonify(federation.get_users(external, id=id))        
+
 # Community
 @bp.route("/communities", methods=["GET"])
 def get_all_communities():
