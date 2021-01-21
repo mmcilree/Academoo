@@ -31,7 +31,6 @@ class PostsViewer extends Component {
   }
 
   fetchPosts() {
-
     fetch('/api/posts?community=' + this.state.currentCommunity + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
       .then(response => response.json())
       .then(data =>
@@ -58,7 +57,6 @@ class PostsViewer extends Component {
 
   render() {
     const { isLoading, posts, error, currentCommunity, newPostText, isAdmin, host } = this.state;
-    console.log(host);
     return currentCommunity && (
       <Card className="mt-4">
         <Card.Header className="pt-4 d-flex justify-content-between">
@@ -80,36 +78,37 @@ class PostsViewer extends Component {
                   className="mr-2"
                   onChange={this.handleChange.bind(this)} />
 
-              </Form.Group>
-              <Form.Group as={Col} xs={12} sm={6} md={5} lg={3}>
-                <Link to={
-                  {
-                    pathname: "/create-post",
-                    state: {
-                      body: newPostText,
-                      community: currentCommunity
-                    }
-                  }
-                }>
-                  <Button variant="outline-secondary" className="w-100" > <PlusCircle className="mb-1" /> New Moo</Button>
-                </Link>
-              </Form.Group>
-            </Form.Row>
-          </Form>
-          {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
-          {!isLoading ? (
-            posts.map(data => {
-              const { parent, id } = data;
-              return (
-                parent === currentCommunity ? (
-                  <Card key={id} className="mt-4">
-                    <Card.Body>
-                      <Post postData={data} />
-                      <Link
-                        to={`/moosfeed/comments/${id}`}
-                        className="btn btn-primary stretched-link"
-                      >
-                        View Comments ({data.children.length})
+                    </Form.Group>
+                    <Form.Group as={Col} xs={12} sm={6} md={5} lg={3}>
+                      <Link to={
+                        {
+                          pathname: "/create-post",
+                          state: {
+                            body: newPostText,
+                            community: currentCommunity,
+                            host: host
+                          }
+                        }
+                      }>
+                        <Button variant="outline-secondary" className="w-100" > <PlusCircle className="mb-1" /> New Moo</Button>
+                      </Link>
+                    </Form.Group>
+                  </Form.Row>
+                </Form>
+                {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
+                {!isLoading ? (
+                  posts.map(data => {
+                    const { parent, id } = data;
+                    return (
+                      parent === currentCommunity ? (
+                        <Card key={id} className="mt-4">
+                          <Card.Body>
+                            <Post postData={data} />
+                            <Link
+                              to={this.state.host == "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
+                              className="btn btn-primary stretched-link"
+                            >
+                              View Comments ({data.children.length})
                           </Link>
                     </Card.Body>
                   </Card>

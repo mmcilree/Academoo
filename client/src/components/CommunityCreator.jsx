@@ -1,12 +1,50 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
+import { Route } from 'react-router-dom';
 
 class CommunityCreator extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { id: "", title: "", description: "", administrators: "" };
+        this.state = {
+            id: "",
+            title: "",
+            description: "",
+            administrators: "",
+            errors: [],
+            communities: []
+        };
+    }
+    componentDidMount() {
+        this.fetchCommunities();
+    }
+    validateForm() {
+        const errors = [];
+        if (this.state.title.length === 0 ||
+            this.state.id.length === 0) {
+            errors.push("Required fields have been left blank.");
+            return errors;
+        }
+        if (this.state.administrators !== "" && !this.state.administrators.match(/[^,]+/)) {
+            errors.push("Administrators input is not a comma separated list.");
+            return errors;
+        }
+        if (this.state.communities.includes(this.state.id)) {
+            errors.push("A community already exists with that ID. Please modify it.");
+            return errors;
+        }
+
+        return errors;
+    }
+
+    fetchCommunities(host) {
+        fetch('/api/communities').then(response => response.json())
+            .then(data =>
+                this.setState({
+                    communities: data,
+                }))
     }
 
     handleChange(event) {
@@ -16,10 +54,30 @@ class CommunityCreator extends React.Component {
         this.setState({
             [name]: value
         });
+
+        if (name === "id") {
+            this.setState({
+                [name]: value.replace(/\s/g, '').replace(/\W/g, '').replace(/[0-9]/g, '')
+            });
+        }
+    }
+
+    handleNameChange(event) {
+        const target = event.target;
+        const value = target.value;
+        this.setState({
+            id: value.split(' ').join(''),
+            title: value
+        });
     }
 
     handleSubmit(event) {
         event.preventDefault();
+        const errors = this.validateForm();
+        if (errors.length > 0) {
+            this.setState({ errors });
+            return;
+        }
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -37,9 +95,11 @@ class CommunityCreator extends React.Component {
         this.setState(
             { id: "", title: "", description: "", administrators: "" }
         );
+        this.props.history.push('/explore');
     }
 
     render() {
+        const { errors } = this.state;
         return (
             <Card className="mt-4">
                 <Card.Header className="pt-4">
@@ -48,45 +108,53 @@ class CommunityCreator extends React.Component {
 
                 <Card.Body>
                     <Form onSubmit={this.handleSubmit.bind(this)}>
-                        <Form.Group controlId="createCommunityId">
-                            <Form.Label>Community Identifier</Form.Label>
+                        <Form.Group controlId="createCommunityTitle">
+                            <Form.Label>Community Name:</Form.Label>
                             <Form.Control type="input"
-                                placeholder="Community ID (e.g. 'cows')"
-                                name="id" 
-                                onChange={this.handleChange.bind(this)}
-                                value={this.state.id} />
+                                placeholder="Funny Cow Memes"
+                                name="title"
+                                onChange={this.handleNameChange.bind(this)}
+                                value={this.state.title} />
+                            <small className="form-text text-muted">Give your new community a name.</small>
                         </Form.Group>
 
-                        <Form.Group controlId="createCommunityTitle">
-                            <Form.Label>Title</Form.Label>
-                            <Form.Control type="input" 
-                                placeholder="Title (e.g. 'Funny Cow Memes')"
-                                name="title" 
+                        <Form.Group controlId="createCommunityId">
+                            <Form.Label>Community ID:</Form.Label>
+                            <Form.Control type="input"
+                                placeholder="FunnyCowMemes"
+                                name="id"
                                 onChange={this.handleChange.bind(this)}
-                                value={this.state.title} />
+                                value={this.state.id} />
+                            <small className="form-text text-muted">Community IDs have to be unique, and can't include spaces or non alphabetic characters.</small>
                         </Form.Group>
 
                         <Form.Group controlId="createCommunityDescription">
-                            <Form.Label>Description</Form.Label>
-                            <Form.Control as="textarea" 
+                            <Form.Label>Description:</Form.Label>
+                            <Form.Control as="textarea"
                                 name="description"
+                                placeholder="Moooo"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.description} />
+                            <small className="form-text text-muted">Tell everyone what your community is about!</small>
                         </Form.Group>
 
                         <Form.Group controlId="createCommunityAdministrators">
-                            <Form.Label>Administrators</Form.Label>
-                            <Form.Control as="textarea" 
-                                placeholder="Comma-separated emails" 
+                            <Form.Label>Administrators:</Form.Label>
+                            <Form.Control as="textarea"
+                                placeholder="Comma-separated usernames"
                                 name="administrators"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.administrators} />
+                            <small className="form-text text-muted">Who else should be in charge of this community?</small>
                         </Form.Group>
+                        {errors.map(error => (
+                            <Alert variant='warning' key={error}>{error}</Alert>
+                        ))}
 
-
-                        <Button variant="primary" type="submit">
-                            Create Community
-                        </Button>
+                        <Route render={({ history }) => (
+                            <Button variant="primary" type="submit">
+                                Create Community
+                            </Button>)} />
                     </Form>
                 </Card.Body>
             </Card>

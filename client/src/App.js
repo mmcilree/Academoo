@@ -13,7 +13,7 @@ import UserProfile from "./components/UserProfile";
 import PageNotFound from "./components/PageNotFound";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
-import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { PrivateRoute } from "./components/PrivateRoute";
 import { LoggedOutRoute } from "./components/LoggedOutRoute";
 import CommunityCreator from "./components/CommunityCreator";
@@ -44,7 +44,8 @@ class App extends React.Component {
                 <PrivateRoute exact path="/communities/:id/manage" component={CommunityManager} />
                 <PrivateRoute path="/communities/:instance/:id" component={PostsViewer} />
                 <PrivateRoute path="/create-post" component={PostCreator} />
-                <PrivateRoute path="/moosfeed/comments/:id" component={CommentsViewer} />
+                <PrivateRoute exact path="/comments/:id" component={CommentsViewer} />
+                <PrivateRoute path="/comments/:instance/:id" component={CommentsViewer} />
                 <PrivateRoute path="/user-settings" component={UserSettings} />
                 <PrivateRoute path="/user-profile" component={UserProfile} />
                 <PrivateRoute path="/explore" component={CommunityExplorer} />
