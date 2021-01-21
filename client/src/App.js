@@ -1,4 +1,5 @@
 import React from "react";
+import AccessForbidden from "./components/AccessForbidden";
 import PostCreator from "./components/PostCreator";
 import HeaderBar from "./components/HeaderBar";
 import Welcome from "./components/Welcome";
@@ -48,6 +49,7 @@ class App extends React.Component {
                 <PrivateRoute path="/user-profile" component={UserProfile} />
                 <PrivateRoute path="/explore" component={CommunityExplorer} />
                 <PrivateRoute path="/create-community" component={CommunityCreator} />
+                <PrivateRoute path="/forbidden" component={AccessForbidden} />
                 <LoggedOutRoute path="/login" component={Login} />
                 <LoggedOutRoute path="/sign-up" component={SignUp} />
                 <Route component={PageNotFound} />
