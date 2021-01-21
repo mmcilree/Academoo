@@ -27,7 +27,7 @@ def addAdmin(username, community_id):
 
     if not user.has_role(community_id, "admin"):
         community = db.session.query(Community).filter_by(id=community_id).first()
-        community.admins.append(user)
+        community.admin_users.append(user)
         db.session.commit()
         return True
 
@@ -52,7 +52,7 @@ def getCommunityIDs():
 
 def getCommunity(community_id):
     community = Community.query.filter_by(id = community_id).first()
-    community_dict = {"id": community.id, "title": community.title, "description": community.description, "admins": [{"id": admin.user_id, "host": admin.host} for admin in community.admins]}
+    community_dict = {"id": community.id, "title": community.title, "description": community.description, "admins": [{"id": admin.user_id, "host": admin.host} for admin in community.admin_users]}
     return community_dict
 
 def getAllCommunityPostsTimeModified(community_id):

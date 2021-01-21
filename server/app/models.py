@@ -16,7 +16,22 @@ community_administrators = db.Table('community_administrators',
     db.Column('community_id', db.String(1000), db.ForeignKey('community.id'))
     )
 
+community_contributors = db.Table('community_contributors',
+    db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
+    db.Column('community_id', db.String(1000), db.ForeignKey('community.id'))
+    )
+
+community_members = db.Table('community_members',
+    db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
+    db.Column('community_id', db.String(1000), db.ForeignKey('community.id'))
+    )
+
 community_guests = db.Table('community_guests',
+    db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
+    db.Column('community_id', db.String(1000), db.ForeignKey('community.id'))
+    )
+
+community_prohibited = db.Table('community_prohibited',
     db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
     db.Column('community_id', db.String(1000), db.ForeignKey('community.id'))
     )
@@ -30,7 +45,10 @@ class User(db.Model):
     email = db.Column(db.String(1000))
     password_hash = db.Column(db.String(128))
     admin_of = db.relationship('Community', secondary=community_administrators, backref='admin_users')
+    contributor_of = db.relationship('Community', secondary=community_contributors, backref='contributor_users')
+    member_of = db.relationship('Community', secondary=community_members, backref='member_users')
     guest_of = db.relationship('Community', secondary=community_guests, backref='guest_users')
+    prohibited_from = db.relationship('Community', secondary=community_prohibited, backref='prohibited_users')
 
     @property
     def rolenames(self):
@@ -39,16 +57,27 @@ class User(db.Model):
         except Exception:
             return []
 
-    # Replace with switch statement for the different roles
+    
     def has_role(self, community_id, role):
-        print(community_id)
-        print(self.admin_communities)
         role_communities = []
         
         if role == "admin":
             role_communities = self.admin_communities
+        elif role == "contributor":
+            role_communities.append(self.admin_communities)
+            role_communities.append(self.contributor_communities)
+        elif role == "member":
+            role_communities.append(self.admin_communities)
+            role_communities.append(self.contributor_communities)
+            role_communities.append(self.member_communities)
         elif role == "guest":
-            role_communities = self.guest_communities
+            role_communities.append(self.admin_communities)
+            role_communities.append(self.contributor_communities)
+            role_communities.append(self.member_communities)
+            role_communities.append(self.guest_communities)
+        elif role == "prohibited":
+            role_communities = self.prohibited_communities
+
                
         for community in role_communities:
             if community.id == community_id:
@@ -77,8 +106,11 @@ class Community(db.Model):
     description = db.Column(db.String(1000))
     posts = db.relationship('Post', backref='community')
     administrators = db.relationship("User", secondary=community_administrators, backref='admin_communities')
+    contributors = db.relationship("User", secondary=community_contributors, backref='contributor_communities')
+    members = db.relationship("User", secondary=community_members, backref='member_communities')
     guests = db.relationship("User", secondary=community_guests, backref='guest_communities')
-
+    prohibited = db.relationship("User", secondary=community_prohibited, backref='prohibited_communities')
+    default_role = db.Column(db.String(50), default="contributor", nullable=False)
 
 class Post(db.Model):
     id = db.Column(db.String(1000), primary_key=True, default=getUUID)
