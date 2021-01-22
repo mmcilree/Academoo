@@ -14,19 +14,9 @@ class Welcome extends React.Component {
           <Link to="/moosfeed" className="btn btn-secondary">
             Go to Moosfeed
           </Link>
-
-          <Button onClick={this.handleClick.bind(this)}>ADMIN ONLY!!!</Button>
         </Card.Body>
       </Card>
     );
-  }
-
-  handleClick(){
-    authFetch("/api/secret").then(response => response.json())
-    .then(data =>
-      console.log(data)
-    );
-
   }
 }
 
