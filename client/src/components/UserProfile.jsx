@@ -35,6 +35,7 @@ class UserProfile extends Component {
     return (
       <Card className="mt-4">
         <Card.Body>
+        
           <Media>
             <img
               width={150}
@@ -61,6 +62,7 @@ class UserProfile extends Component {
                         <Button variant="primary" type="submit" className>
                                 Update Bio
                             </Button>
+                            
         </Card.Body>
       </Card>
     );
