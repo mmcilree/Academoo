@@ -36,14 +36,16 @@ class SignUp extends React.Component {
     if (this.state.password !== this.state.passwordConfirm) {
       errors.push("Passwords do not match");
     }
-    if (!this.state.password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
+    if (!this.state.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*-])(?=.{8,})/)) {
       errors.push(
-        <p>Password should have:
+        <div>
+        <p>Password should have:</p>
           <ul> 
             <li> Minimum eight characters</li> 
-            <li> At least one number</li>
-          </ul>
-        </p>);
+            <li> At least one number.</li>
+            <li> At least one special character.</li>
+            <li> At least one capital letter.</li>
+          </ul></div>);
     }
 
     return errors;
