@@ -130,3 +130,16 @@ describe('SignUp form is invalid (email missing @ symbol)', () => {
         expect(signUpForm.state().errors).toContain("Email should contain the @ symbol.")
     });
 });
+
+describe('SignUp form is invalid (password insecure)', () => {
+    it.each`
+    username        | email                 | password
+    ${"banana"}     | ${"banana@gmail.com"} | ${"Test123"}
+    ${"userMcUser"} | ${"user@outlook.com"} | ${"aaaaaA$"}
+    ${"cheese"}     | ${"cheese@yahoo.com"} | ${"2BAAAAA£"}
+    ${"aaa"}          | ${"m@fb.com"} | ${"1sS&"}
+  `('for input [$username, $email, $password]', ({ username, email, password }) => {
+        setFormDataAndSubmit(email, username, password, password);
+        expect(signUpForm.state().errors).toHaveLength(1)
+    });
+});
