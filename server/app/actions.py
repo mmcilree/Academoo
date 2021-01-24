@@ -32,9 +32,16 @@ def addAdmin(username, community_id):
         return True
 
 def assignRole(host, user_id, community_id, role):
+    #TO-DO check if user already has a role in the community and update it?
     if(host == "local"):
         user = db.session.query(User).filter_by(user_id=user_id).first()
         community = db.session.query(Community).filter_by(id=community_id).first()
+
+        # if (user.has_role(community_id, "guest") & user.has_role(community_id, "prohibitor")):
+        #     for contrib in community.contributor_users:
+        #         if user.user_id == contrib.user_id :
+        #             db.session.delete(contrib)
+        
         if role == "admin" :
             community.admin_users.append(user)
         elif role == "contributor" :
@@ -47,6 +54,7 @@ def assignRole(host, user_id, community_id, role):
             community.prohibited_users.append(user)
         else :
             return False
+
         db.session.commit()
         return True
     else:

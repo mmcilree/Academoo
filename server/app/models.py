@@ -80,9 +80,8 @@ class User(db.Model):
 
                
         for list in role_communities:
-            print(role_communities)
-            for c in list:
-                if c.id == community_id:
+            for community in list:
+                if community.id == community_id:
                     return True
         return False        
 
