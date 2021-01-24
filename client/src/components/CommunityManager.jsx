@@ -18,10 +18,13 @@ class CommunityManager extends React.Component {
             currentCommunity: this.props.match.params.id,
             users: [],
             host: "local",
+            serverDropdown: "Select Server",
             selected: [{
                 user: ""
             }],
             instances: [],
+            roles: ["admin", "contributor", "general member", "guest", "banned"],
+            role: "",
         };
     }
 
@@ -65,6 +68,7 @@ class CommunityManager extends React.Component {
 
     handleHostChange(name) {
         this.setState({ host: name })
+        this.setState({ serverDropdown: name })
         if (this.state.host != "local") {
             this.fetchUsers(this.state.host);
         }
@@ -89,7 +93,7 @@ class CommunityManager extends React.Component {
                                         <InputGroup>
                                             <DropdownButton
                                                 variant="outline-secondary"
-                                                title="Select Server"
+                                                title={this.state.serverDropdown}
                                                 as={InputGroup.Prepend}>
 
                                                 {this.state.instances.map(name => {
@@ -124,7 +128,11 @@ class CommunityManager extends React.Component {
                                     <Form.Group as={Col} xs={12} sm={4} md={4} lg={4}>
                                         <DropdownButton
                                             variant="outline-secondary"
-                                            title="Select Role">
+                                            title={(this.state.role == "" ? "Select Role" : this.state.role)}>
+                                            {this.state.roles.map(role => {
+                                                return <Dropdown.Item key={role} onClick={() => this.setState({ role: role })}>{role}</Dropdown.Item>
+                                            })
+                                            }
                                         </DropdownButton>
                                     </Form.Group>
                                     <Form.Group as={Col} xs={2} sm={2} md={2} lg={2}>
@@ -133,7 +141,7 @@ class CommunityManager extends React.Component {
                                 </Form.Row>
                             </Form>
                         </Card.Body>
-                    </Card>
+                    </Card >
         )
     }
 }
