@@ -62,7 +62,7 @@ class User(db.Model):
         role_communities = []
         
         if role == "admin":
-            role_communities = self.admin_communities
+            role_communities.append(self.admin_communities)
         elif role == "contributor":
             role_communities.append(self.admin_communities)
             role_communities.append(self.contributor_communities)
@@ -76,12 +76,13 @@ class User(db.Model):
             role_communities.append(self.member_communities)
             role_communities.append(self.guest_communities)
         elif role == "prohibited":
-            role_communities = self.prohibited_communities
+            role_communities.append(self.prohibited_communities)
 
                
         for list in role_communities:
-            for community in list:
-                if community.id == community_id:
+            print(role_communities)
+            for c in list:
+                if c.id == community_id:
                     return True
         return False        
 

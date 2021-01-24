@@ -8,6 +8,17 @@ from flask_praetorian import current_user
 def index():
     return "Hello World!"
 
+@bp.route("/assign-role", methods=["POST"])
+def assign_role():
+    req = request.json
+    host = req["host"]
+    user_id = req["user"]
+    community_id = req["community"]
+    role = req["role"]
+    return Response(status=200) if actions.assignRole(host, user_id, community_id, role) else Response(status=400)
+
+
+
 @bp.route("/create-community", methods=["POST"])
 def create_community():
     req = request.json

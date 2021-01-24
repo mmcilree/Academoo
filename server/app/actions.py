@@ -31,6 +31,32 @@ def addAdmin(username, community_id):
         db.session.commit()
         return True
 
+def assignRole(host, user_id, community_id, role):
+    if(host == "local"):
+        user = db.session.query(User).filter_by(user_id=user_id).first()
+        community = db.session.query(Community).filter_by(id=community_id).first()
+        if role == "admin" :
+            community.admin_users.append(user)
+        elif role == "contributor" :
+            community.contributor_users.append(user)
+        elif role == "member" :
+            community.member_users.append(user)
+        elif role == "guest" :
+            community.guest_users.append(user)
+        elif role == "prohibited" :
+            community.prohibited_users.append(user)
+        else :
+            return False
+        db.session.commit()
+        return True
+    else:
+        #TO-DO: implement assigning a role to an external user
+        #(user_id should combine username and host)
+        return False
+    
+
+    
+
 def createUser(username, email, password):
     if db.session.query(User).filter_by(user_id=username).count() < 1 and db.session.query(User).filter_by(email=email).count() < 1:
         db.session.add(User(

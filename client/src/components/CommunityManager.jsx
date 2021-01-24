@@ -23,8 +23,9 @@ class CommunityManager extends React.Component {
                 user: ""
             }],
             instances: [],
-            roles: ["admin", "contributor", "general member", "guest", "banned"],
+            roles: ["admin", "contributor", "member", "guest", "prohibited"],
             role: "",
+            errors: [],
         };
     }
 
@@ -34,6 +35,15 @@ class CommunityManager extends React.Component {
         this.fetchUserDetails();
         this.fetchInstances();
         this.fetchUsers(this.state.host)
+    }
+
+    validateForm() {
+        const errors = [];
+        if (this.state.selected[0].user.length === 0 || this.state.role.length === 0) {
+            errors.push("Required fields have been left blank.");
+            return errors;
+        }
+        return errors;
     }
 
     fetchUserDetails() {
@@ -74,9 +84,33 @@ class CommunityManager extends React.Component {
         }
     }
 
+    handleSubmit(event) {
+        event.preventDefault();
+        const errors = this.validateForm();
+        if (errors.length > 0) {
+            this.setState({ errors });
+            return;
+        }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(
+                {
+                    host: this.state.host,
+                    user: this.state.selected[0].user,
+                    community: this.state.currentCommunity,
+                    role: this.state.role,
+                }
+            )
+        };
+
+        fetch('/api/assign-role', requestOptions);
+        this.setState(
+            { host: "local", serverDropdown: "Select Server", role: "", selected: [{ user: "" }] }
+        );
+    }
 
     render() {
-        console.log(this.state)
         return (
             this.state.isAdmin == null ? <h3> Loading... </h3> :
                 !this.state.isAdmin ? <Redirect to='/forbidden' /> :
@@ -86,7 +120,7 @@ class CommunityManager extends React.Component {
                         </Card.Header>
 
                         <Card.Body>
-                            <Form>
+                            <Form onSubmit={this.handleSubmit.bind(this)}>
                                 <Form.Label>Assign User Role</Form.Label>
                                 <Form.Row>
                                     <Form.Group as={Col} xs={12} sm={12} md={6} lg={6}>
@@ -136,7 +170,7 @@ class CommunityManager extends React.Component {
                                         </DropdownButton>
                                     </Form.Group>
                                     <Form.Group as={Col} xs={2} sm={2} md={2} lg={2}>
-                                        <Button><PlusCircle className="mb-1" /> Assign</Button>
+                                        <Button type="submit"><PlusCircle className="mb-1" /> Assign</Button>
                                     </Form.Group>
                                 </Form.Row>
                             </Form>
