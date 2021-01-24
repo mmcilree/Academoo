@@ -1,7 +1,7 @@
 from app import actions, federation
 from app.supergroup_protocol import bp
 from flask import jsonify, request, Response
-from app.models import User
+from app.models import User, Community
 
 # User
 @bp.route("/users", methods=["GET"])
@@ -76,8 +76,14 @@ def create_post():
     user = User.lookup(user_id)
     community_id = request.json["parent"]
 
-    if user.has_role(community_id, "guest"):
-        return Response(status = 403)
+    if user.has_no_role(community_id):
+        community = Community.lookup(community_id)
+        role = community.get_default_role(community_id)
+        if ((role != "contributor") & (role != "admin")):
+            return Response(status = 403)
+    else :
+        if not user.has_role(community_id, "contributor"):
+            return Response(status = 403)
 
     if host:
         federation.create_post(host, request.json)

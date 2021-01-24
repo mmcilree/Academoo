@@ -85,6 +85,20 @@ class User(db.Model):
                     return True
         return False        
 
+    def has_no_role(self, community_id):
+        role_communities = []
+        role_communities.append(self.admin_communities)
+        role_communities.append(self.contributor_communities)
+        role_communities.append(self.member_communities)
+        role_communities.append(self.guest_communities)
+        role_communities.append(self.prohibited_communities)
+
+        for list in role_communities:
+            for community in list:
+                if community.id == community_id:
+                    return False
+        return True
+
     @classmethod
     def lookup(cls, username):
         return cls.query.filter_by(user_id=username).one_or_none()
@@ -112,6 +126,18 @@ class Community(db.Model):
     guests = db.relationship("User", secondary=community_guests, backref='guest_communities')
     prohibited = db.relationship("User", secondary=community_prohibited, backref='prohibited_communities')
     default_role = db.Column(db.String(50), default="contributor", nullable=False)
+
+    @classmethod
+    def lookup(cls, id):
+        return cls.query.filter_by(id=id).one_or_none()
+
+    
+    def get_default_role(self, id):
+        return self.default_role
+        # community = self.query.filter_by(id=id).one_or_none()
+        # if(community != None):
+        #     return community.default_role
+
 
 class Post(db.Model):
     id = db.Column(db.String(1000), primary_key=True, default=getUUID)
