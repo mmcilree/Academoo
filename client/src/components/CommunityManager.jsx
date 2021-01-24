@@ -1,11 +1,12 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
 import DropdownButton from 'react-bootstrap/DropdownButton';
+import Dropdown from 'react-bootstrap/Dropdown';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import { authFetch } from '../auth';
 import { Redirect } from "react-router-dom";
-import { Typeahead } from 'react-bootstrap-typeahead';
+import { Typeahead, Menu, MenuItem } from 'react-bootstrap-typeahead';
 import { InputGroup, Col } from 'react-bootstrap';
 import { PlusCircle } from "react-bootstrap-icons";
 
@@ -16,15 +17,20 @@ class CommunityManager extends React.Component {
             isAdmin: null,
             currentCommunity: this.props.match.params.id,
             users: [],
+            host: "local",
             selected: [{
-                host: null,
                 user: ""
             }],
+            instances: [],
         };
     }
 
+
+
     componentDidMount() {
         this.fetchUserDetails();
+        this.fetchInstances();
+        this.fetchUsers(this.state.host)
     }
 
     fetchUserDetails() {
@@ -35,6 +41,35 @@ class CommunityManager extends React.Component {
                 })
             )
     }
+
+    async fetchInstances() {
+        await fetch("/api/get-instances")
+            .then(response => response.json())
+            .then(data =>
+                this.setState({
+                    instances: ["local", ...data],
+                })
+            )
+        // this.state.instances.map(host => (this.fetchCommunities(host)));
+    }
+
+    //currently fetches user list for specified host every time a host is selected
+    //TO-DO: Add local storage/caching of users 
+    async fetchUsers(host) {
+        await fetch('/api/users' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
+            .then(data =>
+                this.setState({
+                    users: [...this.state.users, ...data.map(user => ({ host: host, user: user }))],
+                }))
+    }
+
+    handleHostChange(name) {
+        this.setState({ host: name })
+        if (this.state.host != "local") {
+            this.fetchUsers(this.state.host);
+        }
+    }
+
 
     render() {
         console.log(this.state)
@@ -57,8 +92,32 @@ class CommunityManager extends React.Component {
                                                 title="Select Server"
                                                 as={InputGroup.Prepend}>
 
+                                                {this.state.instances.map(name => {
+                                                    return <Dropdown.Item key={name} onClick={() => this.handleHostChange(name)}>{name}</Dropdown.Item>
+                                                })
+                                                }
                                             </DropdownButton>
                                             <Typeahead
+                                                labelKey={option => `${option.user}`}
+                                                id="user-choice"
+                                                renderMenu={(results, menuProps) => (
+                                                    <Menu {...menuProps} maxHeight="500%">
+                                                        {results.map((result, index) => (
+                                                            <MenuItem option={result} position={index} key={index}>
+                                                                {/* <small className="text-muted">{result.host + ":  "}</small> */}
+                                                                {result.user}
+
+                                                            </MenuItem>
+                                                        ))}
+                                                    </Menu>
+                                                )}
+
+                                                onChange={(selected) => {
+                                                    this.setState({ selected: selected })
+                                                }}
+
+                                                options={this.state.users}
+                                                selected={this.state.selected}
                                             />
                                         </InputGroup>
                                     </Form.Group>
