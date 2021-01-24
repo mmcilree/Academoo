@@ -60,7 +60,6 @@ function HeaderBar() {
 
             <Nav>
               
-s
               <DropdownButton
                 // as={Link}
                 // to="/user-profile"

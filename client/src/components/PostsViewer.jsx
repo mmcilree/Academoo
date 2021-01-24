@@ -87,8 +87,8 @@ class PostsViewer extends Component {
                     return (
                       parent === currentCommunity ? (
                         <Card key={id} className="mt-4">
-                          <Card.Body>
-                            <Post postData={data} />
+                          <Card.Body >
+                            <Post postData={data} postType="preview"/>
                             <Link
                               to={this.state.host == "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
                               className="btn btn-primary stretched-link"

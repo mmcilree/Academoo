@@ -17,6 +17,7 @@ class Post extends Component {
         <ContentTypeComponent
           contentType={this.props.postData.contentType}
           body={this.props.postData.body}
+          postType = {this.props.postType}
         />
       </React.Fragment>
     );
@@ -25,11 +26,17 @@ class Post extends Component {
 
 export default Post;
 
-const ContentTypeComponent = ({ contentType, body }) => {
+const ContentTypeComponent = ({ contentType, body, postType }) => {
   switch (contentType) {
     case "text":
-      return <Card.Text>{body}</Card.Text>;
+      return postType == "preview" ? 
+        <Card.Text style={{
+          whiteSpace: "nowrap",
+          maxHeight: "10vh", overflow: "hidden", textOverflow: "ellipsis"}}>{body} 
+        </Card.Text>
+           :
+        <Card.Text >{body}</Card.Text>
     default:
-      return <Card.Text>{body}</Card.Text>;
+      return <Card.Text>{body}</Card.Text>
   }
 };
