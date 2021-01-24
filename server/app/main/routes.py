@@ -17,7 +17,12 @@ def assign_role():
     role = req["role"]
     return Response(status=200) if actions.assignRole(host, user_id, community_id, role) else Response(status=400)
 
-
+@bp.route("/set-default-role", methods=["POST"])
+def set_default_role():
+    req = request.json
+    default_role = req["role"]
+    community_id = req["community"]
+    return Response(status=200) if actions.setDefaultRole(default_role, community_id) else Response(status=400)    
 
 @bp.route("/create-community", methods=["POST"])
 def create_community():

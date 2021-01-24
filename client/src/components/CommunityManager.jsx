@@ -25,6 +25,7 @@ class CommunityManager extends React.Component {
             instances: [],
             roles: ["admin", "contributor", "member", "guest", "prohibited"],
             role: "",
+            defaultRole: "",
             errors: [],
         };
     }
@@ -37,9 +38,18 @@ class CommunityManager extends React.Component {
         this.fetchUsers(this.state.host)
     }
 
-    validateForm() {
+    validateUserRolesForm() {
         const errors = [];
         if (this.state.selected[0].user.length === 0 || this.state.role.length === 0) {
+            errors.push("Required fields have been left blank.");
+            return errors;
+        }
+        return errors;
+    }
+
+    validateDefaultRoleForm() {
+        const errors = [];
+        if (this.state.defaultRole.length === 0) {
             errors.push("Required fields have been left blank.");
             return errors;
         }
@@ -86,7 +96,7 @@ class CommunityManager extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        const errors = this.validateForm();
+        const errors = this.validateUserRolesForm();
         if (errors.length > 0) {
             this.setState({ errors });
             return;
@@ -110,70 +120,113 @@ class CommunityManager extends React.Component {
         );
     }
 
+    handleDefRoleSubmit(event) {
+        event.preventDefault();
+        const errors = this.validateDefaultRoleForm();
+        if (errors.length > 0) {
+            this.setState({ errors });
+            return;
+        }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(
+                {
+                    role: this.state.defaultRole,
+                    community: this.state.currentCommunity,
+                }
+            )
+        };
+        fetch('/api/set-default-role', requestOptions);
+        this.setState(
+            { defaultRole: "" }
+        );
+    }
+
     render() {
         return (
             this.state.isAdmin == null ? <h3> Loading... </h3> :
                 !this.state.isAdmin ? <Redirect to='/forbidden' /> :
                     <Card className="mt-4">
                         <Card.Header className="pt-4">
-                            <Card.Title>Manage your community</Card.Title>
+                            <Card.Title>Manage your community: {this.state.currentCommunity}</Card.Title>
                         </Card.Header>
-
                         <Card.Body>
-                            <Form onSubmit={this.handleSubmit.bind(this)}>
-                                <Form.Label>Assign User Role</Form.Label>
-                                <Form.Row>
-                                    <Form.Group as={Col} xs={12} sm={12} md={6} lg={6}>
-                                        <InputGroup>
-                                            <DropdownButton
-                                                variant="outline-secondary"
-                                                title={this.state.serverDropdown}
-                                                as={InputGroup.Prepend}>
+                            <Card className="mt-4">
+                                <Card.Body>
+                                    <Card.Title>Assign User Role</Card.Title>
+                                    <Form onSubmit={this.handleSubmit.bind(this)}>
+                                        {/* <Form.Label>Assign User Role</Form.Label> */}
+                                        <Form.Row>
+                                            <Form.Group as={Col} xs={12} sm={12} md={6} lg={6}>
+                                                <InputGroup>
+                                                    <DropdownButton
+                                                        variant="outline-secondary"
+                                                        title={this.state.serverDropdown}
+                                                        as={InputGroup.Prepend}>
 
-                                                {this.state.instances.map(name => {
-                                                    return <Dropdown.Item key={name} onClick={() => this.handleHostChange(name)}>{name}</Dropdown.Item>
-                                                })
-                                                }
-                                            </DropdownButton>
-                                            <Typeahead
-                                                labelKey={option => `${option.user}`}
-                                                id="user-choice"
-                                                renderMenu={(results, menuProps) => (
-                                                    <Menu {...menuProps} maxHeight="500%">
-                                                        {results.map((result, index) => (
-                                                            <MenuItem option={result} position={index} key={index}>
-                                                                {/* <small className="text-muted">{result.host + ":  "}</small> */}
-                                                                {result.user}
+                                                        {this.state.instances.map(name => {
+                                                            return <Dropdown.Item key={name} onClick={() => this.handleHostChange(name)}>{name}</Dropdown.Item>
+                                                        })
+                                                        }
+                                                    </DropdownButton>
+                                                    <Typeahead
+                                                        labelKey={option => `${option.user}`}
+                                                        id="user-choice"
+                                                        renderMenu={(results, menuProps) => (
+                                                            <Menu {...menuProps} maxHeight="500%">
+                                                                {results.map((result, index) => (
+                                                                    <MenuItem option={result} position={index} key={index}>
+                                                                        {/* <small className="text-muted">{result.host + ":  "}</small> */}
+                                                                        {result.user}
 
-                                                            </MenuItem>
-                                                        ))}
-                                                    </Menu>
-                                                )}
+                                                                    </MenuItem>
+                                                                ))}
+                                                            </Menu>
+                                                        )}
 
-                                                onChange={(selected) => {
-                                                    this.setState({ selected: selected })
-                                                }}
+                                                        onChange={(selected) => {
+                                                            this.setState({ selected: selected })
+                                                        }}
 
-                                                options={this.state.users}
-                                                selected={this.state.selected}
-                                            />
-                                        </InputGroup>
-                                    </Form.Group>
-                                    <Form.Group as={Col} xs={12} sm={4} md={4} lg={4}>
+                                                        options={this.state.users}
+                                                        selected={this.state.selected}
+                                                    />
+                                                </InputGroup>
+                                            </Form.Group>
+                                            <Form.Group as={Col} xs={12} sm={4} md={4} lg={4}>
+                                                <DropdownButton
+                                                    variant="outline-secondary"
+                                                    title={(this.state.role == "" ? "Select Role" : this.state.role)}>
+                                                    {this.state.roles.map(role => {
+                                                        return <Dropdown.Item key={role} onClick={() => this.setState({ role: role })}>{role}</Dropdown.Item>
+                                                    })
+                                                    }
+                                                </DropdownButton>
+                                            </Form.Group>
+                                            <Form.Group as={Col} xs={2} sm={2} md={2} lg={2}>
+                                                <Button type="submit"><PlusCircle className="mb-1" /> Assign</Button>
+                                            </Form.Group>
+                                        </Form.Row>
+                                    </Form>
+                                </Card.Body>
+                            </Card>
+                            <Card className="mt-4">
+                                <Card.Body>
+                                    <Card.Title>Set Default Role</Card.Title>
+                                    <Form onSubmit={this.handleDefRoleSubmit.bind(this)}>
                                         <DropdownButton
                                             variant="outline-secondary"
                                             title={(this.state.role == "" ? "Select Role" : this.state.role)}>
                                             {this.state.roles.map(role => {
-                                                return <Dropdown.Item key={role} onClick={() => this.setState({ role: role })}>{role}</Dropdown.Item>
+                                                return <Dropdown.Item key={role} onClick={() => this.setState({ defaultRole: role })}>{role}</Dropdown.Item>
                                             })
                                             }
                                         </DropdownButton>
-                                    </Form.Group>
-                                    <Form.Group as={Col} xs={2} sm={2} md={2} lg={2}>
-                                        <Button type="submit"><PlusCircle className="mb-1" /> Assign</Button>
-                                    </Form.Group>
-                                </Form.Row>
-                            </Form>
+                                        <Button type="submit">Set default role</Button>
+                                    </Form>
+                                </Card.Body>
+                            </Card>
                         </Card.Body>
                     </Card >
         )

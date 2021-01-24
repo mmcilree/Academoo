@@ -31,6 +31,11 @@ def addAdmin(username, community_id):
         db.session.commit()
         return True
 
+def setDefaultRole(default_role, community_id):
+    community = db.session.query(Community).filter_by(id=community_id).first()
+    community.default_role = default_role
+    db.session.commit()
+
 def assignRole(host, user_id, community_id, role):
     #TO-DO check if user already has a role in the community and update it?
     if(host == "local"):
