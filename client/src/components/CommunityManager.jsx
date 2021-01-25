@@ -27,7 +27,7 @@ class CommunityManager extends React.Component {
             roles: ["admin", "contributor", "member", "guest", "prohibited"],
             role: "",
             defaultRole: "",
-            currentDefaultRole: "blah",
+            currentDefaultRole: "",
             errors: [],
         };
     }
