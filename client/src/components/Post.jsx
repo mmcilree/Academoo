@@ -8,7 +8,7 @@ class Post extends Component {
     return (
       <React.Fragment>
         <Card.Subtitle className="text-muted mb-2" style={{ fontSize: 12 }}>
-          <b>{this.props.postData.author.id}</b> from{" "}
+          {this.props.postData.author.id} from{" "}
           {this.props.postData.author.host}
           {" · "} {timeSince(this.props.postData.created)} ago
         </Card.Subtitle>
@@ -29,19 +29,16 @@ export default Post;
 const ContentTypeComponent = ({ contentType, body, postType }) => {
   const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
   const IMG_SUFFIX_REGEX = /\.(gif|jpe?g|tiff?|png|webp|bmp)$/i;
-  const imageURLs = body.split(" ").filter(part =>
+  const imageURLs = body.split(/\s+/).filter(part =>
     URL_REGEX.test(part) && IMG_SUFFIX_REGEX.test(part));
 
-
-  const renderText = body.split(" ").map(part =>
+  const renderText = body.split(/\s+/).map(part =>
     URL_REGEX.test(part) ?
       IMG_SUFFIX_REGEX.test(part) ?
-        null :
-        <Card.Link class="text-primary" href={part}>{part} </Card.Link>
+        "" :
+        <Card.Link className="text-primary" href={part}>{part} </Card.Link>
       : part + " ");
-
-
-  console.log(renderText);
+  
   switch (contentType) {
     case "text":
       return postType == "preview" ?

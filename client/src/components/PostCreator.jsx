@@ -116,10 +116,13 @@ class PostCreator extends React.Component {
         requestOptions.body = JSON.stringify(requestOptions.body);
 
         fetch('/api/posts', requestOptions);
+        const community = this.state.selected[0].community;
+        const host = this.state.selected[0].host;
+
         this.setState(
             { email: "", selected: [{community: null, host: null}], title: "", body: "" }
         );
-        this.props.history.push('/moosfeed');
+        this.props.history.push('/communities' + (host !== "local" ? ("/" + host) : " ") + "/" + community);
     }
 
     render() {
