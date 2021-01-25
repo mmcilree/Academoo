@@ -27,6 +27,7 @@ class CommunityManager extends React.Component {
             roles: ["admin", "contributor", "member", "guest", "prohibited"],
             role: "",
             defaultRole: "",
+            currentDefaultRole: "blah",
             errors: [],
         };
     }
@@ -35,6 +36,7 @@ class CommunityManager extends React.Component {
         this.fetchUserDetails();
         this.fetchInstances();
         this.fetchUsers(this.state.host)
+        this.fetchDefaultRole();
     }
 
     validateUserRolesForm() {
@@ -64,6 +66,15 @@ class CommunityManager extends React.Component {
             )
     }
 
+    fetchDefaultRole() {
+        authFetch("/api/get-default-role/" + this.state.currentCommunity).then(response => response.json())
+            .then(data =>
+                this.setState({
+                    currentDefaultRole: data.default_role
+                }))
+
+    }
+
     async fetchInstances() {
         await fetch("/api/get-instances")
             .then(response => response.json())
@@ -81,16 +92,14 @@ class CommunityManager extends React.Component {
         await fetch('/api/users' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
             .then(data =>
                 this.setState({
-                    users: [...this.state.users, ...data.map(user => ({ host: host, user: user }))],
+                    users: [...data.map(user => ({ host: host, user: user }))],
                 }))
     }
 
     handleHostChange(name) {
         this.setState({ host: name })
         this.setState({ serverDropdown: name })
-        if (this.state.host != "local") {
-            this.fetchUsers(this.state.host);
-        }
+        this.fetchUsers(name);
     }
 
     handleSubmit(event) {
@@ -140,6 +149,7 @@ class CommunityManager extends React.Component {
         this.setState(
             { defaultRole: "" }
         );
+        this.fetchDefaultRole();
     }
 
     render() {
@@ -221,7 +231,7 @@ class CommunityManager extends React.Component {
                                                     title={(this.state.defaultRole == "" ? "Select Role" : this.state.defaultRole)}
                                                 >
                                                     {this.state.roles.map(role => {
-                                                        return <Dropdown.Item key={role} onClick={() => this.setState({ defaultRole: role })}>{role}</Dropdown.Item>
+                                                        return <Dropdown.Item key={role} onClick={() => this.setState({ defaultRole: role })}>{(role === this.state.currentDefaultRole ? "current default: " + role : role)}</Dropdown.Item>
                                                     })
                                                     }
                                                 </DropdownButton>
