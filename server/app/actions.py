@@ -94,6 +94,18 @@ def getUser(user_id):
     user_dict = {"id": user.user_id, "posts": []}
     return user_dict
 
+def getUserRoles(community_id):
+    community = Community.query.filter_by(id = community_id).first()
+    user_dict = {
+        "admins": [admin.user_id for admin in community.admin_users],
+        "contributors": [contributor.user_id for contributor in community.contributor_users],
+        "members": [member.user_id for member in community.member_users],
+        "guests": [guest.user_id for guest in community.guest_users],
+        "prohibited": [prohib.user_id for prohib in community.prohibited_users]
+    }
+    return user_dict
+
+
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]
     return ids

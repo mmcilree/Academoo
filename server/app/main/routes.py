@@ -24,6 +24,10 @@ def set_default_role():
     community_id = req["community"]
     return Response(status=200) if actions.setDefaultRole(default_role, community_id) else Response(status=400)    
 
+@bp.route("/get-community-roles/<id>", methods=["GET"])
+def get_user_roles(id):
+    return jsonify(actions.getUserRoles(id))
+
 @bp.route("/create-community", methods=["POST"])
 def create_community():
     req = request.json

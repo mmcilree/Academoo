@@ -1,14 +1,15 @@
 import React from 'react';
+import UserRolesTable from './UserRolesTable'
 import Form from 'react-bootstrap/Form';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import { authFetch } from '../auth';
-import { Redirect } from "react-router-dom";
+import { Redirect } from 'react-router-dom';
 import { Typeahead, Menu, MenuItem } from 'react-bootstrap-typeahead';
 import { InputGroup, Col } from 'react-bootstrap';
-import { PlusCircle } from "react-bootstrap-icons";
+import { PlusCircle } from 'react-bootstrap-icons';
 
 class CommunityManager extends React.Component {
     constructor(props) {
@@ -29,8 +30,6 @@ class CommunityManager extends React.Component {
             errors: [],
         };
     }
-
-
 
     componentDidMount() {
         this.fetchUserDetails();
@@ -158,7 +157,7 @@ class CommunityManager extends React.Component {
                                     <Form onSubmit={this.handleSubmit.bind(this)}>
                                         {/* <Form.Label>Assign User Role</Form.Label> */}
                                         <Form.Row>
-                                            <Form.Group as={Col} xs={12} sm={12} md={6} lg={6}>
+                                            <Form.Group as={Col} xs={12} sm={12} md={12} lg={6}>
                                                 <InputGroup>
                                                     <DropdownButton
                                                         variant="outline-secondary"
@@ -194,7 +193,7 @@ class CommunityManager extends React.Component {
                                                     />
                                                 </InputGroup>
                                             </Form.Group>
-                                            <Form.Group as={Col} xs={12} sm={4} md={4} lg={4}>
+                                            <Form.Group as={Col} xs={12} sm={6} md={7} lg={4}>
                                                 <DropdownButton
                                                     variant="outline-secondary"
                                                     title={(this.state.role == "" ? "Select Role" : this.state.role)}>
@@ -204,7 +203,7 @@ class CommunityManager extends React.Component {
                                                     }
                                                 </DropdownButton>
                                             </Form.Group>
-                                            <Form.Group as={Col} xs={2} sm={2} md={2} lg={2}>
+                                            <Form.Group as={Col} xs={12} sm={6} md={5} lg={2}>
                                                 <Button type="submit"><PlusCircle className="mb-1" /> Assign</Button>
                                             </Form.Group>
                                         </Form.Row>
@@ -215,16 +214,29 @@ class CommunityManager extends React.Component {
                                 <Card.Body>
                                     <Card.Title>Set Default Role</Card.Title>
                                     <Form onSubmit={this.handleDefRoleSubmit.bind(this)}>
-                                        <DropdownButton
-                                            variant="outline-secondary"
-                                            title={(this.state.role == "" ? "Select Role" : this.state.role)}>
-                                            {this.state.roles.map(role => {
-                                                return <Dropdown.Item key={role} onClick={() => this.setState({ defaultRole: role })}>{role}</Dropdown.Item>
-                                            })
-                                            }
-                                        </DropdownButton>
-                                        <Button type="submit">Set default role</Button>
+                                        <Form.Row>
+                                            <Form.Group as={Col} xs={12} sm={4}>
+                                                <DropdownButton
+                                                    variant="outline-secondary"
+                                                    title={(this.state.defaultRole == "" ? "Select Role" : this.state.defaultRole)}
+                                                >
+                                                    {this.state.roles.map(role => {
+                                                        return <Dropdown.Item key={role} onClick={() => this.setState({ defaultRole: role })}>{role}</Dropdown.Item>
+                                                    })
+                                                    }
+                                                </DropdownButton>
+                                            </Form.Group>
+                                            <Form.Group as={Col} xs={10} sm={8}>
+                                                <Button type="submit">Set default role</Button>
+                                            </Form.Group>
+                                        </Form.Row>
                                     </Form>
+                                </Card.Body>
+                            </Card>
+                            <Card className="mt-4">
+                                <Card.Body>
+                                    <Card.Title>Users Assigned Roles</Card.Title>
+                                    <UserRolesTable community_id={this.state.currentCommunity} />
                                 </Card.Body>
                             </Card>
                         </Card.Body>
