@@ -1,3 +1,4 @@
+import re
 from flask_praetorian.decorators import auth_required
 from app import actions, federation
 from app.main import bp
@@ -17,6 +18,16 @@ def create_community():
     admins = request.json["admins"].replace(" ", "").split(",")
 
     return Response(status=200) if actions.createCommunity(id, title, description, admins) else Response(status=400)
+
+@bp.route("/change-password", methods=["POST"])
+@auth_required
+def change_password():
+    req = request.json
+    username = current_user().user_id
+    old_password = req["old_password"]
+    new_password = req["new_password"]
+
+    return Response(status=200) if actions.changePassword(username, old_password, new_password) else Response(status=400)
 
 @bp.route("/get-user")
 @auth_required
