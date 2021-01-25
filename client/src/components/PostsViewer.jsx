@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Post from "./Post";
-import { Card, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
+import { Card, Col, Form, FormControl, Button, Alert, OverlayTrigger, Popover } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { PlusCircle } from "react-bootstrap-icons";
 
@@ -17,7 +17,7 @@ class PostsViewer extends Component {
 
   componentDidMount() {
     this.fetchPosts();
-    
+
   }
 
   async fetchPosts() {
@@ -30,7 +30,7 @@ class PostsViewer extends Component {
         })
       )
       .catch(error => this.setState({ error, isLoading: false }));
-      this.fetchCommunityDetails();
+    this.fetchCommunityDetails();
   }
 
   handleChange(event) {
@@ -59,12 +59,26 @@ class PostsViewer extends Component {
 
   render() {
     const { isLoading, posts, error, currentCommunity, newPostText, host, communityData } = this.state;
+    const popover = (
+      <Popover id="popover-basic">
+        <Popover.Title as="h3">Community description</Popover.Title>
+        <Popover.Content>
+          {!isLoading && communityData.description}
+        </Popover.Content>
+      </Popover>
+    );
 
     return currentCommunity && (
-      <Card className="mt-4">
+      <Card className="mt-4 mb-10">
         <Card.Header className="pt-4">
-          {!isLoading ? <Card.Title ><h1>{communityData.title}</h1></Card.Title> : <h2> Loading... </h2>}
-          <Card.Subtitle className="text-muted">{host + "/" + currentCommunity}</Card.Subtitle>
+          {!isLoading ?
+            <Card.Title className="d-flex justify-content-right">
+              <OverlayTrigger trigger="click" placement="right" overlay={popover}>
+                <Card.Link>{communityData.title}
+                </Card.Link></OverlayTrigger>
+            </Card.Title>
+            : <h2> Loading... </h2>}
+          <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>
         </Card.Header>
         <Card.Body>
           <Form onSubmit={this.handleSubmit.bind(this)}>
@@ -117,6 +131,7 @@ class PostsViewer extends Component {
               <h3>Loading Posts...</h3>
             )}
           {!isLoading && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
+
         </Card.Body>
       </Card>
     );
