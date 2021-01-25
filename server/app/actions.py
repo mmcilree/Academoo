@@ -37,6 +37,12 @@ def setDefaultRole(default_role, community_id):
     db.session.commit()
     return True
 
+
+def getDefaultRole(community_id):
+    community = Community.query.filter_by(id = community_id).first()
+    community_dict = {"default_role": community.default_role}
+    return community_dict
+
 def assignRole(host, user_id, community_id, role):
     #TO-DO check if user already has a role in the community and update it?
     if(host == "local"):
@@ -68,10 +74,7 @@ def assignRole(host, user_id, community_id, role):
         #(user_id should combine username and host)
         
         return False
-    
-
-    
-
+  
 def createUser(username, email, password):
     if db.session.query(User).filter_by(user_id=username).count() < 1 and db.session.query(User).filter_by(email=email).count() < 1:
         db.session.add(User(
@@ -111,11 +114,6 @@ def getRoles(community_id):
         "prohibited": [prohib.user_id for prohib in community.prohibited_users]
     }
     return user_dict
-
-# def getDefaultRole(community_id):
-#     community = Community.query.filter_by(id = community_id).first()
-#     community_dict = {"default_role": community.default_role}
-#     return community_dict
 
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]
