@@ -35,6 +35,7 @@ def setDefaultRole(default_role, community_id):
     community = db.session.query(Community).filter_by(id=community_id).first()
     community.default_role = default_role
     db.session.commit()
+    return True
 
 def assignRole(host, user_id, community_id, role):
     #TO-DO check if user already has a role in the community and update it?
@@ -65,6 +66,7 @@ def assignRole(host, user_id, community_id, role):
     else:
         #TO-DO: implement assigning a role to an external user
         #(user_id should combine username and host)
+        
         return False
     
 
@@ -94,7 +96,12 @@ def getUser(user_id):
     user_dict = {"id": user.user_id, "posts": []}
     return user_dict
 
-def getUserRoles(community_id):
+def getUser(user_id):
+    user = User.query.filter_by(user_id = user_id).first()
+    user_dict = {"id": user.user_id, "posts": []}
+    return user_dict
+
+def getRoles(community_id):
     community = Community.query.filter_by(id = community_id).first()
     user_dict = {
         "admins": [admin.user_id for admin in community.admin_users],
@@ -105,6 +112,10 @@ def getUserRoles(community_id):
     }
     return user_dict
 
+# def getDefaultRole(community_id):
+#     community = Community.query.filter_by(id = community_id).first()
+#     community_dict = {"default_role": community.default_role}
+#     return community_dict
 
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]
