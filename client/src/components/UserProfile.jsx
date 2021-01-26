@@ -4,6 +4,7 @@ import defaultProfile from "../images/default_profile.png";
 import { authFetch } from '../auth';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+var md5 = require("md5");
 
 class UserProfile extends Component {
   constructor(props) {
@@ -66,6 +67,7 @@ class UserProfile extends Component {
   }
 
   render() {
+    const emailHash = !this.state.isLoading && md5(this.state.email)
     return (
       <Card className="mt-4">
         <Card.Body>
@@ -74,8 +76,8 @@ class UserProfile extends Component {
             <img
               width={150}
               height={150}
-              className="mr-3 rounded-circle border border-primary"
-              src={defaultProfile}
+              className="mr-5 mb-3 rounded-circle border border-primary"
+              src={"https://en.gravatar.com/avatar/" + emailHash}
               alt="Profile image placeholder"
             />
             {!this.state.isLoading ? (

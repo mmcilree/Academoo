@@ -11,6 +11,8 @@ import logo from "../images/logo.svg";
 // import logo from "../images/logo.png";
 import { HostContext } from './HostContext';
 import { useState, useEffect, useContext } from "react";
+import { authFetch } from '../auth';
+
 
 import {
   PlusCircle,
@@ -21,9 +23,12 @@ import {
 
 import { Link } from "react-router-dom";
 
+var md5 = require("md5");
+
 function HeaderBar() {
   const [logged] = useAuth();
   const [instances, setInstances] = useState(null);
+  const [email, setEmail] = useState(null);
 
   const context = useContext(HostContext);
 
@@ -31,10 +36,20 @@ function HeaderBar() {
     async function fetchData() {
       const res = await fetch("/api/get-instances");
       res.json().then(res => setInstances(["local", ...res]));
+
+      
+        logged && authFetch("/api/get-user").then(response => response.json())
+          .then(data =>
+            setEmail(md5(data.email))
+          )
+          
+      
+
     }
 
     fetchData();
   }, []);
+
 
   return (
     <Navbar bg="primary" variant="dark" expand="lg" {...(!logged ? {className: 'justify-content-center'} : {})}>
@@ -92,7 +107,7 @@ function HeaderBar() {
                   <span>
                     <Image
                       className="mr-3"
-                      src={defaultProfile}
+                      src={"https://en.gravatar.com/avatar/" + email}
                       roundedCircle
                       width="25"
                       height="25"
