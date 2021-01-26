@@ -122,7 +122,7 @@ class PostCreator extends React.Component {
         this.setState(
             { email: "", selected: [{community: null, host: null}], title: "", body: "" }
         );
-        this.props.history.push('/communities' + (host !== "local" ? ("/" + host) : " ") + "/" + community);
+        this.props.history.push('/communities' + (host !== "local" ? ("/" + host) : "") + "/" + community);
     }
 
     render() {
