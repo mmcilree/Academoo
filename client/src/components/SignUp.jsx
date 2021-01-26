@@ -26,24 +26,26 @@ class SignUp extends React.Component {
         return errors;
       }
     if (this.state.username.length < 3) {
-      errors.push("Username must be at least 3 characters");
+      errors.push("Username must be at least 3 characters.");
     }
 
     if (this.state.email.split("").filter(x => x === "@").length !== 1) {
-      errors.push("Email should contain the @ symbol");
+      errors.push("Email should contain the @ symbol.");
     }
 
     if (this.state.password !== this.state.passwordConfirm) {
-      errors.push("Passwords do not match");
+      errors.push("Passwords do not match.");
     }
-    if (!this.state.password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
+    if (!this.state.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\-£])(?=.{8,})/)) {
       errors.push(
-        <p>Password should have:
+        <div>
+        <p>Password should have:</p>
           <ul> 
             <li> Minimum eight characters</li> 
-            <li> At least one number</li>
-          </ul>
-        </p>);
+            <li> At least one number.</li>
+            <li> At least one special character.</li>
+            <li> At least one capital letter.</li>
+          </ul></div>);
     }
 
     return errors;
@@ -150,14 +152,13 @@ class SignUp extends React.Component {
               {errors.map(error => (
                 <Alert variant='warning' key={error}>{error}</Alert>
               ))}
-              <Route render={({ history }) => (
+            
                 <Button
                   type='submit'
                   onClick={this.handleSubmit.bind(this)}
                 >
                   Register now
                 </Button>
-              )} />
               <Link to="/login" className="btn btn-link">
                 Already signed up?
               </Link>
