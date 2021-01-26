@@ -12,7 +12,7 @@ class Post extends Component {
           {this.props.postData.author.host}
           {" · "} {timeSince(this.props.postData.created)} ago
         </Card.Subtitle>
-        <Card.Title><b>{this.props.postData.title}</b></Card.Title>
+        <Card.Title>{this.props.postData.title}</Card.Title>
 
         <ContentTypeComponent
           contentType={this.props.postData.contentType}

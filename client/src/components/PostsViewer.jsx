@@ -73,9 +73,9 @@ class PostsViewer extends Component {
         <Card.Header className="pt-4">
           {!isLoading ?
             <Card.Title className="d-flex justify-content-right">
-              <OverlayTrigger trigger="click" placement="right" overlay={popover}>
-                <Card.Link>{communityData.title}
-                </Card.Link></OverlayTrigger>
+              <OverlayTrigger trigger="hover" placement="right" overlay={popover}>
+                <Link className="px-0 py-0" variant="none" style={{color: "black", fontSize: "36px"}}>{communityData.title}
+                </Link></OverlayTrigger>
             </Card.Title>
             : <h2> Loading... </h2>}
           <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>
