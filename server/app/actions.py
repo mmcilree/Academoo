@@ -122,3 +122,13 @@ def deletePost(post_id):
     post = Post.query.filter_by(id = post_id)
     db.session.delete(post)
     db.session.commit()
+
+def changePassword(username, old_password, new_password):
+    user = guard.authenticate(username, old_password)
+    print(user)
+    if user:
+        user.password_hash = guard.hash_password(new_password)
+        db.session.commit()
+        return True
+    
+    return False
