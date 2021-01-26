@@ -38,9 +38,9 @@ def create_community():
     id = req["id"]
     title = req["title"]
     description = req["description"]
-    admins = request.json["admins"].replace(" ", "").split(",")
+    admin = req["admin"]
 
-    return Response(status=200) if actions.createCommunity(id, title, description, admins) else Response(status=400)
+    return Response(status=200) if actions.createCommunity(id, title, description, admin) else Response(status=400)
 
 @bp.route("/get-user")
 @auth_required

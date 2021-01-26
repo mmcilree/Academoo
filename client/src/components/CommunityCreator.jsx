@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
 import { Route } from 'react-router-dom';
+import { authFetch } from '../auth';
 
 class CommunityCreator extends React.Component {
     constructor(props) {
@@ -12,13 +13,15 @@ class CommunityCreator extends React.Component {
             id: "",
             title: "",
             description: "",
-            administrators: "",
+            admin: "",
             errors: [],
-            communities: []
+            communities: [],
+            currentUser: "",
         };
     }
     componentDidMount() {
         this.fetchCommunities();
+        this.fetchUserDetails();
     }
     validateForm() {
         const errors = [];
@@ -27,10 +30,10 @@ class CommunityCreator extends React.Component {
             errors.push("Required fields have been left blank.");
             return errors;
         }
-        if (this.state.administrators !== "" && !this.state.administrators.match(/[^,]+/)) {
-            errors.push("Administrators input is not a comma separated list.");
-            return errors;
-        }
+        // if (this.state.administrators !== "" && !this.state.administrators.match(/[^,]+/)) {
+        //     errors.push("Administrators input is not a comma separated list.");
+        //     return errors;
+        // }
         if (this.state.communities.includes(this.state.id)) {
             errors.push("A community already exists with that ID. Please modify it.");
             return errors;
@@ -45,6 +48,15 @@ class CommunityCreator extends React.Component {
                 this.setState({
                     communities: data,
                 }))
+    }
+
+    fetchUserDetails() {
+        authFetch("/api/get-user").then(response => response.json())
+            .then(data =>
+                this.setState({
+                    currentUser: data.id,
+                })
+            )
     }
 
     handleChange(event) {
@@ -86,14 +98,14 @@ class CommunityCreator extends React.Component {
                     id: this.state.id,
                     title: this.state.title,
                     description: this.state.description,
-                    admins: this.state.administrators,
+                    admin: this.state.currentUser,
                 }
             )
         };
 
         fetch('/api/create-community', requestOptions);
         this.setState(
-            { id: "", title: "", description: "", administrators: "" }
+            { id: "", title: "", description: "", admin: "" }
         );
         this.props.history.push('/explore');
     }
@@ -138,7 +150,7 @@ class CommunityCreator extends React.Component {
                             <small className="form-text text-muted">Tell everyone what your community is about!</small>
                         </Form.Group>
 
-                        <Form.Group controlId="createCommunityAdministrators">
+                        {/* <Form.Group controlId="createCommunityAdministrators">
                             <Form.Label>Administrators:</Form.Label>
                             <Form.Control as="textarea"
                                 placeholder="Comma-separated usernames"
@@ -146,7 +158,7 @@ class CommunityCreator extends React.Component {
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.administrators} />
                             <small className="form-text text-muted">Who else should be in charge of this community?</small>
-                        </Form.Group>
+                        </Form.Group> */}
                         {errors.map(error => (
                             <Alert variant='warning' key={error}>{error}</Alert>
                         ))}

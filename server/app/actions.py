@@ -13,17 +13,19 @@ def isUUID(val):
     except ValueError:
         return False
 
-def createCommunity(id, title, description, admins):
+def createCommunity(id, title, description, admin):
     community = Community(id=id, title=title, description=description)
     db.session.add(community)
-    for admin in admins:
-        addAdmin(admin, id)
+    if(addAdmin(admin, id) == False):
+        return False
     db.session.commit()
-
     return True
 
 def addAdmin(username, community_id):
     user = db.session.query(User).filter_by(user_id=username).first()
+    if(user == None):
+        return False
+    
 
     if not user.has_role(community_id, "admin"):
         community = db.session.query(Community).filter_by(id=community_id).first()
