@@ -22,6 +22,7 @@ class User(db.Model):
     posts_created = db.relationship('Post', backref='author')
     host = db.Column(db.String(1000), nullable=False)
     email = db.Column(db.String(1000))
+    bio = db.Column(db.String(140))
     password_hash = db.Column(db.String(128))
     admin_of = db.relationship('Community', secondary=administrating, backref='admins')
 

@@ -18,11 +18,20 @@ def create_community():
 
     return Response(status=200) if actions.createCommunity(id, title, description, admins) else Response(status=400)
 
+@bp.route("/update-bio", methods=["POST"])
+@auth_required
+def update_bio():
+    req = request.json
+    bio = req["bio"]
+    u=current_user()
+
+    return Response(status=200) if actions.updateBio(u.user_id, bio) else Response(status=400)
+
 @bp.route("/get-user")
 @auth_required
 def get_user():
     u = current_user()
-    return jsonify({"id": u.user_id, "email": u.email, "host": u.host})
+    return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "bio": u.bio})
 
 @bp.route("/add-instance", methods=["POST"])
 def add_instance():

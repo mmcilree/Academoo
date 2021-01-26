@@ -37,6 +37,13 @@ def createUser(username, email, password):
     
     return False
 
+def updateBio(user_id, bio):
+    user = User.query.filter_by(user_id = user_id).first()
+    user.bio = bio
+    db.session.commit()
+    return True
+
+
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]
     return ids
