@@ -134,7 +134,8 @@ describe('SignUp form is invalid (email missing @ symbol)', () => {
 describe('SignUp form is invalid (password insecure)', () => {
     it.each`
     username        | email                 | password
-    ${"banana"}     | ${"banana@gmail.com"} | ${"Test123"}
+    ${"banana"}     | ${"banana@gmail.com"} | ${"Test1234"}
+    ${"banana"}     | ${"banana@gmail.com"} | ${"Password123"}
     ${"userMcUser"} | ${"user@outlook.com"} | ${"aaaaaA$"}
     ${"cheese"}     | ${"cheese@yahoo.com"} | ${"2BAAAAA£"}
     ${"aaa"}          | ${"m@fb.com"} | ${"1sS&"}

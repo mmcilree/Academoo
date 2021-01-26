@@ -37,6 +37,15 @@ def createUser(username, email, password):
     
     return False
 
+def getUserIDs():
+    ids = [user.user_id for user in User.query.all()]
+    return ids
+
+def getUser(user_id):
+    user = User.query.filter_by(user_id = user_id).first()
+    user_dict = {"id": user.user_id, "posts": []}
+    return user_dict
+
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]
     return ids
@@ -113,3 +122,13 @@ def deletePost(post_id):
     post = Post.query.filter_by(id = post_id)
     db.session.delete(post)
     db.session.commit()
+
+def changePassword(username, old_password, new_password):
+    user = guard.authenticate(username, old_password)
+    print(user)
+    if user:
+        user.password_hash = guard.hash_password(new_password)
+        db.session.commit()
+        return True
+    
+    return False
