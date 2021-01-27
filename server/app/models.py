@@ -4,6 +4,7 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 import time
 import uuid
+import enum
 
 
 def getUUID():
@@ -12,10 +13,17 @@ def getUUID():
 def getTime():
     return int(datetime.utcnow().timestamp())
 
+'''
 administrating = db.Table('administrating',
     db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
     db.Column('community_id', db.String(1000), db.ForeignKey('community.id'))
     )
+'''
+
+class Subscription(db.Model):
+    user_id = db.Column(db.String(50), db.ForeignKey('user.user_id'), primary_key=True)
+    community_id = db.Column(db.String(1000), db.ForeignKey('community.id'), primary_key=True)
+    role = db.Column(db.String(50), default="member") # admin, contributor, member, guest, prohibited
 
 class User(db.Model):
     user_id = db.Column(db.String(50), primary_key=True)
@@ -23,7 +31,8 @@ class User(db.Model):
     host = db.Column(db.String(1000), nullable=False)
     email = db.Column(db.String(1000))
     password_hash = db.Column(db.String(128))
-    admin_of = db.relationship('Community', secondary=administrating, backref='admins')
+    #admin_of = db.relationship('Community', secondary=administrating, backref='admins')
+    subscriptions = db.relationship('Subscription', backref='subscriber')
 
     @property
     def rolenames(self):
@@ -53,7 +62,8 @@ class Community(db.Model):
     title = db.Column(db.String(1000), nullable=False)
     description = db.Column(db.String(1000))
     posts = db.relationship('Post', backref='community')
-    administrators = db.relationship("User", secondary=administrating, backref='communities')
+    #administrators = db.relationship("User", secondary=administrating, backref='communities')
+    subscriptions = db.relationship('Subscription', backref='community')
 
 class Post(db.Model):
     id = db.Column(db.String(1000), primary_key=True, default=getUUID)
