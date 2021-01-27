@@ -13,7 +13,10 @@ def isUUID(val):
     except ValueError:
         return False
 
-def createCommunity(id, title, description, admins):
+def createCommunity(community_id, title, description, admins):
+    if Community.query.filter_by(id=community_id) is not None:
+        return (400, {"title": "Community already exists", "message": "Please pick another community id that is not taken by an existing community"})
+    
     community = Community(id=id, title=title, description=description)
     db.session.add(community)
 
@@ -30,7 +33,7 @@ def newSubscription(username, community_id, role="member"):
     if user == None:
         return False
     
-    if Subscription.query.filter_by(user_id=username, id=community_id) == None:
+    if Subscription.query.filter_by(user_id=username, id=community_id) is None:
         new_sub = Subscription(user_id=username, community_id=community_id, role=role)
         db.session.add(new_sub)
         db.session.commit()
@@ -102,7 +105,7 @@ def getCommunity(community_id):
     if community is None:
         return (404, {"title": "Could not find community", "message": "Community does not exist on database, use a different community id"})
     
-    community_dict = {"id": community.id, "title": community.title, "description": community.description, "admins": [{"id": admin.user_id, "host": admin.host} for admin in community.admins]}
+    community_dict = {"id": community.id, "title": community.title, "description": community.description, "admins": [{"id": admin.user_id, "host": admin.host} for admin in community.admins()]}
     return (200, community_dict)
 
 def getAllCommunityPostsTimeModified(community_id):

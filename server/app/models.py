@@ -56,6 +56,13 @@ class User(db.Model):
     @property
     def password(self):
         return self.password_hash
+    
+    def has_role(self, community_id, role):
+        role_tiers = {"admin": 1, "contributor": 2, "member": 3, "guest": 4, "prohibited": 5}
+        sub = Subscription.query.filter_by(user_id=user_id, community_id=community_id).first()
+        if sub is None or role_tiers[sub.role] > role_tiers[role]:
+            return False
+        return True
 
 class Community(db.Model):
     id = db.Column(db.String(1000), primary_key=True)
@@ -112,3 +119,6 @@ class Post(db.Model):
     parent_id = db.Column(db.String(1000), db.ForeignKey('post.id'))
     parent = db.relationship('Post', remote_side=[id], backref='comments')
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
+
+class PostContent(db.Model):
+    post_id = db.Column(db.String(1000), db.ForeignKey('post.id'))
