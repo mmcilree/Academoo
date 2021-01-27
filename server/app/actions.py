@@ -79,37 +79,43 @@ def getUser(user_id):
     return user_dict
 
 def getRoles(community_id):
-    admins = Subscription.query.filter_by(community_id=community_id, role="admin")
-    contributors = Subscription.query.filter_by(community_id=community_id, role="contributor")
-    members = Subscription.query.filter_by(community_id=community_id, role="member")
-    guests = Subscription.query.filter_by(community_id=community_id, role="guest")
-    prohibited = Subscription.query.filter_by(community_id=community_id, role="prohibited")
+    community = Community.query.filter_by(id=community_id).first()
 
     user_dict = {
-        "admins": [sub.user_id for sub in admins],
-        "contributors": [sub.user_id for sub in contributors],
-        "members": [sub.user_id for sub in members],
-        "guests": [sub.user_id for sub in guests],
-        "prohibited": [sub.user_id for sub in prohibited]
+        "admins": [user.user_id for user in community.admins()],
+        "contributors": [user.user_id for user in community.contributors()],
+        "members": [user.user_id for user in community.members()],
+        "guests": [user.user_id for user in community.guests()],
+        "prohibited": [user.user_id for user in community.prohibited()]
     }
     return user_dict
 
 
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]
-    return ids
+    return (200, ids)
 
 def getCommunity(community_id):
+    if not re.match("<^[a-zA-Z0-9-_]{1,24}$>", community_id):
+        return (400, {"title": "Invalid community id", "message": "community id does not match expected pattern <^[a-zA-Z0-9-_]{1,24}$>"})
     community = Community.query.filter_by(id = community_id).first()
+    if community is None:
+        return (404, {"title": "Could not find community", "message": "Community does not exist on database, use a different community id"})
+    
     community_dict = {"id": community.id, "title": community.title, "description": community.description, "admins": [{"id": admin.user_id, "host": admin.host} for admin in community.admins]}
-    return community_dict
+    return (200, community_dict)
 
 def getAllCommunityPostsTimeModified(community_id):
     # NOTE: shouldn't this return for all posts? Also, when we add comments to a post, then that parent post should have modified time updated as well?
-    post_dicts = [{"id":post.id, "modified":post.modified} for post in Post.query.filter_by(community_id = community_id)]
-    return post_dicts
+    if not re.match("<^[a-zA-Z0-9-_]{1,24}$>", community_id):
+        return (400, {"title": "Invalid community id", "message": "community id does not match expected pattern <^[a-zA-Z0-9-_]{1,24}$>"})
+    if Community.query.filter_by(id = community_id).first() is None:
+        return (404, {"title": "Could not find community", "message": "Community does not exist on database, use a different community id"})
 
-def getFilteredPosts(limit, community_id, min_date):
+    post_dicts = [{"id":post.id, "modified":post.modified} for post in Post.query.filter_by(community_id = community_id)]
+    return (200, post_dicts)
+
+def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type):
     if community_id:
         is_comment = isUUID(community_id)
 
