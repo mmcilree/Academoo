@@ -46,6 +46,14 @@ def getUser(user_id):
     user_dict = {"id": user.user_id, "posts": []}
     return user_dict
 
+def getLocalUser(id):
+    user = User.query.filter_by(user_id=id).first()
+    if(user == None):
+        return False
+    else:
+        user_dict = {"id": user.user_id, "email": user.email, "host": user.host}
+        return user_dict
+
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]
     return ids

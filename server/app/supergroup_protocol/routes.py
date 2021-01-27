@@ -17,7 +17,7 @@ def get_user_by_id(id):
     external = request.args.get("external")
 
     if not external:
-        return jsonify(actions.getUser(id))
+        return jsonify(actions.getLocalUser(id))
     else:
         return jsonify(federation.get_users(external, id=id))
 
