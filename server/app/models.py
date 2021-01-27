@@ -20,7 +20,7 @@ administrating = db.Table('administrating',
     )
 '''
 
-class Subscription(db.Model):
+class UserRole(db.Model):
     user_id = db.Column(db.String(50), db.ForeignKey('user.user_id'), primary_key=True)
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'), primary_key=True)
     role = db.Column(db.String(50)) # admin, contributor, member, guest, prohibited
@@ -32,7 +32,7 @@ class User(db.Model):
     email = db.Column(db.String(1000))
     password_hash = db.Column(db.String(128))
     #admin_of = db.relationship('Community', secondary=administrating, backref='admins')
-    subscriptions = db.relationship('Subscription', backref='subscriber')
+    roles = db.relationship('UserRole', backref='user')
 
     @property
     def rolenames(self):
@@ -59,8 +59,8 @@ class User(db.Model):
     
     def has_role(self, community_id, role):
         role_tiers = {"admin": 1, "contributor": 2, "member": 3, "guest": 4, "prohibited": 5}
-        sub = Subscription.query.filter_by(user_id=user_id, community_id=community_id).first()
-        if sub is None or role_tiers[sub.role] > role_tiers[role]:
+        entry = UserRole.query.filter_by(user_id=user_id, community_id=community_id).first()
+        if entry is None or role_tiers[entry.role] > role_tiers[role]:
             return False
         return True
 
@@ -70,13 +70,15 @@ class Community(db.Model):
     description = db.Column(db.String(1000))
     posts = db.relationship('Post', backref='community')
     #administrators = db.relationship("User", secondary=administrating, backref='communities')
-    subscriptions = db.relationship('Subscription', backref='community')
+    roles_granted = db.relationship('UserRole', backref='community')
     default_role = db.Column(db.String(50), default="contributor", nullable=False)
 
     @property
     def admins(self):
-        subs = Subscription.query.filter_by(community_id=community_id, role="admin")
-        pairs = subs.join(User, subs.user_id == User.user_id)
+        pairs = UserRole.
+
+        roles = UserRole.query.filter_by(community_id=community_id, role="admin")
+        pairs = roles.join(User, roles.user_id == User.user_id)
         admins = [pair[0] for pair in pairs]
         return admins
 
@@ -120,5 +122,7 @@ class Post(db.Model):
     parent = db.relationship('Post', remote_side=[id], backref='comments')
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
 
+''' Will probably be needed when posts can support more than just text :(
 class PostContent(db.Model):
     post_id = db.Column(db.String(1000), db.ForeignKey('post.id'))
+'''

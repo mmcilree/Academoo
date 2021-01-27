@@ -16,28 +16,34 @@ def isUUID(val):
 def createCommunity(community_id, title, description, admins):
     if Community.query.filter_by(id=community_id) is not None:
         return (400, {"title": "Community already exists", "message": "Please pick another community id that is not taken by an existing community"})
-    
+
     community = Community(id=id, title=title, description=description)
     db.session.add(community)
 
     db.session.commit()
 
     for admin in admins:
-        if not newSubscription(admin, id, "admin"):
-            return False
+        response = grantRole(admin, id, "admin")
+        if response[0] != 200:
+            return response
 
-    return True
+    return (200, None)
 
-def newSubscription(username, community_id, role="member"):
+def grantRole(username, community_id, role="member"):
     user = User.query.filter_by(user_id = username).first()
-    if user == None:
-        return False
+    if user is None:
+        return (404, {"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"})
     
-    if Subscription.query.filter_by(user_id=username, id=community_id) is None:
-        new_sub = Subscription(user_id=username, community_id=community_id, role=role)
-        db.session.add(new_sub)
+    if UserRole.query.filter_by(user_id=username, id=community_id) is None:
+        new_role = UserRole(user_id=username, community_id=community_id, role=role)
+        db.session.add(new_role)
         db.session.commit()
-        return True
+    else:
+        existing_role = UserRole.query.filter_by(user_id=username, id=community_id)
+        existing_role.role = role
+        db.session.commit()
+    return (200, None)
+
 
 def setDefaultRole(default_role, community_id):
     community = Community.query.filter_by(id=community_id).first()
@@ -50,13 +56,15 @@ def getDefaultRole(community_id):
     community_dict = {"default_role": community.default_role}
     return community_dict
 
+'''
 def assignRole(host, user_id, community_id, role):
-    sub = Subscription.query.filter_by(user_id=user_id, community_id=community_id)
-    if sub == None:
+    entry = UserRole.query.filter_by(user_id=user_id, community_id=community_id)
+    if entry == None:
         return False
-    sub.role = role
+    entry.role = role
     db.session.commit()
     return True
+'''
 
 def createUser(username, email, password):
     if db.session.query(User).filter_by(user_id=username).count() < 1 and db.session.query(User).filter_by(email=email).count() < 1:
