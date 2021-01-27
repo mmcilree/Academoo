@@ -23,7 +23,7 @@ administrating = db.Table('administrating',
 class Subscription(db.Model):
     user_id = db.Column(db.String(50), db.ForeignKey('user.user_id'), primary_key=True)
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'), primary_key=True)
-    role = db.Column(db.String(50), default="member") # admin, contributor, member, guest, prohibited
+    role = db.Column(db.String(50)) # admin, contributor, member, guest, prohibited
 
 class User(db.Model):
     user_id = db.Column(db.String(50), primary_key=True)
@@ -64,6 +64,7 @@ class Community(db.Model):
     posts = db.relationship('Post', backref='community')
     #administrators = db.relationship("User", secondary=administrating, backref='communities')
     subscriptions = db.relationship('Subscription', backref='community')
+    default_role = db.Column(db.String(50), default="contributor", nullable=False)
 
 class Post(db.Model):
     id = db.Column(db.String(1000), primary_key=True, default=getUUID)

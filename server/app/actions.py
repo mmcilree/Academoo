@@ -19,8 +19,40 @@ def createCommunity(id, title, description, admins):
 
     db.session.commit()
 
-    # TODO: link admins to the community
+    for admin in admins:
+        if not newSubscription(admin, id, "admin"):
+            return False
 
+    return True
+
+def newSubscription(username, community_id, role="member"):
+    user = User.query.filter_by(user_id = username).first()
+    if user == None:
+        return False
+    
+    if Subscription.query.filter_by(user_id=username, id=community_id) == None:
+        new_sub = Subscription(user_id=username, community_id=community_id, role=role)
+        db.session.add(new_sub)
+        db.session.commit()
+        return True
+
+def setDefaultRole(default_role, community_id):
+    community = Community.query.filter_by(id=community_id).first()
+    community.default_role = default_role
+    db.session.commit()
+    return True
+
+def getDefaultRole(community_id):
+    community = Community.query.filter_by(id = community_id).first()
+    community_dict = {"default_role": community.default_role}
+    return community_dict
+
+def assignRole(host, user_id, community_id, role):
+    sub = Subscription.query.filter_by(user_id=user_id, community_id=community_id)
+    if sub == None:
+        return False
+    sub.role = role
+    db.session.commit()
     return True
 
 def createUser(username, email, password):
@@ -45,6 +77,23 @@ def getUser(user_id):
     user = User.query.filter_by(user_id = user_id).first()
     user_dict = {"id": user.user_id, "posts": []}
     return user_dict
+
+def getRoles(community_id):
+    admins = Subscription.query.filter_by(community_id=community_id, role="admin")
+    contributors = Subscription.query.filter_by(community_id=community_id, role="contributor")
+    members = Subscription.query.filter_by(community_id=community_id, role="member")
+    guests = Subscription.query.filter_by(community_id=community_id, role="guest")
+    prohibited = Subscription.query.filter_by(community_id=community_id, role="prohibited")
+
+    user_dict = {
+        "admins": [sub.user_id for sub in admins],
+        "contributors": [sub.user_id for sub in contributors],
+        "members": [sub.user_id for sub in members],
+        "guests": [sub.user_id for sub in guests],
+        "prohibited": [sub.user_id for sub in prohibited]
+    }
+    return user_dict
+
 
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]
