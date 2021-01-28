@@ -98,7 +98,10 @@ class PostCreator extends React.Component {
 
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'UserIDHeader': this.state.user_id
+            },
             body: {
                 parent: this.state.selected[0].community,
                 title: this.state.title,

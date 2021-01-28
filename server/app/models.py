@@ -6,7 +6,6 @@ import time
 import uuid
 import enum
 
-
 def getUUID():
     return str(uuid.uuid4())
 
@@ -26,6 +25,8 @@ class UserRole(db.Model):
     role = db.Column(db.String(50)) # admin, contributor, member, guest, prohibited
 
 class User(db.Model):
+    __tablename__ = 'user'
+
     user_id = db.Column(db.String(50), primary_key=True)
     posts_created = db.relationship('Post', backref='author')
     host = db.Column(db.String(1000), nullable=False)
@@ -40,6 +41,48 @@ class User(db.Model):
             return self.admin_of.split(',')
         except Exception:
             return []
+
+    
+    def has_role(self, community_id, role):
+        role_communities = []
+        
+        if role == "admin":
+            role_communities.append(self.admin_communities)
+        elif role == "contributor":
+            role_communities.append(self.admin_communities)
+            role_communities.append(self.contributor_communities)
+        elif role == "member":
+            role_communities.append(self.admin_communities)
+            role_communities.append(self.contributor_communities)
+            role_communities.append(self.member_communities)
+        elif role == "guest":
+            role_communities.append(self.admin_communities)
+            role_communities.append(self.contributor_communities)
+            role_communities.append(self.member_communities)
+            role_communities.append(self.guest_communities)
+        elif role == "prohibited":
+            role_communities.append(self.prohibited_communities)
+
+               
+        for list in role_communities:
+            for community in list:
+                if community.id == community_id:
+                    return True
+        return False        
+
+    def has_no_role(self, community_id):
+        role_communities = []
+        role_communities.append(self.admin_communities)
+        role_communities.append(self.contributor_communities)
+        role_communities.append(self.member_communities)
+        role_communities.append(self.guest_communities)
+        role_communities.append(self.prohibited_communities)
+
+        for list in role_communities:
+            for community in list:
+                if community.id == community_id:
+                    return False
+        return True
 
     @classmethod
     def lookup(cls, username):

@@ -1,0 +1,258 @@
+import React from 'react';
+import UserRolesTable from './UserRolesTable'
+import Form from 'react-bootstrap/Form';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Dropdown from 'react-bootstrap/Dropdown';
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+import { authFetch } from '../auth';
+import { Redirect } from 'react-router-dom';
+import { Typeahead, Menu, MenuItem } from 'react-bootstrap-typeahead';
+import { InputGroup, Col } from 'react-bootstrap';
+import { PlusCircle } from 'react-bootstrap-icons';
+
+class CommunityManager extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isAdmin: null,
+            currentCommunity: this.props.match.params.id,
+            users: [],
+            host: "local",
+            serverDropdown: "Select Server",
+            selected: [{
+                user: ""
+            }],
+            instances: [],
+            roles: ["admin", "contributor", "member", "guest", "prohibited"],
+            role: "",
+            defaultRole: "",
+            currentDefaultRole: "",
+            errors: [],
+        };
+    }
+
+    componentDidMount() {
+        this.fetchUserDetails();
+        this.fetchInstances();
+        this.fetchUsers(this.state.host)
+        this.fetchDefaultRole();
+    }
+
+    validateUserRolesForm() {
+        const errors = [];
+        if (this.state.selected[0].user.length === 0 || this.state.role.length === 0) {
+            errors.push("Required fields have been left blank.");
+            return errors;
+        }
+        return errors;
+    }
+
+    validateDefaultRoleForm() {
+        const errors = [];
+        if (this.state.defaultRole.length === 0) {
+            errors.push("Required fields have been left blank.");
+            return errors;
+        }
+        return errors;
+    }
+
+    fetchUserDetails() {
+        authFetch("/api/get-user").then(response => response.json())
+            .then(data =>
+                this.setState({
+                    isAdmin: data.adminOf.includes(this.state.currentCommunity),
+                })
+            )
+    }
+
+    fetchDefaultRole() {
+        authFetch("/api/get-default-role/" + this.state.currentCommunity).then(response => response.json())
+            .then(data =>
+                this.setState({
+                    currentDefaultRole: data.default_role
+                }))
+
+    }
+
+    async fetchInstances() {
+        await fetch("/api/get-instances")
+            .then(response => response.json())
+            .then(data =>
+                this.setState({
+                    instances: ["local", ...data],
+                })
+            )
+        // this.state.instances.map(host => (this.fetchCommunities(host)));
+    }
+
+    //currently fetches user list for specified host every time a host is selected
+    //TO-DO: Add local storage/caching of users 
+    async fetchUsers(host) {
+        await fetch('/api/users' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
+            .then(data =>
+                this.setState({
+                    users: [...data.map(user => ({ host: host, user: user }))],
+                }))
+    }
+
+    handleHostChange(name) {
+        this.setState({ host: name })
+        this.setState({ serverDropdown: name })
+        this.fetchUsers(name);
+    }
+
+    handleSubmit(event) {
+        event.preventDefault();
+        const errors = this.validateUserRolesForm();
+        if (errors.length > 0) {
+            this.setState({ errors });
+            return;
+        }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(
+                {
+                    host: this.state.host,
+                    user: this.state.selected[0].user,
+                    community: this.state.currentCommunity,
+                    role: this.state.role,
+                }
+            )
+        };
+
+        fetch('/api/assign-role', requestOptions);
+        this.setState(
+            { host: "local", serverDropdown: "Select Server", role: "", selected: [{ user: "" }] }
+        );
+    }
+
+    handleDefRoleSubmit(event) {
+        event.preventDefault();
+        const errors = this.validateDefaultRoleForm();
+        if (errors.length > 0) {
+            this.setState({ errors });
+            return;
+        }
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(
+                {
+                    role: this.state.defaultRole,
+                    community: this.state.currentCommunity,
+                }
+            )
+        };
+        fetch('/api/set-default-role', requestOptions);
+        this.setState(
+            { defaultRole: "" }
+        );
+        this.fetchDefaultRole();
+    }
+
+    render() {
+        return (
+            this.state.isAdmin == null ? <h3> Loading... </h3> :
+                !this.state.isAdmin ? <Redirect to='/forbidden' /> :
+                    <Card className="mt-4">
+                        <Card.Header className="pt-4">
+                            <Card.Title>Manage your community: {this.state.currentCommunity}</Card.Title>
+                        </Card.Header>
+                        <Card.Body>
+                            <Card className="mt-4">
+                                <Card.Body>
+                                    <Card.Title>Assign User Role</Card.Title>
+                                    <Form onSubmit={this.handleSubmit.bind(this)}>
+                                        {/* <Form.Label>Assign User Role</Form.Label> */}
+                                        <Form.Row>
+                                            <Form.Group as={Col} xs={12} sm={12} md={12} lg={6}>
+                                                <InputGroup>
+                                                    <DropdownButton
+                                                        variant="outline-secondary"
+                                                        title={this.state.serverDropdown}
+                                                        as={InputGroup.Prepend}>
+
+                                                        {this.state.instances.map(name => {
+                                                            return <Dropdown.Item key={name} onClick={() => this.handleHostChange(name)}>{name}</Dropdown.Item>
+                                                        })
+                                                        }
+                                                    </DropdownButton>
+                                                    <Typeahead
+                                                        labelKey={option => `${option.user}`}
+                                                        id="user-choice"
+                                                        renderMenu={(results, menuProps) => (
+                                                            <Menu {...menuProps} maxHeight="500%">
+                                                                {results.map((result, index) => (
+                                                                    <MenuItem option={result} position={index} key={index}>
+                                                                        {/* <small className="text-muted">{result.host + ":  "}</small> */}
+                                                                        {result.user}
+
+                                                                    </MenuItem>
+                                                                ))}
+                                                            </Menu>
+                                                        )}
+
+                                                        onChange={(selected) => {
+                                                            this.setState({ selected: selected })
+                                                        }}
+
+                                                        options={this.state.users}
+                                                        selected={this.state.selected}
+                                                    />
+                                                </InputGroup>
+                                            </Form.Group>
+                                            <Form.Group as={Col} xs={12} sm={6} md={7} lg={4}>
+                                                <DropdownButton
+                                                    variant="outline-secondary"
+                                                    title={(this.state.role == "" ? "Select Role" : this.state.role)}>
+                                                    {this.state.roles.map(role => {
+                                                        return <Dropdown.Item key={role} onClick={() => this.setState({ role: role })}>{role}</Dropdown.Item>
+                                                    })
+                                                    }
+                                                </DropdownButton>
+                                            </Form.Group>
+                                            <Form.Group as={Col} xs={12} sm={6} md={5} lg={2}>
+                                                <Button type="submit"><PlusCircle className="mb-1" /> Assign</Button>
+                                            </Form.Group>
+                                        </Form.Row>
+                                    </Form>
+                                </Card.Body>
+                            </Card>
+                            <Card className="mt-4">
+                                <Card.Body>
+                                    <Card.Title>Set Default Role</Card.Title>
+                                    <Form onSubmit={this.handleDefRoleSubmit.bind(this)}>
+                                        <Form.Row>
+                                            <Form.Group as={Col} xs={12} sm={4}>
+                                                <DropdownButton
+                                                    variant="outline-secondary"
+                                                    title={(this.state.defaultRole == "" ? "Select Role" : this.state.defaultRole)}
+                                                >
+                                                    {this.state.roles.map(role => {
+                                                        return <Dropdown.Item key={role} onClick={() => this.setState({ defaultRole: role })}>{(role === this.state.currentDefaultRole ? "current default: " + role : role)}</Dropdown.Item>
+                                                    })
+                                                    }
+                                                </DropdownButton>
+                                            </Form.Group>
+                                            <Form.Group as={Col} xs={10} sm={8}>
+                                                <Button type="submit">Set default role</Button>
+                                            </Form.Group>
+                                        </Form.Row>
+                                    </Form>
+                                </Card.Body>
+                            </Card>
+                            <Card className="mt-4">
+                                <Card.Body>
+                                    <Card.Title>Users Assigned Roles</Card.Title>
+                                    <UserRolesTable community_id={this.state.currentCommunity} />
+                                </Card.Body>
+                            </Card>
+                        </Card.Body>
+                    </Card >
+        )
+    }
+}
+
+export default CommunityManager;

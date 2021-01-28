@@ -5,6 +5,14 @@ class Instance(object):
     def __init__(self, url):
         self.url = url
     
+    def get_users(self, id=None):
+        if id:
+            ret = requests.get(urljoin(self.url, f"/fed/users/{id}"))
+        else:
+            ret = requests.get(urljoin(self.url, "/fed/users"))
+
+        return ret.json()
+
     def get_timestamps(self, community):
         ret = requests.get(urljoin(self.url, f"/fed/communities/{community}/timestamps"))
         return ret.json()

@@ -3,6 +3,7 @@ import Post from "./Post";
 import { Card, Col, Form, FormControl, Button, Alert, Row, CardGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { PlusCircle } from "react-bootstrap-icons";
+import { authFetch } from '../auth';
 
 class PostsViewer extends Component {
   state = {
@@ -11,11 +12,22 @@ class PostsViewer extends Component {
     currentCommunity: this.props.match.params.id,
     error: null,
     host: this.props.match.params.instance ? this.props.match.params.instance : "local",
-    newPostText: ""
+    newPostText: "",
+    isAdmin: false
   }
 
   componentDidMount() {
     this.fetchPosts();
+    this.fetchUserDetails();
+  }
+
+  fetchUserDetails() {
+    authFetch("/api/get-user").then(response => response.json())
+      .then(data =>
+        this.setState({
+          isAdmin: data.adminOf.includes(this.state.currentCommunity)
+        })
+      )
   }
 
   fetchPosts() {
@@ -25,7 +37,6 @@ class PostsViewer extends Component {
         this.setState({
           posts: data,
           isLoading: false,
-          host: this.state.host
         })
       )
       .catch(error => this.setState({ error, isLoading: false }));
@@ -45,14 +56,18 @@ class PostsViewer extends Component {
   }
 
   render() {
-    const { isLoading, posts, error, currentCommunity, newPostText, host } = this.state;
-
+    const { isLoading, posts, error, currentCommunity, newPostText, isAdmin, host } = this.state;
     return currentCommunity && (
       <Card className="mt-4">
-        <Card.Header className="pt-4">
+        <Card.Header className="pt-4 d-flex justify-content-between">
           <h2>{currentCommunity}</h2>
+
+          {this.state.host === "local" && isAdmin && <Link to={"/communities/" + currentCommunity + "/manage"}>
+            <Button variant="primary">Manage Community</Button>
+          </Link>}
         </Card.Header>
-        <Card.Body >
+        <Card.Body>
+          {this.state.isAdmin && <Alert variant="primary">You are an admin!</Alert>}
           <Form onSubmit={this.handleSubmit.bind(this)}>
             <Form.Row>
               <Form.Group as={Col} className="d-none d-sm-flex" sm={6} md={7} lg={9}>
@@ -86,17 +101,17 @@ class PostsViewer extends Component {
               const { parent, id } = data;
               return (
                 parent === currentCommunity ? (
-                    <Card key={id} className="mt-4">
-                      <Card.Body className="h-100 mh-100">
-                        <Post postData={data} />
-                        <Link
-                          to={this.state.host == "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
-                          className="btn btn-primary stretched-link"
-                        >
-                          View Comments ({data.children.length})
+                  <Card key={id} className="mt-4">
+                    <Card.Body>
+                      <Post postData={data} />
+                      <Link
+                        to={this.state.host == "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
+                        className="btn btn-primary stretched-link"
+                      >
+                        View Comments ({data.children.length})
                           </Link>
-                      </Card.Body>
-                    </Card>
+                    </Card.Body>
+                  </Card>
                 ) : null);
             })
           ) : (

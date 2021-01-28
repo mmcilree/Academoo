@@ -19,8 +19,10 @@ def createCommunity(community_id, title, description, admins):
 
     community = Community(id=id, title=title, description=description)
     db.session.add(community)
-
+    if(addAdmin(admin, id) == False):
+        return False
     db.session.commit()
+    return True
 
     for admin in admins:
         response = grantRole(admin, id, "admin")
@@ -51,6 +53,7 @@ def setDefaultRole(default_role, community_id):
     db.session.commit()
     return True
 
+
 def getDefaultRole(community_id):
     community = Community.query.filter_by(id = community_id).first()
     community_dict = {"default_role": community.default_role}
@@ -74,6 +77,7 @@ def createUser(username, email, password):
             password_hash=guard.hash_password(password),
             host="Academoo",
         ))
+        
         db.session.commit()
 
         return True

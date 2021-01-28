@@ -3,11 +3,35 @@ from flask_praetorian.decorators import auth_required
 from app import actions, federation
 from app.main import bp
 from flask import request, Response, jsonify
-from flask_praetorian import current_user, auth_required
+from flask_praetorian import current_user
 
 @bp.route("/")
 def index():
     return "Hello World!"
+
+@bp.route("/assign-role", methods=["POST"])
+def assign_role():
+    req = request.json
+    host = req["host"]
+    user_id = req["user"]
+    community_id = req["community"]
+    role = req["role"]
+    return Response(status=200) if actions.assignRole(host, user_id, community_id, role) else Response(status=400)
+
+@bp.route("/set-default-role", methods=["POST"])
+def set_default_role():
+    req = request.json
+    default_role = req["role"]
+    community_id = req["community"]
+    return Response(status=200) if actions.setDefaultRole(default_role, community_id) else Response(status=400)    
+
+@bp.route("/get-default-role/<id>", methods=["GET"])
+def get_default_role(id):
+    return jsonify(actions.getDefaultRole(id))
+
+@bp.route("/get-community-roles/<id>", methods=["GET"])
+def get_community_roles(id):
+    return jsonify(actions.getRoles(id))
 
 @bp.route("/create-community", methods=["POST"])
 def create_community():
@@ -15,9 +39,9 @@ def create_community():
     id = req["id"]
     title = req["title"]
     description = req["description"]
-    admins = request.json["admins"].replace(" ", "").split(",")
+    admin = req["admin"]
 
-    return Response(status=200) if actions.createCommunity(id, title, description, admins) else Response(status=400)
+    return Response(status=200) if actions.createCommunity(id, title, description, admin) else Response(status=400)
 
 @bp.route("/change-password", methods=["POST"])
 @auth_required
@@ -33,7 +57,11 @@ def change_password():
 @auth_required
 def get_user():
     u = current_user()
-    return jsonify({"id": u.user_id, "email": u.email, "host": u.host})
+    adminOf = []
+    for community in u.admin_of:
+        adminOf.append(community.id)
+
+    return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "adminOf": adminOf})
 
 @bp.route("/add-instance", methods=["POST"])
 def add_instance():
