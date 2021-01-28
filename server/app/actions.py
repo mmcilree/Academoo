@@ -13,7 +13,10 @@ def isUUID(val):
     except ValueError:
         return False
 
-def createCommunity(id, title, description, admin):
+def createCommunity(community_id, title, description, admins):
+    if Community.query.filter_by(id=community_id) is not None:
+        return (400, {"title": "Community already exists", "message": "Please pick another community id that is not taken by an existing community"})
+
     community = Community(id=id, title=title, description=description)
     db.session.add(community)
     if(addAdmin(admin, id) == False):
@@ -21,20 +24,31 @@ def createCommunity(id, title, description, admin):
     db.session.commit()
     return True
 
-def addAdmin(username, community_id):
-    user = db.session.query(User).filter_by(user_id=username).first()
-    if(user == None):
-        return False
-    
+    for admin in admins:
+        response = grantRole(admin, id, "admin")
+        if response[0] != 200:
+            return response
 
-    if not user.has_role(community_id, "admin"):
-        community = db.session.query(Community).filter_by(id=community_id).first()
-        community.admin_users.append(user)
+    return (200, None)
+
+def grantRole(username, community_id, role="member"):
+    user = User.query.filter_by(user_id = username).first()
+    if user is None:
+        return (404, {"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"})
+    
+    if UserRole.query.filter_by(user_id=username, id=community_id) is None:
+        new_role = UserRole(user_id=username, community_id=community_id, role=role)
+        db.session.add(new_role)
         db.session.commit()
-        return True
+    else:
+        existing_role = UserRole.query.filter_by(user_id=username, id=community_id)
+        existing_role.role = role
+        db.session.commit()
+    return (200, None)
+
 
 def setDefaultRole(default_role, community_id):
-    community = db.session.query(Community).filter_by(id=community_id).first()
+    community = Community.query.filter_by(id=community_id).first()
     community.default_role = default_role
     db.session.commit()
     return True
@@ -45,38 +59,16 @@ def getDefaultRole(community_id):
     community_dict = {"default_role": community.default_role}
     return community_dict
 
+'''
 def assignRole(host, user_id, community_id, role):
-    #TO-DO check if user already has a role in the community and update it?
-    if(host == "local"):
-        user = db.session.query(User).filter_by(user_id=user_id).first()
-        community = db.session.query(Community).filter_by(id=community_id).first()
-
-        # if (user.has_role(community_id, "guest") & user.has_role(community_id, "prohibitor")):
-        #     for contrib in community.contributor_users:
-        #         if user.user_id == contrib.user_id :
-        #             db.session.delete(contrib)
-        
-        if role == "admin" :
-            community.admin_users.append(user)
-        elif role == "contributor" :
-            community.contributor_users.append(user)
-        elif role == "member" :
-            community.member_users.append(user)
-        elif role == "guest" :
-            community.guest_users.append(user)
-        elif role == "prohibited" :
-            community.prohibited_users.append(user)
-        else :
-            return False
-
-        db.session.commit()
-        return True
-    else:
-        #TO-DO: implement assigning a role to an external user
-        #(user_id should combine username and host)
-        
+    entry = UserRole.query.filter_by(user_id=user_id, community_id=community_id)
+    if entry == None:
         return False
-  
+    entry.role = role
+    db.session.commit()
+    return True
+'''
+
 def createUser(username, email, password):
     if db.session.query(User).filter_by(user_id=username).count() < 1 and db.session.query(User).filter_by(email=email).count() < 1:
         db.session.add(User(
@@ -101,37 +93,44 @@ def getUser(user_id):
     user_dict = {"id": user.user_id, "posts": []}
     return user_dict
 
-def getUser(user_id):
-    user = User.query.filter_by(user_id = user_id).first()
-    user_dict = {"id": user.user_id, "posts": []}
-    return user_dict
-
 def getRoles(community_id):
-    community = Community.query.filter_by(id = community_id).first()
+    community = Community.query.filter_by(id=community_id).first()
+
     user_dict = {
-        "admins": [admin.user_id for admin in community.admin_users],
-        "contributors": [contributor.user_id for contributor in community.contributor_users],
-        "members": [member.user_id for member in community.member_users],
-        "guests": [guest.user_id for guest in community.guest_users],
-        "prohibited": [prohib.user_id for prohib in community.prohibited_users]
+        "admins": [user.user_id for user in community.admins()],
+        "contributors": [user.user_id for user in community.contributors()],
+        "members": [user.user_id for user in community.members()],
+        "guests": [user.user_id for user in community.guests()],
+        "prohibited": [user.user_id for user in community.prohibited()]
     }
     return user_dict
 
+
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]
-    return ids
+    return (200, ids)
 
 def getCommunity(community_id):
+    if not re.match("<^[a-zA-Z0-9-_]{1,24}$>", community_id):
+        return (400, {"title": "Invalid community id", "message": "community id does not match expected pattern <^[a-zA-Z0-9-_]{1,24}$>"})
     community = Community.query.filter_by(id = community_id).first()
-    community_dict = {"id": community.id, "title": community.title, "description": community.description, "admins": [{"id": admin.user_id, "host": admin.host} for admin in community.admin_users]}
-    return community_dict
+    if community is None:
+        return (404, {"title": "Could not find community", "message": "Community does not exist on database, use a different community id"})
+    
+    community_dict = {"id": community.id, "title": community.title, "description": community.description, "admins": [{"id": admin.user_id, "host": admin.host} for admin in community.admins()]}
+    return (200, community_dict)
 
 def getAllCommunityPostsTimeModified(community_id):
     # NOTE: shouldn't this return for all posts? Also, when we add comments to a post, then that parent post should have modified time updated as well?
-    post_dicts = [{"id":post.id, "modified":post.modified} for post in Post.query.filter_by(community_id = community_id)]
-    return post_dicts
+    if not re.match("<^[a-zA-Z0-9-_]{1,24}$>", community_id):
+        return (400, {"title": "Invalid community id", "message": "community id does not match expected pattern <^[a-zA-Z0-9-_]{1,24}$>"})
+    if Community.query.filter_by(id = community_id).first() is None:
+        return (404, {"title": "Could not find community", "message": "Community does not exist on database, use a different community id"})
 
-def getFilteredPosts(limit, community_id, min_date):
+    post_dicts = [{"id":post.id, "modified":post.modified} for post in Post.query.filter_by(community_id = community_id)]
+    return (200, post_dicts)
+
+def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type):
     if community_id:
         is_comment = isUUID(community_id)
 
@@ -193,3 +192,13 @@ def deletePost(post_id):
     post = Post.query.filter_by(id = post_id)
     db.session.delete(post)
     db.session.commit()
+
+def changePassword(username, old_password, new_password):
+    user = guard.authenticate(username, old_password)
+    print(user)
+    if user:
+        user.password_hash = guard.hash_password(new_password)
+        db.session.commit()
+        return True
+    
+    return False

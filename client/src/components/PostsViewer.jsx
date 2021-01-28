@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Post from "./Post";
-import { Card, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
+import { Card, Col, Form, FormControl, Button, Alert, Row, CardGroup } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { PlusCircle } from "react-bootstrap-icons";
 import { authFetch } from '../auth';
