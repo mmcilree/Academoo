@@ -13,25 +13,46 @@ def isUUID(val):
     except ValueError:
         return False
 
+# NOTE: Move to utils.py
+def validate_username(username):
+    if not re.match("<^[a-zA-Z0-9-_]{1,24}$>", username):
+        return (400, {"title": "Invalid username", "message": "username does not match expected pattern <^[a-zA-Z0-9-_]{1,24}$>"})
+
+# NOTE: Move to utils.py
+def validate_community_id(community_id):
+    if not re.match("<^[a-zA-Z0-9-_]{1,24}$>", community_id):
+        return (400, {"title": "Invalid community id", "message": "community id does not match expected pattern <^[a-zA-Z0-9-_]{1,24}$>"})
+
+# NOTE: Move to utils.py
+def validate_role(role):
+    available_roles = ["admin", "contributor", "member", "guest", "prohibited"]
+    if role not in available_roles:
+        return (400, {"title": "Invalid role name", "message": "available roles are admin, contributor, member, guest, prohibited"})
+        
 def createCommunity(community_id, title, description, admins):
+    validate_community_id(community_id)
+
     if Community.query.filter_by(id=community_id) is not None:
         return (400, {"title": "Community already exists", "message": "Please pick another community id that is not taken by an existing community"})
 
     community = Community(id=id, title=title, description=description)
     db.session.add(community)
-    if(addAdmin(admin, id) == False):
-        return False
-    db.session.commit()
-    return True
 
     for admin in admins:
+        if User.query.filter_by(user_id=admin) is None:
+            return (404, {"title": "Could not find user" + admin, "message": "User does not exist on database, specify a different user"})
         response = grantRole(admin, id, "admin")
+        ######################## not best way to do
         if response[0] != 200:
             return response
-
+        ########################
     return (200, None)
 
 def grantRole(username, community_id, role="member"):
+    validate_community_id(community_id)
+    validate_username(username)
+    validate_role(role)
+        
     user = User.query.filter_by(user_id = username).first()
     if user is None:
         return (404, {"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"})
@@ -48,26 +69,19 @@ def grantRole(username, community_id, role="member"):
 
 
 def setDefaultRole(default_role, community_id):
+    validate_community_id(community_id)
+    validate_role(default_role)
     community = Community.query.filter_by(id=community_id).first()
+    if community is None:
+        return (404, {"title": "Could not find community" + community_id, "message": "Community does not exist on database, use a different community id"})
     community.default_role = default_role
     db.session.commit()
     return True
-
 
 def getDefaultRole(community_id):
     community = Community.query.filter_by(id = community_id).first()
     community_dict = {"default_role": community.default_role}
     return community_dict
-
-'''
-def assignRole(host, user_id, community_id, role):
-    entry = UserRole.query.filter_by(user_id=user_id, community_id=community_id)
-    if entry == None:
-        return False
-    entry.role = role
-    db.session.commit()
-    return True
-'''
 
 def createUser(username, email, password):
     if db.session.query(User).filter_by(user_id=username).count() < 1 and db.session.query(User).filter_by(email=email).count() < 1:

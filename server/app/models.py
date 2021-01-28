@@ -35,40 +35,13 @@ class User(db.Model):
     #admin_of = db.relationship('Community', secondary=administrating, backref='admins')
     roles = db.relationship('UserRole', backref='user')
 
+    '''
     @property
     def rolenames(self):
         try:
             return self.admin_of.split(',')
         except Exception:
-            return []
-
-    
-    def has_role(self, community_id, role):
-        role_communities = []
-        
-        if role == "admin":
-            role_communities.append(self.admin_communities)
-        elif role == "contributor":
-            role_communities.append(self.admin_communities)
-            role_communities.append(self.contributor_communities)
-        elif role == "member":
-            role_communities.append(self.admin_communities)
-            role_communities.append(self.contributor_communities)
-            role_communities.append(self.member_communities)
-        elif role == "guest":
-            role_communities.append(self.admin_communities)
-            role_communities.append(self.contributor_communities)
-            role_communities.append(self.member_communities)
-            role_communities.append(self.guest_communities)
-        elif role == "prohibited":
-            role_communities.append(self.prohibited_communities)
-
-               
-        for list in role_communities:
-            for community in list:
-                if community.id == community_id:
-                    return True
-        return False        
+            return []   
 
     def has_no_role(self, community_id):
         role_communities = []
@@ -83,6 +56,7 @@ class User(db.Model):
                 if community.id == community_id:
                     return False
         return True
+    '''
 
     @classmethod
     def lookup(cls, username):
