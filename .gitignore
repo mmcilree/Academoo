@@ -5,3 +5,4 @@ __pycache__/
 .vscode
 app.db
 build/
+client/.eslintcache
