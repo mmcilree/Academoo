@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Post from "./Post";
 import Card from "react-bootstrap/Card";
-import { posts } from "./test_post_json";
 import Button from "react-bootstrap/Button";
 import { ArrowReturnLeft, ChatRight } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
@@ -113,7 +112,7 @@ class CommentsViewer extends React.Component {
                   </Card>
                 ) : null
               )}
-              {this.state.children.length == 0 ? 
+              {this.state.children.length === 0 ? 
                 <p className="mt-4 ml-4 comment">No comments to show.</p> : null}
 
             </Card.Body>) :
