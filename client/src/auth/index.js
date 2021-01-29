@@ -7,7 +7,13 @@ export const [useAuth, authFetch, login, logout] =
             method: 'POST',
             body: token.access_token
         })
-        .then(r => r.json())
+        .then(r => r.json()).then(data => {
+          if(data.status_code === 401) {
+            logout();
+          } else {
+            return data;
+          }
+        })
     });
 
 // NOTE: We won't need get user anymore when we convert to authenticated endpoints. The backend should retrieve user information.
