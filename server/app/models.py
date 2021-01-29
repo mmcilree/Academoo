@@ -1,3 +1,4 @@
+from sqlalchemy.ext.declarative.api import instrument_declarative
 from sqlalchemy.orm import backref
 from app import db
 from datetime import datetime
@@ -89,27 +90,27 @@ class Community(db.Model):
     default_role = db.Column(db.String(50), default="contributor", nullable=False)
 
     def admins(self):
-        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=community_id, role="admin")
+        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="admin")
         admins = [pair[0] for pair in pairs]
         return admins
 
     def contributors(self):
-        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=community_id, role="contributor")
+        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="contributor")
         contributors = [pair[0] for pair in pairs]
         return contributors
 
     def members(self):
-        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=community_id, role="member")
+        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="member")
         members = [pair[0] for pair in pairs]
         return members
 
     def guests(self):
-        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=community_id, role="guest")
+        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="guest")
         guests = [pair[0] for pair in pairs]
         return guests
 
     def prohibited(self):
-        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=community_id, role="prohibited")
+        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="prohibited")
         prohibited = [pair[0] for pair in pairs]
         return prohibited
 

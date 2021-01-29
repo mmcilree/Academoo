@@ -1,5 +1,5 @@
 from app import db, guard
-from app.models import User, Community, Post, getTime
+from app.models import User, Community, Post, UserRole, getTime
 from sqlalchemy import desc
 import json
 from uuid import UUID
@@ -114,7 +114,7 @@ def createUser(username, email, password):
     return (400, {"title": "Username already taken by another user", "message": "Please pick another username that is not taken by an existing user"})
 
 def getUser(user_id):
-    validate_username(username)
+    validate_username(user_id)
     user = User.query.filter_by(user_id = user_id).first()
     if user is None:
         return (404, {"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"})
@@ -189,7 +189,7 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if parent_post != "null":
         query = query.filter(Post.parent_id == parent_post)
     if content_type != "null":
-        query = query.filter(Post.content_type = content_type)
+        query = query.filter(Post.content_type == content_type)
     if limit != "null":
         query = query.limit(limit)
 
@@ -203,7 +203,7 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     '''
     
     # ONLY SUPPORTS TEXT CONTENT TYPE
-    post_dicts = [{"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{post.content_type: {"text": post.body}}], "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created} for post in posts]
+    post_dicts = [{"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{post.content_type: {"text": post.body}}], "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created} for post in query]
     return (200, post_dicts)
 
 # Post host may not be tied to author idk
@@ -228,7 +228,7 @@ def createPost(post_data, host="NULL"):
         db.session.commit()
     
     new_post = Post(community_id=community_id, title=title, parent_id=parent_post, content_type=content_type, body=content_body, author_id=author_id)
-    db.session.add(post)
+    db.session.add(new_post)
     db.session.commit()
     return (200, None)
         
@@ -257,7 +257,7 @@ def editPost(post_id, post_data):
 
     post.title = update_title
     post.content_type = update_content_type
-    post.body = update_body
+    post.body = update_content_body
     db.session.commit()
     return (200, None)
 
