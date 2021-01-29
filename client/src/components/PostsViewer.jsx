@@ -67,6 +67,7 @@ class PostsViewer extends Component {
         </Popover.Content>
       </Popover>
     );
+    console.log(this.state);
     return currentCommunity && (
       <Card className="mt-4 mb-10">
         <Card.Header className="pt-4">
@@ -110,9 +111,9 @@ class PostsViewer extends Component {
           {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
           {!isLoading ? (
             posts.map(data => {
-              const { parent, id } = data;
+              const { community, parent, id } = data;
               return (
-                parent === currentCommunity ? (
+                community === currentCommunity ? (
                   <Card key={id} className="mt-4">
                     <Card.Body >
                       <Post postData={data} postType="preview" />

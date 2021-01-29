@@ -7,7 +7,7 @@ class Manager(object):
         # host name : <Instance Objects>
         self.instances = {
             #"nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/"),
-            #"unifier": Instance("http://unifier-prod.herokuapp.com")
+            "unifier": Instance("http://unifier-prod.herokuapp.com")
         }
 
     def create_post(self, host, data):
