@@ -25,8 +25,6 @@ class UserRole(db.Model):
     role = db.Column(db.String(50)) # admin, contributor, member, guest, prohibited
 
 class User(db.Model):
-    __tablename__ = 'user'
-
     user_id = db.Column(db.String(50), primary_key=True)
     posts_created = db.relationship('Post', backref='author')
     host = db.Column(db.String(1000), nullable=False)
@@ -138,6 +136,7 @@ class Post(db.Model):
     parent_id = db.Column(db.String(1000), db.ForeignKey('post.id'))
     parent = db.relationship('Post', remote_side=[id], backref='comments')
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
+    host = db.Column(db.String(50), nullable=False)
 
 ''' Will probably be needed when posts can support more than just text :(
 class PostContent(db.Model):

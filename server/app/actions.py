@@ -28,7 +28,14 @@ def validate_role(role):
     available_roles = ["admin", "contributor", "member", "guest", "prohibited"]
     if role not in available_roles:
         return (400, {"title": "Invalid role name", "message": "available roles are admin, contributor, member, guest, prohibited"})
-        
+
+# NOTE: Move to utils.py
+def validate_post_id(post_id):
+    if not isUUID(parent_post):
+        return (400, {"title": "post id is not in the correct format", "message": "Format of post id should be uuid4 string"})
+
+
+
 def createCommunity(community_id, title, description, admins):
     validate_community_id(community_id)
 
@@ -76,14 +83,18 @@ def setDefaultRole(default_role, community_id):
         return (404, {"title": "Could not find community" + community_id, "message": "Community does not exist on database, use a different community id"})
     community.default_role = default_role
     db.session.commit()
-    return True
+    return (200, None)
 
 def getDefaultRole(community_id):
+    validate_community_id(community_id)
     community = Community.query.filter_by(id = community_id).first()
+    if community is None:
+        return (404, {"title": "Could not find community" + community_id, "message": "Community does not exist on database, use a different community id"})
     community_dict = {"default_role": community.default_role}
     return community_dict
 
 def createUser(username, email, password):
+    validate_username(username)
     if db.session.query(User).filter_by(user_id=username).count() < 1 and db.session.query(User).filter_by(email=email).count() < 1:
         db.session.add(User(
             user_id=username,
@@ -91,24 +102,36 @@ def createUser(username, email, password):
             password_hash=guard.hash_password(password),
             host="Academoo",
         ))
-        
         db.session.commit()
-
-        return True
+        return (200, None)
     
-    return False
-
-def getUserIDs():
-    ids = [user.user_id for user in User.query.all()]
-    return ids
+    return (400, {"title": "Username already taken by another user", "message": "Please pick another username that is not taken by an existing user"})
 
 def getUser(user_id):
+    validate_username(username)
     user = User.query.filter_by(user_id = user_id).first()
-    user_dict = {"id": user.user_id, "posts": []}
-    return user_dict
+    if user is None:
+        return (404, {"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"})
+    user_dict = {"id": user.user_id, "posts": [{"id": post.id, "host": post.host} for post in Post.query.filter_by(author_id=user.id)]}
+    return (200, user_dict)
+
+def searchUsers(prefix):
+    validate_username(prefix)
+    search = "{}%".format(prefix)
+    users = User.query.filter(User.user_id.like(search))
+    user_dict = {}####NOT JSON MY MAN
+    return (200, user_dict)
+
+# Is this for only our server?, or for external users that have a role on our server as well
+def getUserIDs():
+    ids = [user.user_id for user in User.query.all()]
+    return (200, ids)
 
 def getRoles(community_id):
+    validate_community_id(community_id)
     community = Community.query.filter_by(id=community_id).first()
+    if community is None:
+        return (404, {"title": "Could not find community" + community_id, "message": "Community does not exist on database, use a different community id"})
 
     user_dict = {
         "admins": [user.user_id for user in community.admins()],
@@ -117,7 +140,7 @@ def getRoles(community_id):
         "guests": [user.user_id for user in community.guests()],
         "prohibited": [user.user_id for user in community.prohibited()]
     }
-    return user_dict
+    return (200, user_dict)
 
 
 def getCommunityIDs():
@@ -125,26 +148,51 @@ def getCommunityIDs():
     return (200, ids)
 
 def getCommunity(community_id):
-    if not re.match("<^[a-zA-Z0-9-_]{1,24}$>", community_id):
-        return (400, {"title": "Invalid community id", "message": "community id does not match expected pattern <^[a-zA-Z0-9-_]{1,24}$>"})
+    validate_community_id(community_id)
     community = Community.query.filter_by(id = community_id).first()
     if community is None:
-        return (404, {"title": "Could not find community", "message": "Community does not exist on database, use a different community id"})
+        return (404, {"title": "Could not find community" + community_id, "message": "Community does not exist on database, use a different community id"})
     
     community_dict = {"id": community.id, "title": community.title, "description": community.description, "admins": [{"id": admin.user_id, "host": admin.host} for admin in community.admins()]}
     return (200, community_dict)
 
 def getAllCommunityPostsTimeModified(community_id):
     # NOTE: shouldn't this return for all posts? Also, when we add comments to a post, then that parent post should have modified time updated as well?
-    if not re.match("<^[a-zA-Z0-9-_]{1,24}$>", community_id):
-        return (400, {"title": "Invalid community id", "message": "community id does not match expected pattern <^[a-zA-Z0-9-_]{1,24}$>"})
+    validate_community_id(community_id)
     if Community.query.filter_by(id = community_id).first() is None:
-        return (404, {"title": "Could not find community", "message": "Community does not exist on database, use a different community id"})
+        return (404, {"title": "Could not find community" + community_id, "message": "Community does not exist on database, use a different community id"})
 
     post_dicts = [{"id":post.id, "modified":post.modified} for post in Post.query.filter_by(community_id = community_id)]
     return (200, post_dicts)
 
+# Post host isnt a thing right now
+# Is parent_post NULL for posts with no parent?
 def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type):
+    validate_community_id(community_id)
+    validate_username(author)
+    if parent_post is not None and not isUUID(parent_post):
+        return (400, {"title": "parent_post id is not in the correct format", "message": "Format of post id should be uuid4 string"})
+    
+    result = None
+    if parent_post:
+        result = Post.query.filter(Post.created >= min_date, Post.author == author, Post.host == host, Post.parent_post == parent_post, Post.content_type = content_type)
+    else:
+        result = Post.query.filter(Post.created >= min_date, Post.author == author, Post.host == host, Post.content_type = content_type)
+
+    finished = False
+    while not finished:
+        
+        
+    
+
+
+
+
+
+
+
+
+
     if community_id:
         is_comment = isUUID(community_id)
 
@@ -158,9 +206,29 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     post_dicts = [{"id": post.id, "parent": post.parent_id if post.parent_id else post.community_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id if post.author else "Guest", "host": post.author.host if post.author else "Narnia"}, "modified": post.modified, "created": post.created} for post in posts]
     return post_dicts
 
-def createPost(post_data):
+# Post host may not be tied to author idk
+# Author host is not in json file so will need to passed in manually :(
+# HANDLE BAD JSON
+def createPost(post_data, host):
+    community_id = post_data["community"]
+    parent_post = post_data["parentPost"]
+    title = post_data["title"]
+    content_dict = post_data["content"]
+    author_id = post_data["author"]
+
+    validate_community_id(community_id)
+    validate_username(author_id)
+    
+
+    if User.query.filter_by(user_id = author_id) is None:
+        new_user = User(user_id = author_id, host = host)
+        db.session.add(new_user)
+        db.session.commit()
+    
+
+
+
     post_parent = post_data["parent"]
-    is_comment = isUUID(post_parent)
     post_title = post_data["title"]
     post_content_type = post_data["contentType"]
     post_body = post_data["body"]
@@ -186,15 +254,20 @@ def createPost(post_data):
         
 
 def getPost(post_id):
-    post = Post.query.filter_by(id = post_id).first()    
+    validate_post_id(post_id)
+    post = Post.query.filter_by(id = post_id).first()
+    if post is None:
+        return (404, {"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"})
+
     post_dict = {"id": post.id, "parent": post.parent_id if post.parent_id else post.community_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
+    post_dict = ("id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": ################)
+    return (200,post_dict)
 
-    return post_dict
-
+#### HANDLE BAD JSON
 def editPost(post_id, post_data):
+    validate_post_id(post_id)
     update_title = post_data["title"]
-    update_content_type = post_data["contentType"]
-    update_body = post_data["body"]
+    update_content_dict = post_data["content"]
 
     post = Post.query.filter_by(id = post_id)
     post.title = update_title
@@ -203,9 +276,14 @@ def editPost(post_id, post_data):
     db.session.commit()
 
 def deletePost(post_id):
+    validate_post_id
     post = Post.query.filter_by(id = post_id)
+    if post is None:
+        return (404, {"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"})
+
     db.session.delete(post)
     db.session.commit()
+    return (200, None)
 
 def changePassword(username, old_password, new_password):
     user = guard.authenticate(username, old_password)
