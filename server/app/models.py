@@ -88,40 +88,28 @@ class Community(db.Model):
     roles_granted = db.relationship('UserRole', backref='community')
     default_role = db.Column(db.String(50), default="contributor", nullable=False)
 
-    @property
     def admins(self):
-        pairs = UserRole.
-
-        roles = UserRole.query.filter_by(community_id=community_id, role="admin")
-        pairs = roles.join(User, roles.user_id == User.user_id)
+        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=community_id, role="admin")
         admins = [pair[0] for pair in pairs]
         return admins
 
-    @property
     def contributors(self):
-        subs = Subscription.query.filter_by(community_id=community_id, role="contributor")
-        pairs = subs.join(User, subs.user_id == User.user_id)
+        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=community_id, role="contributor")
         contributors = [pair[0] for pair in pairs]
         return contributors
 
-    @property
     def members(self):
-        subs = Subscription.query.filter_by(community_id=community_id, role="member")
-        pairs = subs.join(User, subs.user_id == User.user_id)
+        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=community_id, role="member")
         members = [pair[0] for pair in pairs]
         return members
 
-    @property
     def guests(self):
-        subs = Subscription.query.filter_by(community_id=community_id, role="guest")
-        pairs = subs.join(User, subs.user_id == User.user_id)
+        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=community_id, role="guest")
         guests = [pair[0] for pair in pairs]
         return guests
 
-    @property
     def prohibited(self):
-        subs = Subscription.query.filter_by(community_id=community_id, role="prohibited")
-        pairs = subs.join(User, subs.user_id == User.user_id)
+        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=community_id, role="prohibited")
         prohibited = [pair[0] for pair in pairs]
         return prohibited
 
