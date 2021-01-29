@@ -29,25 +29,6 @@ class UserProfile extends Component {
 
   }
 
-  async handleSubmit(event) {
-    event.preventDefault();
-
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: {
-        bio: this.state.new_bio
-      }
-    }
-      requestOptions.body = JSON.stringify(requestOptions.body);
-
-      
-      await authFetch('/api/update-bio', requestOptions);
-      this.setState({new_bio: ""})
-
-      this.fetchUserDetails();
-  }
-
   fetchUserDetails() {
     authFetch("/api/get-user").then(response => response.json())
       .then(data =>
@@ -87,21 +68,6 @@ class UserProfile extends Component {
                 <p>Bio: {this.state.bio ? this.state.bio : "You have not yet set a bio!"} </p>
               </Media.Body>) : <h3>Loading Profile...</h3>}
           </Media>
-
-          <Form onSubmit={this.handleSubmit.bind(this)}>
-            <Form.Group controlId="profileBio">
-              <Form.Label>Update your bio:</Form.Label>
-              <Form.Control type="input"
-                placeholder="Tell us more about yourself"
-                name="new_bio"
-                onChange={this.handleChange.bind(this)}
-                value={this.state.new_bio} />
-            </Form.Group>
-            <Button variant="primary" type="submit" className>
-              Update Bio
-            </Button>
-          </Form>
-
         </Card.Body>
       </Card>
     );
