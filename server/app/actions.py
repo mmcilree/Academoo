@@ -193,12 +193,14 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if limit != "null":
         query = query.limit(limit)
 
+    ''' add once tested fully
     if include_children:
         limit -= len(query)
         for post in query:
             post_children = getFilteredPosts(limit, community_id, min_date, author, host, post.id, True, content_type)
             limit -= len(post_children)
             query += post_children
+    '''
     
     # ONLY SUPPORTS TEXT CONTENT TYPE
     post_dicts = [{"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{post.content_type: {"text": post.body}}], "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created} for post in posts]
@@ -206,73 +208,60 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
 
 # Post host may not be tied to author idk
 # Author host is not in json file so will need to passed in manually :(
-def createPost(post_data, host):
+def createPost(post_data, host="NULL"):
     validate_json(post_data)
     community_id = post_data["community"]
     parent_post = post_data["parentPost"]
     title = post_data["title"]
-    content_dict = post_data["content"]
-    author_id = post_data["author"]
+    content_arr = post_data["content"]
+    content_type = "text" #content_arr[0]["text"]
+    content_body = content_arr[0]["text"]["text"]
+    author_id = post_data["author"] # host not given so it will be "NULL" for moment
 
     validate_community_id(community_id)
     validate_username(author_id)
-    
+    if parent_post != "null": validate_post_id(parent_post)
 
     if User.query.filter_by(user_id = author_id) is None:
         new_user = User(user_id = author_id, host = host)
         db.session.add(new_user)
         db.session.commit()
     
-
-
-
-    post_parent = post_data["parent"]
-    post_title = post_data["title"]
-    post_content_type = post_data["contentType"]
-    post_body = post_data["body"]
-    author_dict = post_data["author"]
-    author_id = author_dict["id"]
-    author_host = author_dict["host"]
-
-    if not User.query.filter_by(user_id = author_id).scalar():
-        user = User(user_id = author_id, host = author_host)
-        db.session.add(user)
-        db.session.commit()
-    
-    if is_comment:
-        post = Post(title=post_title, author_id=author_id, content_type=post_content_type, body=post_body, parent_id=post_parent)
-
-        parentPost = Post.query.filter_by(id=post_parent).first()
-        parentPost.modified = getTime()
-    else:
-        post = Post(title=post_title, author_id=author_id, content_type=post_content_type, body=post_body, community_id=post_parent)
-
+    new_post = Post(community_id=community_id, title=title, parent_id=parent_post, content_type=content_type, body=content_body, author_id=author_id)
     db.session.add(post)
     db.session.commit()
+    return (200, None)
         
-
+# CONTENT FIELD IS WRONG AND WEIRD
 def getPost(post_id):
     validate_post_id(post_id)
     post = Post.query.filter_by(id = post_id).first()
     if post is None:
         return (404, {"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"})
 
-    post_dict = {"id": post.id, "parent": post.parent_id if post.parent_id else post.community_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
-    post_dict = ("id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": ################)
+    post_dict = {"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{post.content_type: {"text": post.body}}], "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
     return (200,post_dict)
 
+# STILL NEED TO IMPLEMENT 403 FORBIDDEN
 def editPost(post_id, post_data):
     validate_json(post_data)
     validate_post_id(post_id)
     update_title = post_data["title"]
-    update_content_dict = post_data["content"]
+    update_content_arr = post_data["content"]
+    update_content_type = "text" #update_content_arr[0]["text"]
+    update_content_body = update_content_arr[0]["text"]["text"]
 
     post = Post.query.filter_by(id = post_id)
+    if post is None:
+        return (404, {"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"})
+
     post.title = update_title
     post.content_type = update_content_type
     post.body = update_body
     db.session.commit()
+    return (200, None)
 
+# STILL NEED TO IMPLEMENT 403 FORBIDDEN
 def deletePost(post_id):
     validate_post_id(post_id)
     post = Post.query.filter_by(id = post_id)
