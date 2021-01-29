@@ -31,8 +31,14 @@ def validate_role(role):
 
 # NOTE: Move to utils.py
 def validate_post_id(post_id):
-    if not isUUID(parent_post):
+    if not isUUID(post_id):
         return (400, {"title": "post id is not in the correct format", "message": "Format of post id should be uuid4 string"})
+
+def validate_json(file):
+    try:
+        json.loads(file)
+    except ValueError:
+        return (400, {"title": "Invalid JSON file passed", "message": "Make sure JSON file is properly formatted"})
 
 
 
@@ -91,7 +97,7 @@ def getDefaultRole(community_id):
     if community is None:
         return (404, {"title": "Could not find community" + community_id, "message": "Community does not exist on database, use a different community id"})
     community_dict = {"default_role": community.default_role}
-    return community_dict
+    return (200, community_dict)
 
 def createUser(username, email, password):
     validate_username(username)
@@ -119,8 +125,8 @@ def searchUsers(prefix):
     validate_username(prefix)
     search = "{}%".format(prefix)
     users = User.query.filter(User.user_id.like(search))
-    user_dict = {}####NOT JSON MY MAN
-    return (200, user_dict)
+    user_arr = [user.user_id for user in users]
+    return (200, user_arr)
 
 # Is this for only our server?, or for external users that have a role on our server as well
 def getUserIDs():
@@ -166,50 +172,42 @@ def getAllCommunityPostsTimeModified(community_id):
     return (200, post_dicts)
 
 # Post host isnt a thing right now
-# Is parent_post NULL for posts with no parent?
 def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type):
-    validate_community_id(community_id)
-    validate_username(author)
-    if parent_post is not None and not isUUID(parent_post):
-        return (400, {"title": "parent_post id is not in the correct format", "message": "Format of post id should be uuid4 string"})
+    if community_id != "null": validate_community_id(community_id)
+    if author != "null": validate_username(author)
+    if parent_post != "null": validate_post_id(parent_post)
     
-    result = None
-    if parent_post:
-        result = Post.query.filter(Post.created >= min_date, Post.author == author, Post.host == host, Post.parent_post == parent_post, Post.content_type = content_type)
-    else:
-        result = Post.query.filter(Post.created >= min_date, Post.author == author, Post.host == host, Post.content_type = content_type)
+    query = db.session.Query(Post)
+    if community_id != "null":
+        query = query.filter(Post.community_id == community_id)
+    if min_date != "null":
+        query = query.filter(Post.created >= min_date)
+    if author != "null":
+        query = query.filter(Post.author_id == author)
+    if host != "null":
+        query = query.filter(Post.host == host)
+    if parent_post != "null":
+        query = query.filter(Post.parent_id == parent_post)
+    if content_type != "null":
+        query = query.filter(Post.content_type = content_type)
+    if limit != "null":
+        query = query.limit(limit)
 
-    finished = False
-    while not finished:
-        
-        
+    if include_children:
+        limit -= len(query)
+        for post in query:
+            post_children = getFilteredPosts(limit, community_id, min_date, author, host, post.id, True, content_type)
+            limit -= len(post_children)
+            query += post_children
     
-
-
-
-
-
-
-
-
-
-    if community_id:
-        is_comment = isUUID(community_id)
-
-        if is_comment:
-            posts = Post.query.filter(Post.created >= min_date, Post.parent_id == community_id).order_by(desc(Post.created)).limit(limit)
-        else:
-            posts = Post.query.filter(Post.created >= min_date, Post.community_id == community_id).order_by(desc(Post.created)).limit(limit)
-    else:
-        posts = Post.query.filter(Post.created >= min_date).order_by(desc(Post.created)).limit(limit)
-    
-    post_dicts = [{"id": post.id, "parent": post.parent_id if post.parent_id else post.community_id, "children": [comment.id for comment in post.comments], "title": post.title, "contentType": post.content_type, "body": post.body, "author": {"id": post.author.user_id if post.author else "Guest", "host": post.author.host if post.author else "Narnia"}, "modified": post.modified, "created": post.created} for post in posts]
-    return post_dicts
+    # ONLY SUPPORTS TEXT CONTENT TYPE
+    post_dicts = [{"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{post.content_type: {"text": post.body}}], "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created} for post in posts]
+    return (200, post_dicts)
 
 # Post host may not be tied to author idk
 # Author host is not in json file so will need to passed in manually :(
-# HANDLE BAD JSON
 def createPost(post_data, host):
+    validate_json(post_data)
     community_id = post_data["community"]
     parent_post = post_data["parentPost"]
     title = post_data["title"]
@@ -263,8 +261,8 @@ def getPost(post_id):
     post_dict = ("id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": ################)
     return (200,post_dict)
 
-#### HANDLE BAD JSON
 def editPost(post_id, post_data):
+    validate_json(post_data)
     validate_post_id(post_id)
     update_title = post_data["title"]
     update_content_dict = post_data["content"]
@@ -276,7 +274,7 @@ def editPost(post_id, post_data):
     db.session.commit()
 
 def deletePost(post_id):
-    validate_post_id
+    validate_post_id(post_id)
     post = Post.query.filter_by(id = post_id)
     if post is None:
         return (404, {"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"})
