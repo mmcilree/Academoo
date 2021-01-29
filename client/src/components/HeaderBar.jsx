@@ -27,28 +27,6 @@ var md5 = require("md5");
 
 function HeaderBar() {
   const [logged] = useAuth();
-  const [instances, setInstances] = useState(null);
-  const [email, setEmail] = useState(null);
-
-  const context = useContext(HostContext);
-
-  useEffect(() => {
-    async function fetchData() {
-      const res = await fetch("/api/get-instances");
-      res.json().then(res => setInstances(["local", ...res]));
-
-      
-        logged && authFetch("/api/get-user").then(response => response.json())
-          .then(data =>
-            setEmail(md5(data.email))
-          )
-          
-      
-
-    }
-
-    fetchData();
-  }, []);
 
 
   return (
@@ -64,7 +42,7 @@ function HeaderBar() {
         Academoo
       </Navbar.Brand>
 
-      {logged && (instances !== null) && (
+      {logged && (
         <React.Fragment>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
@@ -79,26 +57,14 @@ function HeaderBar() {
                 <PlusCircle className="mb-1" />
                 <span> New Moo</span>
               </Nav.Link>
-              {context.host === null && <Nav.Link as={Link} to="/create-community">
+              <Nav.Link as={Link} to="/create-community">
                 <PlusCircle className="mb-1" />
                 <span> New Commoonity</span>
-              </Nav.Link>}
+              </Nav.Link>
             </Nav>
 
             <Nav>
-              {/*<HostContext.Consumer>
-                {({host, setHost}) => (
-                  <DropdownButton title={"Current Instance: " + (host ? host : "local")} className="mr-5">
-                  {
-                    instances.map(name => {
-                      return <Dropdown.Item as="button" key={name} onClick={() => setHost((name === "local" ? null : name))}>{name}</Dropdown.Item>
-                    })
-                  }
-                  </DropdownButton>
-                )}
-                </HostContext.Consumer>*/}
               
-
               <DropdownButton
                 // as={Link}
                 // to="/user-profile"

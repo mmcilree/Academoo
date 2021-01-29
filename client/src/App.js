@@ -16,11 +16,12 @@ import { PrivateRoute } from "./components/PrivateRoute";
 import { LoggedOutRoute } from "./components/LoggedOutRoute";
 import CommunityCreator from "./components/CommunityCreator";
 import { HostContext } from "./components/HostContext";
- 
+import PublicProfile from "./components/PublicProfile";
+
 class App extends React.Component {
   constructor(props) {
     super(props);
-    
+
     this.state = {
       host: null,
       setHost: (value) => this.setState({ host: value })
@@ -32,7 +33,7 @@ class App extends React.Component {
       <HostContext.Provider value={this.state}>
         <Router>
           <div className="App">
-            <Route component={HeaderBar}/>
+            <Route component={HeaderBar} />
             <div className="container-md">
               <Switch>
                 <PrivateRoute exact path="/" component={Welcome} />
@@ -44,7 +45,9 @@ class App extends React.Component {
                 <PrivateRoute exact path="/comments/:id" component={CommentsViewer} />
                 <PrivateRoute path="/comments/:instance/:id" component={CommentsViewer} />
                 <PrivateRoute path="/user-settings" component={UserSettings} />
-                <PrivateRoute path="/user-profile" component={UserProfile} />
+                <PrivateRoute exact path="/user-profile/:id" component={PublicProfile} />
+                <PrivateRoute path="/user-profile/:instance/:id" component={PublicProfile} />
+                <PrivateRoute exact path="/user-profile" component={UserProfile} />
                 <PrivateRoute path="/explore" component={CommunityExplorer} />
                 <PrivateRoute path="/create-community" component={CommunityCreator} />
                 <LoggedOutRoute path="/login" component={Login} />
