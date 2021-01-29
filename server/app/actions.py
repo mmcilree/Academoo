@@ -43,6 +43,8 @@ def getCommunityIDs():
 
 def getCommunity(community_id):
     community = Community.query.filter_by(id = community_id).first()
+    if community is None:
+        return (404, {"title": "Could not find community" + community_id, "message": "Community does not exist on database, use a different community id"})
     community_dict = {"id": community.id, "title": community.title, "description": community.description, "admins": [{"id": admin.user_id, "host": admin.host} for admin in community.admins]}
     return community_dict
 

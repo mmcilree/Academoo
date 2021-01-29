@@ -67,14 +67,13 @@ class PostsViewer extends Component {
         </Popover.Content>
       </Popover>
     );
-
     return currentCommunity && (
       <Card className="mt-4 mb-10">
         <Card.Header className="pt-4">
           {!isLoading ?
             <Card.Title className="d-flex justify-content-right">
-              <OverlayTrigger trigger="hover" placement="right" overlay={popover}>
-                <Link className="px-0 py-0" variant="none" style={{color: "black", fontSize: "36px"}}>{communityData.title}
+              <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={popover}>
+                <Link to="#" className="px-0 py-0" variant="none" style={{color: "black", fontSize: "36px"}}>{communityData.title}
                 </Link></OverlayTrigger>
             </Card.Title>
             : <h2> Loading... </h2>}
@@ -118,7 +117,7 @@ class PostsViewer extends Component {
                     <Card.Body >
                       <Post postData={data} postType="preview" />
                       <Link
-                        to={this.state.host == "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
+                        to={this.state.host === "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
                         className="btn btn-primary stretched-link"
                       >
                         View Comments ({data.children.length})
