@@ -178,7 +178,7 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if author is not None: validate_username(author)
     if parent_post is not None: validate_post_id(parent_post)
     
-    query = db.session.Query(Post)
+    query = db.session.query(Post)
     if community_id is not None:
         query = query.filter(Post.community_id == community_id)
     if min_date is not None:

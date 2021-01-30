@@ -34,11 +34,12 @@ class User(db.Model):
     #admin_of = db.relationship('Community', secondary=administrating, backref='admins')
     roles = db.relationship('UserRole', backref='user')
 
-    '''
+    
+    # We need this for auth to work apparently - maybe Robert can clarify?
     @property
     def rolenames(self):
         try:
-            return self.admin_of.split(',')
+            return []
         except Exception:
             return []   
 
