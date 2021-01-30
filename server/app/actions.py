@@ -56,7 +56,7 @@ def getLocalUser(id):
     if(user == None):
         return False
     else:
-        user_dict = {"id": user.user_id, "email": user.email, "host": user.host}
+        user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio}
         return user_dict
 
 def getCommunityIDs():

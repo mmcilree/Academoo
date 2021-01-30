@@ -9,47 +9,74 @@ var md5 = require("md5");
 class UserProfile extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      user_id: "",
-      email: "",
+      // currentUser: "",
+      username: this.props.match.params.id,
+      email: null,
       bio: "",
-      new_bio: "",
-      host: "",
+      host: this.props.match.params.instance ? this.props.match.params.instance : "local",
       isLoading: true
     };
   }
+  // handleChange(event) {
+  //   const target = event.target;
+  //   const value = target.value;
+  //   const name = target.name;
+  //   this.setState({
+  //     [name]: value
+  //   });
 
-  handleChange(event) {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-    this.setState({
-      [name]: value
-    });
+  // }
 
-  }
-
-  fetchUserDetails() {
-    authFetch("/api/get-user").then(response => response.json())
-      .then(data =>
-        this.setState({
-          user_id: data.id,
-          email: data.email,
-          bio: data.bio,
-          host: data.host,
-          isLoading: false
-        })
-      )
-
-  }
+  // fetchCurrentUser() {
+  //   authFetch("/api/get-user").then(response => response.json())
+  //     .then(data =>
+  //       this.setState({
+  //         currentUser: data.id,
+  //         email: data.email,
+  //         bio: data.bio,
+  //         host: data.host,
+  //         isLoading: false
+  //       })
+  //     )
+  // }
 
   componentDidMount() {
     this.fetchUserDetails();
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.id !== prevProps.match.params.id) {
+      this.state.username = this.props.match.params.id;
+      this.state.host = this.props.match.params.instance ? this.props.match.params.instance : "local";
+      this.fetchUserDetails();
+    }
+  }
+
+  fetchUserDetails() {
+    fetch('/api/users/' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
+      .then(response => response.json())
+      .then(data =>
+        this.setState({
+          isLoading: false,
+          email: data.email,
+          // host: data.host,
+          bio: data.bio,
+          error: null,
+        })
+      )
+      .catch(error => this.setState({ error, isLoading: false }));
+  }
+
   render() {
-    const emailHash = !this.state.isLoading && md5(this.state.email)
-    return (
+    let emailHash = ""
+    if (this.state.email) {
+      emailHash = !this.state.isLoading && md5(this.state.email);
+    }
+
+    const { username, email, bio } = this.state;
+    return username && (
       <Card className="mt-4">
         <Card.Body>
 
@@ -58,14 +85,14 @@ class UserProfile extends Component {
               width={150}
               height={150}
               className="mr-5 mb-3 rounded-circle border border-primary"
-              src={"https://en.gravatar.com/avatar/" + emailHash}
+              src={email ? "https://en.gravatar.com/avatar/" + emailHash : defaultProfile}
               alt="Profile image placeholder"
             />
             {!this.state.isLoading ? (
               <Media.Body className="mr-3">
-                <h3>Username: {this.state.user_id}</h3>
-                <h4 className="text-muted"> Email: {this.state.email} </h4>
-                <p>Bio: {this.state.bio ? this.state.bio : "You have not yet set a bio!"} </p>
+                <h3>Username: {username}</h3>
+                <h4 className="text-muted"> Email: {email} </h4>
+                <p>Bio: {bio ? bio : "You have not yet set a bio!"} </p>
               </Media.Body>) : <h3>Loading Profile...</h3>}
           </Media>
         </Card.Body>

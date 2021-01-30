@@ -11,14 +11,24 @@ class UserSettings extends Component {
       newPassword: "",
       errors: [],
       changed: false,
+      username: "",
+      email: "",
+      bio: "",
+      host: "",
+      isLoading: false
+
     }
+  }
+
+  componentDidMount() {
+    this.fetchUserDetails();
   }
 
   fetchUserDetails() {
     authFetch("/api/get-user").then(response => response.json())
       .then(data =>
         this.setState({
-          user_id: data.id,
+          username: data.id,
           email: data.email,
           bio: data.bio,
           host: data.host,
@@ -85,7 +95,7 @@ class UserSettings extends Component {
     this.setState(
       { oldPassword: "", newPassword: "" }
     );
-    this.props.history.push('/user-settings');
+    this.props.history.push('/user-settings/');
   }
 
   async handleSubmitBio(event) {
@@ -103,9 +113,8 @@ class UserSettings extends Component {
 
     await authFetch('/api/update-bio', requestOptions);
     this.setState({ new_bio: "" })
-
     this.fetchUserDetails();
-    this.props.history.push("/user-profile");
+    this.props.history.push("/user-profile/" + this.state.username);
   }
 
   render() {
