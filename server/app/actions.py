@@ -173,24 +173,25 @@ def getAllCommunityPostsTimeModified(community_id):
 
 # Post host isnt a thing right now
 def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type):
-    if community_id != "null": validate_community_id(community_id)
-    if author != "null": validate_username(author)
-    if parent_post != "null": validate_post_id(parent_post)
+    print(author)
+    if community_id is not None: validate_community_id(community_id)
+    if author is not None: validate_username(author)
+    if parent_post is not None: validate_post_id(parent_post)
     
     query = db.session.Query(Post)
-    if community_id != "null":
+    if community_id is not None:
         query = query.filter(Post.community_id == community_id)
-    if min_date != "null":
+    if min_date is not None:
         query = query.filter(Post.created >= min_date)
-    if author != "null":
+    if author is not None:
         query = query.filter(Post.author_id == author)
-    if host != "null":
+    if host is not None:
         query = query.filter(Post.host == host)
-    if parent_post != "null":
+    if parent_post is not None:
         query = query.filter(Post.parent_id == parent_post)
-    if content_type != "null":
+    if content_type is not None:
         query = query.filter(Post.content_type == content_type)
-    if limit != "null":
+    if limit is not None:
         query = query.limit(limit)
 
     ''' add once tested fully
