@@ -16,7 +16,6 @@ import { PrivateRoute } from "./components/PrivateRoute";
 import { LoggedOutRoute } from "./components/LoggedOutRoute";
 import CommunityCreator from "./components/CommunityCreator";
 import { HostContext } from "./components/HostContext";
-import PublicProfile from "./components/PublicProfile";
 
 class App extends React.Component {
   constructor(props) {
