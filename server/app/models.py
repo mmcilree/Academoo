@@ -92,27 +92,27 @@ class Community(db.Model):
     default_role = db.Column(db.String(50), default="contributor", nullable=False)
 
     def admins(self):
-        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="admin")
+        pairs = UserRole.query.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="admin")
         admins = [pair[0] for pair in pairs]
         return admins
 
     def contributors(self):
-        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="contributor")
+        pairs = UserRole.query.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="contributor")
         contributors = [pair[0] for pair in pairs]
         return contributors
 
     def members(self):
-        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="member")
+        pairs = UserRole.query.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="member")
         members = [pair[0] for pair in pairs]
         return members
 
     def guests(self):
-        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="guest")
+        pairs = UserRole.query.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="guest")
         guests = [pair[0] for pair in pairs]
         return guests
 
     def prohibited(self):
-        pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="prohibited")
+        pairs = UserRole.query.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="prohibited")
         prohibited = [pair[0] for pair in pairs]
         return prohibited
     
