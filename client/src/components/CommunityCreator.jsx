@@ -85,6 +85,7 @@ class CommunityCreator extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
+        
         const errors = this.validateForm();
         if (errors.length > 0) {
             this.setState({ errors });
@@ -102,7 +103,7 @@ class CommunityCreator extends React.Component {
                 }
             )
         };
-
+        console.log(requestOptions)
         fetch('/api/create-community', requestOptions);
         this.setState(
             { id: "", title: "", description: "", admin: "" }

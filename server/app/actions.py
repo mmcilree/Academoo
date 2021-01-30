@@ -42,24 +42,22 @@ def validate_json(file):
 
 
 
-def createCommunity(community_id, title, description, admins):
+def createCommunity(community_id, title, description, admin):
     validate_community_id(community_id)
     
     if Community.query.filter_by(id=community_id).first() is not None:
-        print(community_id)
         return ({"title": "Community already exists", "message": "Please pick another community id that is not taken by an existing community"}, 400)
 
-    community = Community(id=id, title=title, description=description)
+    community = Community(id=community_id, title=title, description=description)
     db.session.add(community)
     
-    for admin in admins:
-        if User.query.filter_by(user_id=admin) is None:
-            return ({"title": "Could not find user" + admin, "message": "User does not exist on database, specify a different user"}, 404)
+    if User.query.filter_by(user_id=admin) is None:
+        return ({"title": "Could not find user" + admin, "message": "User does not exist on database, specify a different user"}, 404)
         
-        response = grantRole(admin, id, "admin")
+    response = grantRole(admin, community_id, "admin")
         ######################## not best way to do
-        if response[1] != 200:
-            return response
+    if response[1] != 200:
+        return response
         ########################
     db.session.commit()
     return (None, 200)
@@ -69,18 +67,18 @@ def grantRole(username, community_id, role="member"):
     validate_community_id(community_id)
     validate_username(username)
     validate_role(role)
-    
+    print(username)
     user = User.query.filter_by(user_id = username).first()
     if user is None:
-        
+        print("maybe")
         return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 400)
     
-    if UserRole.query.filter_by(user_id=username, id=community_id) is None:
+    if UserRole.query.filter_by(user_id=username, community_id=community_id) is None:
         new_role = UserRole(user_id=username, community_id=community_id, role=role)
         db.session.add(new_role)
         db.session.commit()
     else:
-        existing_role = UserRole.query.filter_by(user_id=username, id=community_id)
+        existing_role = UserRole.query.filter_by(user_id=username, community_id=community_id)
         existing_role.role = role
         db.session.commit()
 

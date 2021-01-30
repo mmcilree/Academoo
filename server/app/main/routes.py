@@ -40,12 +40,12 @@ def get_community_roles(id):
 @bp.route("/create-community", methods=["POST"])
 def create_community():
     req = request.json
-    id = req["id"]
+    community_id = req["id"]
     title = req["title"]
     description = req["description"]
     admin = req["admin"]
-
-    return respond_with_action(actions.createCommunity(id, title, description, admin))
+    print("admin: " + admin)
+    return respond_with_action(actions.createCommunity(community_id, title, description, admin))
 
 @bp.route("/change-password", methods=["POST"])
 @auth_required
