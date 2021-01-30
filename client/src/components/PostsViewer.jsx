@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Post from "./Post";
-import { Card, Col, Form, FormControl, Button, Alert, Row, CardGroup } from "react-bootstrap";
+import { Card, Col, Form, FormControl, Button, Alert, OverlayTrigger, Popover } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { PlusCircle } from "react-bootstrap-icons";
 
@@ -11,24 +11,26 @@ class PostsViewer extends Component {
     currentCommunity: this.props.match.params.id,
     error: null,
     host: this.props.match.params.instance ? this.props.match.params.instance : "local",
-    newPostText: ""
+    newPostText: "",
+    communityData: null
   }
 
   componentDidMount() {
     this.fetchPosts();
+
   }
 
-  fetchPosts() {
-    fetch('/api/posts?community=' + this.state.currentCommunity + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
+  async fetchPosts() {
+    await fetch('/api/posts?community=' + this.state.currentCommunity + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
       .then(response => response.json())
       .then(data =>
         this.setState({
           posts: data,
-          isLoading: false,
           host: this.state.host
         })
       )
       .catch(error => this.setState({ error, isLoading: false }));
+    this.fetchCommunityDetails();
   }
 
   handleChange(event) {
@@ -40,19 +42,44 @@ class PostsViewer extends Component {
     });
   }
 
+  fetchCommunityDetails() {
+    fetch('/api/communities/' + this.state.currentCommunity + (this.state.host !== "local" ? "?external=" + this.state.host : ""))
+      .then(response => response.json())
+      .then(data =>
+        this.setState({
+          communityData: data,
+          isLoading: false,
+        })
+      )
+  }
+
   handleSubmit(event) {
     event.preventDefault();
   }
 
   render() {
-    const { isLoading, posts, error, currentCommunity, newPostText, host } = this.state;
-
+    const { isLoading, posts, error, currentCommunity, newPostText, host, communityData } = this.state;
+    const popover = (
+      <Popover id="popover-basic">
+        <Popover.Title as="h3">Community description</Popover.Title>
+        <Popover.Content>
+          {!isLoading && communityData.description}
+        </Popover.Content>
+      </Popover>
+    );
     return currentCommunity && (
-      <Card className="mt-4">
+      <Card className="mt-4 mb-10">
         <Card.Header className="pt-4">
-          <h2>{currentCommunity}</h2>
+          {!isLoading ?
+            <Card.Title className="d-flex justify-content-right">
+              <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={popover}>
+                <Link to="#" className="px-0 py-0" variant="none" style={{color: "black", fontSize: "36px"}}>{communityData.title}
+                </Link></OverlayTrigger>
+            </Card.Title>
+            : <h2> Loading... </h2>}
+          <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>
         </Card.Header>
-        <Card.Body >
+        <Card.Body>
           <Form onSubmit={this.handleSubmit.bind(this)}>
             <Form.Row>
               <Form.Group as={Col} className="d-none d-sm-flex" sm={6} md={7} lg={9}>
@@ -86,23 +113,24 @@ class PostsViewer extends Component {
               const { parent, id } = data;
               return (
                 parent === currentCommunity ? (
-                    <Card key={id} className="mt-4">
-                      <Card.Body className="h-100 mh-100">
-                        <Post postData={data} />
-                        <Link
-                          to={this.state.host == "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
-                          className="btn btn-primary stretched-link"
-                        >
-                          View Comments ({data.children.length})
+                  <Card key={id} className="mt-4">
+                    <Card.Body >
+                      <Post postData={data} postType="preview" />
+                      <Link
+                        to={this.state.host === "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
+                        className="btn btn-primary stretched-link"
+                      >
+                        View Comments ({data.children.length})
                           </Link>
-                      </Card.Body>
-                    </Card>
+                    </Card.Body>
+                  </Card>
                 ) : null);
             })
           ) : (
               <h3>Loading Posts...</h3>
             )}
           {!isLoading && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
+
         </Card.Body>
       </Card>
     );
