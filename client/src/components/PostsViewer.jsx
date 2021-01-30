@@ -13,16 +13,12 @@ class PostsViewer extends Component {
     error: null,
     host: this.props.match.params.instance ? this.props.match.params.instance : "local",
     newPostText: "",
-<<<<<<< HEAD
-    isAdmin: false
-=======
+    isAdmin: false,
     communityData: null
->>>>>>> matthew/front-end-protocol-update
   }
 
   componentDidMount() {
     this.fetchPosts();
-<<<<<<< HEAD
     this.fetchUserDetails();
   }
 
@@ -33,9 +29,7 @@ class PostsViewer extends Component {
           isAdmin: data.adminOf.includes(this.state.currentCommunity)
         })
       )
-=======
 
->>>>>>> matthew/front-end-protocol-update
   }
 
   async fetchPosts() {
@@ -44,11 +38,8 @@ class PostsViewer extends Component {
       .then(data =>
         this.setState({
           posts: data,
-<<<<<<< HEAD
           isLoading: false,
-=======
           host: this.state.host
->>>>>>> matthew/front-end-protocol-update
         })
       )
       .catch(error => this.setState({ error, isLoading: false }));
@@ -80,20 +71,6 @@ class PostsViewer extends Component {
   }
 
   render() {
-<<<<<<< HEAD
-    const { isLoading, posts, error, currentCommunity, newPostText, isAdmin, host } = this.state;
-    return currentCommunity && (
-      <Card className="mt-4">
-        <Card.Header className="pt-4 d-flex justify-content-between">
-          <h2>{currentCommunity}</h2>
-
-          {this.state.host === "local" && isAdmin && <Link to={"/communities/" + currentCommunity + "/manage"}>
-            <Button variant="primary">Manage Community</Button>
-          </Link>}
-        </Card.Header>
-        <Card.Body>
-          {this.state.isAdmin && <Alert variant="primary">You are an admin!</Alert>}
-=======
     const { isLoading, posts, error, currentCommunity, newPostText, host, communityData } = this.state;
     const popover = (
       <Popover id="popover-basic">
@@ -117,7 +94,6 @@ class PostsViewer extends Component {
           <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>
         </Card.Header>
         <Card.Body>
->>>>>>> matthew/front-end-protocol-update
           <Form onSubmit={this.handleSubmit.bind(this)}>
             <Form.Row>
               <Form.Group as={Col} className="d-none d-sm-flex" sm={6} md={7} lg={9}>
@@ -150,21 +126,12 @@ class PostsViewer extends Component {
             posts.map(data => {
               const { community, parent, id } = data;
               return (
-<<<<<<< HEAD
-                parent === currentCommunity ? (
-                  <Card key={id} className="mt-4">
-                    <Card.Body>
-                      <Post postData={data} />
-                      <Link
-                        to={this.state.host == "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
-=======
                 community === currentCommunity ? (
                   <Card key={id} className="mt-4">
                     <Card.Body >
                       <Post postData={data} postType="preview" />
                       <Link
                         to={this.state.host === "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
->>>>>>> matthew/front-end-protocol-update
                         className="btn btn-primary stretched-link"
                       >
                         View Comments ({data.children.length})

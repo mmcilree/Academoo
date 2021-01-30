@@ -6,11 +6,7 @@ class Manager(object):
     def __init__(self):
         # host name : <Instance Objects>
         self.instances = {
-<<<<<<< HEAD
             "nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/"),
-=======
-            #"nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/"),
->>>>>>> matthew/front-end-protocol-update
             "unifier": Instance("http://unifier-prod.herokuapp.com")
         }
 
