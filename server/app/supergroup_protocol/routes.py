@@ -3,13 +3,16 @@ from app.supergroup_protocol import bp
 from flask import jsonify, request, Response
 from app.models import User, Community
 
+def respond_with_action(actionResponse):
+    data, status = actionResponse
+    return jsonify(data), status
 # User
 @bp.route("/users", methods=["GET"])
 def get_all_users():
     external = request.args.get("external")
 
     if not external:
-        return jsonify(actions.getUserIDs())
+        return respond_with_action(actions.getUserIDs())
     else:
         return jsonify(federation.get_users(external))
 
@@ -18,7 +21,7 @@ def get_user_by_id(id):
     external = request.args.get("external")
 
     if not external:
-        return jsonify(actions.getUser(id))
+        return respond_with_action(actions.getUser(id))
     else:
         return jsonify(federation.get_users(external, id=id))
 
@@ -28,7 +31,8 @@ def get_all_communities():
     external = request.args.get("external")
 
     if not external:
-        return jsonify(actions.getCommunityIDs())
+        body, status = actions.getCommunityIDs()
+        return respond_with_action(actions.getCommunityIDs())
     else:
         return jsonify(federation.get_communities(external))
 
@@ -37,13 +41,13 @@ def get_community_by_id(id):
     external = request.args.get("external")
 
     if not external:
-        return jsonify(actions.getCommunity(id))
+        return respond_with_action(actions.getCommunity(id))
     else:
         return jsonify(federation.get_communities(external, id=id))
 
 @bp.route("/communities/<id>/timestamps")
 def get_community_timestamps(id):
-    return jsonify(actions.getAllCommunityPostsTimeModified(id))
+    return respond_with_action(actions.getAllCommunityPostsTimeModified(id))
 
 # Posts
 @bp.route("/posts", methods=["GET"])
@@ -61,7 +65,7 @@ def get_all_posts():
     external = request.args.get("external")
 
     if not external:
-        return jsonify(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type))
+        return respond_with_action(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type))
     else:
         return jsonify(federation.get_posts(external, community_id))
 
@@ -70,7 +74,7 @@ def get_post_by_id(id):
     external = request.args.get("external")
 
     if not external:
-        return jsonify(actions.getPost(id))
+        return respond_with_action(actions.getPost(id))
     else:
         return jsonify(federation.get_post_by_id(external, id))
 
