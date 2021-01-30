@@ -58,8 +58,9 @@ def change_password():
 def get_user():
     u = current_user()
     adminOf = []
-    for community in u.admin_of:
-        adminOf.append(community.id)
+    for userRole in u.roles:
+        if(userRole.role("admin")):
+            adminOf.append(useRole.community.id)
 
     return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "adminOf": adminOf})
 
