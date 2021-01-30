@@ -5,6 +5,10 @@ from app.main import bp
 from flask import request, Response, jsonify
 from flask_praetorian import current_user
 
+def respond_with_action(actionResponse):
+    data, status = actionResponse
+    return jsonify(data), status
+
 @bp.route("/")
 def index():
     return "Hello World!"
@@ -12,26 +16,26 @@ def index():
 @bp.route("/assign-role", methods=["POST"])
 def assign_role():
     req = request.json
-    host = req["host"]
+    host = req["host"] #someday
     user_id = req["user"]
     community_id = req["community"]
     role = req["role"]
-    return Response(status=200) if actions.assignRole(host, user_id, community_id, role) else Response(status=400)
+    return respond_with_action(actions.grantRole(user_id, community_id, role))
 
 @bp.route("/set-default-role", methods=["POST"])
 def set_default_role():
     req = request.json
     default_role = req["role"]
     community_id = req["community"]
-    return Response(status=200) if actions.setDefaultRole(default_role, community_id) else Response(status=400)    
+    return respond_with_action(actions.setDefaultRole(default_role, community_id))  
 
 @bp.route("/get-default-role/<id>", methods=["GET"])
 def get_default_role(id):
-    return jsonify(actions.getDefaultRole(id))
+    return respond_with_action(actions.getDefaultRole(id))
 
 @bp.route("/get-community-roles/<id>", methods=["GET"])
 def get_community_roles(id):
-    return jsonify(actions.getRoles(id))
+    return respond_with_action(actions.getRoles(id))
 
 @bp.route("/create-community", methods=["POST"])
 def create_community():
@@ -41,7 +45,7 @@ def create_community():
     description = req["description"]
     admin = req["admin"]
 
-    return Response(status=200) if actions.createCommunity(id, title, description, admin) else Response(status=400)
+    return respond_with_action(actions.createCommunity(id, title, description, admin))
 
 @bp.route("/change-password", methods=["POST"])
 @auth_required
@@ -60,7 +64,7 @@ def get_user():
     adminOf = []
     for userRole in u.roles:
         if(userRole.role("admin")):
-            adminOf.append(useRole.community.id)
+            adminOf.append(userRole.community.id)    
 
     return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "adminOf": adminOf})
 
