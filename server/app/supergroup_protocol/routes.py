@@ -83,7 +83,7 @@ def create_post():
     host = request.json.get("external")
     user_id = request.headers.get("UserIDHeader")
     user = User.lookup(user_id)
-    community_id = request.json["parent"]
+    community_id = request.json["community"]
 
     #if user.has_no_role(community_id):
     if not user.has_role(community_id, "guest"): # works because having guest or higher corresponds to having any role

@@ -21,7 +21,7 @@ class PostCreator extends React.Component {
             errors: [],
             selected: [{
                 host: this.props.location && this.props.location.state ?
-                this.props.location.state.host : null,
+                    this.props.location.state.host : null,
                 community: this.props.location && this.props.location.state ?
                     this.props.location.state.community : "",
             }]
@@ -98,15 +98,22 @@ class PostCreator extends React.Component {
 
         const requestOptions = {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'UserIDHeader': this.state.user_id
             },
             body: {
-                parent: this.state.selected[0].community,
+                community: this.state.selected[0].community,
                 title: this.state.title,
                 contentType: 'text',
-                body: this.state.body,
+                parentPost: null,
+                content: [
+                    {
+                        text: {
+                            text: this.state.body
+                        }
+                    }
+                ],
                 author: {
                     id: this.state.user_id,
                     host: "Academoo"
@@ -120,7 +127,7 @@ class PostCreator extends React.Component {
 
         fetch('/api/posts', requestOptions);
         this.setState(
-            { email: "", selected: [{community: null, host: null}], title: "", body: "" }
+            { email: "", selected: [{ community: null, host: null }], title: "", body: "" }
         );
         this.props.history.push('/moosfeed');
     }
@@ -172,9 +179,9 @@ class PostCreator extends React.Component {
                                 )}
 
                                 defaultInputValue={this.state.selected.community ? this.state.selected.community : undefined}
-                                
+
                                 onChange={(selected) => {
-                                    this.setState({selected : selected})
+                                    this.setState({ selected: selected })
                                 }}
 
                                 options={this.state.communities}

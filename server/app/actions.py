@@ -221,18 +221,20 @@ def createPost(post_data, host="NULL"):
     content_arr = post_data["content"]
     content_type = "text" #content_arr[0]["text"]
     content_body = content_arr[0]["text"]["text"]
-    author_id = post_data["author"] # host not given so it will be "NULL" for moment
+    author = post_data["author"] # host not given so it will be "NULL" for moment
+    author_id = author["id"]
+    host = author["host"]
 
     validate_community_id(community_id)
     validate_username(author_id)
-    if parent_post != "null": validate_post_id(parent_post)
+    if parent_post is not None: validate_post_id(parent_post)
 
     if User.query.filter_by(user_id = author_id) is None:
         new_user = User(user_id = author_id, host = host)
         db.session.add(new_user)
         db.session.commit()
     
-    new_post = Post(community_id=community_id, title=title, parent_id=parent_post, content_type=content_type, body=content_body, author_id=author_id)
+    new_post = Post(community_id=community_id, title=title, parent_id=parent_post, content_type=content_type, body=content_body, author_id=author_id, host=host)
     db.session.add(new_post)
     db.session.commit()
     return (None, 200)
