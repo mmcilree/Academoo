@@ -161,10 +161,16 @@ def getCommunity(community_id):
     validate_community_id(community_id)
     community = Community.query.filter_by(id = community_id).first()
     if community is None:
+<<<<<<< HEAD
         return ({"title": "Could not find community" + community_id, "message": "Community does not exist on database, use a different community id"}, 404)
     
     community_dict = {"id": community.id, "title": community.title, "description": community.description, "admins": [{"id": admin.user_id, "host": admin.host} for admin in community.admins()]}
     return (community_dict, 200)
+=======
+        return (404, {"title": "Could not find community" + community_id, "message": "Community does not exist on database, use a different community id"})
+    community_dict = {"id": community.id, "title": community.title, "description": community.description, "admins": [{"id": admin.user_id, "host": admin.host} for admin in community.admins]}
+    return community_dict
+>>>>>>> matthew/front-end-protocol-update
 
 def getAllCommunityPostsTimeModified(community_id):
     # NOTE: shouldn't this return for all posts? Also, when we add comments to a post, then that parent post should have modified time updated as well?
