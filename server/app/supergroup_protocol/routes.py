@@ -50,13 +50,18 @@ def get_community_timestamps(id):
 def get_all_posts():
     # limit, community, min_date
     limit = int(request.args.get("limit", 20))
-    community = request.args.get("community")
-    min_date = request.args.get("min_date", 0)
+    community_id = request.args.get("community")
+    min_date = request.args.get("minDate", 0)
+    author = request.args.get("author")
+    host = request.args.get("host")
+    parent_post = request.args.get("parentPost")
+    include_children = request.args.get("includeSubChildrenPosts")
+    content_type = request.args.get("contentType")
 
     external = request.args.get("external")
 
     if not external:
-        return jsonify(actions.getFilteredPosts(limit, community, min_date))
+        return jsonify(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type))
     else:
         return jsonify(federation.get_posts(external, community))
 
