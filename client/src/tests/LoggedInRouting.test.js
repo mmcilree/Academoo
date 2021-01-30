@@ -23,13 +23,13 @@ jest.mock('../auth', () => ({
     authFetch: () =>
         Promise.resolve({
             json: () => Promise.resolve(
-                { 
+                {
                     id: "academoo",
                     email: "academoo@academoo.com",
                     host: "academoo"
                 }),
         })
-    }));
+}));
 
 it("Routes to default page", () => {
     const wrapper = mount(
@@ -97,7 +97,7 @@ it("Routes to Comments page for parent post id", () => {
 
 it("Routes to User-Profile page", () => {
     const wrapper = mount(
-        <Router initialEntries={["/user-profile"]}>
+        <Router initialEntries={["/user-profile/academoo"]}>
             <App />
         </Router>
     );
