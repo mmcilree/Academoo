@@ -103,7 +103,7 @@ class CommunityCreator extends React.Component {
                 }
             )
         };
-        console.log(requestOptions)
+        
         fetch('/api/create-community', requestOptions);
         this.setState(
             { id: "", title: "", description: "", admin: "" }

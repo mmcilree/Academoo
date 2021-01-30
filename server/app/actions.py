@@ -70,7 +70,6 @@ def grantRole(username, community_id, role="member"):
     print(username)
     user = User.query.filter_by(user_id = username).first()
     if user is None:
-        print("maybe")
         return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 400)
     
     if UserRole.query.filter_by(user_id=username, community_id=community_id) is None:
@@ -178,7 +177,6 @@ def getAllCommunityPostsTimeModified(community_id):
 
 # Post host isnt a thing right now
 def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type):
-    print(author)
     if community_id is not None: validate_community_id(community_id)
     if author is not None: validate_username(author)
     if parent_post is not None: validate_post_id(parent_post)
@@ -215,7 +213,8 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
 # Post host may not be tied to author idk
 # Author host is not in json file so will need to passed in manually :(
 def createPost(post_data, host="NULL"):
-    validate_json(post_data)
+    # v BROKEN v (TypeError: the JSON object must be str, bytes or bytearray, not dict)
+    # validate_json(post_data) 
     community_id = post_data["community"]
     parent_post = post_data["parentPost"]
     title = post_data["title"]
@@ -280,7 +279,6 @@ def deletePost(post_id):
 
 def changePassword(username, old_password, new_password):
     user = guard.authenticate(username, old_password)
-    print(user)
     if user:
         user.password_hash = guard.hash_password(new_password)
         db.session.commit()

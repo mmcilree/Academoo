@@ -77,7 +77,7 @@ class User(db.Model):
     
     def has_role(self, community_id, role):
         role_tiers = {"admin": 1, "contributor": 2, "member": 3, "guest": 4, "prohibited": 5}
-        entry = UserRole.query.filter_by(user_id=user_id, community_id=community_id).first()
+        entry = UserRole.query.filter_by(user_id=self.identity, community_id=community_id).first()
         if entry is None or role_tiers[entry.role] > role_tiers[role]:
             return False
         return True
@@ -115,6 +115,10 @@ class Community(db.Model):
         pairs = UserRole.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="prohibited")
         prohibited = [pair[0] for pair in pairs]
         return prohibited
+    
+    @classmethod
+    def lookup(cls, community_id):
+        return cls.query.filter_by(id=community_id).one_or_none()
 
 class Post(db.Model):
     id = db.Column(db.String(1000), primary_key=True, default=getUUID)

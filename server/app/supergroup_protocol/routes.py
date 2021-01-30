@@ -85,9 +85,10 @@ def create_post():
     user = User.lookup(user_id)
     community_id = request.json["parent"]
 
-    if user.has_no_role(community_id):
+    #if user.has_no_role(community_id):
+    if not user.has_role(community_id, "guest"): # works because having guest or higher corresponds to having any role
         community = Community.lookup(community_id)
-        role = community.get_default_role(community_id)
+        role = community.default_role
         if ((role != "contributor") & (role != "admin")):
             return Response(status = 403)
     else :
