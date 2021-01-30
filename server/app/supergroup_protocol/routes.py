@@ -63,7 +63,7 @@ def get_all_posts():
     if not external:
         return jsonify(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type))
     else:
-        return jsonify(federation.get_posts(external, community))
+        return jsonify(federation.get_posts(external, community_id))
 
 @bp.route("/posts/<id>", methods=["GET"])
 def get_post_by_id(id):

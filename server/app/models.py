@@ -43,6 +43,7 @@ class User(db.Model):
         except Exception:
             return []   
 
+    '''
     def has_no_role(self, community_id):
         role_communities = []
         role_communities.append(self.admin_communities)
