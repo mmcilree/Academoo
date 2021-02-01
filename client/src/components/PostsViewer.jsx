@@ -38,7 +38,6 @@ class PostsViewer extends Component {
       .then(data =>
         this.setState({
           posts: data,
-          isLoading: false,
           host: this.state.host
         })
       )
@@ -71,7 +70,7 @@ class PostsViewer extends Component {
   }
 
   render() {
-    const { isLoading, posts, error, currentCommunity, newPostText, host, communityData } = this.state;
+    const { isLoading, posts, error, currentCommunity, newPostText, host, communityData, isAdmin } = this.state;
     const popover = (
       <Popover id="popover-basic">
         <Popover.Title as="h3">Community description</Popover.Title>
@@ -83,7 +82,7 @@ class PostsViewer extends Component {
     console.log(this.state);
     return currentCommunity && (
       <Card className="mt-4 mb-10">
-        <Card.Header className="pt-4">
+        <Card.Header className="pt-4 d-flex justify-content-between">
           {!isLoading ?
             <Card.Title className="d-flex justify-content-right">
               <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={popover}>
@@ -91,6 +90,9 @@ class PostsViewer extends Component {
                 </Link></OverlayTrigger>
             </Card.Title>
             : <h2> Loading... </h2>}
+            {this.state.host === "local" && isAdmin && <Link to={"/communities/" + currentCommunity + "/manage"}>
+            <Button variant="primary">Manage Community</Button>
+          </Link>}
           <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>
         </Card.Header>
         <Card.Body>
