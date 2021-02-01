@@ -92,28 +92,29 @@ class Community(db.Model):
     default_role = db.Column(db.String(50), default="contributor", nullable=False)
 
     def admins(self):
-        pairs = UserRole.query.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="admin")
-        admins = [pair[0] for pair in pairs]
+        pairs = User.query.join(UserRole, UserRole.user_id == User.user_id).filter_by(community_id=self.id, role="admin")
+        admins = [pair for pair in pairs]
+        print(admins)
         return admins
 
     def contributors(self):
-        pairs = UserRole.query.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="contributor")
-        contributors = [pair[0] for pair in pairs]
+        pairs = User.query.join(UserRole, UserRole.user_id == User.user_id).filter_by(community_id=self.id, role="contributor")
+        contributors = [pair for pair in pairs]
         return contributors
 
     def members(self):
-        pairs = UserRole.query.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="member")
-        members = [pair[0] for pair in pairs]
+        pairs = User.query.join(UserRole, UserRole.user_id == User.user_id).filter_by(community_id=self.id, role="member")
+        members = [pair for pair in pairs]
         return members
 
     def guests(self):
-        pairs = UserRole.query.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="guest")
-        guests = [pair[0] for pair in pairs]
+        pairs = User.query.join(UserRole, UserRole.user_id == User.user_id).filter_by(community_id=self.id, role="guest")
+        guests = [pair for pair in pairs]
         return guests
 
     def prohibited(self):
-        pairs = UserRole.query.join(User, UserRole.user_id == User.user_id).filter_by(community_id=id, role="prohibited")
-        prohibited = [pair[0] for pair in pairs]
+        pairs = User.query.join(UserRole, UserRole.user_id == User.user_id).filter_by(community_id=self.id, role="prohibited")
+        prohibited = [pair for pair in pairs]
         return prohibited
     
     @classmethod

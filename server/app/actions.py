@@ -36,7 +36,7 @@ def validate_post_id(post_id):
 
 def validate_json(file):
     try:
-        json.loads(file)
+        json.dumps(file)
     except ValueError:
         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file is properly formatted"}, 400)
 
@@ -70,14 +70,17 @@ def grantRole(username, community_id, role="member"):
     print(username)
     user = User.query.filter_by(user_id = username).first()
     if user is None:
+        print("user is returned 400")
         return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 400)
     
-    if UserRole.query.filter_by(user_id=username, community_id=community_id) is None:
+    if UserRole.query.filter_by(user_id=username, community_id=community_id).first() is None:
+        print("no role found")
         new_role = UserRole(user_id=username, community_id=community_id, role=role)
         db.session.add(new_role)
         db.session.commit()
     else:
-        existing_role = UserRole.query.filter_by(user_id=username, community_id=community_id)
+        print("role found")
+        existing_role = UserRole.query.filter_by(user_id=username, community_id=community_id).first()
         existing_role.role = role
         db.session.commit()
 
@@ -214,7 +217,7 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
 # Author host is not in json file so will need to passed in manually :(
 def createPost(post_data, host="NULL"):
     # v BROKEN v (TypeError: the JSON object must be str, bytes or bytearray, not dict)
-    # validate_json(post_data) 
+    validate_json(post_data) 
     community_id = post_data["community"]
     parent_post = post_data["parentPost"]
     title = post_data["title"]

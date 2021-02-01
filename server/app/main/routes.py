@@ -63,9 +63,10 @@ def get_user():
     u = current_user()
     adminOf = []
     for userRole in u.roles:
-        if(userRole.role("admin")):
-            adminOf.append(userRole.community.id)    
+        if(userRole.role == "admin"):
+            adminOf.append(userRole.community_id)   
 
+    print(str(adminOf) + " admin of")
     return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "adminOf": adminOf})
 
 @bp.route("/add-instance", methods=["POST"])
