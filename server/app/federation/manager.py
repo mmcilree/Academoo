@@ -6,8 +6,8 @@ class Manager(object):
     def __init__(self):
         # host name : <Instance Objects>
         self.instances = {
-            #"nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/"),
-            #"unifier": Instance("http://unifier-prod.herokuapp.com")
+            "nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/"),
+            "unifier": Instance("http://unifier-prod.herokuapp.com")
         }
 
     def create_post(self, host, data):
@@ -29,6 +29,9 @@ class Manager(object):
 
     def get_communities(self, host, id=None):
         return self.instances[host].get_communities(id=id)
+    
+    def get_users(self, host, id=None):
+        return self.instances[host].get_users(id=id)
 
     def get_instances(self):
         return list(self.instances.keys())

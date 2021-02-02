@@ -8,10 +8,10 @@ import { HostContext } from "./HostContext";
 class CommentCreator extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { 
+        this.state = {
             title: "",
-            email: "", 
-            host: "", 
+            email: "",
+            host: "",
             body: "",
             parentPost: this.props.parentPost
         };
@@ -43,17 +43,26 @@ class CommentCreator extends React.Component {
         event.preventDefault();
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'UserIDHeader': this.state.user_id
+            },
             body: {
-                    parent: this.state.parentPost.id,
-                    title: this.state.title,
-                    contentType: 'text',
-                    body: this.state.body,
-                    author: {
-                        id: this.state.user_id,
-                        host: this.state.host
+                community: this.state.parentPost.community,
+                parentPost: this.state.parentPost.id,
+                title: this.state.title,
+                content: [
+                    {
+                        text: {
+                            text: this.state.body
+                        }
                     }
+                ],
+                author: {
+                    id: this.state.user_id,
+                    host: this.state.host
                 }
+            }
         };
 
         if (this.context.host !== null) {
@@ -61,10 +70,10 @@ class CommentCreator extends React.Component {
         }
 
         requestOptions.body = JSON.stringify(requestOptions.body);
-        
+
         await fetch('/api/posts', requestOptions);
         this.setState(
-            { email: "", host: "", title: "", body: ""}
+            { email: "", host: "", title: "", body: "" }
         );
 
         this.props.onSubmit();
@@ -81,8 +90,8 @@ class CommentCreator extends React.Component {
                     <Form onSubmit={this.handleSubmit.bind(this)}>
 
                         <Form.Group controlId="createPostText">
-                            <Form.Control as="textarea" 
-                                placeholder="Write a comment..." 
+                            <Form.Control as="textarea"
+                                placeholder="Write a comment..."
                                 name="body"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.body} />

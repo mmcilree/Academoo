@@ -1,4 +1,5 @@
 import React from "react";
+import AccessForbidden from "./components/AccessForbidden";
 import PostCreator from "./components/PostCreator";
 import HeaderBar from "./components/HeaderBar";
 import Welcome from "./components/Welcome";
@@ -6,6 +7,7 @@ import CommunityFeed from "./components/CommunityFeed";
 import PostsViewer from "./components/PostsViewer";
 import CommentsViewer from "./components/CommentsViewer";
 import CommunityExplorer from "./components/CommunityExplorer";
+import CommunityManager from "./components/CommunityManager";
 import UserSettings from "./components/UserSettings";
 import UserProfile from "./components/UserProfile";
 import PageNotFound from "./components/PageNotFound";
@@ -39,6 +41,7 @@ class App extends React.Component {
                 <PrivateRoute path="/home" component={Welcome} />
                 <PrivateRoute exact path="/moosfeed" component={CommunityFeed} />
                 <PrivateRoute exact path="/communities/:id" component={PostsViewer} />
+                <PrivateRoute exact path="/communities/:id/manage" component={CommunityManager} />
                 <PrivateRoute path="/communities/:instance/:id" component={PostsViewer} />
                 <PrivateRoute path="/create-post" component={PostCreator} />
                 <PrivateRoute exact path="/comments/:id" component={CommentsViewer} />
@@ -47,6 +50,7 @@ class App extends React.Component {
                 <PrivateRoute path="/user-profile" component={UserProfile} />
                 <PrivateRoute path="/explore" component={CommunityExplorer} />
                 <PrivateRoute path="/create-community" component={CommunityCreator} />
+                <PrivateRoute path="/forbidden" component={AccessForbidden} />
                 <LoggedOutRoute path="/login" component={Login} />
                 <LoggedOutRoute path="/sign-up" component={SignUp} />
                 <Route component={PageNotFound} />

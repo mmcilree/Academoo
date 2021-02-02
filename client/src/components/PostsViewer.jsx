@@ -3,6 +3,7 @@ import Post from "./Post";
 import { Card, Col, Form, FormControl, Button, Alert, OverlayTrigger, Popover } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { PlusCircle } from "react-bootstrap-icons";
+import { authFetch } from '../auth';
 
 class PostsViewer extends Component {
   state = {
@@ -12,11 +13,22 @@ class PostsViewer extends Component {
     error: null,
     host: this.props.match.params.instance ? this.props.match.params.instance : "local",
     newPostText: "",
+    isAdmin: false,
     communityData: null
   }
 
   componentDidMount() {
     this.fetchPosts();
+    this.fetchUserDetails();
+  }
+
+  fetchUserDetails() {
+    authFetch("/api/get-user").then(response => response.json())
+      .then(data =>
+        this.setState({
+          isAdmin: data.adminOf.includes(this.state.currentCommunity)
+        })
+      )
 
   }
 
@@ -58,7 +70,7 @@ class PostsViewer extends Component {
   }
 
   render() {
-    const { isLoading, posts, error, currentCommunity, newPostText, host, communityData } = this.state;
+    const { isLoading, posts, error, currentCommunity, newPostText, host, communityData, isAdmin } = this.state;
     const popover = (
       <Popover id="popover-basic">
         <Popover.Title as="h3">Community description</Popover.Title>
@@ -67,19 +79,27 @@ class PostsViewer extends Component {
         </Popover.Content>
       </Popover>
     );
+    console.log(this.state);
     return currentCommunity && (
       <Card className="mt-4 mb-10">
         <Card.Header className="pt-4">
-          {!isLoading ?
-            <Card.Title className="d-flex justify-content-right">
-              <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={popover}>
-                <Link to="#" className="px-0 py-0" variant="none" style={{color: "black", fontSize: "36px"}}>{communityData.title}
-                </Link></OverlayTrigger>
-            </Card.Title>
-            : <h2> Loading... </h2>}
+          <div className="d-flex justify-content-between">
+            {!isLoading ?
+              <Card.Title className="d-flex justify-content-right">
+                <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={popover}>
+                  <Link to="#" className="px-0 py-0" variant="none" style={{ color: "black", fontSize: "36px" }}>{communityData.title}
+                  </Link></OverlayTrigger>
+              </Card.Title>
+              : <h2> Loading... </h2>}
+            {this.state.host === "local" && isAdmin && <Link to={"/communities/" + currentCommunity + "/manage"}>
+              <Button variant="primary">Manage Community</Button>
+            </Link>}
+          </div>
+
           <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>
         </Card.Header>
         <Card.Body>
+         {this.state.isAdmin && <Alert variant="primary">You are an admin!</Alert>}
           <Form onSubmit={this.handleSubmit.bind(this)}>
             <Form.Row>
               <Form.Group as={Col} className="d-none d-sm-flex" sm={6} md={7} lg={9}>
@@ -110,9 +130,9 @@ class PostsViewer extends Component {
           {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
           {!isLoading ? (
             posts.map(data => {
-              const { parent, id } = data;
+              const { community, parent, id } = data;
               return (
-                parent === currentCommunity ? (
+                community === currentCommunity ? (
                   <Card key={id} className="mt-4">
                     <Card.Body >
                       <Post postData={data} postType="preview" />

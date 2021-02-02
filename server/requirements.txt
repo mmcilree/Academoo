@@ -6,6 +6,7 @@ chardet==3.0.4
 click==7.1.2
 Deprecated==1.2.10
 Flask==1.1.2
+Flask-Authorize==0.2.2
 flask-buzz==0.1.15
 Flask-Cors==3.0.9
 Flask-Mail==0.9.1

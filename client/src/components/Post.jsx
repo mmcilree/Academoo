@@ -16,7 +16,7 @@ class Post extends Component {
 
         <ContentTypeComponent
           contentType={this.props.postData.contentType}
-          body={this.props.postData.body}
+          body={this.props.postData.content[0].text.text}
           postType={this.props.postType}
         />
       </React.Fragment>
