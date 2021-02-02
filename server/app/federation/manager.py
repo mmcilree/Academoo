@@ -8,7 +8,7 @@ class Manager(object):
         # host name : <Instance Objects>
         if os.environ.get("FLASK_ENV") == "production":
             self.instances = {
-                
+                "unifier": Instance("http://unifier-prod.herokuapp.com")
             }
         else:
             self.instances = {
