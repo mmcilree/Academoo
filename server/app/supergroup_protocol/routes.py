@@ -85,15 +85,18 @@ def create_post():
     user = User.lookup(user_id)
     community_id = request.json["community"]
 
-    #if user.has_no_role(community_id):
-    if not user.has_role(community_id, "guest"): # works because having guest or higher corresponds to having any role
-        community = Community.lookup(community_id)
-        role = community.default_role
-        if ((role != "contributor") & (role != "admin")):
-            return Response(status = 403)
-    else :
-        if not user.has_role(community_id, "contributor"):
-            return Response(status = 403)
+    
+        
+    if(not host):
+        #if user.has_no_role(community_id):
+        if not user.has_role(community_id, "guest"): # works because having guest or higher corresponds to having any role
+            community = Community.lookup(community_id)
+            role = community.default_role
+            if ((role != "contributor") & (role != "admin")):
+                return Response(status = 403)
+        else :
+            if not user.has_role(community_id, "contributor"):
+                return Response(status = 403)
 
     if host:
         federation.create_post(host, request.json)
