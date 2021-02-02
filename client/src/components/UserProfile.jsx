@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Card, Media } from "react-bootstrap";
 import defaultProfile from "../images/default_profile.png";
 import { authFetch } from '../auth';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 class UserProfile extends Component {
   constructor(props) {
@@ -33,6 +35,7 @@ class UserProfile extends Component {
     return (
       <Card className="mt-4">
         <Card.Body>
+        
           <Media>
             <img
               width={150}
@@ -47,6 +50,19 @@ class UserProfile extends Component {
               <h4 className="text-muted"> Email: {this.state.email} </h4>
             </Media.Body> ) : <h3>Loading Profile...</h3> }
           </Media>
+
+          <Form.Group controlId="profileBio">
+                            <Form.Label>Bio:</Form.Label>
+                            <Form.Control type="input"
+                                placeholder="Tell us more about yourself"
+                                name="bio"
+                                //onChange={this.handleChange.bind(this)}
+                                value={this.state.bio} />
+                        </Form.Group>
+                        <Button variant="primary" type="submit" className>
+                                Update Bio
+                            </Button>
+                            
         </Card.Body>
       </Card>
     );

@@ -35,6 +35,9 @@ class Manager(object):
 
     def get_communities(self, host, id=None):
         return self.instances[host].get_communities(id=id)
+    
+    def get_users(self, host, id=None):
+        return self.instances[host].get_users(id=id)
 
     def get_instances(self):
         return list(self.instances.keys())

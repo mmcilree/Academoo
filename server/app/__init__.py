@@ -3,7 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
-from flask_praetorian import Praetorian
+from flask_praetorian import Praetorian, current_user
 from app.federation.manager import Manager
 
 from config import Config
@@ -14,7 +14,7 @@ app.config.from_object(Config)
 CORS(app)
 
 db = SQLAlchemy()
-migrate = Migrate()
+migrate = Migrate(compare_type=True)
 guard = Praetorian()
 federation = Manager()
 
@@ -43,3 +43,6 @@ def create_app(config_class=Config):
     return app
 
 from app import models
+# with app.app_context():
+#     db.create_all()
+#     db.session.commit()

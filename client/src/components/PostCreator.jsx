@@ -21,7 +21,7 @@ class PostCreator extends React.Component {
             errors: [],
             selected: [{
                 host: this.props.location && this.props.location.state ?
-                this.props.location.state.host : null,
+                    this.props.location.state.host : null,
                 community: this.props.location && this.props.location.state ?
                     this.props.location.state.community : "",
             }]
@@ -98,12 +98,22 @@ class PostCreator extends React.Component {
 
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'UserIDHeader': this.state.user_id
+            },
             body: {
-                parent: this.state.selected[0].community,
+                community: this.state.selected[0].community,
                 title: this.state.title,
                 contentType: 'text',
-                body: this.state.body,
+                parentPost: null,
+                content: [
+                    {
+                        text: {
+                            text: this.state.body
+                        }
+                    }
+                ],
                 author: {
                     id: this.state.user_id,
                     host: "Academoo"
@@ -116,10 +126,13 @@ class PostCreator extends React.Component {
         requestOptions.body = JSON.stringify(requestOptions.body);
 
         fetch('/api/posts', requestOptions);
+        const community = this.state.selected[0].community;
+        const host = this.state.selected[0].host;
+
         this.setState(
-            { email: "", selected: [{community: null, host: null}], title: "", body: "" }
+            { email: "", selected: [{ community: null, host: null }], title: "", body: "" }
         );
-        this.props.history.push('/moosfeed');
+        this.props.history.push('/communities' + (host !== "local" ? ("/" + host) : "") + "/" + community);
     }
 
     render() {
@@ -169,9 +182,9 @@ class PostCreator extends React.Component {
                                 )}
 
                                 defaultInputValue={this.state.selected.community ? this.state.selected.community : undefined}
-                                
+
                                 onChange={(selected) => {
-                                    this.setState({selected : selected})
+                                    this.setState({ selected: selected })
                                 }}
 
                                 options={this.state.communities}

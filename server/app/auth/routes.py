@@ -1,7 +1,11 @@
-from flask import request, Response
+from flask import request, Response, jsonify
 from app.auth import bp
 from app import actions, guard
 from flask_praetorian import auth_required, current_user
+
+def respond_with_action(actionResponse):
+    data, status = actionResponse
+    return jsonify(data), status
 
 @bp.route("/register", methods=["POST"])
 def register():
@@ -10,7 +14,7 @@ def register():
     email = req.get('email')
     password = req.get('password')
 
-    return Response(status=200) if actions.createUser(username, email, password) else Response(status=400)
+    return respond_with_action(actions.createUser(username, email, password))
 
 @bp.route("/login", methods=["POST"])
 def login():

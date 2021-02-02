@@ -5,12 +5,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import ListGroup from "react-bootstrap/ListGroup";
 import { Link } from "react-router-dom";
 
-import {
-    CaretUpFill,
-    CaretDownFill
-} from "react-bootstrap-icons";
-
-
 class CommunityList extends React.Component {
     constructor(props) {
         super(props);
@@ -50,9 +44,9 @@ class CommunityList extends React.Component {
                             <ListGroup variant="flush">
                                 {!isLoading ?
                                     communities.map((community) =>
-                                        community != "" &&
+                                        community !== "" &&
                                         
-                                            <ListGroup.Item>
+                                            <ListGroup.Item key={community}>
                                                 <Link to={this.props.instance === "local" ? 
                                                 "communities/" + community : "communities/" + this.props.instance + "/" + community} >
                                                 {community}
