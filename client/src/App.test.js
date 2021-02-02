@@ -25,18 +25,26 @@ it("App renders without crashing", () => {
 });
 
 const test_data = {
-  id: "post1",
-  parent: "",
-  children: ["comment1"],
-  title: "My First Post",
-  contentType: "text",
-  body: "This is my first moo on Academoo, excited to chat and learn!",
   author: {
-    id: "user1",
-    host: "somewhere_else.edu",
+    host: "Academoo",
+    id: "test"
   },
-  modified: 1552832552,
-  created: 1552832584,
+  children: [
+    "c0cc144e-fa1a-4213-903d-55f98f40a60c"
+  ],
+  community: "MyCommunity",
+  content: [
+    {
+      text: {
+        text: "My first post!"
+      }
+    }
+  ],
+  created: 1612261692,
+  id: "171547f6-700b-4099-87bf-cbc4f714c6db",
+  modified: 1612261692,
+  parentPost: null,
+  title: "Test post"
 };
 
 it("App renders without crashing", () => {
