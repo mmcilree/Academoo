@@ -28,6 +28,7 @@ class CommunityManager extends React.Component {
             role: "",
             defaultRole: "",
             currentDefaultRole: "",
+            tableUpdate: "",
             errors: [],
         };
     }
@@ -246,7 +247,7 @@ class CommunityManager extends React.Component {
                             <Card className="mt-4">
                                 <Card.Body>
                                     <Card.Title>Users Assigned Roles</Card.Title>
-                                    <UserRolesTable community_id={this.state.currentCommunity} />
+                                    <UserRolesTable community_id={this.state.currentCommunity} tableUpdate={this.state.tableUpdate} />
                                 </Card.Body>
                             </Card>
                         </Card.Body>

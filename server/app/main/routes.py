@@ -44,7 +44,6 @@ def create_community():
     title = req["title"]
     description = req["description"]
     admin = req["admin"]
-    print("admin: " + admin)
     return respond_with_action(actions.createCommunity(community_id, title, description, admin))
 
 @bp.route("/change-password", methods=["POST"])
@@ -66,7 +65,6 @@ def get_user():
         if(userRole.role == "admin"):
             adminOf.append(userRole.community_id)   
 
-    print(str(adminOf) + " admin of")
     return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "adminOf": adminOf})
 
 @bp.route("/add-instance", methods=["POST"])

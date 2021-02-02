@@ -17,6 +17,7 @@ class UserRolesTable extends Component {
         this.fetchUserRoles();
     }
 
+
     async fetchUserRoles() {
         await fetch("/api/get-community-roles/" + this.props.community_id)
             .then(response => response.json())

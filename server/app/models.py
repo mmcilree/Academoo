@@ -94,7 +94,6 @@ class Community(db.Model):
     def admins(self):
         pairs = User.query.join(UserRole, UserRole.user_id == User.user_id).filter_by(community_id=self.id, role="admin")
         admins = [pair for pair in pairs]
-        print(admins)
         return admins
 
     def contributors(self):

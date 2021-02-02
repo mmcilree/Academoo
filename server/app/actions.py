@@ -67,19 +67,15 @@ def grantRole(username, community_id, role="member"):
     validate_community_id(community_id)
     validate_username(username)
     validate_role(role)
-    print(username)
     user = User.query.filter_by(user_id = username).first()
     if user is None:
-        print("user is returned 400")
         return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 400)
     
     if UserRole.query.filter_by(user_id=username, community_id=community_id).first() is None:
-        print("no role found")
         new_role = UserRole(user_id=username, community_id=community_id, role=role)
         db.session.add(new_role)
         db.session.commit()
     else:
-        print("role found")
         existing_role = UserRole.query.filter_by(user_id=username, community_id=community_id).first()
         existing_role.role = role
         db.session.commit()
