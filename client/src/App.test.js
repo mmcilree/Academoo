@@ -78,10 +78,6 @@ it("SignUp renders without crashing", () => {
   shallow(<SignUp />);
 });
 
-it("Profile renders without crashing", () => {
-  shallow(<UserProfile />);
-});
-
 it("User Settings renders without crashing", () => {
   shallow(<UserSettings />);
 });

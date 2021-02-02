@@ -1,11 +1,11 @@
-import React from "react";
+import React, { Component } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import Image from "react-bootstrap/Image";
-import {logout, useAuth} from "../auth";
+import { logout, useAuth } from "../auth";
 import defaultProfile from "../images/default_profile.png";
 import logo from "../images/logo.svg";
 // import logo from "../images/logo.png";
@@ -22,15 +22,36 @@ import {
 } from "react-bootstrap-icons";
 
 import { Link } from "react-router-dom";
-
 var md5 = require("md5");
 
 function HeaderBar() {
+
   const [logged] = useAuth();
+  const [instances, setInstances] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [username, setUsername] = useState(null);
+
+  const context = useContext(HostContext);
+
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetch("/api/get-instances");
+      res.json().then(res => setInstances(["local", ...res]));
+
+      logged && authFetch("/api/get-user").then(response => response.json())
+        .then(data => {
+          setEmail(md5(data.email))
+          setUsername(data.id)
+        }
+        )
+    }
+
+    fetchData();
+  }, []);
 
 
   return (
-    <Navbar bg="primary" variant="dark" expand="lg" {...(!logged ? {className: 'justify-content-center'} : {})}>
+    <Navbar bg="primary" variant="dark" expand="lg" {...(!logged ? { className: 'justify-content-center' } : {})}>
       <Navbar.Brand as={Link} to="/">
         <img
           alt=""
@@ -64,7 +85,7 @@ function HeaderBar() {
             </Nav>
 
             <Nav>
-              
+
               <DropdownButton
                 // as={Link}
                 // to="/user-profile"
@@ -85,7 +106,7 @@ function HeaderBar() {
                 alignRight
                 className="p0"
               >
-                <NavDropdown.Item as={Link} to="/user-profile">
+                <NavDropdown.Item as={Link} to={"/user-profile/" + username}>
                   <PersonCircle /> Profile
                 </NavDropdown.Item>
                 <NavDropdown.Item as={Link} to="/user-settings">

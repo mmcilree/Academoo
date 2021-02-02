@@ -19,7 +19,6 @@ def create_community():
 
     return Response(status=200) if actions.createCommunity(id, title, description, admins) else Response(status=400)
 
-<<<<<<< server/app/main/routes.py
 @bp.route("/update-bio", methods=["POST"])
 @auth_required
 def update_bio():
@@ -38,7 +37,6 @@ def change_password():
     new_password = req["new_password"]
 
     return Response(status=200) if actions.changePassword(username, old_password, new_password) else Response(status=400)
->>>>>>> server/app/main/routes.py
 
 @bp.route("/get-user")
 @auth_required

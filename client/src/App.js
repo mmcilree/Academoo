@@ -16,7 +16,6 @@ import { PrivateRoute } from "./components/PrivateRoute";
 import { LoggedOutRoute } from "./components/LoggedOutRoute";
 import CommunityCreator from "./components/CommunityCreator";
 import { HostContext } from "./components/HostContext";
-import PublicProfile from "./components/PublicProfile";
 
 class App extends React.Component {
   constructor(props) {
@@ -45,9 +44,9 @@ class App extends React.Component {
                 <PrivateRoute exact path="/comments/:id" component={CommentsViewer} />
                 <PrivateRoute path="/comments/:instance/:id" component={CommentsViewer} />
                 <PrivateRoute path="/user-settings" component={UserSettings} />
-                <PrivateRoute exact path="/user-profile/:id" component={PublicProfile} />
-                <PrivateRoute path="/user-profile/:instance/:id" component={PublicProfile} />
-                <PrivateRoute exact path="/user-profile" component={UserProfile} />
+                <PrivateRoute exact path="/user-profile/:id" component={UserProfile} />
+                <PrivateRoute path="/user-profile/:instance/:id" component={UserProfile} />
+                {/* <PrivateRoute exact path="/user-profile" component={UserProfile} /> */}
                 <PrivateRoute path="/explore" component={CommunityExplorer} />
                 <PrivateRoute path="/create-community" component={CommunityCreator} />
                 <LoggedOutRoute path="/login" component={Login} />
