@@ -193,6 +193,7 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
         query = query.filter(Post.parent_id == parent_post)
     if content_type is not None:
         query = query.filter(Post.content_type == content_type)
+    query = query.order_by(desc(Post.created))
     if limit is not None:
         query = query.limit(limit)
 
