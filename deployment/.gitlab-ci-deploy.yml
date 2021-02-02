@@ -12,4 +12,4 @@ deployment:
   environment:
     name: staging
   script:
-    - ssh -o StrictHostKeyChecking=no nnv2@cs3099user-a1.host.cs.st-andrews.ac.uk "sudo -u cs3099user-a1 bash -l && cd ~/Documents/project-code && git stash && git pull && chmod +x boot.sh && ./boot.sh"
+    - ssh -o StrictHostKeyChecking=no cs3099user-a1@cs3099user-a1.host.cs.st-andrews.ac.uk "cd ~/Documents/project-code && git stash && git pull && chmod +x boot.sh && ./boot.sh"
