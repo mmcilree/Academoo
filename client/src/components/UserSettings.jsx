@@ -15,6 +15,8 @@ class UserSettings extends Component {
       email: "",
       bio: "",
       host: "",
+      privateAccount: true,
+      privUpdated: false,
       isLoading: false
 
     }
@@ -45,6 +47,10 @@ class UserSettings extends Component {
     this.setState({
       [name]: value
     });
+  }
+
+  handleCheckboxChange(event) {
+    this.setState({ privateAccount: event.target.checked });
   }
 
   validateForm() {
@@ -117,13 +123,33 @@ class UserSettings extends Component {
     this.props.history.push("/user-profile/" + this.state.username);
   }
 
+  async handleSubmitPrivacy(event) {
+    event.preventDefault();
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: {
+        private: (this.state.privateAccount ? "private" : "public")
+      }
+    }
+    requestOptions.body = JSON.stringify(requestOptions.body);
+
+
+    await authFetch('/api/update-privacy', requestOptions)
+      .then(response => {
+        this.setState({ privUpdated: true })
+      });
+
+  }
+
   render() {
     const { errors, changed } = this.state;
     return (
       <Card className="mt-4">
         <Card.Body>
           <h3>Settings</h3>
-          <Card>
+          <Card className="mt-4">
             <Card.Body>
 
               {errors.map(error => (
@@ -133,35 +159,51 @@ class UserSettings extends Component {
 
               <Form onSubmit={this.handleSubmitPass.bind(this)}>
                 <Form.Group>
-                  <Form.Label>Current Password</Form.Label>
+                  <Form.Label>Change your password:</Form.Label>
+                  <Form.Text>Current Password</Form.Text>
                   <Form.Control type="password" name="oldPassword" onChange={this.handleChange.bind(this)} value={this.state.oldPassword} />
-                  <Form.Label>New Password</Form.Label>
+                  <Form.Text>New Password</Form.Text>
                   <Form.Control type="password" name="newPassword" onChange={this.handleChange.bind(this)} value={this.state.newPassword} />
                 </Form.Group>
-
-                <Button type="submit">
-                  Change Password
-            </Button>
+                <Button type="submit" variant="secondary">Change Password</Button>
               </Form>
             </Card.Body>
           </Card>
-          <Card>
+          <Card className="mt-4">
             <Card.Body>
               <Form onSubmit={this.handleSubmitBio.bind(this)}>
                 <Form.Group controlId="profileBio">
-                  <Form.Label>Update your bio:</Form.Label>
+                  <Form.Label>Update Your Bio:</Form.Label>
                   <Form.Control type="input"
                     placeholder="Tell us more about yourself"
                     name="new_bio"
                     onChange={this.handleChange.bind(this)}
                     value={this.state.new_bio} />
                 </Form.Group>
-                <Button variant="primary" type="submit">
+                <Button variant="secondary" type="submit">
                   Update Bio
                   </Button>
-
               </Form>
-
+            </Card.Body>
+          </Card>
+          <Card className="mt-4">
+            <Card.Body>
+              <Form onSubmit={this.handleSubmitPrivacy.bind(this)}>
+                <Form.Group controlId="privacy">
+                  <Form.Label>Privacy Settings</Form.Label>
+                  {this.state.privUpdated && <Alert variant="primary">Privacy Settings Updated</Alert>}
+                  <Form.Text>With a private account, other users can see your username but cannot see any of your details.</Form.Text>
+                  <Form.Text>Your account is currently <b>{this.state.privateAccount ? "private." : "public"}</b></Form.Text>
+                  <Form.Check
+                    type="switch"
+                    id="custom-switch"
+                    label="Private account"
+                    checked={this.state.privateAccount}
+                    onChange={this.handleCheckboxChange.bind(this)}
+                  />
+                </Form.Group>
+                <Button variant="secondary" type="submit">Save</Button>
+              </Form>
             </Card.Body>
           </Card>
         </Card.Body>
