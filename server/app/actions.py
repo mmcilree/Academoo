@@ -51,7 +51,8 @@ def updatePrivacy(user_id, private_account):
     else:
         return False
     db.session.commit()
-    return True
+    user_dict = {"id": user.user_id, "private": private_account}
+    return user_dict
 
 def getUserIDs():
     ids = [user.user_id for user in User.query.all()]

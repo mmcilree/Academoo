@@ -16,6 +16,7 @@ class UserSettings extends Component {
       bio: "",
       host: "",
       privateAccount: true,
+      checked: true,
       privUpdated: false,
       isLoading: false
 
@@ -34,6 +35,7 @@ class UserSettings extends Component {
           email: data.email,
           bio: data.bio,
           privateAccount: data.private,
+          checked: data.private,
           host: data.host,
           isLoading: false
         })
@@ -51,7 +53,7 @@ class UserSettings extends Component {
   }
 
   handleCheckboxChange(event) {
-    this.setState({ privateAccount: event.target.checked });
+    this.setState({ checked: event.target.checked, privUpdated: false });
   }
 
   validateForm() {
@@ -131,7 +133,7 @@ class UserSettings extends Component {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: {
-        private: (this.state.privateAccount ? "private" : "public")
+        private: (this.state.checked ? "private" : "public")
       }
     }
     requestOptions.body = JSON.stringify(requestOptions.body);
@@ -196,11 +198,12 @@ class UserSettings extends Component {
                   {this.state.privUpdated && <Alert variant="primary">Privacy Settings Updated</Alert>}
                   <Form.Text>With a private account, other users can see your username but cannot see any of your details.</Form.Text>
                   <Form.Text>Your account is currently <b>{this.state.privateAccount ? "private." : "public"}</b></Form.Text>
+                  <br />
                   <Form.Check
                     type="switch"
                     id="custom-switch"
                     label="Private account"
-                    checked={this.state.privateAccount}
+                    checked={this.state.checked}
                     onChange={this.handleCheckboxChange.bind(this)}
                   />
                 </Form.Group>
