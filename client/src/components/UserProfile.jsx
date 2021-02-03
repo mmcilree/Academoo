@@ -101,7 +101,7 @@ class UserProfile extends Component {
               <Media.Body className="mr-3">
                 <h3>Username: {username}</h3>
                 <h4 className="text-muted"> Email: {email} </h4>
-                <p>Bio: {bio ? bio : "You have not yet set a bio!"} </p>
+                <p>Bio: {bio ? bio : "No bio has been set yet!"} </p>
               </Media.Body>) : <h3>Loading Profile...</h3>}
           </Media>
         </Card.Body>
