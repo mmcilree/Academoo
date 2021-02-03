@@ -17,13 +17,13 @@ class CommentsViewer extends React.Component {
       host: this.props.match.params.instance ? this.props.match.params.instance : "local",
       children: [],
       fetchedChildren: new Set(),
-      
+
       isLoading: true,
       needsUpdate: false,
 
       error: null,
       showCommentEditor: false,
-      
+
     }
   }
 
@@ -47,7 +47,7 @@ class CommentsViewer extends React.Component {
           needsUpdate: false
         })
       );
-    
+
     this.fetchChildren();
   }
 
@@ -62,7 +62,7 @@ class CommentsViewer extends React.Component {
           .then(data => data)
           .catch(error => this.setState({ error, isLoading: false }));
       }));
-    
+
     this.setState({ isLoading: false, children: [...children, ...new_children] })
   }
 
@@ -71,7 +71,7 @@ class CommentsViewer extends React.Component {
   }
 
   componentDidUpdate() {
-    if(this.state.needsUpdate) {
+    if (this.state.needsUpdate) {
       this.fetchParentPost();
     }
   }
@@ -97,7 +97,7 @@ class CommentsViewer extends React.Component {
                   <Modal show={this.state.showCommentEditor} onHide={() => this.setState({ showCommentEditor: false })}>
                     <Modal.Header closeButton />
                     <Modal.Body>
-                      <CommentCreator parentPost={this.state.parentPost} onSubmit={this.handleCloseCommentEditor.bind(this)}/>
+                      <CommentCreator parentPost={this.state.parentPost} host={this.state.host} onSubmit={this.handleCloseCommentEditor.bind(this)} />
                     </Modal.Body>
                   </Modal>
 
@@ -112,7 +112,7 @@ class CommentsViewer extends React.Component {
                   </Card>
                 ) : null
               )}
-              {this.state.children.length === 0 ? 
+              {this.state.children.length === 0 ?
                 <p className="mt-4 ml-4 comment">No comments to show.</p> : null}
 
             </Card.Body>) :

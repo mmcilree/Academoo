@@ -4,32 +4,6 @@ import Table from 'react-bootstrap/Table';
 class UserRolesTable extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            adminUsers: [],
-            contributorUsers: [],
-            memberUsers: [],
-            guestUsers: [],
-            prohibitedUsers: [],
-        }
-    }
-
-    componentDidMount() {
-        this.fetchUserRoles();
-    }
-
-
-    async fetchUserRoles() {
-        await fetch("/api/get-community-roles/" + this.props.community_id)
-            .then(response => response.json())
-            .then(data =>
-                this.setState({
-                    adminUsers: data.admins,
-                    contributorUsers: data.contributors,
-                    memberUsers: data.members,
-                    guestUsers: data.guests,
-                    prohibitedUsers: data.prohibited,
-                })
-            )
     }
 
     render() {
@@ -42,7 +16,7 @@ class UserRolesTable extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {this.state.adminUsers.map(admin => {
+                    {this.props.userRoles.adminUsers.map(admin => {
                         return (
                             <tr>
                                 <td>{admin}</td>
@@ -50,7 +24,7 @@ class UserRolesTable extends Component {
                             </tr>
                         )
                     })}
-                    {this.state.contributorUsers.map(contributor => {
+                    {this.props.userRoles.contributorUsers.map(contributor => {
                         return (
                             <tr>
                                 <td>{contributor}</td>
@@ -58,7 +32,7 @@ class UserRolesTable extends Component {
                             </tr>
                         )
                     })}
-                    {this.state.memberUsers.map(member => {
+                    {this.props.userRoles.memberUsers.map(member => {
                         return (
                             <tr>
                                 <td>{member}</td>
@@ -66,7 +40,7 @@ class UserRolesTable extends Component {
                             </tr>
                         )
                     })}
-                    {this.state.guestUsers.map(guest => {
+                    {this.props.userRoles.guestUsers.map(guest => {
                         return (
                             <tr>
                                 <td>{guest}</td>
@@ -74,7 +48,7 @@ class UserRolesTable extends Component {
                             </tr>
                         )
                     })}
-                    {this.state.prohibitedUsers.map(prohibited => {
+                    {this.props.userRoles.prohibitedUsers.map(prohibited => {
                         return (
                             <tr style={{ "color": "red" }}>
                                 <td>{prohibited}</td>

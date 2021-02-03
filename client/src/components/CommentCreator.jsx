@@ -11,7 +11,7 @@ class CommentCreator extends React.Component {
         this.state = {
             title: "",
             email: "",
-            host: "",
+            userHost: "",
             body: "",
             parentPost: this.props.parentPost
         };
@@ -25,7 +25,7 @@ class CommentCreator extends React.Component {
                 this.setState({
                     user_id: data.id,
                     email: data.email,
-                    host: data.host
+                    userHost: data.host
                 })
             )
     }
@@ -60,13 +60,14 @@ class CommentCreator extends React.Component {
                 ],
                 author: {
                     id: this.state.user_id,
-                    host: this.state.host
+                    host: this.state.userHost
                 }
             }
         };
 
-        if (this.context.host !== null) {
-            requestOptions.body.external = this.context.host
+
+        if (this.props.host !== "local") {
+            requestOptions.body.external = this.props.host
         }
 
         requestOptions.body = JSON.stringify(requestOptions.body);

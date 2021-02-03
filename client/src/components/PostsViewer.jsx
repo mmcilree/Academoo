@@ -99,7 +99,7 @@ class PostsViewer extends Component {
           <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>
         </Card.Header>
         <Card.Body>
-         {this.state.isAdmin && <Alert variant="primary">You are an admin!</Alert>}
+          {this.state.isAdmin && <Alert variant="primary">You are an admin!</Alert>}
           <Form onSubmit={this.handleSubmit.bind(this)}>
             <Form.Row>
               <Form.Group as={Col} className="d-none d-sm-flex" sm={6} md={7} lg={9}>
@@ -130,9 +130,9 @@ class PostsViewer extends Component {
           {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
           {!isLoading ? (
             posts.map(data => {
-              const { community, parent, id } = data;
+              const { community, parentPost, id } = data;
               return (
-                community === currentCommunity ? (
+                (community === currentCommunity & parentPost === null) ? (
                   <Card key={id} className="mt-4">
                     <Card.Body >
                       <Post postData={data} postType="preview" />
