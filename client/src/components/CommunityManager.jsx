@@ -29,6 +29,13 @@ class CommunityManager extends React.Component {
             defaultRole: "",
             currentDefaultRole: "",
             tableUpdate: "",
+            usersWithRoles: {
+                adminUsers: [],
+                contributorUsers: [],
+                memberUsers: [],
+                guestUsers: [],
+                prohibitedUsers: [],
+            },
             errors: [],
         };
     }
@@ -38,6 +45,8 @@ class CommunityManager extends React.Component {
         this.fetchInstances();
         this.fetchUsers(this.state.host)
         this.fetchDefaultRole();
+        this.fetchUserRoles();
+        console.log(this.state.usersWithRoles)
     }
 
     validateUserRolesForm() {
@@ -73,7 +82,30 @@ class CommunityManager extends React.Component {
                 this.setState({
                     currentDefaultRole: data.default_role
                 }))
+    }
 
+    async fetchUserRoles() {
+        await fetch("/api/get-community-roles/" + this.state.currentCommunity)
+            .then(response => response.json())
+            .then(data =>
+                this.setState((prevState) => ({
+                    usersWithRoles: {
+                        adminUsers: data.admins,
+                        contributorUsers: data.contributors,
+                        memberUsers: data.members,
+                        guestUsers: data.guests,
+                        prohibitedUsers: data.prohibited,
+                    }
+                }))
+                // usersWithRoles: {
+                //     adminUsers: data.admins,
+                // contributorUsers: data.contributors,
+                // memberUsers: data.members,
+                // guestUsers: data.guests,
+                // prohibitedUsers: data.prohibited,
+                // }
+                // })
+            )
     }
 
     async fetchInstances() {
@@ -123,10 +155,23 @@ class CommunityManager extends React.Component {
             )
         };
 
-        fetch('/api/assign-role', requestOptions);
+        fetch('/api/assign-role', requestOptions)
+            .then(r => r.status).then(statusCode => {
+                if (statusCode == 200) {
+
+                    this.fetchUserRoles();
+
+                }
+            });
+
+
         this.setState(
             { host: "local", serverDropdown: "Select Server", role: "", selected: [{ user: "" }] }
         );
+
+        console.log(this.state.usersWithRoles)
+
+
     }
 
     handleDefRoleSubmit(event) {
@@ -247,7 +292,7 @@ class CommunityManager extends React.Component {
                             <Card className="mt-4">
                                 <Card.Body>
                                     <Card.Title>Users Assigned Roles</Card.Title>
-                                    <UserRolesTable community_id={this.state.currentCommunity} tableUpdate={this.state.tableUpdate} />
+                                    <UserRolesTable community_id={this.state.currentCommunity} userRoles={this.state.usersWithRoles} />
                                 </Card.Body>
                             </Card>
                         </Card.Body>
