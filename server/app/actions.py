@@ -67,8 +67,12 @@ def getLocalUser(id):
     if(user == None):
         return False
     else:
-        user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio, "private": user.private_account}
-        return user_dict
+        if user.private_account:
+            user_dict = {"id":user.user_id, "email": "", "host":user.host, "bio":""}
+            return user_dict
+        else:
+            user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio}
+            return user_dict
 
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]
