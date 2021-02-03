@@ -28,6 +28,15 @@ def update_bio():
 
     return Response(status=200) if actions.updateBio(u.user_id, bio) else Response(status=400)
 
+@bp.route("/update-privacy", methods=["POST"])
+@auth_required
+def update_privacy():
+    req = request.json
+    private = req["private"]
+    u=current_user()
+
+    return Response(status=200) if actions.updatePrivacy(u.user_id, private) else Response(status=400)
+
 @bp.route("/change-password", methods=["POST"])
 @auth_required
 def change_password():
@@ -42,7 +51,7 @@ def change_password():
 @auth_required
 def get_user():
     u = current_user()
-    return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "bio": u.bio})
+    return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "bio": u.bio, "private": u.private_account})
 
 @bp.route("/add-instance", methods=["POST"])
 def add_instance():

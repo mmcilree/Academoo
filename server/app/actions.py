@@ -42,6 +42,17 @@ def updateBio(user_id, bio):
     user.bio = bio
     db.session.commit()
 
+def updatePrivacy(user_id, private_account):
+    user = User.query.filter_by(user_id = user_id).first()
+    if private_account == "private" :
+        user.private_account = True
+    elif private_account == "public":
+        user.private_account = False
+    else:
+        return False
+    db.session.commit()
+    return True
+
 def getUserIDs():
     ids = [user.user_id for user in User.query.all()]
     return ids
@@ -56,7 +67,7 @@ def getLocalUser(id):
     if(user == None):
         return False
     else:
-        user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio}
+        user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio, "private": user.private_account}
         return user_dict
 
 def getCommunityIDs():

@@ -33,6 +33,7 @@ class UserSettings extends Component {
           username: data.id,
           email: data.email,
           bio: data.bio,
+          privateAccount: data.private,
           host: data.host,
           isLoading: false
         })
@@ -138,7 +139,8 @@ class UserSettings extends Component {
 
     await authFetch('/api/update-privacy', requestOptions)
       .then(response => {
-        this.setState({ privUpdated: true })
+        this.setState({ privUpdated: true });
+        this.fetchUserDetails();
       });
 
   }
