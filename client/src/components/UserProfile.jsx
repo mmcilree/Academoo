@@ -11,7 +11,7 @@ class UserProfile extends Component {
     super(props);
 
     this.state = {
-      // currentUser: "",
+      currentUser: "",
       username: this.props.match.params.id,
       email: null,
       bio: "",
@@ -29,28 +29,37 @@ class UserProfile extends Component {
 
   // }
 
-  // fetchCurrentUser() {
-  //   authFetch("/api/get-user").then(response => response.json())
-  //     .then(data =>
-  //       this.setState({
-  //         currentUser: data.id,
-  //         email: data.email,
-  //         bio: data.bio,
-  //         host: data.host,
-  //         isLoading: false
-  //       })
-  //     )
-  // }
+  fetchCurrentUser() {
+    authFetch("/api/get-user").then(response => response.json())
+      .then(data => {
+        if (data.id === this.state.username) {
+          this.setState({
+            currentUser: data.id,
+            email: data.email,
+            bio: data.bio,
+            isLoading: false
+          })
+        } else {
+          this.setState({
+            currentUser: data.id,
+          })
+          this.fetchUserDetails();
+        }
+      }
+
+      )
+  }
 
   componentDidMount() {
-    this.fetchUserDetails();
+    this.fetchCurrentUser();
   }
+
 
   componentDidUpdate(prevProps) {
     if (this.props.match.params.id !== prevProps.match.params.id) {
       this.state.username = this.props.match.params.id;
       this.state.host = this.props.match.params.instance ? this.props.match.params.instance : "local";
-      this.fetchUserDetails();
+      this.fetchCurrentUser();
     }
   }
 
