@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import {Card, Row, Col} from "react-bootstrap";
+import { Card, Row, Col } from "react-bootstrap";
 import timeSince from "../util/timeSince";
+import { Link } from "react-router-dom";
 
 class Post extends Component {
   render() {
@@ -8,7 +9,7 @@ class Post extends Component {
     return (
       <React.Fragment>
         <Card.Subtitle className="text-muted mb-2" style={{ fontSize: 12 }}>
-          {this.props.postData.author.id} from{" "}
+          <b><Link to={"/user-profile/" + this.props.postData.author.id}>{this.props.postData.author.id}</Link></b> from{" "}
           {this.props.postData.author.host}
           {" · "} {timeSince(this.props.postData.created)} ago
         </Card.Subtitle>
@@ -38,14 +39,14 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
         "" :
         <Card.Link className="text-primary" href={part}>{part} </Card.Link>
       : part + " ");
-  
+
   switch (contentType) {
     case "text":
       return postType == "preview" ?
         <React.Fragment>
           {imageURLs.length > 0 &&
             <Row className="justify-content-center">
-                <Card.Img src={imageURLs[0]} style={{ width: "40vh" }} />
+              <Card.Img src={imageURLs[0]} style={{ width: "40vh" }} />
             </Row>}
           <Card.Text variant="top" style={{
             whiteSpace: "nowrap",

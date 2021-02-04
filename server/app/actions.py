@@ -131,7 +131,23 @@ def searchUsers(prefix):
     user_arr = [user.user_id for user in users]
     return (user_arr, 200)
 
-# Is this for only our server?, or for external users that have a role on our server as well
+def updateBio(user_id, bio):
+    user = User.query.filter_by(user_id = user_id).first()
+    user.bio = bio
+    db.session.commit()
+
+def updatePrivacy(user_id, private_account):
+    user = User.query.filter_by(user_id = user_id).first()
+    if private_account == "private" :
+        user.private_account = True
+    elif private_account == "public":
+        user.private_account = False
+    else:
+        return False
+    db.session.commit()
+    user_dict = {"id": user.user_id, "private": private_account}
+    return user_dict
+
 def getUserIDs():
     ids = [user.user_id for user in User.query.all()]
     return (ids, 200)
@@ -151,6 +167,18 @@ def getRoles(community_id):
     }
     return (user_dict, 200)
 
+
+def getLocalUser(id):
+    user = User.query.filter_by(user_id=id).first()
+    if(user == None):
+        return False
+    else:
+        if user.private_account:
+            user_dict = {"id":user.user_id, "email": "", "host":user.host, "bio":""}
+            return user_dict
+        else:
+            user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio}
+            return user_dict
 
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]

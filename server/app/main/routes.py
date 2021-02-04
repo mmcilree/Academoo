@@ -46,6 +46,24 @@ def create_community():
     admin = req["admin"]
     return respond_with_action(actions.createCommunity(community_id, title, description, admin))
 
+@bp.route("/update-bio", methods=["POST"])
+@auth_required
+def update_bio():
+    req = request.json
+    bio = req["bio"]
+    u=current_user()
+
+    return Response(status=200) if actions.updateBio(u.user_id, bio) else Response(status=400)
+
+@bp.route("/update-privacy", methods=["POST"])
+@auth_required
+def update_privacy():
+    req = request.json
+    private = req["private"]
+    u=current_user()
+
+    return Response(status=200) if actions.updatePrivacy(u.user_id, private) else Response(status=400)
+
 @bp.route("/change-password", methods=["POST"])
 @auth_required
 def change_password():
@@ -65,7 +83,7 @@ def get_user():
         if(userRole.role == "admin"):
             adminOf.append(userRole.community_id)   
 
-    return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "adminOf": adminOf})
+    return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "bio": u.bio, "private": u.private_account})
 
 @bp.route("/add-instance", methods=["POST"])
 def add_instance():

@@ -80,7 +80,7 @@ it("Comments page reroutes to login page", () => {
 
 it("User-Profile page reroutes to login page", () => {
   const wrapper = mount(
-    <Router initialEntries={["/user-profile"]}>
+    <Router initialEntries={["/user-profile/academoo"]}>
       <App />
     </Router>
   );
