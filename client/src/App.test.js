@@ -47,10 +47,15 @@ it("Welcome page renders without crashing", () => {
   shallow(<Welcome />);
 });
 
+
 describe("", () => {
   it("Post accepts data props", () => {
-    const wrapper = mount(<Post postData={test_data} />);
-    expect(wrapper.props().postData).toEqual(test_data);
+    const wrapper = mount(
+    <Router>
+      <Post postData={test_data}/>
+    </Router>);
+    expect(wrapper.find(Post).props().postData).toEqual(test_data);
+    
   });
 });
 
