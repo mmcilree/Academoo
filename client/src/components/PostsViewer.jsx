@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import Post from "./Post";
-import { Card, Col, Form, FormControl, Button, Alert, OverlayTrigger, Popover } from "react-bootstrap";
+import { Card, Button, Alert, OverlayTrigger, Popover, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { PlusCircle } from "react-bootstrap-icons";
+import { BookmarkPlus } from "react-bootstrap-icons";
 import { authFetch } from '../auth';
 import MiniPostCreator from "./MiniPostCreator";
 
@@ -83,19 +83,24 @@ class PostsViewer extends Component {
     console.log(this.state);
     return currentCommunity && (
       <Card className="mt-4 mb-10">
-        <Card.Header className="pt-4">
-          <div className="d-flex justify-content-between">
+        <Card.Header className="pt-4 pr-4">
+          <div className="d-flex justify-content-right">
             {!isLoading ?
-              <Card.Title className="d-flex justify-content-right">
+              <Card.Title >
                 <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={popover}>
                   <Link to="#" className="px-0 py-0" variant="none" style={{ color: "black", fontSize: "36px" }}>{communityData.title}
                   </Link></OverlayTrigger>
               </Card.Title>
-              : <h2> Loading... </h2>}
 
+              : <h2> Loading... </h2>}
+          <Button className="h-50 ml-4 mt-1" variant="outline-secondary">
+              <BookmarkPlus className="mr-2"/>Folloow
+          </Button>
           </div>
 
           <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>
+          
+
         </Card.Header>
         <Card.Body>
           {this.state.isAdmin &&
