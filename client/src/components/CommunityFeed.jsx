@@ -1,10 +1,11 @@
 import React, { Component, useContext } from "react";
 import Post from "./Post";
 import Sidebar from "./Sidebar";
-import { Card, Container, Row, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
+import { Nav, Card, Container, Row, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { HostContext } from "./HostContext";
 import { PlusCircle } from "react-bootstrap-icons";
+import MiniPostCreator from "./MiniPostCreator";
 
 class CommunityFeed extends Component {
   state = {
@@ -55,68 +56,32 @@ class CommunityFeed extends Component {
       .catch(error => this.setState({ error, isLoading: false }));
   }
 
-  handleChange(event) {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-    this.setState({
-      [name]: value
-    });
-  }
-
-  handleSubmit(event) {
-    event.preventDefault();
-  }
-
   render() {
     const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
 
     return currentCommunity && (
       <Container>
-        <Card className="mt-4">
-          <Card.Body>
-            <h3>You haven't yet subscribed to any communities!</h3>
-            <p>See what's available:</p>
-            <Link to="/explore" className="btn btn-secondary">
-            Explore Communities
-          </Link>
-          </Card.Body>
-
-        </Card>
-        {/*
         <Row>
-          <Col xs={8}>
+          <Col xs={12} lg={8}>
             <Card className="mt-4">
-              <Card.Header className="pt-4">
-                <h2>{currentCommunity}</h2>
+              <Card.Header>
+                <Nav variant="tabs" defaultActiveKey="#recent">
+                  <Nav.Item>
+                    <Nav.Link href="#recent">Most Recent</Nav.Link>
+                  </Nav.Item>
+                  <Nav.Item>
+                    <Nav.Link href="#commented">Most Commented</Nav.Link>
+                  </Nav.Item>
+                  <Nav.Item>
+                  <Nav.Link href="#top">
+                      Top Posts
+                  </Nav.Link>
+                  </Nav.Item>
+                </Nav>
               </Card.Header>
               <Card.Body>
-                <Form onSubmit={this.handleSubmit.bind(this)}>
-                  <Form.Row>
-                    <Form.Group as={Col} className="d-none d-sm-flex" sm={6} md={7} lg={9}>
-                      <FormControl 
-                        type="text" 
-                        placeholder="Create your own post: " 
-                        name="newPostText" 
-                        className="mr-2" 
-                        onChange={this.handleChange.bind(this)} />
+                <MiniPostCreator currentCommunity={null} />
 
-                    </Form.Group>
-                    <Form.Group as={Col} xs={12} sm={6} md={5} lg={3}>
-                      <Link to={
-                        {
-                          pathname: "/create-post",
-                          state: {
-                            body: newPostText,
-                            community: currentCommunity
-                          }
-                        }
-                      }>
-                        <Button variant="outline-secondary" className="w-100" > <PlusCircle className="mb-1" /> New Moo</Button>
-                      </Link>
-                    </Form.Group>
-                  </Form.Row>
-                </Form>
                 {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
                 {!isLoading ? (
                   posts.map(data => {
@@ -143,7 +108,7 @@ class CommunityFeed extends Component {
               </Card.Body>
             </Card>
           </Col>
-          
+
           <Col>
             <Sidebar currentCommunity={currentCommunity}
               changeCommunity={(community) => this.setState({
@@ -151,7 +116,7 @@ class CommunityFeed extends Component {
                 isLoading: true
               })} />
           </Col>
-            </Row>*/}
+        </Row>
       </Container>
     );
   }

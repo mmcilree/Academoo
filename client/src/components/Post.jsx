@@ -8,8 +8,10 @@ class Post extends Component {
     if (!this.props.postData.id) return <div />;
     return (
       <React.Fragment>
-        <Card.Subtitle className="text-muted mb-2" style={{ fontSize: 12 }}>
-          <b><Link to={"/user-profile/" + this.props.postData.author.id}>{this.props.postData.author.id}</Link></b> from{" "}
+        <Card.Subtitle className="text-muted mb-2" style={{ fontSize: 12}}>
+          <b style={{zIndex: 2, position: "relative"}}><Link to={"/user-profile/" + this.props.postData.author.id}>
+            {this.props.postData.author.id}
+          </Link></b> from{" "}
           {this.props.postData.author.host}
           {" · "} {timeSince(this.props.postData.created)} ago
         </Card.Subtitle>

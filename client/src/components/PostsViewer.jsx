@@ -4,6 +4,7 @@ import { Card, Col, Form, FormControl, Button, Alert, OverlayTrigger, Popover } 
 import { Link } from "react-router-dom";
 import { PlusCircle } from "react-bootstrap-icons";
 import { authFetch } from '../auth';
+import MiniPostCreator from "./MiniPostCreator";
 
 class PostsViewer extends Component {
   state = {
@@ -91,42 +92,19 @@ class PostsViewer extends Component {
                   </Link></OverlayTrigger>
               </Card.Title>
               : <h2> Loading... </h2>}
-            {this.state.host === "local" && isAdmin && <Link to={"/communities/" + currentCommunity + "/manage"}>
-              <Button variant="primary">Manage Community</Button>
-            </Link>}
+
           </div>
 
           <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>
         </Card.Header>
         <Card.Body>
-          {this.state.isAdmin && <Alert variant="primary">You are an admin!</Alert>}
-          <Form onSubmit={this.handleSubmit.bind(this)}>
-            <Form.Row>
-              <Form.Group as={Col} className="d-none d-sm-flex" sm={6} md={7} lg={9}>
-                <FormControl
-                  type="text"
-                  placeholder="Create your own post: "
-                  name="newPostText"
-                  className="mr-2"
-                  onChange={this.handleChange.bind(this)} />
-
-              </Form.Group>
-              <Form.Group as={Col} xs={12} sm={6} md={5} lg={3}>
-                <Link to={
-                  {
-                    pathname: "/create-post",
-                    state: {
-                      body: newPostText,
-                      community: currentCommunity,
-                      host: host
-                    }
-                  }
-                }>
-                  <Button variant="outline-secondary" className="w-100" > <PlusCircle className="mb-1" /> New Moo</Button>
-                </Link>
-              </Form.Group>
-            </Form.Row>
-          </Form>
+          {this.state.isAdmin &&
+            <Alert className="d-flex justify-content-between align-itemsp-center" variant="primary">You are an admin!
+            <Link to={"/communities/" + currentCommunity + "/manage"}>
+                Manage Community
+              </Link>
+            </Alert>}
+          <MiniPostCreator currentCommunity={currentCommunity} />
           {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
           {!isLoading ? (
             posts.map(data => {
