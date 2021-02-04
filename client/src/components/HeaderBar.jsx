@@ -94,7 +94,7 @@ function HeaderBar() {
                   <span>
                     <Image
                       className="mr-3"
-                      src={"https://en.gravatar.com/avatar/"}
+                      src={"https://en.gravatar.com/avatar/" + email}
                       roundedCircle
                       width="25"
                       height="25"
