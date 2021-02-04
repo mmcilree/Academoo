@@ -1,9 +1,11 @@
 import React from "react";
 import Accordion from "react-bootstrap/Accordion";
 import Card from "react-bootstrap/Card";
+import Button from "react-bootstrap/Button";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ListGroup from "react-bootstrap/ListGroup";
 import { Link } from "react-router-dom";
+import { BookmarkPlus } from "react-bootstrap-icons";
 
 class CommunityList extends React.Component {
     constructor(props) {
@@ -45,13 +47,16 @@ class CommunityList extends React.Component {
                                 {!isLoading ?
                                     communities.map((community) =>
                                         community !== "" &&
-                                        
-                                            <ListGroup.Item key={community}>
-                                                <Link to={this.props.instance === "local" ? 
+
+                                        <ListGroup.Item key={community} className="d-flex justify-content-between">
+                                            <Link to={this.props.instance === "local" ?
                                                 "communities/" + community : "communities/" + this.props.instance + "/" + community} >
                                                 {community}
-                                                </Link>
-                                            </ListGroup.Item>)
+                                            </Link>
+                                            <Button className="h-80 ml-4 mt-0 mb-0" variant="outline-secondary">
+                                                <BookmarkPlus className="mr-2" /><div className="d-inline">Folloow</div>
+                                            </Button>
+                                        </ListGroup.Item>)
                                     : <ListGroup.Item>Loading Communities...</ListGroup.Item>
                                 }
                             </ListGroup>

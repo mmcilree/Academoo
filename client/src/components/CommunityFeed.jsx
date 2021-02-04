@@ -3,7 +3,6 @@ import Post from "./Post";
 import Sidebar from "./Sidebar";
 import { Nav, Card, Container, Row, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { HostContext } from "./HostContext";
 import { PlusCircle } from "react-bootstrap-icons";
 import MiniPostCreator from "./MiniPostCreator";
 
@@ -17,34 +16,18 @@ class CommunityFeed extends Component {
     newPostText: ""
   }
 
-  static contextType = HostContext;
-
   componentDidMount() {
-    this.fetchCommunity();
+    this.fetchPosts();
   }
 
   componentDidUpdate() {
-    if (this.context.host !== this.state.host) {
-      this.fetchCommunity();
-    } else if (this.state.isLoading) {
+   if (this.state.isLoading) {
       this.fetchPosts();
     }
   }
 
-  async fetchCommunity() {
-    await fetch('/api/communities' + (this.context.host !== null ? "?external=" + this.context.host : ""))
-      .then(response => response.json())
-      .then(data =>
-        this.setState({
-          currentCommunity: data.length > 0 ? data[0] : "?"
-        })
-      )
-
-    this.fetchPosts();
-  }
-
   fetchPosts() {
-    fetch('/api/posts?community=' + this.state.currentCommunity + (this.context.host !== null ? "&external=" + this.context.host : ""))
+    fetch('/api/posts')
       .then(response => response.json())
       .then(data =>
         this.setState({
@@ -58,8 +41,8 @@ class CommunityFeed extends Component {
 
   render() {
     const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
-
-    return currentCommunity && (
+    console.log(this.state);
+    return (
       <Container>
         <Row>
           <Col xs={12} lg={8}>
@@ -87,7 +70,7 @@ class CommunityFeed extends Component {
                   posts.map(data => {
                     const { parent, id } = data;
                     return (
-                      parent === currentCommunity ? (
+                      
                         <Card key={id} className="mt-4">
                           <Card.Body>
                             <Post postData={data} />
@@ -99,7 +82,7 @@ class CommunityFeed extends Component {
                           </Link>
                           </Card.Body>
                         </Card>
-                      ) : null);
+                    )
                   })
                 ) : (
                     <h3>Loading Posts...</h3>
@@ -110,11 +93,7 @@ class CommunityFeed extends Component {
           </Col>
 
           <Col>
-            <Sidebar currentCommunity={currentCommunity}
-              changeCommunity={(community) => this.setState({
-                currentCommunity: community,
-                isLoading: true
-              })} />
+            <Sidebar c/>
           </Col>
         </Row>
       </Container>
