@@ -16,7 +16,6 @@ class UserSettings extends Component {
       bio: "",
       host: "",
       privateAccount: true,
-      checked: true,
       privUpdated: false,
       isLoading: false
 
