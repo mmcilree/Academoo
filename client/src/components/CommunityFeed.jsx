@@ -67,14 +67,14 @@ class CommunityFeed extends Component {
               <Card.Header>
                 <Nav variant="tabs" defaultActiveKey="#recent">
                   <Nav.Item>
-                    <Nav.Link href="#recent">Most Recent</Nav.Link>
+                    <Nav.Link href="#recent"><div className="d-none d-sm-inline">Most</div> Recent</Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
                     <Nav.Link href="#commented">Most Commented</Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
                   <Nav.Link href="#top">
-                      Top Posts
+                      Top <div className="d-none d-sm-inline">Posts</div>
                   </Nav.Link>
                   </Nav.Item>
                 </Nav>
