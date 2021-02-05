@@ -1,28 +1,22 @@
 import React, { Component } from "react";
 import { Card, Row, Col } from "react-bootstrap";
 import timeSince from "../util/timeSince";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { ThreeDots, PencilSquare, Trash } from "react-bootstrap-icons";
 import Dropdown from "react-bootstrap/Dropdown";
-const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
-  <a
-    href=""
-    ref={ref}
-    onClick={e => {
-      e.preventDefault();
-      onClick(e);
-    }}
-  >
-
-    {children}
-    <ThreeDots />
-
-  </a>
-));
 
 class Post extends Component {
-  render() {
+  handleDeletePost(event) {
+    event.preventDefault();
+    const requestOptions = {
+      method: "DELETE",
+      headers: { 'Content-Type': 'application/json' },
+    }
+    fetch('/api/posts/' + this.props.postData.id, requestOptions);
+    this.props.history.push("/communities/" + this.props.postData.community)
+  }
 
+  render() {
     if (!this.props.postData.id) return <div />;
     return (
       <React.Fragment>
@@ -41,7 +35,7 @@ class Post extends Component {
                 <Dropdown.Menu size="sm" title="">
                   <Dropdown.Header>Options</Dropdown.Header>
                   <Dropdown.Item><PencilSquare /> Edit Post</Dropdown.Item>
-                  <Dropdown.Item><Trash /> Delete Post</Dropdown.Item>
+                  <Dropdown.Item onClick={this.handleDeletePost.bind(this)}><Trash /> Delete Post</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </Card.Subtitle>
@@ -59,7 +53,7 @@ class Post extends Component {
   }
 }
 
-export default Post;
+export default withRouter(Post);
 
 const ContentTypeComponent = ({ contentType, body, postType }) => {
   const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
@@ -97,3 +91,19 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
       return <Card.Text>{renderText}</Card.Text>
   }
 }
+
+const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+  <a
+    href=""
+    ref={ref}
+    onClick={e => {
+      e.preventDefault();
+      onClick(e);
+    }}
+  >
+
+    {children}
+    <ThreeDots />
+
+  </a>
+));

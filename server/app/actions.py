@@ -286,7 +286,7 @@ def editPost(post_id, post_data):
     update_content_type = "text" #update_content_arr[0]["text"]
     update_content_body = update_content_arr[0]["text"]["text"]
 
-    post = Post.query.filter_by(id = post_id)
+    post = Post.query.filter_by(id = post_id).first()
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
@@ -299,7 +299,7 @@ def editPost(post_id, post_data):
 # STILL NEED TO IMPLEMENT 403 FORBIDDEN
 def deletePost(post_id):
     validate_post_id(post_id)
-    post = Post.query.filter_by(id = post_id)
+    post = Post.query.filter_by(id = post_id).first()
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
