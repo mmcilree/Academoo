@@ -38,14 +38,14 @@ class PostEditor extends React.Component {
                 <Modal.Body>
                     <Form onSubmit={this.handleSubmit}>
 
-                        <Form.Group controlId="createPostTitle">
+                        {title && <Form.Group controlId="createPostTitle">
                             <Form.Label>Post Title:</Form.Label>
                             <Form.Control type="input"
                                 placeholder="Moo"
                                 name="title"
                                 onChange={this.handleChange}
                                 value={title} />
-                        </Form.Group>
+                        </Form.Group>}
 
                         <Form.Group controlId="createPostText">
                             <Form.Label>Post Content:</Form.Label>

@@ -71,9 +71,16 @@ class Post extends Component {
 
   validateForm() {
     const errors = [];
-    if (this.state.title.length === 0) {
+    if (this.state.updatedTitle.length === 0) {
+      //post is a comment and has no title
+      if (this.state.title.length !== 0) {
+        errors.push("The title is invalid for a comment")
+      }
+
+    } else if (this.state.title.length === 0) {
       errors.push("Title field cannot be empty")
     }
+
     if (this.state.title === "Moo" && this.state.body === "Moooo") {
       errors.push("...really?")
     }
