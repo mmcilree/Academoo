@@ -107,6 +107,7 @@ def create_post():
 
 @bp.route("/posts/<id>", methods=["PUT"])
 def edit_post(id):
+    print(id)
     actions.editPost(id, request.json)
 
     return Response(status = 200)

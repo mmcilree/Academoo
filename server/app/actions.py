@@ -287,6 +287,7 @@ def editPost(post_id, post_data):
     update_content_body = update_content_arr[0]["text"]["text"]
 
     post = Post.query.filter_by(id = post_id).first()
+    
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 

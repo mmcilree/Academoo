@@ -1,11 +1,16 @@
 import React, { Component } from "react";
-import { Card, Row, Col } from "react-bootstrap";
+import { Card, Row, Col, Modal, Button } from "react-bootstrap";
 import timeSince from "../util/timeSince";
 import { Link, withRouter } from "react-router-dom";
 import { ThreeDots, PencilSquare, Trash } from "react-bootstrap-icons";
 import Dropdown from "react-bootstrap/Dropdown";
+import PostEditor from "./PostEditor"
 
 class Post extends Component {
+  state = {
+    show: false,
+  }
+
   handleDeletePost(event) {
     event.preventDefault();
     const requestOptions = {
@@ -14,6 +19,27 @@ class Post extends Component {
     }
     fetch('/api/posts/' + this.props.postData.id, requestOptions);
     this.props.history.push("/communities/" + this.props.postData.community)
+  }
+
+  // handleEditPost(event) {
+  //   event.preventDefault();
+  //   const editor = (<Alert>hello!</Alert>);
+  //   this.setState = ({ editor });
+  //   return;
+  // }
+
+  handleShow(event) {
+    event.preventDefault();
+    this.setState({
+      show: true
+    });
+  }
+
+  handleClose = () => {
+    // event.preventDefault();
+    this.setState({
+      show: false
+    });
   }
 
   render() {
@@ -34,7 +60,7 @@ class Post extends Component {
                 <Dropdown.Toggle as={CustomToggle} />
                 <Dropdown.Menu size="sm" title="">
                   <Dropdown.Header>Options</Dropdown.Header>
-                  <Dropdown.Item><PencilSquare /> Edit Post</Dropdown.Item>
+                  <Dropdown.Item onClick={this.handleShow.bind(this)}><PencilSquare /> Edit Post</Dropdown.Item>
                   <Dropdown.Item onClick={this.handleDeletePost.bind(this)}><Trash /> Delete Post</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
@@ -42,7 +68,12 @@ class Post extends Component {
           </Col>
         </Row>
         <Card.Title>{this.props.postData.title}</Card.Title>
-
+        <Modal
+          show={this.state.show}
+          onHide={this.handleClose}
+          backdrop="static">
+          <PostEditor id={this.props.postData.id} title={this.props.postData.title} body={this.props.postData.content[0].text.text} handleClose={this.handleClose} />
+        </Modal>
         <ContentTypeComponent
           contentType={this.props.postData.contentType}
           body={this.props.postData.content[0].text.text}
