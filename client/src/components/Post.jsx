@@ -8,7 +8,8 @@ import PostEditor from "./PostEditor"
 
 class Post extends Component {
   state = {
-    show: false,
+    showEdit: false,
+    showDelete: false
   }
 
   handleDeletePost(event) {
@@ -21,24 +22,29 @@ class Post extends Component {
     this.props.history.push("/communities/" + this.props.postData.community)
   }
 
-  // handleEditPost(event) {
-  //   event.preventDefault();
-  //   const editor = (<Alert>hello!</Alert>);
-  //   this.setState = ({ editor });
-  //   return;
-  // }
-
-  handleShow(event) {
+  handleShowDelete(event) {
     event.preventDefault();
     this.setState({
-      show: true
+      showDelete: true
     });
   }
 
-  handleClose = () => {
-    // event.preventDefault();
+  handleCloseDelete = () => {
     this.setState({
-      show: false
+      showDelete: false
+    });
+  }
+
+  handleShowEdit(event) {
+    event.preventDefault();
+    this.setState({
+      showEdit: true
+    });
+  }
+
+  handleCloseEdit = () => {
+    this.setState({
+      showEdit: false
     });
   }
 
@@ -60,8 +66,8 @@ class Post extends Component {
                 <Dropdown.Toggle as={CustomToggle} />
                 <Dropdown.Menu size="sm" title="">
                   <Dropdown.Header>Options</Dropdown.Header>
-                  <Dropdown.Item onClick={this.handleShow.bind(this)}><PencilSquare /> Edit Post</Dropdown.Item>
-                  <Dropdown.Item onClick={this.handleDeletePost.bind(this)}><Trash /> Delete Post</Dropdown.Item>
+                  <Dropdown.Item onClick={this.handleShowEdit.bind(this)}><PencilSquare /> Edit Post</Dropdown.Item>
+                  <Dropdown.Item onClick={this.handleShowDelete.bind(this)}><Trash /> Delete Post</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </Card.Subtitle>
@@ -69,10 +75,21 @@ class Post extends Component {
         </Row>
         <Card.Title>{this.props.postData.title}</Card.Title>
         <Modal
-          show={this.state.show}
-          onHide={this.handleClose}
+          show={this.state.showEdit}
+          onHide={this.handleCloseEdit}
           backdrop="static">
-          <PostEditor id={this.props.postData.id} title={this.props.postData.title} body={this.props.postData.content[0].text.text} handleClose={this.handleClose} />
+          <PostEditor id={this.props.postData.id} title={this.props.postData.title} body={this.props.postData.content[0].text.text} handleClose={this.handleCloseEdit} />
+        </Modal>
+        <Modal
+          show={this.state.showDelete}
+          onHide={this.handleCloseDelete}
+          backdrop="static"
+        >
+          <Modal.Body>Are you sure you want to delete this post and all its comments?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={this.handleDeletePost.bind(this)}>Yes, delete post</Button>
+            <Button onClick={this.handleCloseDelete}>No, cancel</Button>
+          </Modal.Footer>
         </Modal>
         <ContentTypeComponent
           contentType={this.props.postData.contentType}
