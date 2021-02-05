@@ -304,6 +304,12 @@ def deletePost(post_id):
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
+    print(post.comments)
+    for comment in post.comments:
+        if comment is None:
+            return ({"title": "could not find comment id " + comment.id, "message": "Could not find comment id, use another comment id"}, 404)
+        db.session.delete(comment)
+
     db.session.delete(post)
     db.session.commit()
     return (None, 200)
