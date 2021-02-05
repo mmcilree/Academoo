@@ -2,17 +2,51 @@ import React, { Component } from "react";
 import { Card, Row, Col } from "react-bootstrap";
 import timeSince from "../util/timeSince";
 import { Link } from "react-router-dom";
+import { ThreeDots, PencilSquare, Trash } from "react-bootstrap-icons";
+import Dropdown from "react-bootstrap/Dropdown";
+const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+  <a
+    href=""
+    ref={ref}
+    onClick={e => {
+      e.preventDefault();
+      onClick(e);
+    }}
+  >
+
+    {children}
+    <ThreeDots />
+
+  </a>
+));
 
 class Post extends Component {
   render() {
+
     if (!this.props.postData.id) return <div />;
     return (
       <React.Fragment>
-        <Card.Subtitle className="text-muted mb-2" style={{ fontSize: 12 }}>
-          <b><Link to={"/user-profile/" + this.props.postData.author.id}>{this.props.postData.author.id}</Link></b> from{" "}
-          {this.props.postData.author.host}
-          {" · "} {timeSince(this.props.postData.created)} ago
-        </Card.Subtitle>
+        <Row>
+          <Col>
+            <Card.Subtitle className="text-muted" style={{ fontSize: 14 }}>
+              <b><Link to={"/user-profile/" + this.props.postData.author.id}>{this.props.postData.author.id}</Link></b> from{" "}
+              {this.props.postData.author.host}
+              {" · "} {timeSince(this.props.postData.created)} ago
+              </Card.Subtitle>
+          </Col>
+          <Col xs={2} sm={1} className="mb-2">
+            <Card.Subtitle>
+              <Dropdown drop="left">
+                <Dropdown.Toggle as={CustomToggle} />
+                <Dropdown.Menu size="sm" title="">
+                  <Dropdown.Header>Options</Dropdown.Header>
+                  <Dropdown.Item><PencilSquare /> Edit Post</Dropdown.Item>
+                  <Dropdown.Item><Trash /> Delete Post</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </Card.Subtitle>
+          </Col>
+        </Row>
         <Card.Title>{this.props.postData.title}</Card.Title>
 
         <ContentTypeComponent
@@ -20,7 +54,7 @@ class Post extends Component {
           body={this.props.postData.content[0].text.text}
           postType={this.props.postType}
         />
-      </React.Fragment>
+      </React.Fragment >
     );
   }
 }
