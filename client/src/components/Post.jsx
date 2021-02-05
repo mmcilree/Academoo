@@ -7,10 +7,22 @@ import Dropdown from "react-bootstrap/Dropdown";
 import PostEditor from "./PostEditor"
 
 class Post extends Component {
-  state = {
-    showEdit: false,
-    showDelete: false
+  constructor(props) {
+    super(props);
+    this.state = {
+      showEdit: false,
+      showDelete: false,
+      updatedTitle: this.props.postData.title,
+      updatedBody: this.props.postData.content[0].text.text,
+      title: this.props.postData.title,
+      body: this.props.postData.content[0].text.text,
+      errors: [],
+    }
+    this.validateForm = this.validateForm.bind(this);
+    this.handleSubmitEdit = this.handleSubmitEdit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
+
 
   handleDeletePost(event) {
     event.preventDefault();
@@ -48,6 +60,62 @@ class Post extends Component {
     });
   }
 
+  handleChange(event) {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name
+    this.setState({
+      [name]: value
+    });
+  }
+
+  validateForm() {
+    const errors = [];
+    if (this.state.title.length === 0) {
+      errors.push("Title field cannot be empty")
+    }
+    if (this.state.title === "Moo" && this.state.body === "Moooo") {
+      errors.push("...really?")
+    }
+
+    return errors;
+  }
+
+  handleSubmitEdit(event) {
+    event.preventDefault();
+
+    const errors = this.validateForm();
+    if (errors.length > 0) {
+      this.setState({ errors });
+      return;
+    }
+
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: {
+        title: this.state.title,
+        content: [
+          {
+            text: {
+              text: this.state.body
+            }
+          }
+        ],
+      }
+    };
+    requestOptions.body = JSON.stringify(requestOptions.body);
+
+    fetch('/api/posts/' + this.props.postData.id, requestOptions);
+    this.setState({
+      updatedTitle: this.state.title,
+      updatedBody: this.state.body
+    })
+    this.handleCloseEdit();
+  }
+
   render() {
     if (!this.props.postData.id) return <div />;
     return (
@@ -73,12 +141,19 @@ class Post extends Component {
             </Card.Subtitle>
           </Col>
         </Row>
-        <Card.Title>{this.props.postData.title}</Card.Title>
+        <Card.Title>{this.state.updatedTitle}</Card.Title>
         <Modal
           show={this.state.showEdit}
           onHide={this.handleCloseEdit}
           backdrop="static">
-          <PostEditor id={this.props.postData.id} title={this.props.postData.title} body={this.props.postData.content[0].text.text} handleClose={this.handleCloseEdit} />
+          <PostEditor
+            title={this.state.title}
+            body={this.state.body}
+            handleClose={this.handleCloseEdit}
+            handleSubmit={this.handleSubmitEdit}
+            handleChange={this.handleChange}
+            errors={(this.state.errors)}
+          />
         </Modal>
         <Modal
           show={this.state.showDelete}
@@ -93,7 +168,7 @@ class Post extends Component {
         </Modal>
         <ContentTypeComponent
           contentType={this.props.postData.contentType}
-          body={this.props.postData.content[0].text.text}
+          body={this.state.updatedBody}
           postType={this.props.postType}
         />
       </React.Fragment >

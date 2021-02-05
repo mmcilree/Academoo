@@ -5,76 +5,30 @@ import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
 import Modal from 'react-bootstrap/Modal';
 import { authFetch } from '../auth';
-import { Route } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
 
 class PostEditor extends React.Component {
-    state = {
-        id: this.props.id,
-        title: this.props.title,
-        body: this.props.body,
-        errors: [],
-    };
-
-
-
-    validateForm() {
-        const errors = [];
-        if (this.state.title.length === 0) {
-            errors.push("Title field cannot be empty")
-        }
-        if (this.state.title === "Moo" && this.state.body === "Moooo") {
-            errors.push("...really?")
-        }
-
-        return errors;
+    constructor(props) {
+        super(props);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange(event) {
-        const target = event.target;
-        const value = target.value;
-        const name = target.name;
-        this.setState({
-            [name]: value
-        });
-
+        this.props.handleChange(event);
     }
 
     handleSubmit(event) {
+        this.props.handleSubmit(event);
         event.preventDefault();
-
-        const errors = this.validateForm();
-        if (errors.length > 0) {
-            this.setState({ errors });
-            return;
-        }
-
-        const requestOptions = {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: {
-                title: this.state.title,
-                content: [
-                    {
-                        text: {
-                            text: this.state.body
-                        }
-                    }
-                ],
-            }
-        };
-        requestOptions.body = JSON.stringify(requestOptions.body);
-
-        fetch('/api/posts/' + this.state.id, requestOptions);
-
-        this.props.handleClose();
-        this.props.history.push("comments/" + this.state.id);
     }
 
+
     render() {
-        const { errors } = this.state;
+        const title = this.props.title;
+        const body = this.props.body;
+        const errors = this.props.errors;
         return (
             <React.Fragment>
                 {/* <Card className="mt-4"> */}
@@ -82,15 +36,15 @@ class PostEditor extends React.Component {
                     <Modal.Title>Edit a post!</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={this.handleSubmit.bind(this)}>
+                    <Form onSubmit={this.handleSubmit}>
 
                         <Form.Group controlId="createPostTitle">
                             <Form.Label>Post Title:</Form.Label>
                             <Form.Control type="input"
                                 placeholder="Moo"
                                 name="title"
-                                onChange={this.handleChange.bind(this)}
-                                value={this.state.title} />
+                                onChange={this.handleChange}
+                                value={title} />
                         </Form.Group>
 
                         <Form.Group controlId="createPostText">
@@ -98,8 +52,8 @@ class PostEditor extends React.Component {
                             <Form.Control as="textarea"
                                 placeholder="Moooo"
                                 name="body"
-                                onChange={this.handleChange.bind(this)}
-                                value={this.state.body} />
+                                onChange={this.handleChange}
+                                value={body} />
                         </Form.Group>
 
                         {errors.map(error => (
@@ -112,10 +66,9 @@ class PostEditor extends React.Component {
                     </Form>
 
                 </Modal.Body>
-                {/* </Card > */}
             </React.Fragment>
         )
     }
 }
 
-export default PostEditor;
+export default withRouter(PostEditor);
