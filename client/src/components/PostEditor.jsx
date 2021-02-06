@@ -1,12 +1,9 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
 import Modal from 'react-bootstrap/Modal';
-import { authFetch } from '../auth';
 import { withRouter } from 'react-router-dom';
-import { Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
 
 class PostEditor extends React.Component {
     constructor(props) {

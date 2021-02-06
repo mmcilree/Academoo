@@ -5,24 +5,63 @@ import { Link, withRouter } from "react-router-dom";
 import { ThreeDots, PencilSquare, Trash } from "react-bootstrap-icons";
 import Dropdown from "react-bootstrap/Dropdown";
 import PostEditor from "./PostEditor"
+import { authFetch } from '../auth';
 
 class Post extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      currentUser: "",
       showEdit: false,
       showDelete: false,
       updatedTitle: this.props.postData.title,
       updatedBody: this.props.postData.content[0].text.text,
       title: this.props.postData.title,
       body: this.props.postData.content[0].text.text,
+      canEdit: true,
+      canDelete: true,
       errors: [],
+      error: null,
+      isLoading: false,
     }
     this.validateForm = this.validateForm.bind(this);
     this.handleSubmitEdit = this.handleSubmitEdit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
+  componentDidMount() {
+    this.fetchUserDetails();
+  }
+
+  async fetchUserDetails() {
+    await authFetch("/api/get-user").then(response => response.json())
+      .then(data =>
+        this.setState({
+          currentUser: data.id,
+          isLoading: false
+        })
+      )
+      .catch(error => this.setState({ error, isLoading: false }));
+    this.checkPermissions();
+  }
+
+  checkPermissions() {
+    console.log("author " + this.props.postData.author.id);
+    console.log("current " + this.state.currentUser);
+
+    if (this.props.postData.author.id === this.state.currentUser) {
+      console.log("here")
+      this.setState({
+        canEdit: false,
+        canDelete: false
+      })
+    } else {
+      this.setState({
+        canEdit: true,
+        canDelete: true
+      })
+    }
+  }
 
   handleDeletePost(event) {
     event.preventDefault();
@@ -141,8 +180,8 @@ class Post extends Component {
                 <Dropdown.Toggle as={CustomToggle} />
                 <Dropdown.Menu size="sm" title="">
                   <Dropdown.Header>Options</Dropdown.Header>
-                  <Dropdown.Item onClick={this.handleShowEdit.bind(this)}><PencilSquare /> Edit Post</Dropdown.Item>
-                  <Dropdown.Item onClick={this.handleShowDelete.bind(this)}><Trash /> Delete Post</Dropdown.Item>
+                  <Dropdown.Item disabled={this.state.canEdit} onClick={this.handleShowEdit.bind(this)}><PencilSquare /> Edit Post</Dropdown.Item>
+                  <Dropdown.Item disabled={this.state.canDelete} onClick={this.handleShowDelete.bind(this)}><Trash /> Delete Post</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </Card.Subtitle>
