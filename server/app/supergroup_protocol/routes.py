@@ -107,12 +107,22 @@ def create_post():
 
 @bp.route("/posts/<id>", methods=["PUT"])
 def edit_post(id):
-    actions.editPost(id, request.json)
+    host = request.json.get("external")
+
+    if host:
+        federation.edit_post(host,request.json)
+    else:
+        actions.editPost(id, request.json)
 
     return Response(status = 200)
 
 @bp.route("/posts/<id>", methods=["DELETE"])
 def delete_post(id):
-    actions.deletePost(id)
+    host = request.json.get("external")
+
+    if host:
+        federation.delete_post(host, request.json)
+    else:
+        actions.deletePost(id)
 
     return Response(status = 200)

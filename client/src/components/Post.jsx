@@ -67,8 +67,17 @@ class Post extends Component {
     event.preventDefault();
     const requestOptions = {
       method: "DELETE",
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'UserIDHeader': this.state.currentUser
+      },
+
     }
+    if (this.props.postData.host !== "local") {
+      requestOptions.body.external = this.props.postData.host;
+    }
+    requestOptions.body = JSON.stringify(requestOptions.body);
+
     fetch('/api/posts/' + this.props.postData.id, requestOptions);
     this.props.history.push("/communities/" + this.props.postData.community)
   }
@@ -140,6 +149,7 @@ class Post extends Component {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        'UserIDHeader': this.state.currentUser
       },
       body: {
         title: this.state.title,
@@ -152,6 +162,10 @@ class Post extends Component {
         ],
       }
     };
+
+    if (this.props.postData.host !== "local") {
+      requestOptions.body.external = this.props.postData.host;
+    }
     requestOptions.body = JSON.stringify(requestOptions.body);
 
     fetch('/api/posts/' + this.props.postData.id, requestOptions);

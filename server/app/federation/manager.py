@@ -6,12 +6,18 @@ class Manager(object):
     def __init__(self):
         # host name : <Instance Objects>
         self.instances = {
-            #"nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/"),
+            # "nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/"),
             "unifier": Instance("http://unifier-prod.herokuapp.com")
         }
 
     def create_post(self, host, data):
         self.instances[host].create_post(data)
+    
+    def edit_post(self, host, data):
+        return self.instances[host].edit_post(data)
+    
+    def delete_post(self, host, data):
+        return self.instances[host].delete_post(data)
 
     def _get_latest_timestamp(self, host, community):
         return max([x["modified"] for x in self.instances[host].get_timestamps(community)] + [0])

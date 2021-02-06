@@ -38,4 +38,12 @@ class Instance(object):
         data.pop("external")
         print(requests.post(urljoin(self.url, f"/fed/posts"), json=data))
     
-    # TODO: editing and deleting posts
+    def edit_post(self, data, id):
+        data.pop("external")
+        ret = requests.put(urljoin(self.url, f"/fed/posts/{id}"), json=data) 
+        return ret.json()
+    
+    def delete_post(self, data, id):
+        data.pop("external")
+        ret = requests.delete(urljoin(self.url, f"/fed/posts/{id}")) 
+        return ret.json()
