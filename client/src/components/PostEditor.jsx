@@ -37,7 +37,6 @@ class PostEditor extends React.Component {
 
         return (
             <React.Fragment>
-                {/* <Card className="mt-4"> */}
                 <Modal.Header className="pt-4" closeButton>
                     <Modal.Title>Edit a post!</Modal.Title>
                 </Modal.Header>
