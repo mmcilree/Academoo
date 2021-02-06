@@ -1,7 +1,6 @@
 import React from "react";
 import AccessForbidden from "./components/AccessForbidden";
 import PostCreator from "./components/PostCreator";
-import PostEditor from "./components/PostEditor";
 import HeaderBar from "./components/HeaderBar";
 import Welcome from "./components/Welcome";
 import CommunityFeed from "./components/CommunityFeed";
@@ -45,7 +44,6 @@ class App extends React.Component {
                 <PrivateRoute exact path="/communities/:id/manage" component={CommunityManager} />
                 <PrivateRoute path="/communities/:instance/:id" component={PostsViewer} />
                 <PrivateRoute path="/create-post" component={PostCreator} />
-                <PrivateRoute path="/edit-post" component={PostEditor} />
                 <PrivateRoute exact path="/comments/:id" component={CommentsViewer} />
                 <PrivateRoute path="/comments/:instance/:id" component={CommentsViewer} />
                 <PrivateRoute path="/user-settings" component={UserSettings} />
