@@ -85,7 +85,8 @@ class Post extends Component {
   handleShowDelete(event) {
     event.preventDefault();
     this.setState({
-      showDelete: true
+      showDelete: true,
+      errors: []
     });
   }
 
@@ -98,7 +99,8 @@ class Post extends Component {
   handleShowEdit(event) {
     event.preventDefault();
     this.setState({
-      showEdit: true
+      showEdit: true,
+      errors: []
     });
   }
 
@@ -113,7 +115,8 @@ class Post extends Component {
     const value = target.value;
     const name = target.name
     this.setState({
-      [name]: value
+      [name]: value,
+      errors: []
     });
   }
 
@@ -168,13 +171,20 @@ class Post extends Component {
     }
     requestOptions.body = JSON.stringify(requestOptions.body);
 
-    fetch('/api/posts/' + this.props.postData.id, requestOptions);
-    this.setState({
-      updatedTitle: this.state.title,
-      updatedBody: this.state.body
-    })
-    this.handleCloseEdit();
+    fetch('/api/posts/' + this.props.postData.id, requestOptions).then(r => r.status).then(statusCode => {
+      if (statusCode != 200) {
+        this.setState({ errors: ["Could not save edit"] })
+      } else {
+        this.setState({
+          updatedTitle: this.state.title,
+          updatedBody: this.state.body,
+          errors: []
+        })
+        this.handleCloseEdit();
+      }
+    });
   }
+
 
   render() {
     if (!this.props.postData.id) return <div />;

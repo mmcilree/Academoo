@@ -8,8 +8,15 @@ import { withRouter } from 'react-router-dom';
 class PostEditor extends React.Component {
     constructor(props) {
         super(props);
+        this.state = { isComment: false }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    componentDidMount() {
+        this.setState({
+            isComment: this.props.title ? true : false
+        })
     }
 
     handleChange(event) {
@@ -26,6 +33,8 @@ class PostEditor extends React.Component {
         const title = this.props.title;
         const body = this.props.body;
         const errors = this.props.errors;
+        const isComment = this.state.isComment;
+
         return (
             <React.Fragment>
                 {/* <Card className="mt-4"> */}
@@ -35,7 +44,7 @@ class PostEditor extends React.Component {
                 <Modal.Body>
                     <Form onSubmit={this.handleSubmit}>
 
-                        {title && <Form.Group controlId="createPostTitle">
+                        {isComment && <Form.Group controlId="createPostTitle">
                             <Form.Label>Post Title:</Form.Label>
                             <Form.Control type="input"
                                 placeholder="Moo"

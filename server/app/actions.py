@@ -278,7 +278,7 @@ def getPost(post_id):
     return (post_dict, 200)
 
 # STILL NEED TO IMPLEMENT 403 FORBIDDEN
-def editPost(post_id, post_data):
+def editPost(post_id, post_data, username):
     validate_json(post_data)
     validate_post_id(post_id)
     update_title = post_data["title"]
@@ -291,6 +291,10 @@ def editPost(post_id, post_data):
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
+    if username != post.author.user_id:
+        return ({"title": "Permission denied " + post_id, "message": "User does not have permission to edit this post"}, 404)
+
+
     post.title = update_title
     post.content_type = update_content_type
     post.body = update_content_body
@@ -298,11 +302,14 @@ def editPost(post_id, post_data):
     return (None, 200)
 
 # STILL NEED TO IMPLEMENT 403 FORBIDDEN
-def deletePost(post_id):
+def deletePost(post_id, username):
     validate_post_id(post_id)
     post = Post.query.filter_by(id = post_id).first()
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
+
+    if username != post.author.user_id:
+        return ({"title": "Permission denied " + post_id, "message": "User does not have permission to delete this post"}, 404)
 
     print(post.comments)
     for comment in post.comments:
