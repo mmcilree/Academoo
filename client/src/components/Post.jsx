@@ -192,12 +192,12 @@ class Post extends Component {
       <React.Fragment>
         <Row>
           <Col>
-          <Card.Subtitle className="text-muted mb-2" style={{ fontSize: 12}}>
-          <b style={{zIndex: 2, position: "relative"}}><Link to={"/user-profile/" + this.props.postData.author.id}>
-            {this.props.postData.author.id}
-          </Link></b> from{" "}
-          {this.props.postData.author.host}
-          {" · "} {timeSince(this.props.postData.created)} ago
+            <Card.Subtitle className="text-muted mb-2" style={{ fontSize: 12 }}>
+              <b style={{ zIndex: 2, position: "relative" }}><Link to={"/user-profile/" + this.props.postData.author.id}>
+                {this.props.postData.author.id}
+              </Link></b> from{" "}
+              {this.props.postData.author.host}
+              {" · "} {timeSince(this.props.postData.created)} ago
         </Card.Subtitle>
           </Col>
           <Col xs={2} sm={1} className="mb-2">
@@ -238,7 +238,7 @@ class Post extends Component {
             <Button onClick={this.handleCloseDelete}>No, cancel</Button>
           </Modal.Footer>
         </Modal>
-        
+
         <Card.Title>{this.props.postData.title}</Card.Title>
 
         <ContentTypeComponent
@@ -298,6 +298,7 @@ const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
       e.preventDefault();
       onClick(e);
     }}
+    style={{ zIndex: 2, position: "relative" }}
   >
 
     {children}

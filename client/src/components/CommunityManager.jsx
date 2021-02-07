@@ -256,7 +256,7 @@ class CommunityManager extends React.Component {
                                                         )}
 
                                                         onChange={(selected) => {
-                                                            this.setState({ selected: selected })
+                                                            this.setState({ errors: [], selected: selected })
                                                         }}
 
                                                         options={this.state.users}
