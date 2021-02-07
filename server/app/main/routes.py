@@ -20,7 +20,8 @@ def assign_role():
     user_id = req["user"]
     community_id = req["community"]
     role = req["role"]
-    return respond_with_action(actions.grantRole(user_id, community_id, role))
+    current_user = request.headers.get("UserIDHeader")
+    return respond_with_action(actions.grantRole(user_id, community_id, current_user, role))
 
 @bp.route("/set-default-role", methods=["POST"])
 def set_default_role():

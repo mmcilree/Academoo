@@ -34,6 +34,13 @@ def validate_post_id(post_id):
     if not isUUID(post_id):
         return ({"title": "post id is not in the correct format", "message": "Format of post id should be uuid4 string"}, 400)
 
+def validate_change_role(user, current_user):
+    print("to change " + user)
+    print("current " + current_user)
+    if user == current_user:
+        print("here!")
+        return ({"title": "User cannot change own role", "message": "please choose another user"}, 400)
+
 def validate_json(file):
     try:
         json.dumps(file)
@@ -54,7 +61,7 @@ def createCommunity(community_id, title, description, admin):
     if User.query.filter_by(user_id=admin) is None:
         return ({"title": "Could not find user" + admin, "message": "User does not exist on database, specify a different user"}, 404)
         
-    response = grantRole(admin, community_id, "admin")
+    response = grantRole(admin, community_id, admin, "admin")
         ######################## not best way to do
     if response[1] != 200:
         return response
@@ -63,9 +70,10 @@ def createCommunity(community_id, title, description, admin):
     return (None, 200)
 
 # TODO: We need to handle granting roles to external users too
-def grantRole(username, community_id, role="member"):
+def grantRole(username, community_id, current_user, role="member"):
     validate_community_id(community_id)
     validate_username(username)
+    # validate_change_role(username, current_user)
     validate_role(role)
     user = User.query.filter_by(user_id = username).first()
     if user is None:

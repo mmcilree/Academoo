@@ -4,6 +4,7 @@ import Form from 'react-bootstrap/Form';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Card from 'react-bootstrap/Card';
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import { authFetch } from '../auth';
 import { Redirect } from 'react-router-dom';
@@ -16,6 +17,7 @@ class CommunityManager extends React.Component {
         super(props);
         this.state = {
             isAdmin: null,
+            currentUser: "",
             currentCommunity: this.props.match.params.id,
             users: [],
             host: "local",
@@ -53,8 +55,13 @@ class CommunityManager extends React.Component {
         const errors = [];
         if (this.state.selected[0].user.length === 0 || this.state.role.length === 0) {
             errors.push("Required fields have been left blank.");
-            return errors;
         }
+        console.log("selected " + this.state.selected[0].user)
+        console.log("current " + this.state.currentUser)
+        if (this.state.selected[0].user === this.state.currentUser) {
+            errors.push("You cannot change your own role");
+        }
+
         return errors;
     }
 
@@ -71,6 +78,7 @@ class CommunityManager extends React.Component {
         authFetch("/api/get-user").then(response => response.json())
             .then(data =>
                 this.setState({
+                    currentUser: data.id,
                     isAdmin: data.adminOf.includes(this.state.currentCommunity),
                 })
             )
@@ -144,7 +152,10 @@ class CommunityManager extends React.Component {
         }
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'UserIDHeader': this.state.currentUser
+            },
             body: JSON.stringify(
                 {
                     host: this.state.host,
@@ -207,6 +218,10 @@ class CommunityManager extends React.Component {
                             <Card.Title>Manage your community: {this.state.currentCommunity}</Card.Title>
                         </Card.Header>
                         <Card.Body>
+                            {this.state.errors.map(error => (
+                                <Alert variant='warning' key={error}>{error}</Alert>
+                            ))}
+
                             <Card className="mt-4">
                                 <Card.Body>
                                     <Card.Title>Assign User Role</Card.Title>
