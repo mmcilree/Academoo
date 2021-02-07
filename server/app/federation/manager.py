@@ -1,3 +1,4 @@
+import os
 import functools
 from app.federation.instance import Instance
 
@@ -5,10 +6,17 @@ from app.federation.instance import Instance
 class Manager(object):
     def __init__(self):
         # host name : <Instance Objects>
-        self.instances = {
-            # "nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/"),
-            "unifier": Instance("http://unifier-prod.herokuapp.com")
-        }
+        if os.environ.get("FLASK_ENV") == "production":
+            self.instances = {
+                "nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/"),
+                "unifier": Instance("http://unifier-prod.herokuapp.com")
+            }
+        else:
+            self.instances = {
+                "cs3099-group1": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
+                "nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/"),
+                "unifier": Instance("http://unifier-prod.herokuapp.com")
+            }
 
     def create_post(self, host, data):
         self.instances[host].create_post(data)

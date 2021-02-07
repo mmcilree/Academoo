@@ -10,6 +10,7 @@ flask db upgrade
 echo "Starting tmux session for backend"
 
 kill $(lsof -t -i:5000)
+kill $(lsof -t -i:22875)
 tmux kill-session -t CS3099-backend
-tmux new-session -d -s CS3099-backend "export FLASK_ENV=production; gunicorn -b :5000 backend:app"
+tmux new-session -d -s CS3099-backend "export FLASK_ENV=production; gunicorn -b :22875 backend:app"
 
