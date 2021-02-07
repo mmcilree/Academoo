@@ -48,7 +48,6 @@ class CommunityManager extends React.Component {
         this.fetchUsers(this.state.host)
         this.fetchDefaultRole();
         this.fetchUserRoles();
-        console.log(this.state.usersWithRoles)
     }
 
     validateUserRolesForm() {
@@ -56,8 +55,7 @@ class CommunityManager extends React.Component {
         if (this.state.selected[0].user.length === 0 || this.state.role.length === 0) {
             errors.push("Required fields have been left blank.");
         }
-        console.log("selected " + this.state.selected[0].user)
-        console.log("current " + this.state.currentUser)
+
         if (this.state.selected[0].user === this.state.currentUser) {
             errors.push("You cannot change your own role");
         }
@@ -179,9 +177,6 @@ class CommunityManager extends React.Component {
         this.setState(
             { host: "local", serverDropdown: "Select Server", role: "", selected: [{ user: "" }] }
         );
-
-        console.log(this.state.usersWithRoles)
-
 
     }
 
