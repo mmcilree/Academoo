@@ -54,7 +54,7 @@ def createCommunity(community_id, title, description, admin):
     if User.query.filter_by(user_id=admin) is None:
         return ({"title": "Could not find user" + admin, "message": "User does not exist on database, specify a different user"}, 404)
         
-    response = grantRole(admin, community_id, "admin")
+    response = grantRole(admin, community_id, admin, "admin")
         ######################## not best way to do
     if response[1] != 200:
         return response
@@ -63,7 +63,7 @@ def createCommunity(community_id, title, description, admin):
     return (None, 200)
 
 # TODO: We need to handle granting roles to external users too
-def grantRole(username, community_id, role="member"):
+def grantRole(username, community_id, current_user, role="member"):
     validate_community_id(community_id)
     validate_username(username)
     validate_role(role)
@@ -71,6 +71,10 @@ def grantRole(username, community_id, role="member"):
     if user is None:
         return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 400)
     
+    if username == current_user:
+        return ({"title": "User cannot change own role", "message": "please choose another user"}, 400)
+
+
     if UserRole.query.filter_by(user_id=username, community_id=community_id).first() is None:
         new_role = UserRole(user_id=username, community_id=community_id, role=role)
         db.session.add(new_role)
@@ -278,7 +282,7 @@ def getPost(post_id):
     return (post_dict, 200)
 
 # STILL NEED TO IMPLEMENT 403 FORBIDDEN
-def editPost(post_id, post_data):
+def editPost(post_id, post_data, username):
     validate_json(post_data)
     validate_post_id(post_id)
     update_title = post_data["title"]
@@ -286,9 +290,14 @@ def editPost(post_id, post_data):
     update_content_type = "text" #update_content_arr[0]["text"]
     update_content_body = update_content_arr[0]["text"]["text"]
 
-    post = Post.query.filter_by(id = post_id)
+    post = Post.query.filter_by(id = post_id).first()
+    
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
+
+    if username != post.author.user_id:
+        return ({"title": "Permission denied " + post_id, "message": "User does not have permission to edit this post"}, 404)
+
 
     post.title = update_title
     post.content_type = update_content_type
@@ -297,11 +306,20 @@ def editPost(post_id, post_data):
     return (None, 200)
 
 # STILL NEED TO IMPLEMENT 403 FORBIDDEN
-def deletePost(post_id):
+def deletePost(post_id, username):
     validate_post_id(post_id)
-    post = Post.query.filter_by(id = post_id)
+    post = Post.query.filter_by(id = post_id).first()
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
+
+    if username != post.author.user_id:
+        return ({"title": "Permission denied " + post_id, "message": "User does not have permission to delete this post"}, 404)
+
+    print(post.comments)
+    for comment in post.comments:
+        if comment is None:
+            return ({"title": "could not find comment id " + comment.id, "message": "Could not find comment id, use another comment id"}, 404)
+        db.session.delete(comment)
 
     db.session.delete(post)
     db.session.commit()
