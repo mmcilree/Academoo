@@ -109,7 +109,7 @@ class PostsViewer extends Component {
                 Manage Community
               </Link>
             </Alert>}
-          <MiniPostCreator currentCommunity={currentCommunity} />
+          <MiniPostCreator currentCommunity={currentCommunity} host={host}/>
           {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
           {!isLoading ? (
             posts.map(data => {
