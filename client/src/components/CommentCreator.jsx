@@ -46,7 +46,7 @@ class CommentCreator extends React.Component {
             headers: {
                 'Content-Type': 'application/json',
                 'User-ID': this.state.user_id,
-                'Client-Host': window.location.hostname
+                'Client-Host': window.location.protocol + "//" + window.location.hostname
             },
             body: {
                 community: this.state.parentPost.community,
