@@ -239,8 +239,6 @@ class Post extends Component {
           </Modal.Footer>
         </Modal>
 
-        <Card.Title>{this.props.postData.title}</Card.Title>
-
         <ContentTypeComponent
           contentType={this.props.postData.contentType}
           body={this.state.updatedBody}
