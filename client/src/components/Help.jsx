@@ -2,14 +2,6 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import {Form, Button, Alert } from "react-bootstrap";
 
-import {
-    PlusCircle,
-    PersonCircle,
-    Gear,
-    BoxArrowRight,
-    QuestionCircle,
-  } from "react-bootstrap-icons";
-
 class Help extends React.Component {
   render() {
     return (

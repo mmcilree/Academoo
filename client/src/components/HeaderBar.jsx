@@ -48,7 +48,7 @@ function HeaderBar() {
     }
 
     fetchData();
-  }, [setEmail, setUsername]);
+  }, [username]);
 
 
   return (
