@@ -69,8 +69,10 @@ class Post extends Component {
       method: "DELETE",
       headers: {
         'Content-Type': 'application/json',
-        'UserIDHeader': this.state.currentUser
+        'User-ID': this.state.currentUser,
+        'Client-Host': window.location.protocol + "//" + window.location.hostname
       },
+      body:{}
 
     }
     if (this.props.postData.host !== "local") {
@@ -152,7 +154,8 @@ class Post extends Component {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'UserIDHeader': this.state.currentUser
+        'User-ID': this.state.currentUser,
+        'Client-Host': window.location.protocol + "//" + window.location.hostname
       },
       body: {
         title: this.state.title,
