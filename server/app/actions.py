@@ -71,7 +71,6 @@ def grantRole(username, community_id, current_user, role="member"):
     if user is None:
         return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 400)
     
-    # current = User.query.filter_by(user_id = current_user).first()
     current_role = UserRole.query.filter_by(user_id=current_user, community_id=community_id).first()
 
     if ((not current_role == None) & (username == current_user)):
