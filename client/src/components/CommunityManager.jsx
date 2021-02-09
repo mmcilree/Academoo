@@ -152,7 +152,7 @@ class CommunityManager extends React.Component {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'UserIDHeader': this.state.currentUser
+                'User-ID': this.state.currentUser
             },
             body: JSON.stringify(
                 {

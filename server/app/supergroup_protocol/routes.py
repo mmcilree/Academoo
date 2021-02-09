@@ -63,6 +63,7 @@ def get_all_posts():
     content_type = request.args.get("contentType")
 
     external = request.args.get("external")
+    print("external is " + str(external))
 
     if not external:
         return respond_with_action(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type))
@@ -81,11 +82,10 @@ def get_post_by_id(id):
 @bp.route("/posts", methods=["POST"])
 def create_post():
     host = request.json.get("external")
-    user_id = request.headers.get("UserIDHeader")
+    user_id = request.headers.get("User-ID")
     user = User.lookup(user_id)
     community_id = request.json["community"]
-
-    
+    print("http headers are " + str(request.headers))
         
     if(not host):
         #if user.has_no_role(community_id):
@@ -108,7 +108,7 @@ def create_post():
 @bp.route("/posts/<id>", methods=["PUT"])
 def edit_post(id):
     host = request.json.get("external")
-    user = request.headers.get("UserIDHeader")
+    user = request.headers.get("User-ID")
     if host:
         federation.edit_post(host,request.json)
     else:
@@ -119,7 +119,7 @@ def edit_post(id):
 @bp.route("/posts/<id>", methods=["DELETE"])
 def delete_post(id):
     host = request.json.get("external")
-    user = request.headers.get("UserIDHeader")
+    user = request.headers.get("User-ID")
     if host:
         federation.delete_post(host, request.json)
     else:

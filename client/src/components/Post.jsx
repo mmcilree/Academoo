@@ -69,7 +69,7 @@ class Post extends Component {
       method: "DELETE",
       headers: {
         'Content-Type': 'application/json',
-        'UserIDHeader': this.state.currentUser
+        'User-ID': this.state.currentUser
       },
 
     }
@@ -152,7 +152,7 @@ class Post extends Component {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'UserIDHeader': this.state.currentUser
+        'User-ID': this.state.currentUser
       },
       body: {
         title: this.state.title,
