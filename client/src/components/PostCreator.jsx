@@ -100,7 +100,7 @@ class PostCreator extends React.Component {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'UserIDHeader': this.state.user_id
+                'User-ID': this.state.user_id
             },
             body: {
                 community: this.state.selected[0].community,
