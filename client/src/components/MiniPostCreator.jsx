@@ -23,7 +23,8 @@ function MiniPostCreator(props) {
                             pathname: "/create-post",
                             state: {
                                 body: newPostText,
-                                community: props.currentCommunity
+                                community: props.currentCommunity,
+                                host: props.host
                             }
                         }
                     }>
