@@ -18,7 +18,7 @@ class Post extends Component {
       updatedBody: this.props.postData.content[0].text ? this.props.postData.content[0].text.text : this.props.postData.content[0].markdown.text,
       title: this.props.postData.title,
       body: this.props.postData.content[0].text ? this.props.postData.content[0].text.text : this.props.postData.content[0].markdown.text,
-      contentType = this.props.postData.content[0].text ? "text" : "markdown",
+      contentType: this.props.postData.content[0].text ? "text" : "markdown",
       canEdit: true,
       canDelete: true,
       errors: [],
