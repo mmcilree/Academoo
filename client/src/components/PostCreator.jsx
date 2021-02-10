@@ -1,4 +1,5 @@
 import React from 'react';
+import MarkdownPreviewer from './MarkdownPreviewer';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
@@ -24,9 +25,12 @@ class PostCreator extends React.Component {
                     this.props.location.state.host : null,
                 community: this.props.location && this.props.location.state && this.props.location.state.community ?
                     this.props.location.state.community : "",
-            }]
+            }],
+            markdown: false,
         };
-
+        this.handleChange = this.handleChange.bind(this);
+        this.handleContentSwitch = this.handleContentSwitch.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     validateForm() {
@@ -77,6 +81,14 @@ class PostCreator extends React.Component {
                 }))
     }
 
+    handleContentSwitch(event) {
+        if (this.state.markdown) {
+            this.setState({ markdown: false });
+        } else {
+            this.setState({ markdown: true });
+        }
+    }
+
     handleChange(event) {
         const target = event.target;
         const value = target.value;
@@ -84,7 +96,6 @@ class PostCreator extends React.Component {
         this.setState({
             [name]: value
         });
-
     }
 
     handleSubmit(event) {
@@ -137,7 +148,7 @@ class PostCreator extends React.Component {
     }
 
     render() {
-        const { errors } = this.state;
+        const { markdown, errors } = this.state;
         return this.state.communities && (
             <Card className="mt-4">
                 <Card.Header className="pt-4">
@@ -156,12 +167,20 @@ class PostCreator extends React.Component {
                         </Form.Group>
 
                         <Form.Group controlId="createPostText">
-                            <Form.Label>Post Content:</Form.Label>
+                            <Form.Label className="d-flex justify-content-between">
+                                Post Content:
+                                {markdown ? " Markdown" : " Text"}
+                                <Button variant="outline-secondary" onClick={this.handleContentSwitch}>{markdown ? "switch to text editor" : "switch to markdown"}</Button>
+                            </Form.Label>
                             <Form.Control as="textarea"
+                                rows={4}
                                 placeholder="Moooo"
                                 name="body"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.body} />
+
+                            {markdown && <MarkdownPreviewer body={this.state.body} handleChange={this.handleChange} />}
+
                         </Form.Group>
 
                         <Form.Group controlId="createPostCommunity">
