@@ -2,6 +2,8 @@ from app import actions, federation
 from app.supergroup_protocol import bp
 from flask import jsonify, request, Response
 from app.models import User, Community
+from utils import *
+import json
 
 def respond_with_action(actionResponse):
     data, status = actionResponse
@@ -81,48 +83,68 @@ def get_post_by_id(id):
 
 @bp.route("/posts", methods=["POST"])
 def create_post():
-    host = request.json.get("external")
-    user_id = request.headers.get("User-ID")
-    user = User.lookup(user_id)
-    community_id = request.json["community"]
-    print("http headers are " + str(request.headers))
-        
-    if(not host):
-        #if user.has_no_role(community_id):
-        if not user.has_role(community_id, "guest"): # works because having guest or higher corresponds to having any role
+    external = request.json.get("external")
+    print("EXTERNAL IS " + str(external))
+    host = request.headers.get("Client-Host")
+    requester_str = request.headers.get("User-ID")
+    if host is None:
+        return Response(status = 400)
+
+    if check_create_post(request.get_json(silent=True)): return Response(status = 400) # will not display error message
+
+    if external is None:
+        requester = User.lookup(requester_str)
+        community_id = request.json["community"]
+        if not requester.has_role(community_id, "guest"):
             community = Community.lookup(community_id)
             role = community.default_role
             if ((role != "contributor") & (role != "admin")):
                 return Response(status = 403)
         else :
-            if not user.has_role(community_id, "contributor"):
+            if not requester.has_role(community_id, "contributor"):
                 return Response(status = 403)
-
-    if host:
-        federation.create_post(host, request.json)
-    else:
         actions.createPost(request.json)
+    else:
+        federation.create_post(host, request.json)
 
-    return Response(status = 200)
+    return Response(status = 201)
 
 @bp.route("/posts/<id>", methods=["PUT"])
 def edit_post(id):
-    host = request.json.get("external")
-    user = request.headers.get("User-ID")
-    if host:
-        federation.edit_post(host,request.json)
+    external = request.json.get("external") # Changed from request.json.get("external") as external not field in create_post json
+    print("EXTERNAL IS " + str(external))
+
+    host = request.headers.get("Client-Host") 
+    requester_str = request.headers.get("User-ID")
+    if host is None or requester_str is None:
+        return Response(status = 400)
+
+    if check_edit_post(request.get_json(silent=True)): return Response(status = 400) # will not display error message
+
+    requester = User.lookup(requester_str)
+
+    if external is None:
+        actions.editPost(id, request.json, requester)
     else:
-        actions.editPost(id, request.json, user)
+        federation.edit_post(host,request.json)
 
     return Response(status = 200)
 
 @bp.route("/posts/<id>", methods=["DELETE"])
 def delete_post(id):
-    host = request.json.get("external")
-    user = request.headers.get("User-ID")
-    if host:
-        federation.delete_post(host, request.json)
+    external = request.args.get("external")
+    print("EXTERNAL IS " + str(external))
+
+    host = request.headers.get("Client-Host") 
+    requester_str = request.headers.get("User-ID")
+    if host is None or requester_str is None:
+        return Response(status = 400)
+
+    requester = User.lookup(requester_str)
+
+    if external is None:
+        actions.deletePost(id, requester)
     else:
-        actions.deletePost(id, user)
+        federation.delete_post(host, request.json)
 
     return Response(status = 200)
