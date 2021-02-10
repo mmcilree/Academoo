@@ -7,7 +7,10 @@ import json
 
 def respond_with_action(actionResponse):
     data, status = actionResponse
-    return jsonify(data), status
+    if data is None:
+        return Response(status=status)
+    else:
+        return jsonify(data), status
 # User
 @bp.route("/users", methods=["GET"])
 def get_all_users():
@@ -90,7 +93,7 @@ def create_post():
     if host is None:
         return Response(status = 400)
 
-    if check_create_post(request.get_json(silent=True)): return Response(status = 400) # will not display error message
+    if check_create_post(request.get_json(silent=True)): return check_create_post(request.get_json(silent=True))
 
     if external is None:
         requester = User.lookup(requester_str)
@@ -103,11 +106,12 @@ def create_post():
         else :
             if not requester.has_role(community_id, "contributor"):
                 return Response(status = 403)
-        actions.createPost(request.json)
+        
+        return respond_with_action(actions.createPost(request.json))
     else:
-        federation.create_post(host, request.json)
+        return federation.create_post(external, request.json)
 
-    return Response(status = 201)
+    #return Response(status = 201)
 
 @bp.route("/posts/<id>", methods=["PUT"])
 def edit_post(id):
@@ -119,14 +123,14 @@ def edit_post(id):
     if host is None or requester_str is None:
         return Response(status = 400)
 
-    if check_edit_post(request.get_json(silent=True)): return Response(status = 400) # will not display error message
+    if check_edit_post(request.get_json(silent=True)): return check_edit_post(request.get_json(silent=True))
 
     requester = User.lookup(requester_str)
 
     if external is None:
         actions.editPost(id, request.json, requester)
     else:
-        federation.edit_post(host,request.json)
+        federation.edit_post(external, request.json)
 
     return Response(status = 200)
 
@@ -145,6 +149,6 @@ def delete_post(id):
     if external is None:
         actions.deletePost(id, requester)
     else:
-        federation.delete_post(host, request.json)
+        federation.delete_post(external, request.json)
 
     return Response(status = 200)

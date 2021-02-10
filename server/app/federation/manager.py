@@ -19,7 +19,7 @@ class Manager(object):
             }
 
     def create_post(self, host, data):
-        self.instances[host].create_post(data)
+        return self.instances[host].create_post(data)
     
     def edit_post(self, host, data):
         return self.instances[host].edit_post(data)
