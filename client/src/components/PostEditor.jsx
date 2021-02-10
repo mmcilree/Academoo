@@ -3,6 +3,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import Modal from 'react-bootstrap/Modal';
+import MarkdownPreviewer from './MarkdownPreviewer';
 import { withRouter } from 'react-router-dom';
 
 class PostEditor extends React.Component {
@@ -34,6 +35,7 @@ class PostEditor extends React.Component {
         const body = this.props.body;
         const errors = this.props.errors;
         const isComment = this.state.isComment;
+        const isMarkdown = this.props.contentType;
 
         return (
             <React.Fragment>
@@ -57,10 +59,14 @@ class PostEditor extends React.Component {
                             <Form.Control as="textarea"
                                 placeholder="Moooo"
                                 name="body"
+                                rows={4}
                                 onChange={this.handleChange}
                                 value={body} />
                         </Form.Group>
 
+                        {isMarkdown && <MarkdownPreviewer body={body} handleChange={this.handleChange} />}
+
+                        <br />
                         {errors.map(error => (
                             <Alert variant='warning' key={error}>{error}</Alert>
                         ))}

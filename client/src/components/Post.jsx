@@ -18,6 +18,7 @@ class Post extends Component {
       updatedBody: this.props.postData.content[0].text ? this.props.postData.content[0].text.text : this.props.postData.content[0].markdown.text,
       title: this.props.postData.title,
       body: this.props.postData.content[0].text ? this.props.postData.content[0].text.text : this.props.postData.content[0].markdown.text,
+      contentType = this.props.postData.content[0].text ? "text" : "markdown",
       canEdit: true,
       canDelete: true,
       errors: [],
@@ -155,19 +156,28 @@ class Post extends Component {
       },
       body: {
         title: this.state.title,
-        content: [
-          {
-            text: {
-              text: this.state.body
-            }
-          }
-        ],
+        content: [],
       }
     };
 
     if (this.props.postData.host !== "local") {
       requestOptions.body.external = this.props.postData.host;
     }
+
+    if (this.state.contentType == "markdown") {
+      // requestOptions.body.content.push({
+      //     markdown: {
+      //         text: this.state.body
+      //     }
+      // });
+    } else if (this.state.contentType == "text") {
+      requestOptions.body.content.push({
+        text: {
+          text: this.state.body
+        }
+      });
+    }
+
     requestOptions.body = JSON.stringify(requestOptions.body);
 
     fetch('/api/posts/' + this.props.postData.id, requestOptions).then(r => r.status).then(statusCode => {
@@ -214,12 +224,14 @@ class Post extends Component {
         </Row>
         <Card.Title>{this.state.updatedTitle}</Card.Title>
         <Modal
+          size="lg"
           show={this.state.showEdit}
           onHide={this.handleCloseEdit}
           backdrop="static">
           <PostEditor
             title={this.state.title}
             body={this.state.body}
+            contentType={this.state.contentType}
             handleClose={this.handleCloseEdit}
             handleSubmit={this.handleSubmitEdit}
             handleChange={this.handleChange}
@@ -239,7 +251,7 @@ class Post extends Component {
         </Modal>
 
         <ContentTypeComponent
-          contentType={this.props.postData.content[0].text ? "text" : "markdown"}
+          contentType={this.state.contentType}
           body={this.state.updatedBody}
           postType={this.props.postType}
         />

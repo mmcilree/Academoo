@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from 'react-bootstrap';
+import { Card, Form } from 'react-bootstrap';
 
 const ReactMarkdown = require('react-markdown');
 const gfm = require('remark-gfm');
@@ -18,9 +18,9 @@ class MarkdownPreviewer extends React.Component {
         return (
             <React.Fragment>
                 <br />
+                <Form.Label>Markdown Preview:</Form.Label>
                 <Card >
                     <Card.Body style={{ height: "400px", "overflow-y": "scroll" }}>
-                        <Card.Subtitle>Preview:</Card.Subtitle>
                         <Card.Text>
                             <ReactMarkdown plugins={[gfm]} renderers={renderers} children={body} />
                         </Card.Text>
