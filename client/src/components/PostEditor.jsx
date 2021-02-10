@@ -35,7 +35,7 @@ class PostEditor extends React.Component {
         const body = this.props.body;
         const errors = this.props.errors;
         const isComment = this.state.isComment;
-        const isMarkdown = this.props.contentType;
+        const contentType = this.props.contentType;
 
         return (
             <React.Fragment>
@@ -64,7 +64,7 @@ class PostEditor extends React.Component {
                                 value={body} />
                         </Form.Group>
 
-                        {isMarkdown && <MarkdownPreviewer body={body} handleChange={this.handleChange} />}
+                        {contentType === "markdown" && <MarkdownPreviewer body={body} handleChange={this.handleChange} />}
 
                         <br />
                         {errors.map(error => (
