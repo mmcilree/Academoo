@@ -117,15 +117,8 @@ class PostCreator extends React.Component {
             body: {
                 community: this.state.selected[0].community,
                 title: this.state.title,
-                contentType: 'text',
                 parentPost: null,
-                content: [
-                    {
-                        text: {
-                            text: this.state.body
-                        }
-                    }
-                ],
+                content: [],
                 author: {
                     id: this.state.user_id,
                     host: "Academoo"
@@ -135,6 +128,21 @@ class PostCreator extends React.Component {
         if (this.state.selected[0].host !== "local") {
             requestOptions.body.external = this.state.selected[0].host;
         }
+
+        if (this.state.markdown) {
+            // requestOptions.body.content.push({
+            //     markdown: {
+            //         text: this.state.body
+            //     }
+            // });
+        } else {
+            requestOptions.body.content.push({
+                text: {
+                    text: this.state.body
+                }
+            });
+        }
+
         requestOptions.body = JSON.stringify(requestOptions.body);
 
         fetch('/api/posts', requestOptions);

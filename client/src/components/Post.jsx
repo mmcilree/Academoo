@@ -15,9 +15,9 @@ class Post extends Component {
       showEdit: false,
       showDelete: false,
       updatedTitle: this.props.postData.title,
-      updatedBody: this.props.postData.content[0].text.text,
+      updatedBody: this.props.postData.content[0].text ? this.props.postData.content[0].text.text : this.props.postData.content[0].markdown.text,
       title: this.props.postData.title,
-      body: this.props.postData.content[0].text.text,
+      body: this.props.postData.content[0].text ? this.props.postData.content[0].text.text : this.props.postData.content[0].markdown.text,
       canEdit: true,
       canDelete: true,
       errors: [],
@@ -46,11 +46,7 @@ class Post extends Component {
   }
 
   checkPermissions() {
-    console.log("author " + this.props.postData.author.id);
-    console.log("current " + this.state.currentUser);
-
     if (this.props.postData.author.id === this.state.currentUser) {
-      console.log("here")
       this.setState({
         canEdit: false,
         canDelete: false
@@ -72,7 +68,7 @@ class Post extends Component {
         'User-ID': this.state.currentUser,
         'Client-Host': window.location.protocol + "//" + window.location.hostname
       },
-      body:{}
+      body: {}
 
     }
     if (this.props.postData.host !== "local") {
@@ -243,7 +239,7 @@ class Post extends Component {
         </Modal>
 
         <ContentTypeComponent
-          contentType={this.props.postData.contentType}
+          contentType={this.props.postData.content[0].text ? "text" : "markdown"}
           body={this.state.updatedBody}
           postType={this.props.postType}
         />
@@ -267,6 +263,9 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
         <Card.Link className="text-primary" href={part}>{part} </Card.Link>
       : part + " ");
 
+  const ReactMarkdown = require('react-markdown');
+  const gfm = require('remark-gfm');
+  const renderers = { heading: HeadingRenderer };
   switch (contentType) {
     case "text":
       return postType == "preview" ?
@@ -286,6 +285,12 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
           {imageURLs.length > 0 && <Card.Img src={imageURLs[0]} />}
           <Card.Text >{renderText}</Card.Text>
         </React.Fragment>
+    case "markdown":
+      return (
+        <React.Fragment>
+          <ReactMarkdown plugins={[gfm]} renderers={renderers} children={body} />
+        </React.Fragment>
+      )
     default:
       return <Card.Text>{renderText}</Card.Text>
   }
@@ -307,3 +312,17 @@ const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
 
   </a>
 ));
+
+const HeadingRenderer = (props) => {
+  if (props.level === 1) {
+    return <h3>{props.children}</h3>
+  }
+  if (props.level === 2) {
+    return <h4>{props.children}</h4>
+  }
+  if (props.level === 3) {
+    return <h5>{props.children}</h5>
+  } else {
+    return <h6>{props.children}</h6>
+  }
+}

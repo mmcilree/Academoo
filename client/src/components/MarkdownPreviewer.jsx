@@ -14,12 +14,16 @@ class MarkdownPreviewer extends React.Component {
     }
     render() {
         const body = this.props.body;
+        const renderers = { heading: HeadingRenderer }
         return (
             <React.Fragment>
                 <br />
                 <Card >
-                    <Card.Body>
-                        <ReactMarkdown plugins={[gfm]} children={body} />
+                    <Card.Body style={{ height: "400px", "overflow-y": "scroll" }}>
+                        <Card.Subtitle>Preview:</Card.Subtitle>
+                        <Card.Text>
+                            <ReactMarkdown plugins={[gfm]} renderers={renderers} children={body} />
+                        </Card.Text>
                     </Card.Body>
                 </Card>
             </React.Fragment >
@@ -28,3 +32,17 @@ class MarkdownPreviewer extends React.Component {
 }
 
 export default MarkdownPreviewer;
+
+const HeadingRenderer = (props) => {
+    if (props.level === 1) {
+        return <h3>{props.children}</h3>
+    }
+    if (props.level === 2) {
+        return <h4>{props.children}</h4>
+    }
+    if (props.level === 3) {
+        return <h5>{props.children}</h5>
+    } else {
+        return <h6>{props.children}</h6>
+    }
+}
