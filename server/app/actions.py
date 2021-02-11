@@ -213,7 +213,7 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if parent_post is not None:
         query = query.filter(Post.parent_id == parent_post)
     if content_type is not None:
-        query = query.filter(Post.content_type == content_type)
+        query = query.filter(Post.content_json.contains())
     query = query.order_by(desc(Post.created))
     if limit is not None:
         query = query.limit(limit)
@@ -231,35 +231,30 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     post_dicts = [{"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{post.content_type: {"text": post.body}}], "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created} for post in query]
     return (post_dicts, 200)
 
-# Post host may not be tied to author idk
-# Author host is not in json file so will need to passed in manually :(
-def createPost(post_data, host="NULL"):
+def createPost(post_data):
     community_id = post_data["community"]
     parent_post = post_data["parentPost"]
     title = post_data["title"]
-    content_arr = post_data["content"]
-    content_type = "text" #content_arr[0]["text"]
-    content_body = content_arr[0]["text"]["text"]
-    author = post_data["author"] # host not given so it will be "NULL" for moment
+    content_json = post_data["content"]
+    author = post_data["author"]
     author_id = author["id"]
-    host = author["host"]
+    author_host = author["host"]
 
     if validate_community_id(community_id): return validate_community_id(community_id)
     if validate_username(author_id): return validate_username(author_id)
     if parent_post is not None: 
         if validate_post_id(parent_post): return validate_post_id(parent_post)
 
-    if User.query.filter_by(user_id = author_id) is None:
-        new_user = User(user_id = author_id, host = host)
+    if User.query.filter_by(user_id = author_id).first() is None:
+        new_user = User(user_id = author_id, host = author_host)
         db.session.add(new_user)
         db.session.commit()
     
-    new_post = Post(community_id=community_id, title=title, parent_id=parent_post, content_type=content_type, body=content_body, author_id=author_id, host=host)
+    new_post = Post(community_id=community_id, title=title, parent_id=parent_post, content_json=content_json, author_id=author_id)
     db.session.add(new_post)
     db.session.commit()
     return (None, 200)
-        
-# CONTENT FIELD IS WRONG AND WEIRD
+
 def getPost(post_id):
     if validate_post_id(post_id): return validate_post_id(post_id)
 
@@ -267,7 +262,7 @@ def getPost(post_id):
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
-    post_dict = {"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{post.content_type: {"text": post.body}}], "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
+    post_dict = {"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": post.content_json, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
     return (post_dict, 200)
 
 def editPost(post_id, post_data, requester):
