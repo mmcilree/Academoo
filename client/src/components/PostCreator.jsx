@@ -178,7 +178,7 @@ class PostCreator extends React.Component {
                             <Form.Label className="d-flex justify-content-between">
                                 Post Content:
                                 {markdown ? " Markdown" : " Text"}
-                                <Button variant="outline-secondary" onClick={this.handleContentSwitch}>{markdown ? "switch to text editor" : "switch to markdown"}</Button>
+                                <Button variant="outline-secondary" onClick={this.handleContentSwitch}>Switch To {markdown ? "Text" : "Markdown"} Editor</Button>
                             </Form.Label>
                             <Form.Control as="textarea"
                                 rows={4}

@@ -78,6 +78,7 @@ class Post extends Component {
     requestOptions.body = JSON.stringify(requestOptions.body);
 
     fetch('/api/posts/' + this.props.postData.id, requestOptions);
+    this.handleCloseDelete();
     this.props.history.push("/communities/" + this.props.postData.community)
   }
 
@@ -227,7 +228,7 @@ class Post extends Component {
           size="lg"
           show={this.state.showEdit}
           onHide={this.handleCloseEdit}
-          backdrop="static">
+          backdrop="true">
           <PostEditor
             title={this.state.title}
             body={this.state.body}
