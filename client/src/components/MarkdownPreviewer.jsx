@@ -45,10 +45,10 @@ class MarkdownPreviewer extends React.Component {
                     <Button xs={6} variant="link" onClick={this.handleShow}>Markdown Tips <QuestionCircle /></Button>
                 </Form.Label>
                 <Card >
-                    <Card.Body style={{ height: "400px", "overflow-y": "scroll" }}>
-                        <Card.Text>
-                            <ReactMarkdown plugins={[gfm]} renderers={renderers} children={body} />
-                        </Card.Text>
+                    <Card.Body style={{ height: "400px", "overflowY": "scroll" }}>
+                        {/* <Card.Text> */}
+                        <ReactMarkdown plugins={[gfm]} renderers={renderers} children={body} />
+                        {/* </Card.Text> */}
                     </Card.Body>
                 </Card>
 
@@ -56,7 +56,6 @@ class MarkdownPreviewer extends React.Component {
                     size="lg"
                     show={this.state.show}
                     onHide={this.handleClose}
-                    backdrop="true"
                 >
                     <Modal.Header closeButton>
                         <Modal.Title>Markdown Tips</Modal.Title>

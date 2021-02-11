@@ -228,7 +228,7 @@ class Post extends Component {
           size="lg"
           show={this.state.showEdit}
           onHide={this.handleCloseEdit}
-          backdrop="true">
+        >
           <PostEditor
             title={this.state.title}
             body={this.state.body}
