@@ -208,16 +208,13 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
         query = query.filter(Post.created >= min_date)
     if author is not None:
         query = query.filter(Post.author_id == author)
-    if host is not None:
-        query = query.filter(Post.host == host)
+    #if host is not None:
+        #query = query.filter(Post.host == host)
     if parent_post is not None:
         query = query.filter(Post.parent_id == parent_post)
-    if content_type is not None:
-
-
-
-
-        query = query.filter(Post.content_objects)
+    #if content_type is not None:
+        #query = query.filter(Post.content_objects)
+    
     query = query.order_by(desc(Post.created))
     if limit is not None:
         query = query.limit(limit)
@@ -249,13 +246,14 @@ def createPost(post_data):
     if User.query.filter_by(user_id = author_id).first() is None:
         new_user = User(user_id = author_id, host = author_host)
         db.session.add(new_user)
-        db.session.commit()
     
     new_post = Post(community_id=community_id, title=title, parent_id=parent_post, author_id=author_id)
     db.session.add(new_post)
 
-    for key, val in content_json:
-        content_field = PostContentField(post_id=new_post.id, content_type=key, json_object=val)
+    for entry in content_json:
+        print(str(entry.keys()))
+        key = list(entry.keys())[0]
+        content_field = PostContentField(post_id=new_post.id, content_type=key, json_object=content_json[key])
         db.session.add(content_field)
 
     db.session.commit()
@@ -285,10 +283,16 @@ def editPost(post_id, post_data, requester):
     if requester.user_id != post.author.user_id:
         return ({"title": "Permission denied " + post_id, "message": "User does not have permission to edit this post"}, 403)
 
-
     post.title = update_title
-    post.content_type = update_content_type
-    post.body = update_content_body
+    
+    for content_field in post.content_objects:
+        db.session.delete(content_field)
+    db.session.commit()
+
+    for key, val in update_content_json:
+        content_field = PostContentField(post_id=post.id, content_type=key, json_object=val)
+        db.session.add(content_field)
+
     db.session.commit()
     return (None, 200)
 

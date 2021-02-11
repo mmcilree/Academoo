@@ -128,6 +128,6 @@ class Post(db.Model):
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
 
 class PostContentField(db.Model):
-    post_id = db.Column(db.String(1000), db.ForeignKey('post.id'))
-    content_type = db.Column(db.String(50))
+    post_id = db.Column(db.String(1000), db.ForeignKey('post.id'), primary_key=True)
+    content_type = db.Column(db.String(50), primary_key=True)
     json_object = db.Column(types.JSON())
