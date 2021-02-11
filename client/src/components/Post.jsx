@@ -278,7 +278,7 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
 
   const ReactMarkdown = require('react-markdown');
   const gfm = require('remark-gfm');
-  const renderers = { heading: HeadingRenderer };
+  const renderers = { heading: HeadingRenderer, image: ImageRenderer };
   switch (contentType) {
     case "text":
       return postType == "preview" ?
@@ -338,4 +338,8 @@ const HeadingRenderer = (props) => {
   } else {
     return <h6>{props.children}</h6>
   }
+}
+
+const ImageRenderer = (props) => {
+  return <Card.Img src={props.src} style={{ width: "40vh" }} />
 }
