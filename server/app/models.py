@@ -120,7 +120,7 @@ class Post(db.Model):
     id = db.Column(db.String(1000), primary_key=True, default=getUUID)
     title = db.Column(db.String(1000))
     author_id = db.Column(db.String(50), db.ForeignKey('user.user_id'))
-    content_objects = db.relationship('PostContentField', backref='post')
+    content_objects = db.relationship('PostContentField', cascade="all,delete", backref='post')
     created = db.Column(db.BigInteger, default=getTime)
     modified = db.Column(db.BigInteger, default=getTime, onupdate=getTime)
     parent_id = db.Column(db.String(1000), db.ForeignKey('post.id'))

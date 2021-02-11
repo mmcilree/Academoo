@@ -100,7 +100,7 @@ def getUser(user_id):
     user = User.query.filter_by(user_id = user_id).first()
     if user is None:
         return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 404)
-    user_dict = {"id": user.user_id, "posts": [{"id": post.id, "host": post.host} for post in Post.query.filter_by(author_id=user.id)]}
+    user_dict = {"id": user.user_id, "posts": [{"id": post.id, "host": "post.host doesn't exist for now oops"} for post in Post.query.filter_by(author_id=user.id)]}#########################
     return (user_dict, 200)
 
 def searchUsers(prefix):
@@ -212,9 +212,10 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
         #query = query.filter(Post.host == host)
     if parent_post is not None:
         query = query.filter(Post.parent_id == parent_post)
-    #if content_type is not None:
-        #query = query.filter(Post.content_objects)
-    
+    if content_type is not None:
+        valid_posts = [content_field.post_id for content_field in PostContentField.query.filter(content_type=content_type).all()]
+        query = query.filter(Post.id.in_(valid_posts))
+
     query = query.order_by(desc(Post.created))
     if limit is not None:
         query = query.limit(limit)
@@ -249,11 +250,11 @@ def createPost(post_data):
     
     new_post = Post(community_id=community_id, title=title, parent_id=parent_post, author_id=author_id)
     db.session.add(new_post)
+    db.session.commit()
 
     for entry in content_json:
-        print(str(entry.keys()))
         key = list(entry.keys())[0]
-        content_field = PostContentField(post_id=new_post.id, content_type=key, json_object=content_json[key])
+        content_field = PostContentField(post_id=new_post.id, content_type=key, json_object=entry[key])
         db.session.add(content_field)
 
     db.session.commit()
@@ -289,8 +290,9 @@ def editPost(post_id, post_data, requester):
         db.session.delete(content_field)
     db.session.commit()
 
-    for key, val in update_content_json:
-        content_field = PostContentField(post_id=post.id, content_type=key, json_object=val)
+    for entry in update_content_json:
+        key = list(entry.keys())[0]
+        content_field = PostContentField(post_id=post.id, content_type=key, json_object=entry[key])
         db.session.add(content_field)
 
     db.session.commit()
