@@ -1,5 +1,6 @@
 import requests
 from urllib.parse import urljoin
+from flask import jsonify, request, Response
 
 class Instance(object):
     def __init__(self, url):
@@ -36,7 +37,8 @@ class Instance(object):
 
     def create_post(self, data):
         data.pop("external")
-        print(requests.post(urljoin(self.url, f"/fed/posts"), json=data))
+        #print(requests.post(urljoin(self.url, f"/fed/posts"), json=data))
+        return Response(status=requests.post(urljoin(self.url, f"/fed/posts"), json=data).status_code)
     
     def edit_post(self, data, id):
         data.pop("external")

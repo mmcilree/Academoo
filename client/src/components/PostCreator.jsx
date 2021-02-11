@@ -106,7 +106,6 @@ class PostCreator extends React.Component {
             body: {
                 community: this.state.selected[0].community,
                 title: this.state.title,
-                contentType: 'text',
                 parentPost: null,
                 content: [
                     {

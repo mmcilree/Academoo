@@ -4,6 +4,7 @@ from app import actions, federation
 from app.main import bp
 from flask import request, Response, jsonify
 from flask_praetorian import current_user
+from utils import *
 
 def respond_with_action(actionResponse):
     data, status = actionResponse
@@ -16,12 +17,16 @@ def index():
 @bp.route("/assign-role", methods=["POST"])
 def assign_role():
     req = request.json
-    host = req["host"] #someday
+    user_host = req["host"] #someday
     user_id = req["user"]
     community_id = req["community"]
     role = req["role"]
     current_user = request.headers.get("User-ID")
-    return respond_with_action(actions.grantRole(user_id, community_id, current_user, role))
+    print("USER HOST IS " + user_host)
+    if user_host in ["local", "nnv2host"]:
+        return respond_with_action(actions.grantRole(user_id, community_id, current_user, role))
+    else:
+        return respond_with_action(actions.grantRole(user_id, community_id, current_user, role, True, user_host))
 
 @bp.route("/set-default-role", methods=["POST"])
 def set_default_role():
