@@ -111,7 +111,7 @@ class Community(db.Model):
         pairs = User.query.join(UserRole, UserRole.user_id == User.user_id).filter_by(community_id=self.id, role="prohibited")
         prohibited = [pair for pair in pairs]
         return prohibited
-    
+        
     @classmethod
     def lookup(cls, community_id):
         return cls.query.filter_by(id=community_id).one_or_none()
