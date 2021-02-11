@@ -129,5 +129,5 @@ class Post(db.Model):
 
 class PostContentField(db.Model):
     post_id = db.Column(db.String(1000), db.ForeignKey('post.id'))
-    type = db.Column(db.String(50))
+    content_type = db.Column(db.String(50))
     json_object = db.Column(types.JSON())

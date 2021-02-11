@@ -1,5 +1,5 @@
 from app import db, guard
-from app.models import User, Community, Post, UserRole, getTime
+from app.models import User, Community, Post, UserRole, PostContentField, getTime
 from sqlalchemy import desc
 import json
 from uuid import UUID
@@ -213,22 +213,23 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if parent_post is not None:
         query = query.filter(Post.parent_id == parent_post)
     if content_type is not None:
-        query = query.filter(Post.content_json.contains())
+
+
+
+
+        query = query.filter(Post.content_objects)
     query = query.order_by(desc(Post.created))
     if limit is not None:
         query = query.limit(limit)
 
-    ''' add once tested fully
+    '''
     if include_children:
-        limit -= len(query)
         for post in query:
             post_children = getFilteredPosts(limit, community_id, min_date, author, host, post.id, True, content_type)
-            limit -= len(post_children)
             query += post_children
     '''
     
-    # ONLY SUPPORTS TEXT CONTENT TYPE
-    post_dicts = [{"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{post.content_type: {"text": post.body}}], "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created} for post in query]
+    post_dicts = [{"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created} for post in query]
     return (post_dicts, 200)
 
 def createPost(post_data):
@@ -250,8 +251,13 @@ def createPost(post_data):
         db.session.add(new_user)
         db.session.commit()
     
-    new_post = Post(community_id=community_id, title=title, parent_id=parent_post, content_json=content_json, author_id=author_id)
+    new_post = Post(community_id=community_id, title=title, parent_id=parent_post, author_id=author_id)
     db.session.add(new_post)
+
+    for key, val in content_json:
+        content_field = PostContentField(post_id=new_post.id, content_type=key, json_object=val)
+        db.session.add(content_field)
+
     db.session.commit()
     return (None, 200)
 
@@ -262,17 +268,14 @@ def getPost(post_id):
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
-    post_dict = {"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": post.content_json, "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
+    post_dict = {"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
     return (post_dict, 200)
 
 def editPost(post_id, post_data, requester):
     if validate_post_id(post_id): return validate_post_id(post_id)
-    print("AFTER VAL EDIT")
 
     update_title = post_data["title"]
-    update_content_arr = post_data["content"]
-    update_content_type = "text" #update_content_arr[0]["text"]
-    update_content_body = update_content_arr[0]["text"]["text"]
+    update_content_json = post_data["content"]
 
     post = Post.query.filter_by(id = post_id).first()
     
@@ -290,6 +293,7 @@ def editPost(post_id, post_data, requester):
     return (None, 200)
 
 def deletePost(post_id, requester):
+    # assuming deleting a post will delete all postcontentobjects associated with it until it get proven wrong eventually
     if validate_post_id(post_id): return validate_post_id(post_id)
 
     post = Post.query.filter_by(id = post_id).first()
@@ -307,7 +311,7 @@ def deletePost(post_id, requester):
             return ({"title": "could not find comment id " + comment.id, "message": "Could not find comment id, use another comment id"}, 404)
         db.session.delete(comment)
     '''
-
+    # probably needs a cascade delete or something
     db.session.delete(post)
     db.session.commit()
     return (None, 200)
