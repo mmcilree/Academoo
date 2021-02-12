@@ -19,6 +19,7 @@ import {
   PersonCircle,
   Gear,
   BoxArrowRight,
+  QuestionCircle,
 } from "react-bootstrap-icons";
 
 import { Link } from "react-router-dom";
@@ -47,7 +48,7 @@ function HeaderBar() {
     }
 
     fetchData();
-  }, []);
+  }, [username]);
 
 
   return (
@@ -114,6 +115,9 @@ function HeaderBar() {
                 </NavDropdown.Item>
 
                 <NavDropdown.Divider />
+                <NavDropdown.Item as={Link} to="/help">
+                  <QuestionCircle /> Help
+                </NavDropdown.Item>
                 <NavDropdown.Item onClick={logout}>
                   <BoxArrowRight /> Log Out{" "}
                 </NavDropdown.Item>

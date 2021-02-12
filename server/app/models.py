@@ -6,19 +6,13 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import time
 import uuid
 import enum
+import sqlalchemy.types as types
 
 def getUUID():
     return str(uuid.uuid4())
 
 def getTime():
     return int(datetime.utcnow().timestamp())
-
-'''
-administrating = db.Table('administrating',
-    db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
-    db.Column('community_id', db.String(1000), db.ForeignKey('community.id'))
-    )
-'''
 
 class UserRole(db.Model):
     user_id = db.Column(db.String(50), db.ForeignKey('user.user_id'), primary_key=True)
@@ -117,7 +111,7 @@ class Community(db.Model):
         pairs = User.query.join(UserRole, UserRole.user_id == User.user_id).filter_by(community_id=self.id, role="prohibited")
         prohibited = [pair for pair in pairs]
         return prohibited
-    
+        
     @classmethod
     def lookup(cls, community_id):
         return cls.query.filter_by(id=community_id).one_or_none()
@@ -126,16 +120,14 @@ class Post(db.Model):
     id = db.Column(db.String(1000), primary_key=True, default=getUUID)
     title = db.Column(db.String(1000))
     author_id = db.Column(db.String(50), db.ForeignKey('user.user_id'))
-    content_type = db.Column(db.String(50))
-    body = db.Column(db.String(1000))
+    content_objects = db.relationship('PostContentField', cascade="all,delete", backref='post')
     created = db.Column(db.BigInteger, default=getTime)
     modified = db.Column(db.BigInteger, default=getTime, onupdate=getTime)
     parent_id = db.Column(db.String(1000), db.ForeignKey('post.id'))
     parent = db.relationship('Post', remote_side=[id], backref='comments')
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
-    host = db.Column(db.String(50), nullable=False)
 
-''' Will probably be needed when posts can support more than just text :(
-class PostContent(db.Model):
-    post_id = db.Column(db.String(1000), db.ForeignKey('post.id'))
-'''
+class PostContentField(db.Model):
+    post_id = db.Column(db.String(1000), db.ForeignKey('post.id'), primary_key=True)
+    content_type = db.Column(db.String(50), primary_key=True)
+    json_object = db.Column(types.JSON())

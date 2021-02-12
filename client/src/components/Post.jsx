@@ -197,17 +197,28 @@ class Post extends Component {
 
 
   render() {
-    if (!this.props.postData.id) return <div />;
+    const { postData, displayCommunityName } = this.props;
+    if (!postData.id) return <div />;
     return (
       <React.Fragment>
         <Row>
           <Col>
             <Card.Subtitle className="text-muted mb-2" style={{ fontSize: 12 }}>
-              <b style={{ zIndex: 2, position: "relative" }}><Link to={"/user-profile/" + this.props.postData.author.id}>
-                {this.props.postData.author.id}
-              </Link></b> from{" "}
-              {this.props.postData.author.host}
-              {" · "} {timeSince(this.props.postData.created)} ago
+              {displayCommunityName &&
+
+                <b style={{ zIndex: 2, position: "relative" }}>
+                  <Link style={{ color: "inherit" }} to={"/communities/" + (postData.host ? "/" + postData.host + "/" : "") + postData.community}>
+                    {(postData.host ? postData.host + + "/" : "") + postData.community}
+                  </Link>{" · "}</b>}
+
+              <b style={{ zIndex: 2, position: "relative" }}>
+                <Link to={"/user-profile/" + postData.author.id}>
+                  {postData.author.id}
+                </Link></b> from{" "}
+
+              {postData.author.host}
+
+              {" · "} {timeSince(postData.created)} ago
         </Card.Subtitle>
           </Col>
           <Col xs={2} sm={1} className="mb-2">

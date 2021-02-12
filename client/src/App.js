@@ -11,6 +11,7 @@ import CommunityManager from "./components/CommunityManager";
 import UserSettings from "./components/UserSettings";
 import UserProfile from "./components/UserProfile";
 import PageNotFound from "./components/PageNotFound";
+import Help from "./components/Help";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
@@ -18,6 +19,7 @@ import { PrivateRoute } from "./components/PrivateRoute";
 import { LoggedOutRoute } from "./components/LoggedOutRoute";
 import CommunityCreator from "./components/CommunityCreator";
 import { HostContext } from "./components/HostContext";
+import SubscribedFeed from "./components/SubscribedFeed";
 
 class App extends React.Component {
   constructor(props) {
@@ -39,14 +41,15 @@ class App extends React.Component {
               <Switch>
                 <PrivateRoute exact path="/" component={Welcome} />
                 <PrivateRoute path="/home" component={Welcome} />
-                <PrivateRoute exact path="/moosfeed" component={CommunityFeed} />
-                <PrivateRoute exact path="/communities/:id" component={PostsViewer} />
+                <PrivateRoute exact path="/moosfeed" component={SubscribedFeed} />
+                <PrivateRoute exact path="/communities/:id" component={CommunityFeed} />
                 <PrivateRoute exact path="/communities/:id/manage" component={CommunityManager} />
-                <PrivateRoute path="/communities/:instance/:id" component={PostsViewer} />
+                <PrivateRoute path="/communities/:instance/:id" component={CommunityFeed} />
                 <PrivateRoute path="/create-post" component={PostCreator} />
                 <PrivateRoute exact path="/comments/:id" component={CommentsViewer} />
                 <PrivateRoute path="/comments/:instance/:id" component={CommentsViewer} />
                 <PrivateRoute path="/user-settings" component={UserSettings} />
+                <PrivateRoute path="/help" component={Help} />
                 <PrivateRoute exact path="/user-profile/:id" component={UserProfile} />
                 <PrivateRoute path="/user-profile/:instance/:id" component={UserProfile} />
                 {/* <PrivateRoute exact path="/user-profile" component={UserProfile} /> */}
