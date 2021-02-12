@@ -20,7 +20,9 @@ import UserSettings from "./components/UserSettings";
 import Welcome from "./components/Welcome";
 import PageNotFound from "./components/PageNotFound";
 
-jest.mock('../auth', () => ({
+const auth = require('./auth');
+
+jest.mock('./auth', () => ({
   useAuth: () => [false],
   authFetch: () =>
       Promise.resolve({
