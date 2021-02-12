@@ -4,6 +4,7 @@ import { Card, Button, Alert, OverlayTrigger, Popover, Row, Col } from "react-bo
 import { Link } from "react-router-dom";
 import { BookmarkPlus } from "react-bootstrap-icons";
 import { authFetch } from '../../auth';
+import { PlusCircle } from "react-bootstrap-icons";
 import MiniPostCreator from "../posts/MiniPostCreator";
 import CommunitySubscribeButton from "./CommunitySubscribeButton";
 

@@ -9,7 +9,6 @@ import { logout, useAuth, authFetch } from "../../auth";
 import defaultProfile from "../../images/default_profile.png";
 import logo from "../../images/logo.svg";
 // import logo from "../images/logo.png";
-import { HostContext } from '../HostContext';
 import { useState, useEffect, useContext } from "react";
 
 
@@ -34,7 +33,6 @@ function HeaderBar() {
   const [hasSiteRole, setHasSiteRole] = useState(null);
   const [isLoading, setIsLoading] = useState(true)
 
-  const context = useContext(HostContext);
 
   useEffect(() => {
     async function fetchData() {

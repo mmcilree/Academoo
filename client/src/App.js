@@ -35,7 +35,6 @@ class App extends React.Component {
 
   render() {
     return (
-      <HostContext.Provider value={this.state}>
         <Router>
           <div className="App">
             <Route component={HeaderBar} />
@@ -66,7 +65,6 @@ class App extends React.Component {
             </div>
           </div>
         </Router>
-      </HostContext.Provider>
     );
   }
 }
