@@ -1,5 +1,5 @@
 from app import db, guard
-from app.models import User, Community, Post, UserRole, getTime
+from app.models import User, Community, Post, UserRole, PostContentField, getTime
 from sqlalchemy import desc
 import json
 from uuid import UUID
@@ -122,7 +122,7 @@ def getUser(user_id):
     user = User.query.filter_by(user_id = user_id).first()
     if user is None:
         return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 404)
-    user_dict = {"id": user.user_id, "posts": [{"id": post.id, "host": post.host} for post in Post.query.filter_by(author_id=user.id)]}
+    user_dict = {"id": user.user_id, "posts": [{"id": post.id, "host": "post.host doesn't exist for now oops"} for post in Post.query.filter_by(author_id=user.id)]}#########################
     return (user_dict, 200)
 
 def searchUsers(prefix):
@@ -230,58 +230,58 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
         query = query.filter(Post.created >= min_date)
     if author is not None:
         query = query.filter(Post.author_id == author)
-    if host is not None:
-        query = query.filter(Post.host == host)
+    #if host is not None:
+        #query = query.filter(Post.host == host)
     if parent_post is not None:
         query = query.filter(Post.parent_id == parent_post)
     if content_type is not None:
-        query = query.filter(Post.content_type == content_type)
+        valid_posts = [content_field.post_id for content_field in PostContentField.query.filter(content_type=content_type).all()]
+        query = query.filter(Post.id.in_(valid_posts))
+
     query = query.order_by(desc(Post.created))
     if limit is not None:
         query = query.limit(limit)
 
-    ''' add once tested fully
+    '''
     if include_children:
-        limit -= len(query)
         for post in query:
             post_children = getFilteredPosts(limit, community_id, min_date, author, host, post.id, True, content_type)
-            limit -= len(post_children)
             query += post_children
     '''
     
-    # ONLY SUPPORTS TEXT CONTENT TYPE
-    post_dicts = [{"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{post.content_type: {"text": post.body}}], "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created} for post in query]
+    post_dicts = [{"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created} for post in query]
     return (post_dicts, 200)
 
-# Post host may not be tied to author idk
-# Author host is not in json file so will need to passed in manually :(
-def createPost(post_data, host="NULL"):
+def createPost(post_data):
     community_id = post_data["community"]
     parent_post = post_data["parentPost"]
     title = post_data["title"]
-    content_arr = post_data["content"]
-    content_type = "text" #content_arr[0]["text"]
-    content_body = content_arr[0]["text"]["text"]
-    author = post_data["author"] # host not given so it will be "NULL" for moment
+    content_json = post_data["content"]
+    author = post_data["author"]
     author_id = author["id"]
-    host = author["host"]
+    author_host = author["host"]
 
     if validate_community_id(community_id): return validate_community_id(community_id)
     if validate_username(author_id): return validate_username(author_id)
     if parent_post is not None: 
         if validate_post_id(parent_post): return validate_post_id(parent_post)
 
-    if User.query.filter_by(user_id = author_id) is None:
-        new_user = User(user_id = author_id, host = host)
+    if User.query.filter_by(user_id = author_id).first() is None:
+        new_user = User(user_id = author_id, host = author_host)
         db.session.add(new_user)
-        db.session.commit()
     
-    new_post = Post(community_id=community_id, title=title, parent_id=parent_post, content_type=content_type, body=content_body, author_id=author_id, host=host)
+    new_post = Post(community_id=community_id, title=title, parent_id=parent_post, author_id=author_id)
     db.session.add(new_post)
     db.session.commit()
+
+    for entry in content_json:
+        key = list(entry.keys())[0]
+        content_field = PostContentField(post_id=new_post.id, content_type=key, json_object=entry[key])
+        db.session.add(content_field)
+
+    db.session.commit()
     return (None, 200)
-        
-# CONTENT FIELD IS WRONG AND WEIRD
+
 def getPost(post_id):
     if validate_post_id(post_id): return validate_post_id(post_id)
 
@@ -289,17 +289,14 @@ def getPost(post_id):
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
-    post_dict = {"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{post.content_type: {"text": post.body}}], "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
+    post_dict = {"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], "author": {"id": post.author.user_id, "host": post.author.host}, "modified": post.modified, "created": post.created}
     return (post_dict, 200)
 
 def editPost(post_id, post_data, requester):
     if validate_post_id(post_id): return validate_post_id(post_id)
-    print("AFTER VAL EDIT")
 
     update_title = post_data["title"]
-    update_content_arr = post_data["content"]
-    update_content_type = "text" #update_content_arr[0]["text"]
-    update_content_body = update_content_arr[0]["text"]["text"]
+    update_content_json = post_data["content"]
 
     post = Post.query.filter_by(id = post_id).first()
     
@@ -309,14 +306,22 @@ def editPost(post_id, post_data, requester):
     if requester.user_id != post.author.user_id:
         return ({"title": "Permission denied " + post_id, "message": "User does not have permission to edit this post"}, 403)
 
-
     post.title = update_title
-    post.content_type = update_content_type
-    post.body = update_content_body
+    
+    for content_field in post.content_objects:
+        db.session.delete(content_field)
+    db.session.commit()
+
+    for entry in update_content_json:
+        key = list(entry.keys())[0]
+        content_field = PostContentField(post_id=post.id, content_type=key, json_object=entry[key])
+        db.session.add(content_field)
+
     db.session.commit()
     return (None, 200)
 
 def deletePost(post_id, requester):
+    # assuming deleting a post will delete all postcontentobjects associated with it until it get proven wrong eventually
     if validate_post_id(post_id): return validate_post_id(post_id)
 
     post = Post.query.filter_by(id = post_id).first()
@@ -334,7 +339,7 @@ def deletePost(post_id, requester):
             return ({"title": "could not find comment id " + comment.id, "message": "Could not find comment id, use another comment id"}, 404)
         db.session.delete(comment)
     '''
-
+    # probably needs a cascade delete or something
     db.session.delete(post)
     db.session.commit()
     return (None, 200)

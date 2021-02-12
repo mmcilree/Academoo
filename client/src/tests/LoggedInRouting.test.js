@@ -6,6 +6,7 @@ import { shallow, mount } from "enzyme";
 import App from "../App";
 import Welcome from "../components/Welcome";
 import CommunityFeed from "../components/CommunityFeed";
+import SubscribedFeed from "../components/SubscribedFeed"
 import CommentsViewer from "../components/CommentsViewer";
 import PostCreator from "../components/PostCreator";
 import UserSettings from "../components/UserSettings";
@@ -74,7 +75,7 @@ it("Routes to Moosfeed page", () => {
             <App />
         </Router>
     );
-    expect(wrapper.find(CommunityFeed)).toHaveLength(1);
+    expect(wrapper.find(SubscribedFeed)).toHaveLength(1);
 });
 
 it("Routes to Create-Post page", () => {

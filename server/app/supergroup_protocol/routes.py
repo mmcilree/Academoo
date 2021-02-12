@@ -73,7 +73,11 @@ def get_all_posts():
     if not external:
         return respond_with_action(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type))
     else:
-        return jsonify(federation.get_posts(external, community_id))
+        responseArr = federation.get_posts(external, community_id)
+        for post in responseArr:
+            post['host'] = external
+        
+        return jsonify(responseArr)
 
 @bp.route("/posts/<id>", methods=["GET"])
 def get_post_by_id(id):
@@ -82,7 +86,10 @@ def get_post_by_id(id):
     if not external:
         return respond_with_action(actions.getPost(id))
     else:
-        return jsonify(federation.get_post_by_id(external, id))
+        post = federation.get_post_by_id(external, id)
+        post['host'] = external
+        
+        return jsonify(post)
 
 @bp.route("/posts", methods=["POST"])
 def create_post():
