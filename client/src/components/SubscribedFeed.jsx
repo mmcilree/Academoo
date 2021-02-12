@@ -24,12 +24,15 @@ class SubscribedFeed extends Component {
     async fetchSubscribedCommunities() {
         this.setState({isLoading: true});
         await authFetch("/api/get-user").then(response => response.json())
-            .then(data =>
+            .then(data => {
+                // console.log("data = "  + data.subcriptions);
                 this.setState({
                     subscribedCommunities: data.subscriptions,
                     posts: []
                 })
+            }
             )
+        
         this.fetchPosts();
     }
 

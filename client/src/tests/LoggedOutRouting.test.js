@@ -14,6 +14,25 @@ import Login from "../components/Login";
 import SignUp from "../components/SignUp";
 import { MemoryRouter as Router, Route } from "react-router-dom";
 
+// const App = require('../App').default;
+const auth = require('../auth');
+
+// Mock the necessary API calls for authentication
+jest.mock('../auth', () => ({
+    useAuth: () => [false],
+    authFetch: () =>
+        Promise.resolve({
+            json: () => Promise.resolve(
+                {
+                    id: "academoo",
+                    email: "academoo@academoo.com",
+                    host: "academoo",
+                    subscriptions: [],
+                    adminOf: []
+                }),
+        })
+}));
+
 it("Routes to default page", () => {
   const wrapper = mount(
     <Router initialEntries={["/"]}>
