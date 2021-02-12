@@ -14,7 +14,7 @@ class Welcome extends React.Component {
       <Card className="mt-4">
         <Card.Body>
           <h1>Hello,</h1>
-          <h1>  Welcome to Academoo!</h1>
+          <h1> Welcome to Academoo!</h1>
           <p>We are part of a new federated social media platform for universities. We connect with similar sites to allow communciation between sites and to allow people from all over to connect and discuss things they enjoy! </p>
           <p>There is lots of things you can do on Academoo: 
             <ul>
