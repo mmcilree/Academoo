@@ -1,8 +1,8 @@
 from flask import request, Response, jsonify
 from app.auth import bp
 from app import actions, guard
-from flask_praetorian import auth_required, current_user
 from utils import *
+from flask_praetorian import auth_required, roles_required, current_user
 
 def respond_with_action(actionResponse):
     data, status = actionResponse
@@ -37,3 +37,8 @@ def refresh():
 @auth_required
 def protected():
     return f"Congrats, you've logged in to {current_user().user_id}"
+
+@bp.route("/admin-protected")
+@roles_required("admin")
+def protected_admin():
+    return f"Congrats, {current_user().user_id} you're an admin!"

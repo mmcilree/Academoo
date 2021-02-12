@@ -9,6 +9,14 @@ import {
 } from "react-bootstrap-icons";
 
 class Welcome extends React.Component {
+  fetchCurrentUser() {
+    authFetch("/api/admin-protected").then(response => response.json())
+      .then(data => {
+        return (<p>{data}</p>)
+      }
+      )
+  }
+
   render() {
     return (
       <Card className="mt-4">
