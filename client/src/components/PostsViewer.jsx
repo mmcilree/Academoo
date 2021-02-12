@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import Post from "./Post";
-import { Card, Button, Alert, OverlayTrigger, Popover, Row, Col } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { BookmarkPlus } from "react-bootstrap-icons";
-import { authFetch } from '../auth';
-import MiniPostCreator from "./MiniPostCreator";
+
 
 class PostsViewer extends Component {
   constructor(props) {
