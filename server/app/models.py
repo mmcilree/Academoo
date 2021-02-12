@@ -25,6 +25,10 @@ class UserRole(db.Model):
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'), primary_key=True)
     role = db.Column(db.String(50)) # admin, contributor, member, guest, prohibited
 
+subscriptions = db.Table('subscriptions',
+    db.Column(db.String(50), db.ForeignKey('user.user_id')),
+    db.Column(db.String(1000), db.ForeignKey('community.id')))
+
 class User(db.Model):
     user_id = db.Column(db.String(50), primary_key=True)
     posts_created = db.relationship('Post', backref='author')
@@ -35,8 +39,8 @@ class User(db.Model):
     password_hash = db.Column(db.String(128))
     #admin_of = db.relationship('Community', secondary=administrating, backref='admins')
     roles = db.relationship('UserRole', backref='user')
+    subscriptions = db.relationship('Subscription', secondary=subscriptions, backref='subscribed_users')
 
-    
     # We need this for auth to work apparently - maybe Robert can clarify?
     @property
     def rolenames(self):
@@ -90,6 +94,7 @@ class Community(db.Model):
     description = db.Column(db.String(1000))
     posts = db.relationship('Post', backref='community')
     #administrators = db.relationship("User", secondary=administrating, backref='communities')
+    subscribers = db.relationship("User", secondary=subscriptions, backref='subscribed_communities')
     roles_granted = db.relationship('UserRole', backref='community')
     default_role = db.Column(db.String(50), default="contributor", nullable=False)
 
