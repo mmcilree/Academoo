@@ -6,7 +6,6 @@ import { ArrowReturnLeft, ChatRight } from "../../../node_modules/react-bootstra
 import { Link } from "../../../node_modules/react-router-dom";
 import Modal from "../../../node_modules/react-bootstrap/Modal";
 import CommentCreator from "./CommentCreator";
-import { HostContext } from "../HostContext";
 
 class CommentsViewer extends React.Component {
   constructor(props) {
@@ -27,7 +26,6 @@ class CommentsViewer extends React.Component {
     }
   }
 
-  static contextType = HostContext;
 
   handleOpenCommentEditor() {
     this.setState({ showCommentEditor: true });

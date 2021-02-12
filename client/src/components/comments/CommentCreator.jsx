@@ -3,7 +3,6 @@ import Form from '../../../node_modules/react-bootstrap/Form';
 import Button from '../../../node_modules/react-bootstrap/Button';
 import Modal from '../../../node_modules/react-bootstrap/Modal';
 import { authFetch } from '../../auth';
-import { HostContext } from "../HostContext";
 
 class CommentCreator extends React.Component {
     constructor(props) {
@@ -17,7 +16,6 @@ class CommentCreator extends React.Component {
         };
     }
 
-    static contextType = HostContext;
 
     fetchUserDetails() {
         authFetch("/api/get-user").then(response => response.json())

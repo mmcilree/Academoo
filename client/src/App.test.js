@@ -3,7 +3,6 @@ import { configure } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 configure({ adapter: new Adapter() });
 import { shallow, mount } from "enzyme";
-import { posts } from "./components/test_post_json";
 
 import App from "./App";
 import Post from "./components/posts/Post";

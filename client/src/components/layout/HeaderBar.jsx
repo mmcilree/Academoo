@@ -9,7 +9,6 @@ import { logout, useAuth } from "../../auth";
 import defaultProfile from "../../images/default_profile.png";
 import logo from "../../images/logo.svg";
 // import logo from "../images/logo.png";
-import { HostContext } from '../HostContext';
 import { useState, useEffect, useContext } from "react";
 import { authFetch } from '../../auth';
 
@@ -32,7 +31,6 @@ function HeaderBar() {
   const [email, setEmail] = useState(null);
   const [username, setUsername] = useState(null);
 
-  const context = useContext(HostContext);
 
   useEffect(() => {
     async function fetchData() {

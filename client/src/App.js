@@ -15,10 +15,9 @@ import Help from "./components/static/Help";
 import Login from "./components/authentication/Login";
 import SignUp from "./components/authentication/SignUp";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { PrivateRoute } from "./components/PrivateRoute";
+import { PrivateRoute } from "./components/authentication/PrivateRoute";
 import { LoggedOutRoute } from "./components/authentication/LoggedOutRoute";
 import CommunityCreator from "./components/community/CommunityCreator";
-import { HostContext } from "./components/HostContext";
 
 class App extends React.Component {
   constructor(props) {
@@ -32,7 +31,6 @@ class App extends React.Component {
 
   render() {
     return (
-      <HostContext.Provider value={this.state}>
         <Router>
           <div className="App">
             <Route component={HeaderBar} />
@@ -62,7 +60,6 @@ class App extends React.Component {
             </div>
           </div>
         </Router>
-      </HostContext.Provider>
     );
   }
 }
