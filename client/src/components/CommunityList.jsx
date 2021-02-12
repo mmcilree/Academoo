@@ -4,6 +4,7 @@ import Card from "react-bootstrap/Card";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ListGroup from "react-bootstrap/ListGroup";
 import { Link } from "react-router-dom";
+import CommunitySubscribeButton from "./CommunitySubscribeButton";
 
 class CommunityList extends React.Component {
     constructor(props) {
@@ -41,16 +42,17 @@ class CommunityList extends React.Component {
 
                     <Accordion.Collapse eventKey="0">
                         <Card.Body className="px-0 py-1">
-                            <ListGroup variant="flush">
+                            <ListGroup variant="flush"  >
                                 {!isLoading ?
                                     communities.map((community) =>
                                         community !== "" &&
                                         
-                                            <ListGroup.Item key={community}>
+                                            <ListGroup.Item key={community} className="d-flex justify-content-between">
                                                 <Link to={this.props.instance === "local" ? 
                                                 "communities/" + community : "communities/" + this.props.instance + "/" + community} >
                                                 {community}
                                                 </Link>
+                                                <CommunitySubscribeButton community={community}/>
                                             </ListGroup.Item>)
                                     : <ListGroup.Item>Loading Communities...</ListGroup.Item>
                                 }

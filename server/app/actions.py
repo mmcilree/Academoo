@@ -169,9 +169,19 @@ def getLocalUser(id):
 
 def addSubscriber(user_id, community_id):
     user = User.query.filter_by(user_id = user_id).first()
-    user.subscribed_communities.add(community_id)
+    community = Community.query.filter_by(id = community_id).first()
+    user.subscribed_communities.append(community)
 
-    db.sesssion.commit()
+    db.session.commit()
+    return (None, 200)
+
+def removeSubscriber(user_id, community_id):
+    user = User.query.filter_by(user_id = user_id).first()
+    community = Community.query.filter_by(id = community_id).first()
+    user.subscribed_communities.remove(community)
+
+    db.session.commit()
+    return (None, 200)
 
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]
