@@ -86,11 +86,10 @@ def get_post_by_id(id):
     if not external:
         return respond_with_action(actions.getPost(id))
     else:
-        responseArr = federation.get_post_by_id(external, id)
-        for post in responseArr:
-            post['host'] = external
+        post = federation.get_post_by_id(external, id)
+        post['host'] = external
         
-        return jsonify(responseArr)
+        return jsonify(post)
 
 @bp.route("/posts", methods=["POST"])
 def create_post():

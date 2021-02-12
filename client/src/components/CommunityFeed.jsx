@@ -80,7 +80,6 @@ class CommunityFeed extends Component {
         </Popover.Content>
       </Popover>
     );
-    console.log(this.state);
     return currentCommunity && (
       <Card className="mt-4 mb-10">
         <Card.Header className="pt-4 pr-4">

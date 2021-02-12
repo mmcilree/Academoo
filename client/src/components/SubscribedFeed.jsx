@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { HostContext } from "./HostContext";
 import { PlusCircle } from "react-bootstrap-icons";
 import MiniPostCreator from "./MiniPostCreator";
+import PostsViewer from "./PostsViewer";
 
 class SubscribedFeed extends Component {
   state = {
@@ -83,23 +84,7 @@ class SubscribedFeed extends Component {
 
                 {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
                 {!isLoading ? (
-                  posts.map(data => {
-                    const { community, id } = data;
-                    return (
-                      community === currentCommunity ? (
-                        <Card key={id} className="mt-4">
-                          <Card.Body>
-                            <Post postData={data} />
-                            <Link
-                              to={this.state.host == "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
-                              className="btn btn-primary stretched-link"
-                            >
-                              View Comments ({data.children.length})
-                          </Link>
-                          </Card.Body>
-                        </Card>
-                      ) : null);
-                  })
+                  <PostsViewer posts={posts} />
                 ) : (
                     <h3>Loading Posts...</h3>
                   )}
