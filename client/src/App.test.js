@@ -7,7 +7,7 @@ import { posts } from "./components/test_post_json";
 
 import App from "./App";
 import Post from "./components/Post";
-import CommunityFeed from "./components/CommunityFeed";
+import SubscribedFeed from "./components/SubscribedFeed";
 import CommunityExplorer from "./components/CommunityExplorer";
 import CommentsViewer from "./components/CommentsViewer";
 import HeaderBar from './components/HeaderBar';
@@ -67,8 +67,8 @@ describe("", () => {
   });
 });
 
-it("CommunityFeed renders without crashing", () => {
-  shallow(<CommunityFeed />);
+it("SubscribedFeed renders without crashing", () => {
+  shallow(<SubscribedFeed />);
 });
 
 it("CommunityExplorer renders without crashing", () => {
