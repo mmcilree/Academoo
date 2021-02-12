@@ -5,6 +5,7 @@ import json
 from uuid import UUID
 import re
 from utils import *
+from sqlalchemy.sql.elements import Null
 
 def createCommunity(community_id, title, description, admin):
     if validate_community_id(community_id): return validate_community_id(community_id)
@@ -58,6 +59,27 @@ def grantRole(username, community_id, current_user, role="member", external=Fals
     
     return (None, 200)
 
+def addSiteWideRole(username, role):
+    # Admin or Moderator added by another user
+    user = User.query.filter_by(user_id=username).first()
+    if(user is None):
+        return({"title":"Could not find user" + username, "message": "User does not exist in database, use a different username"}, 404)
+
+    if((not role == "site-admin") & (not role == "site-moderator")):
+        return({"title":"Invalid role" + role, "message": "Cannot assign this role, make sure role is <site-admin> or <site-moderator>"}, 400)
+
+    if(user.site_roles == Null):
+       user.site_roles = role
+    else: 
+        roles = user.site_roles + "," + role
+        user.site_roles = roles
+    db.session.commit()
+    return(None, 200)
+
+
+def addFirstSiteWideRole(username, role, key):
+    # Add logic to check if the provided key matches the authentication key to become an admin
+    return(None, 200)
 
 def setDefaultRole(default_role, community_id):
     if validate_community_id(community_id): return validate_community_id(community_id)

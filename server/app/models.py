@@ -34,8 +34,6 @@ class User(db.Model):
     private_account = db.Column(db.Boolean, default=False, nullable=False)
     password_hash = db.Column(db.String(128))
     site_roles = db.Column(db.String)
-    # site_admin = db.Column(db.Boolean, default=False, nullable=False)
-    # site_moderator = db.Column(db.Boolean, default=False, nullable=False)
     #admin_of = db.relationship('Community', secondary=administrating, backref='admins')
     roles = db.relationship('UserRole', backref='user')
 

@@ -43,6 +43,20 @@ def get_default_role(id):
 def get_community_roles(id):
     return respond_with_action(actions.getRoles(id))
 
+@bp.route("/add-site-role/", methods=["POST"])
+def add_sitewide_role():
+    req = request.json
+    username = req["username"]
+    role = req["role"]
+    return respond_with_action(actions.addSiteWideRole(username, role))
+
+@bp.route("/add-first-site-role/<key>", methods=["POST"])
+def add_first_sitewide_role(key):
+    req = request.json
+    username = req["username"]
+    role = req["role"]
+    return respond_with_action(actions.addFirstSiteWideRole(username, role, key))
+
 @bp.route("/create-community", methods=["POST"])
 def create_community():
     req = request.json
