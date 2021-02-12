@@ -28,6 +28,7 @@ class Sidebar extends Component {
     updateSubscriptions() {
         this.setState({isLoading: true});
         this.fetchUserDetails();
+        this.props.fetchSubscribedCommunities();
     }
 
     render() {
