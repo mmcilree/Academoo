@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Post from "./Post";
+import PostViewer from "./PostsViewer";
 import { Card, Button, Alert, OverlayTrigger, Popover, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { BookmarkPlus } from "react-bootstrap-icons";
@@ -103,7 +103,7 @@ class CommunityFeed extends Component {
 
         </Card.Header>
         <Card.Body>
-          {this.state.isAdmin &&
+          {isAdmin &&
             <Alert className="d-flex justify-content-between align-itemsp-center" variant="primary">You are an admin!
             <Link to={"/communities/" + currentCommunity + "/manage"}>
                 Manage Community
@@ -112,23 +112,7 @@ class CommunityFeed extends Component {
           <MiniPostCreator currentCommunity={currentCommunity} host={host}/>
           {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
           {!isLoading ? (
-            posts.map(data => {
-              const { community, parentPost, id } = data;
-              return (
-                (community === currentCommunity & parentPost === null) ? (
-                  <Card key={id} className="mt-4">
-                    <Card.Body >
-                      <Post postData={data} postType="preview" />
-                      <Link
-                        to={this.state.host === "local" ? `/comments/${id}` : '/comments/' + this.state.host + `/${id}`}
-                        className="btn btn-primary stretched-link"
-                      >
-                        View Comments ({data.children.length})
-                          </Link>
-                    </Card.Body>
-                  </Card>
-                ) : null);
-            })
+            <PostViewer posts={posts} />
           ) : (
               <h3>Loading Posts...</h3>
             )}
