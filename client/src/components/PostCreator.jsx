@@ -130,11 +130,11 @@ class PostCreator extends React.Component {
         }
 
         if (this.state.markdown) {
-            // requestOptions.body.content.push({
-            //     markdown: {
-            //         text: this.state.body
-            //     }
-            // });
+            requestOptions.body.content.push({
+                markdown: {
+                    text: this.state.body
+                }
+            });
         } else {
             requestOptions.body.content.push({
                 text: {

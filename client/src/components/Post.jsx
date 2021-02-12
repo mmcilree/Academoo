@@ -166,11 +166,11 @@ class Post extends Component {
     }
 
     if (this.state.contentType == "markdown") {
-      // requestOptions.body.content.push({
-      //     markdown: {
-      //         text: this.state.body
-      //     }
-      // });
+      requestOptions.body.content.push({
+        markdown: {
+          text: this.state.body
+        }
+      });
     } else if (this.state.contentType == "text") {
       requestOptions.body.content.push({
         text: {
