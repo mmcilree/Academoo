@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import { Card, Row, Col, Modal, Button } from "react-bootstrap";
-import timeSince from "../util/timeSince";
+import timeSince from "../../util/timeSince";
 import { Link, withRouter } from "react-router-dom";
 import { ThreeDots, PencilSquare, Trash } from "react-bootstrap-icons";
 import Dropdown from "react-bootstrap/Dropdown";
 import PostEditor from "./PostEditor"
-import { authFetch } from '../auth';
+import { authFetch } from '../../auth';
 
 class Post extends Component {
   constructor(props) {

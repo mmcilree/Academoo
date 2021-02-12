@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { ListGroup, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import CommunityList from "./CommunityList";
+import CommunityList from "../community/CommunityList";
 
 class Sidebar extends Component {
     state = {

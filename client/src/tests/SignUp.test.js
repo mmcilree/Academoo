@@ -6,8 +6,8 @@ import { shallow, mount } from "enzyme";
 import App from "../App";
 import { Router, Route, Switch } from "react-router-dom";
 import { createMemoryHistory } from 'history';
-import SignUp from "../components/SignUp";
-import Login from "../components/Login";
+import SignUp from "../components/authentication/SignUp";
+import Login from "../components/authentication/Login";
 import each from 'jest-each';
 
 let wrapper;

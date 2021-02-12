@@ -5,13 +5,13 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import Image from "react-bootstrap/Image";
-import { logout, useAuth } from "../auth";
-import defaultProfile from "../images/default_profile.png";
-import logo from "../images/logo.svg";
+import { logout, useAuth } from "../../auth";
+import defaultProfile from "../../images/default_profile.png";
+import logo from "../../images/logo.svg";
 // import logo from "../images/logo.png";
-import { HostContext } from './HostContext';
+import { HostContext } from '../HostContext';
 import { useState, useEffect, useContext } from "react";
-import { authFetch } from '../auth';
+import { authFetch } from '../../auth';
 
 
 import {

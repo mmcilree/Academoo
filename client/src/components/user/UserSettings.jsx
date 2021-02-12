@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Card, Form, Button, Alert } from "react-bootstrap";
-import { authFetch } from '../auth';
+import { authFetch } from '../../auth';
 import { withRouter } from 'react-router-dom';
 
 class UserSettings extends Component {
