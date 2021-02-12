@@ -12,7 +12,7 @@ import {
 } from "react-bootstrap";
 import { PlusCircle } from "react-bootstrap-icons";
 import { Redirect } from "react-router-dom";
-import { authFetch } from "../auth";
+import { authFetch } from "../../auth";
 import { Typeahead, Menu, MenuItem } from 'react-bootstrap-typeahead';
 
 

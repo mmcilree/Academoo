@@ -1,13 +1,13 @@
 import React, { Component, useContext } from "react";
-import Post from "./Post";
-import Sidebar from "./Sidebar";
+import Post from "../posts/Post";
+import Sidebar from "../layout/Sidebar";
 import { Nav, Card, Container, Row, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { HostContext } from "./HostContext";
+import { HostContext } from "../HostContext";
 import { PlusCircle } from "react-bootstrap-icons";
-import MiniPostCreator from "./MiniPostCreator";
-import PostsViewer from "./PostsViewer";
-import { authFetch } from '../auth';
+import MiniPostCreator from "../posts/MiniPostCreator";
+import PostsViewer from "../posts/PostsViewer";
+import { authFetch } from '../../auth';
 
 class SubscribedFeed extends Component {
     state = {

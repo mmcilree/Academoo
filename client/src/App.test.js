@@ -6,19 +6,19 @@ import { shallow, mount } from "enzyme";
 import { posts } from "./components/test_post_json";
 
 import App from "./App";
-import Post from "./components/Post";
-import SubscribedFeed from "./components/SubscribedFeed";
-import CommunityExplorer from "./components/CommunityExplorer";
-import CommentsViewer from "./components/CommentsViewer";
-import HeaderBar from './components/HeaderBar';
-import PostCreator from './components/PostCreator';
+import Post from "./components/posts/Post";
+import SubscribedFeed from "./components/user/SubscribedFeed";
+import CommunityExplorer from "./components/community/CommunityExplorer";
+import CommentsViewer from "./components/comments/CommentsViewer";
+import HeaderBar from './components/layout/HeaderBar';
+import PostCreator from './components/posts/PostCreator';
 import { MemoryRouter as Router } from "react-router-dom";
-import Login from "./components/Login";
-import SignUp from "./components/SignUp";
-import UserProfile from "./components/UserProfile";
-import UserSettings from "./components/UserSettings";
-import Welcome from "./components/Welcome";
-import PageNotFound from "./components/PageNotFound";
+import Login from "./components/authentication/Login";
+import SignUp from "./components/authentication/SignUp";
+import UserProfile from "./components/user/UserProfile";
+import UserSettings from "./components/user/UserSettings";
+import Welcome from "./components/static/Welcome";
+import PageNotFound from "./components/static/PageNotFound";
 
 const auth = require('./auth');
 

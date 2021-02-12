@@ -1,27 +1,27 @@
 import React from "react";
-import AccessForbidden from "./components/AccessForbidden";
-import PostCreator from "./components/PostCreator";
-import HeaderBar from "./components/HeaderBar";
-import Welcome from "./components/Welcome";
-import CommunityFeed from "./components/CommunityFeed";
-import PostsViewer from "./components/PostsViewer";
-import CommentsViewer from "./components/CommentsViewer";
-import CommunityExplorer from "./components/CommunityExplorer";
-import CommunityManager from "./components/CommunityManager";
-import UserSettings from "./components/UserSettings";
-import UserProfile from "./components/UserProfile";
-import PageNotFound from "./components/PageNotFound";
-import Help from "./components/Help";
-import Login from "./components/Login";
-import SignUp from "./components/SignUp";
+import AccessForbidden from "./components/static/AccessForbidden";
+import PostCreator from "./components/posts/PostCreator";
+import HeaderBar from "./components/layout/HeaderBar";
+import Welcome from "./components/static/Welcome";
+import CommunityFeed from "./components/community/CommunityFeed";
+import PostsViewer from "./components/posts/PostsViewer";
+import CommentsViewer from "./components/comments/CommentsViewer";
+import CommunityExplorer from "./components/community/CommunityExplorer";
+import CommunityManager from "./components/community/CommunityManager";
+import UserSettings from "./components/user/UserSettings";
+import UserProfile from "./components/user/UserProfile";
+import PageNotFound from "./components/static/PageNotFound";
+import Help from "./components/static/Help";
+import Login from "./components/authentication/Login";
+import SignUp from "./components/authentication/SignUp";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { PrivateRoute } from "./components/PrivateRoute";
-import { LoggedOutRoute } from "./components/LoggedOutRoute";
-import CommunityCreator from "./components/CommunityCreator";
+import { PrivateRoute } from "./components/authentication/PrivateRoute";
+import { LoggedOutRoute } from "./components/authentication/LoggedOutRoute";
+import CommunityCreator from "./components/community/CommunityCreator";
 import { HostContext } from "./components/HostContext";
-import SubscribedFeed from "./components/SubscribedFeed";
-import AdminKeyAuth from "./components/AdminKeyAuth";
-import ControlPanel from "./components/ControlPanel";
+import SubscribedFeed from "./components/user/SubscribedFeed";
+import AdminKeyAuth from "./components/authentication/AdminKeyAuth";
+import ControlPanel from "./components/authentication/ControlPanel";
 
 class App extends React.Component {
   constructor(props) {

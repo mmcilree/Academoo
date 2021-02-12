@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Card, Button, Form, Alert } from "react-bootstrap"
-import { authFetch } from '../auth';
+import { authFetch } from '../../auth';
 
 class AdminKeyAuth extends Component {
     constructor(props) {

@@ -1,12 +1,12 @@
 import React from 'react';
-import UserRolesTable from './UserRolesTable'
+import UserRolesTable from '../user/UserRolesTable'
 import Form from 'react-bootstrap/Form';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
-import { authFetch } from '../auth';
+import { authFetch } from '../../auth';
 import { Redirect } from 'react-router-dom';
 import { Typeahead, Menu, MenuItem } from 'react-bootstrap-typeahead';
 import { InputGroup, Col } from 'react-bootstrap';
