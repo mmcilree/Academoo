@@ -15,9 +15,10 @@ class Post extends Component {
       showEdit: false,
       showDelete: false,
       updatedTitle: this.props.postData.title,
-      updatedBody: this.props.postData.content[0].text.text,
+      updatedBody: this.props.postData.content[0].text ? this.props.postData.content[0].text.text : this.props.postData.content[0].markdown.text,
       title: this.props.postData.title,
-      body: this.props.postData.content[0].text.text,
+      body: this.props.postData.content[0].text ? this.props.postData.content[0].text.text : this.props.postData.content[0].markdown.text,
+      contentType: this.props.postData.content[0].text ? "text" : "markdown",
       canEdit: true,
       canDelete: true,
       errors: [],
@@ -46,11 +47,7 @@ class Post extends Component {
   }
 
   checkPermissions() {
-    console.log("author " + this.props.postData.author.id);
-    console.log("current " + this.state.currentUser);
-
     if (this.props.postData.author.id === this.state.currentUser) {
-      console.log("here")
       this.setState({
         canEdit: false,
         canDelete: false
@@ -81,6 +78,7 @@ class Post extends Component {
     requestOptions.body = JSON.stringify(requestOptions.body);
 
     fetch('/api/posts/' + this.props.postData.id, requestOptions);
+    this.handleCloseDelete();
     this.props.history.push("/communities/" + this.props.postData.community)
   }
 
@@ -159,19 +157,28 @@ class Post extends Component {
       },
       body: {
         title: this.state.title,
-        content: [
-          {
-            text: {
-              text: this.state.body
-            }
-          }
-        ],
+        content: [],
       }
     };
 
     if (this.props.postData.host !== "local") {
       requestOptions.body.external = this.props.postData.host;
     }
+
+    if (this.state.contentType == "markdown") {
+      requestOptions.body.content.push({
+        markdown: {
+          text: this.state.body
+        }
+      });
+    } else if (this.state.contentType == "text") {
+      requestOptions.body.content.push({
+        text: {
+          text: this.state.body
+        }
+      });
+    }
+
     requestOptions.body = JSON.stringify(requestOptions.body);
 
     fetch('/api/posts/' + this.props.postData.id, requestOptions).then(r => r.status).then(statusCode => {
@@ -190,7 +197,7 @@ class Post extends Component {
 
 
   render() {
-    const {postData, displayCommunityName} = this.props;
+    const { postData, displayCommunityName } = this.props;
     if (!postData.id) return <div />;
     return (
       <React.Fragment>
@@ -199,9 +206,9 @@ class Post extends Component {
             <Card.Subtitle className="text-muted mb-2" style={{ fontSize: 12 }}>
               {displayCommunityName &&
 
-              <b style={{ zIndex: 2, position: "relative" }}>
-                  <Link style={{color: "inherit"}} to={"/communities/" + (postData.host ?  "/" + postData.host + "/" : "") + postData.community}>
-                    {(postData.host ? postData.host + + "/" : "") + postData.community }
+                <b style={{ zIndex: 2, position: "relative" }}>
+                  <Link style={{ color: "inherit" }} to={"/communities/" + (postData.host ? "/" + postData.host + "/" : "") + postData.community}>
+                    {(postData.host ? postData.host + + "/" : "") + postData.community}
                   </Link>{" · "}</b>}
 
               <b style={{ zIndex: 2, position: "relative" }}>
@@ -229,12 +236,14 @@ class Post extends Component {
         </Row>
         <Card.Title>{this.state.updatedTitle}</Card.Title>
         <Modal
+          size="lg"
           show={this.state.showEdit}
           onHide={this.handleCloseEdit}
-          backdrop="static">
+        >
           <PostEditor
             title={this.state.title}
             body={this.state.body}
+            contentType={this.state.contentType}
             handleClose={this.handleCloseEdit}
             handleSubmit={this.handleSubmitEdit}
             handleChange={this.handleChange}
@@ -254,7 +263,7 @@ class Post extends Component {
         </Modal>
 
         <ContentTypeComponent
-          contentType={postData.contentType}
+          contentType={this.state.contentType}
           body={this.state.updatedBody}
           postType={this.props.postType}
         />
@@ -278,6 +287,9 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
         <Card.Link className="text-primary" href={part}>{part} </Card.Link>
       : part + " ");
 
+  const ReactMarkdown = require('react-markdown');
+  const gfm = require('remark-gfm');
+  const renderers = { heading: HeadingRenderer, image: ImageRenderer };
   switch (contentType) {
     case "text":
       return postType == "preview" ?
@@ -297,6 +309,12 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
           {imageURLs.length > 0 && <Card.Img src={imageURLs[0]} />}
           <Card.Text >{renderText}</Card.Text>
         </React.Fragment>
+    case "markdown":
+      return (
+        <React.Fragment>
+          <ReactMarkdown plugins={[gfm]} renderers={renderers} children={body} />
+        </React.Fragment>
+      )
     default:
       return <Card.Text>{renderText}</Card.Text>
   }
@@ -318,3 +336,21 @@ const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
 
   </a>
 ));
+
+const HeadingRenderer = (props) => {
+  if (props.level === 1) {
+    return <h3>{props.children}</h3>
+  }
+  if (props.level === 2) {
+    return <h4>{props.children}</h4>
+  }
+  if (props.level === 3) {
+    return <h5>{props.children}</h5>
+  } else {
+    return <h6>{props.children}</h6>
+  }
+}
+
+const ImageRenderer = (props) => {
+  return <Card.Img src={props.src} style={{ width: "40vh" }} />
+}
