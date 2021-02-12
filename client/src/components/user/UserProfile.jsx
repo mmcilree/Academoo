@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Card, Media } from "react-bootstrap";
-import defaultProfile from "../images/default_profile.png";
-import { authFetch } from '../auth';
+import defaultProfile from "../../images/default_profile.png";
+import { authFetch } from '../../auth';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 var md5 = require("md5");

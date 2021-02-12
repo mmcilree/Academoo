@@ -1,12 +1,12 @@
-import React from "react";
-import Post from "./Post";
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
-import { ArrowReturnLeft, ChatRight } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
-import Modal from "react-bootstrap/Modal";
+import React from "../../../node_modules/react";
+import Post from "../posts/Post";
+import Card from "../../../node_modules/react-bootstrap/Card";
+import Button from "../../../node_modules/react-bootstrap/Button";
+import { ArrowReturnLeft, ChatRight } from "../../../node_modules/react-bootstrap-icons";
+import { Link } from "../../../node_modules/react-router-dom";
+import Modal from "../../../node_modules/react-bootstrap/Modal";
 import CommentCreator from "./CommentCreator";
-import { HostContext } from "./HostContext";
+import { HostContext } from "../HostContext";
 
 class CommentsViewer extends React.Component {
   constructor(props) {

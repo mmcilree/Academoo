@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, FormGroup, FormControl, Form, Card,Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { login } from "../auth";
+import { login } from "../../auth";
 import { Route } from 'react-router-dom';
 
 class Login extends React.Component {

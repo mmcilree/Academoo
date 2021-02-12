@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
 import { Route } from 'react-router-dom';
-import { authFetch } from '../auth';
+import { authFetch } from '../../auth';
 
 class CommunityCreator extends React.Component {
     constructor(props) {
