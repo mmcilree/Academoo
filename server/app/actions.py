@@ -167,6 +167,12 @@ def getLocalUser(id):
             user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio}
             return user_dict
 
+def addSubscriber(user_id, community_id):
+    user = User.query.filter_by(user_id = user_id).first()
+    user.subscribed_communities.add(community_id)
+
+    db.sesssion.commit()
+
 def getCommunityIDs():
     ids = [community.id for community in Community.query.all()]
     return (ids, 200)

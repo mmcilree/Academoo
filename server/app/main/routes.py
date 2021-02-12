@@ -89,7 +89,15 @@ def get_user():
         if(userRole.role == "admin"):
             adminOf.append(userRole.community_id)   
 
-    return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "adminOf": adminOf, "bio": u.bio, "private": u.private_account})
+    return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "adminOf": adminOf, "subscriptions": u.subscriptions, "bio": u.bio, "private": u.private_account})
+
+@bp.route("/subscribe", methods=["POST"])
+@auth_required
+def subscribe():
+    u = current_user()
+    req = request.json
+    community_id = req["id"]
+    respond_with_action(actions.addSubscriber(u.user_id, community_id));
 
 @bp.route("/add-instance", methods=["POST"])
 def add_instance():

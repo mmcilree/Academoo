@@ -26,8 +26,8 @@ class UserRole(db.Model):
     role = db.Column(db.String(50)) # admin, contributor, member, guest, prohibited
 
 subscriptions = db.Table('subscriptions',
-    db.Column(db.String(50), db.ForeignKey('user.user_id')),
-    db.Column(db.String(1000), db.ForeignKey('community.id')))
+    db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
+    db.Column('community_id', db.String(1000), db.ForeignKey('community.id')))
 
 class User(db.Model):
     user_id = db.Column(db.String(50), primary_key=True)
@@ -39,7 +39,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(128))
     #admin_of = db.relationship('Community', secondary=administrating, backref='admins')
     roles = db.relationship('UserRole', backref='user')
-    subscriptions = db.relationship('Subscription', secondary=subscriptions, backref='subscribed_users')
+    subscriptions = db.relationship('Community', secondary=subscriptions, backref='subscribed_users')
 
     # We need this for auth to work apparently - maybe Robert can clarify?
     @property
