@@ -21,6 +21,7 @@ import CommunityCreator from "./components/CommunityCreator";
 import { HostContext } from "./components/HostContext";
 import SubscribedFeed from "./components/SubscribedFeed";
 import AdminKeyAuth from "./components/AdminKeyAuth";
+import ControlPanel from "./components/ControlPanel";
 
 class App extends React.Component {
   constructor(props) {
@@ -53,9 +54,9 @@ class App extends React.Component {
                 <PrivateRoute path="/help" component={Help} />
                 <PrivateRoute exact path="/user-profile/:id" component={UserProfile} />
                 <PrivateRoute path="/user-profile/:instance/:id" component={UserProfile} />
-                {/* <PrivateRoute exact path="/user-profile" component={UserProfile} /> */}
                 <PrivateRoute path="/explore" component={CommunityExplorer} />
                 <PrivateRoute path="/create-community" component={CommunityCreator} />
+                <PrivateRoute path="/control-panel" component={ControlPanel} />
                 <PrivateRoute path="/admin-key" component={AdminKeyAuth} />
                 <PrivateRoute path="/forbidden" component={AccessForbidden} />
                 <LoggedOutRoute path="/login" component={Login} />

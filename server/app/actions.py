@@ -209,10 +209,10 @@ def getLocalUser(id):
         return False
     else:
         if user.private_account:
-            user_dict = {"id":user.user_id, "email": "", "host":user.host, "bio":""}
+            user_dict = {"id":user.user_id, "email": "", "host":user.host, "bio":"", "site_roles" : user.site_roles}
             return user_dict
         else:
-            user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio}
+            user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio, "site_roles" : user.site_roles}
             return user_dict
 
 def getCommunityIDs():
