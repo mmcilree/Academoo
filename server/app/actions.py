@@ -94,16 +94,15 @@ def addSiteWideRole(admin, username, role, key):
     if(user.site_roles == None):
        user.site_roles = role
     else: 
-        assigned_roles = user.site_roles.split(",");
-        if(len(assigned_roles) == 0):
-            roles = user.site_roles + "," + role
-            user.site_roles = roles
-        elif(len(assigned_roles) == 1):
+        assigned_roles = user.site_roles.split(",");  
+        if(len(assigned_roles) == 1):
             if(assigned_roles[0] == role):
                 return({"title":"Cannot Add Role" + role, "message": "User already has " + role + " privileges"}, 400)
-        else:
+        elif(len(assigned_roles) == 2):
             return({"title":"Cannot Add Role" + role, "message": "User already has admin and moderator privileges"}, 400)
-
+        
+        roles = user.site_roles + "," + role
+        user.site_roles = roles
     db.session.commit()
     return(None, 200)
 
