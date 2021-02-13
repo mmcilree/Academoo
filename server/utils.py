@@ -7,6 +7,12 @@ import re
 import jsonschema
 from jsonschema import validate
 
+def adminMatchesKey(key):
+    secret_key = "lh87GFL3DHkkMsw098An"
+    if key == secret_key:
+        return True
+    else:
+        return False
 
 def isUUID(val):
     try:
