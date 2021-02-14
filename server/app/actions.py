@@ -88,7 +88,7 @@ def addSiteWideRole(admin, username, role, key, host):
         if((not role == "site-admin") & (not role == "site-moderator")):
             return({"title":"Invalid role" + role, "message": "Cannot assign this role, make sure role is <site-admin> or <site-moderator>"}, 400)
 
-        if(user.site_roles == None | user.site_roles == ""):
+        if((user.site_roles == None) | (user.site_roles == "")):
             user.site_roles = role
         else: 
             assigned_roles = user.site_roles.split(",");  

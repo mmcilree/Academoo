@@ -1,5 +1,5 @@
 import re
-from flask_praetorian.decorators import auth_required, roles_required
+from flask_praetorian.decorators import auth_required, roles_required, roles_accepted
 from app import actions, federation
 from app.main import bp
 from flask import request, Response, jsonify
@@ -15,6 +15,7 @@ def index():
     return "Hello World!"
 
 @bp.route("/assign-role", methods=["POST"])
+# @roles_accepted("site-admin, site-moderator")
 def assign_role():
     req = request.json
     user_host = req["host"] #someday
@@ -22,7 +23,6 @@ def assign_role():
     community_id = req["community"]
     role = req["role"]
     current_user = request.headers.get("User-ID")
-    print("USER HOST IS " + user_host)
     if user_host in ["local", "nnv2host"]:
         return respond_with_action(actions.grantRole(user_id, community_id, current_user, role))
     else:
@@ -43,14 +43,6 @@ def get_default_role(id):
 def get_community_roles(id):
     return respond_with_action(actions.getRoles(id))
 
-# @bp.route("/add-site-role/", methods=["POST"])
-# @auth_required
-# def add_sitewide_role():
-#     req = request.json
-#     username = req["username"]
-#     role = req["role"]
-#     return respond_with_action(actions.addSiteWideRole(username, role))
-
 @bp.route("/add-site-role/", methods=["PUT"])
 @auth_required
 def add_sitewide_role():
@@ -59,7 +51,9 @@ def add_sitewide_role():
     username = req["username"]
     key = req["key"]
     role = req["role"]
-    return respond_with_action(actions.addSiteWideRole(admin, username, role, key))
+    host = req["host"]
+
+    return respond_with_action(actions.addSiteWideRole(admin, username, role, key, host))
 
 @bp.route("/remove-site-roles/", methods=["PUT"])
 @roles_required("site-admin")
@@ -76,9 +70,8 @@ def create_community():
     title = req["title"]
     description = req["description"]
     admin = req["admin"]
-    host = req["host"]
     
-    return respond_with_action(actions.createCommunity(community_id, title, description, admin, host))
+    return respond_with_action(actions.createCommunity(community_id, title, description, admin))
     
 
 @bp.route("/update-bio", methods=["POST"])

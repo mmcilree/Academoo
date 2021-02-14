@@ -104,7 +104,7 @@ class ControlPanel extends Component {
             return;
         }
 
-        if (this.state.role = "remove-all") {
+        if (this.state.role == "remove-all") {
             const requestOptions = {
                 method: 'PUT',
                 headers: {
