@@ -62,7 +62,7 @@ class AdminKeyAuth extends Component {
         }
 
         const requestOptions = {
-            method: "POST",
+            method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
             },

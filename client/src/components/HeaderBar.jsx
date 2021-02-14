@@ -18,6 +18,7 @@ import {
   PlusCircle,
   PersonCircle,
   Gear,
+  Tools,
   BoxArrowRight,
   QuestionCircle,
 } from "react-bootstrap-icons";
@@ -31,6 +32,8 @@ function HeaderBar() {
   const [instances, setInstances] = useState(null);
   const [email, setEmail] = useState(null);
   const [username, setUsername] = useState(null);
+  const [hasSiteRole, setHasSiteRole] = useState(null);
+  const [isLoading, setIsLoading] = useState(true)
 
   const context = useContext(HostContext);
 
@@ -43,12 +46,14 @@ function HeaderBar() {
         .then(data => {
           setEmail(md5(data.email))
           setUsername(data.id)
+          setHasSiteRole(data.site_roles != null ? (data.site_roles.split(",").includes("site-admin") || data.site_roles.split(",").includes("site-moderator")) : false)
+          setIsLoading(false)
         }
         )
     }
 
     fetchData();
-  }, [username]);
+  }, []);
 
 
   return (
@@ -64,7 +69,7 @@ function HeaderBar() {
         Academoo
       </Navbar.Brand>
 
-      {logged && (
+      {logged && !isLoading && (
         <React.Fragment>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
@@ -115,6 +120,11 @@ function HeaderBar() {
                 </NavDropdown.Item>
 
                 <NavDropdown.Divider />
+                {hasSiteRole &&
+                  <NavDropdown.Item as={Link} to="/control-panel">
+                    <Tools /> Control Panel
+                  </NavDropdown.Item>
+                }
                 <NavDropdown.Item as={Link} to="/help">
                   <QuestionCircle /> Help
                 </NavDropdown.Item>
@@ -128,7 +138,7 @@ function HeaderBar() {
       )}
 
     </Navbar>
-  );
+  )
 }
 
 export default HeaderBar;

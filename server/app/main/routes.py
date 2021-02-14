@@ -1,5 +1,5 @@
 import re
-from flask_praetorian.decorators import auth_required
+from flask_praetorian.decorators import auth_required, roles_required
 from app import actions, federation
 from app.main import bp
 from flask import request, Response, jsonify
@@ -51,7 +51,7 @@ def get_community_roles(id):
 #     role = req["role"]
 #     return respond_with_action(actions.addSiteWideRole(username, role))
 
-@bp.route("/add-site-role/", methods=["POST"])
+@bp.route("/add-site-role/", methods=["PUT"])
 @auth_required
 def add_sitewide_role():
     req = request.json
@@ -61,6 +61,14 @@ def add_sitewide_role():
     role = req["role"]
     return respond_with_action(actions.addSiteWideRole(admin, username, role, key))
 
+@bp.route("/remove-site-roles/", methods=["PUT"])
+@roles_required("site-admin")
+def remove_site_roles():
+    req = request.json
+    username = req["username"]
+    host = req["host"]
+    return respond_with_action(actions.removeSiteWideRoles(username, host))
+
 @bp.route("/create-community", methods=["POST"])
 def create_community():
     req = request.json
@@ -68,7 +76,10 @@ def create_community():
     title = req["title"]
     description = req["description"]
     admin = req["admin"]
-    return respond_with_action(actions.createCommunity(community_id, title, description, admin))
+    host = req["host"]
+    
+    return respond_with_action(actions.createCommunity(community_id, title, description, admin, host))
+    
 
 @bp.route("/update-bio", methods=["POST"])
 @auth_required

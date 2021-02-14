@@ -103,38 +103,60 @@ class ControlPanel extends Component {
             this.setState({ errors });
             return;
         }
-        const requestOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-                {
-                    admin: this.state.currentUser,
-                    username: this.state.selected[0].user,
-                    key: "",
-                    role: this.state.role,
-                }
-            )
-        };
 
-        if (this.state.host !== "local") {
-            requestOptions.body.external = this.state.host;
+        if (this.state.role = "remove-all") {
+            const requestOptions = {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        username: this.state.selected[0].user,
+                        host: this.state.host
+                    }
+                )
+            };
+
+            authFetch('/api/remove-site-roles/', requestOptions)
+                .then(r => r.status).then(statusCode => {
+                    if (statusCode != 200) {
+                        this.setState({ changed: false, errors: ["Could not remove user roles."] })
+                    } else {
+                        this.setState({ changed: true, errors: [], host: "local", serverDropdown: "Select Server", role: "", selected: [{ user: "" }] });
+                    }
+                });
+        } else {
+
+            const requestOptions = {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(
+                    {
+                        admin: this.state.currentUser,
+                        username: this.state.selected[0].user,
+                        key: "",
+                        role: this.state.role,
+                        host: this.state.host
+                    }
+                )
+            };
+
+            authFetch('/api/add-site-role/', requestOptions)
+                .then(r => r.status).then(statusCode => {
+                    if (statusCode != 200) {
+                        this.setState({ changed: false, errors: ["Could not register user as admin/moderator."] })
+                    } else {
+                        this.setState({ changed: true, errors: [], host: "local", serverDropdown: "Select Server", role: "", selected: [{ user: "" }] });
+                    }
+                });
         }
-
-        authFetch('/api/add-site-role/', requestOptions)
-            .then(r => r.status).then(statusCode => {
-                if (statusCode != 200) {
-                    this.setState({ changed: false, errors: ["Could not register user as admin."] })
-                } else {
-                    this.setState({ changed: true, errors: [], host: "local", serverDropdown: "Select Server", role: "", selected: [{ user: "" }] });
-                }
-            });
-
     }
 
     render() {
-        const { currentUser, roles, isLoading, errors, isAdmin, isModerator } = this.state;
+        const { currentUser, isLoading, errors, isAdmin, isModerator } = this.state;
         return (
             isLoading ? <Card className="mt-4"><Card.Body><Card.Title>Loading ...</Card.Title></Card.Body></Card> :
                 !isAdmin ? <Redirect to='/forbidden' /> :
@@ -191,6 +213,8 @@ class ControlPanel extends Component {
                                                         return <Dropdown.Item key={role} onClick={() => this.setState({ role: role })}>{role}</Dropdown.Item>
                                                     })
                                                     }
+                                                    <Dropdown.Item key={"Remove-all"} onClick={() => this.setState({ role: "remove-all" })} style={{ color: "red" }}>Remove All Roles</Dropdown.Item>
+
                                                 </DropdownButton>
                                             </Form.Group>
                                             <Form.Group as={Col} xs={12} sm={6} md={5} lg={2}>

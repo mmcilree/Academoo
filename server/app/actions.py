@@ -59,52 +59,52 @@ def grantRole(username, community_id, current_user, role="member", external=Fals
     
     return (None, 200)
 
-# def addSiteWideRole(username, role):
-#     # Admin or Moderator added by another user
-#     user = User.query.filter_by(user_id=username).first()
-#     if(user is None):
-#         return({"title":"Could not find user" + username, "message": "User does not exist in database, use a different username"}, 404)
-
-#     if((not role == "site-admin") & (not role == "site-moderator")):
-#         return({"title":"Invalid role" + role, "message": "Cannot assign this role, make sure role is <site-admin> or <site-moderator>"}, 400)
-
-#     if(user.site_roles == Null):
-#        user.site_roles = role
-#     else: 
-#         roles = user.site_roles + "," + role
-#         user.site_roles = roles
-#     db.session.commit()
-#     return(None, 200)
-
-
-def addSiteWideRole(admin, username, role, key):
-    # Add logic to check if the provided key matches the authentication key to become an admin
-    user = User.query.filter_by(user_id=username).first()
-    if(user is None):
-        return({"title":"Could not find user" + username, "message": "User does not exist in database, use a different username"}, 404)
-
-    admin_user = User.query.filter_by(user_id=admin).first()
-    if(admin_user == None):
-        if not adminMatchesKey(key):
-            return({"title":"Unauthorized request from " + username, "message": "User is unauthorized to request admin priviliges, invalid key"}, 401)
-
-    if((not role == "site-admin") & (not role == "site-moderator")):
-        return({"title":"Invalid role" + role, "message": "Cannot assign this role, make sure role is <site-admin> or <site-moderator>"}, 400)
-
-    if(user.site_roles == None):
-       user.site_roles = role
-    else: 
-        assigned_roles = user.site_roles.split(",");  
-        if(len(assigned_roles) == 1):
-            if(assigned_roles[0] == role):
-                return({"title":"Cannot Add Role" + role, "message": "User already has " + role + " privileges"}, 400)
-        elif(len(assigned_roles) == 2):
-            return({"title":"Cannot Add Role" + role, "message": "User already has admin and moderator privileges"}, 400)
+def removeSiteWideRoles(username, host):
+    if(host == "local"):
+        user = User.query.filter_by(user_id=username).first()
+        if(user is None):
+            return({"title":"Could not find user" + username, "message": "User does not exist in database, use a different username"}, 404)
         
-        roles = user.site_roles + "," + role
-        user.site_roles = roles
-    db.session.commit()
-    return(None, 200)
+        if(user.site_roles != None):
+            user.site_roles = ""
+        db.session.commit()
+        return(None, 200)
+    else:
+        # Add support for roles for external users
+        return(None, 400)
+
+
+def addSiteWideRole(admin, username, role, key, host):
+    if (host == "local"):
+        user = User.query.filter_by(user_id=username).first()
+        if(user is None):
+            return({"title":"Could not find user" + username, "message": "User does not exist in database, use a different username"}, 404)
+
+        admin_user = User.query.filter_by(user_id=admin).first()
+        if(admin_user == None):
+            if not adminMatchesKey(key):
+                return({"title":"Unauthorized request from " + username, "message": "User is unauthorized to request admin priviliges, invalid key"}, 401)
+
+        if((not role == "site-admin") & (not role == "site-moderator")):
+            return({"title":"Invalid role" + role, "message": "Cannot assign this role, make sure role is <site-admin> or <site-moderator>"}, 400)
+
+        if(user.site_roles == None | user.site_roles == ""):
+            user.site_roles = role
+        else: 
+            assigned_roles = user.site_roles.split(",");  
+            if(len(assigned_roles) == 1):
+                if(assigned_roles[0] == role):
+                    return({"title":"Cannot Add Role" + role, "message": "User already has " + role + " privileges"}, 400)
+            elif(len(assigned_roles) == 2):
+                return({"title":"Cannot Add Role" + role, "message": "User already has admin and moderator privileges"}, 400)
+            
+            roles = user.site_roles + "," + role
+            user.site_roles = roles
+        db.session.commit()
+        return(None, 200)
+    else:
+        # add functionality for roles for external users
+        return(None, 400)
 
 def setDefaultRole(default_role, community_id):
     if validate_community_id(community_id): return validate_community_id(community_id)
