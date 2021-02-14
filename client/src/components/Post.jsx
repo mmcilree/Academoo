@@ -212,11 +212,14 @@ class Post extends Component {
                   </Link>{" · "}</b>}
 
               <b style={{ zIndex: 2, position: "relative" }}>
+
+                {postData.author.id ? 
                 <Link to={"/user-profile/" + postData.author.id}>
                   {postData.author.id}
-                </Link></b> from{" "}
-
-              {postData.author.host ? postData.author.host : "[deleted]"}
+                </Link> : "[deleted]"}
+                
+              </b> 
+              {postData.author.host ? " from " + postData.author.host : ""}
 
               {" · "} {timeSince(postData.created)} ago
         </Card.Subtitle>
