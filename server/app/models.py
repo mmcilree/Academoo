@@ -28,7 +28,7 @@ class User(db.Model):
     private_account = db.Column(db.Boolean, default=False, nullable=False)
     password_hash = db.Column(db.String(128))
     #admin_of = db.relationship('Community', secondary=administrating, backref='admins')
-    roles = db.relationship('UserRole', backref='user')
+    roles = db.relationship('UserRole', backref='user', cascade="all, delete")
 
     
     # We need this for auth to work apparently - maybe Robert can clarify?

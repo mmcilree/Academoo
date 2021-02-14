@@ -216,7 +216,7 @@ class Post extends Component {
                   {postData.author.id}
                 </Link></b> from{" "}
 
-              {postData.author.host}
+              {postData.author.host ? postData.author.host : "[deleted]"}
 
               {" · "} {timeSince(postData.created)} ago
         </Card.Subtitle>
