@@ -82,7 +82,6 @@ class AdminKeyAuth extends Component {
             .then((response) => {
                 if (response.ok) {
                     this.setState({ changed: true, errors: [], key: "" });
-                    window.location.reload(false);
                     return;
                 } else {
                     return response.json();
