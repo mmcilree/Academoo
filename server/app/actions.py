@@ -63,7 +63,7 @@ def removeSiteWideRoles(username, host):
     if(host == "local"):
         user = User.query.filter_by(user_id=username).first()
         if(user is None):
-            return({"title":"Could not find user" + username, "message": "User does not exist in database, use a different username"}, 404)
+            return({"title":"Could not find user " + username, "message": "User does not exist in database, use a different username"}, 404)
         
         if(user.site_roles != None):
             user.site_roles = ""
@@ -84,7 +84,8 @@ def addSiteWideRole(admin, username, role, key, host):
         if(admin_user == None):
             if not adminMatchesKey(key):
                 return({"title":"Unauthorized request from " + username, "message": "User is unauthorized to request admin priviliges, invalid key"}, 401)
-
+        elif(admin == username):
+            return({"title: User cannot set their own permissions, message: Contact another admin user to allow permission change"}, 401)
         if((not role == "site-admin") & (not role == "site-moderator")):
             return({"title":"Invalid role" + role, "message": "Cannot assign this role, make sure role is <site-admin> or <site-moderator>"}, 400)
 
@@ -94,14 +95,14 @@ def addSiteWideRole(admin, username, role, key, host):
             assigned_roles = user.site_roles.split(",");  
             if(len(assigned_roles) == 1):
                 if(assigned_roles[0] == role):
-                    return({"title":"Cannot Add Role" + role, "message": "User already has " + role + " privileges"}, 400)
+                    return({"title":"Cannot Add Role " + role, "message": "User already has " + role + " privileges"}, 400)
             elif(len(assigned_roles) == 2):
-                return({"title":"Cannot Add Role" + role, "message": "User already has admin and moderator privileges"}, 400)
+                return({"title":"Cannot Add Role " + role, "message": "User already has admin and moderator privileges"}, 400)
             
             roles = user.site_roles + "," + role
             user.site_roles = roles
         db.session.commit()
-        return(None, 200)
+        return("", 200)
     else:
         # add functionality for roles for external users
         return(None, 400)

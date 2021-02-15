@@ -43,7 +43,7 @@ def get_default_role(id):
 def get_community_roles(id):
     return respond_with_action(actions.getRoles(id))
 
-@bp.route("/add-site-role/", methods=["PUT"])
+@bp.route("/add-site-role/", methods=["POST"])
 @auth_required
 def add_sitewide_role():
     req = request.json

@@ -33,7 +33,10 @@ class ControlPanel extends Component {
             roles: ["site-admin", "site-moderator"],
             role: "",
             isLoading: true,
-            errors: []
+            errors: [],
+            clientErrors: [],
+            changed: false,
+            success: "",
 
         }
     }
@@ -54,7 +57,7 @@ class ControlPanel extends Component {
                     isLoading: false,
                 })
             )
-            .catch(error => this.setState({ errors: error, isLoading: false }));
+            .catch(error => this.setState({ clientErrors: error, isLoading: false }));
     }
 
     async fetchInstances() {
@@ -78,8 +81,7 @@ class ControlPanel extends Component {
     }
 
     handleHostChange(name) {
-        this.setState({ host: name })
-        this.setState({ serverDropdown: name })
+        this.setState({ host: name, serverDropdown: name, changed: false })
         this.fetchUsers(name);
     }
 
@@ -100,7 +102,7 @@ class ControlPanel extends Component {
         event.preventDefault();
         const errors = this.validateUserRolesForm();
         if (errors.length > 0) {
-            this.setState({ errors });
+            this.setState({ clientErrors: errors });
             return;
         }
 
@@ -119,9 +121,12 @@ class ControlPanel extends Component {
             };
 
             authFetch('/api/remove-site-roles/', requestOptions)
-                .then(r => r.status).then(statusCode => {
-                    if (statusCode != 200) {
-                        this.setState({ changed: false, errors: ["Could not remove user roles."] })
+                .then(response => response.json())
+                .then((data) => {
+                    if (data) {
+                        let errors = []
+                        errors.push(data)
+                        this.setState({ changed: false, errors: errors })
                     } else {
                         this.setState({ changed: true, errors: [], host: "local", serverDropdown: "Select Server", role: "", selected: [{ user: "" }] });
                     }
@@ -129,7 +134,7 @@ class ControlPanel extends Component {
         } else {
 
             const requestOptions = {
-                method: 'PUT',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -144,19 +149,29 @@ class ControlPanel extends Component {
                 )
             };
 
+
             authFetch('/api/add-site-role/', requestOptions)
-                .then(r => r.status).then(statusCode => {
-                    if (statusCode != 200) {
-                        this.setState({ changed: false, errors: ["Could not register user as admin/moderator."] })
-                    } else {
+                .then((response) => {
+                    if (response.ok) {
                         this.setState({ changed: true, errors: [], host: "local", serverDropdown: "Select Server", role: "", selected: [{ user: "" }] });
+                        return;
+                    } else {
+                        return response.json();
                     }
+                })
+                .then((data) => {
+                    if (data != null) {
+                        let errors = []
+                        errors.push(data)
+                        this.setState({ changed: false, errors: errors })
+                    }
+
                 });
         }
     }
 
     render() {
-        const { currentUser, isLoading, errors, isAdmin, isModerator } = this.state;
+        const { isLoading, isAdmin, isModerator } = this.state;
         return (
             isLoading ? <Card className="mt-4"><Card.Body><Card.Title>Loading ...</Card.Title></Card.Body></Card> :
                 !isAdmin ? <Redirect to='/forbidden' /> :
@@ -197,7 +212,7 @@ class ControlPanel extends Component {
                                                         )}
 
                                                         onChange={(selected) => {
-                                                            this.setState({ errors: [], selected: selected })
+                                                            this.setState({ errors: [], clientErrors: [], selected: selected, changed: false, success: "" })
                                                         }}
 
                                                         options={this.state.users}
@@ -222,6 +237,14 @@ class ControlPanel extends Component {
                                             </Form.Group>
                                         </Form.Row>
                                     </Form>
+                                    {this.state.errors.length !== 0 && this.state.errors.map(error => (
+                                        <Alert variant='warning' key={error}>{error.title}: {error.message}</Alert>
+                                    ))}
+                                    {this.state.clientErrors.map(error => (
+                                        <Alert variant='warning' key={error}>{error}</Alert>
+                                    ))}
+                                    {this.state.changed && <Alert variant='success'>permissions have been changed successfully!</Alert>}
+
                                 </Card.Body>
                             </Card>}
 

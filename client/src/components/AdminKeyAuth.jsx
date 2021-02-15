@@ -8,6 +8,7 @@ class AdminKeyAuth extends Component {
         this.state = {
             key: "",
             user: "",
+            host: "",
             isLoading: true,
             changed: false,
             errors: [],
@@ -25,6 +26,7 @@ class AdminKeyAuth extends Component {
             .then(data =>
                 this.setState({
                     user: data.id,
+                    host: data.host,
                     isLoading: false
                 })
             )
@@ -60,9 +62,8 @@ class AdminKeyAuth extends Component {
             this.setState({ errors });
             return;
         }
-
         const requestOptions = {
-            method: "PUT",
+            method: "POST",
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -70,19 +71,30 @@ class AdminKeyAuth extends Component {
                 admin: "",
                 username: this.state.user,
                 key: this.state.key,
-                role: "site-admin"
+                role: "site-admin",
+                host: this.state.host == "Academoo" ? "local" : this.state.host
             }
 
         }
         requestOptions.body = JSON.stringify(requestOptions.body);
 
         authFetch('/api/add-site-role/', requestOptions)
-            .then(r => r.status).then(statusCode => {
-                if (statusCode != 200) {
-                    this.setState({ changed: false, errors: ["Invalid key - could not register user as admin."] })
-                } else {
+            .then((response) => {
+                if (response.ok) {
                     this.setState({ changed: true, errors: [], key: "" });
+                    window.location.reload(false);
+                    return;
+                } else {
+                    return response.json();
                 }
+            })
+            .then((data) => {
+                if (data != null) {
+                    let errors = []
+                    errors.push(data)
+                    this.setState({ changed: false, errors: errors })
+                }
+
             });
     }
 
@@ -100,7 +112,7 @@ class AdminKeyAuth extends Component {
                     </Form>
                     <br />
                     {this.state.errors.map(error => (
-                        <Alert variant='warning' key={error}>{error}</Alert>
+                        <Alert variant='warning' key={error}>{error.title}: {error.message}</Alert>
                     ))}
                     {this.state.changed && <Alert variant='success'>{this.state.user} has been added as a site-wide Admin!</Alert>}
 
