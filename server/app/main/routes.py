@@ -1,5 +1,5 @@
 import re
-from flask_praetorian.decorators import auth_required
+from flask_praetorian.decorators import auth_required, roles_required, roles_accepted
 from app import actions, federation
 from app.main import bp
 from flask import request, Response, jsonify
@@ -15,6 +15,7 @@ def index():
     return "Hello World!"
 
 @bp.route("/assign-role", methods=["POST"])
+# @roles_accepted("site-admin, site-moderator")
 def assign_role():
     req = request.json
     user_host = req["host"] #someday
@@ -22,7 +23,6 @@ def assign_role():
     community_id = req["community"]
     role = req["role"]
     current_user = request.headers.get("User-ID")
-    print("USER HOST IS " + user_host)
     if user_host in ["local", "nnv2host"]:
         return respond_with_action(actions.grantRole(user_id, community_id, current_user, role))
     else:
@@ -43,6 +43,26 @@ def get_default_role(id):
 def get_community_roles(id):
     return respond_with_action(actions.getRoles(id))
 
+@bp.route("/add-site-role/", methods=["POST"])
+@auth_required
+def add_sitewide_role():
+    req = request.json
+    admin = req["admin"]
+    username = req["username"]
+    key = req["key"]
+    role = req["role"]
+    host = req["host"]
+
+    return respond_with_action(actions.addSiteWideRole(admin, username, role, key, host))
+
+@bp.route("/remove-site-roles/", methods=["PUT"])
+@roles_required("site-admin")
+def remove_site_roles():
+    req = request.json
+    username = req["username"]
+    host = req["host"]
+    return respond_with_action(actions.removeSiteWideRoles(username, host))
+
 @bp.route("/create-community", methods=["POST"])
 def create_community():
     req = request.json
@@ -50,7 +70,9 @@ def create_community():
     title = req["title"]
     description = req["description"]
     admin = req["admin"]
+    
     return respond_with_action(actions.createCommunity(community_id, title, description, admin))
+    
 
 @bp.route("/update-bio", methods=["POST"])
 @auth_required
@@ -94,7 +116,7 @@ def get_user():
     for subscription in u.subscriptions:
         subscriptions.append(subscription.id)
 
-    return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "adminOf": adminOf, "subscriptions": subscriptions, "bio": u.bio, "private": u.private_account})
+    return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "adminOf": adminOf, "subscriptions": subscriptions, "bio": u.bio, "private": u.private_account, "site_roles": u.site_roles})
 
 @bp.route("/subscribe", methods=["POST"])
 @auth_required

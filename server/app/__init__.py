@@ -43,6 +43,3 @@ def create_app(config_class=Config):
     return app
 
 from app import models
-# with app.app_context():
-#     db.create_all()
-#     db.session.commit()

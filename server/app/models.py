@@ -31,6 +31,7 @@ class User(db.Model):
     bio = db.Column(db.String(140))
     private_account = db.Column(db.Boolean, default=False, nullable=False)
     password_hash = db.Column(db.String(128))
+    site_roles = db.Column(db.String)
     #admin_of = db.relationship('Community', secondary=administrating, backref='admins')
     subscriptions = db.relationship('Community', secondary=subscriptions, backref='subscribed_users')
     roles = db.relationship('UserRole', backref='user', cascade="all, delete")
@@ -39,7 +40,8 @@ class User(db.Model):
     @property
     def rolenames(self):
         try:
-            return []
+            roles = self.site_roles.split(",")
+            return roles
         except Exception:
             return []   
 
