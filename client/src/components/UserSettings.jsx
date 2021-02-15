@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Card, Form, Button, Alert } from "react-bootstrap";
-import { authFetch } from '../auth';
+import { authFetch, logout } from '../auth';
 import { withRouter } from 'react-router-dom';
 
 class UserSettings extends Component {
@@ -17,7 +17,8 @@ class UserSettings extends Component {
       host: "",
       privateAccount: true,
       privUpdated: false,
-      isLoading: false
+      isLoading: false,
+      confirmUsername: "",
 
     }
   }
@@ -94,7 +95,7 @@ class UserSettings extends Component {
     requestOptions.body = JSON.stringify(requestOptions.body);
 
     authFetch('/api/change-password', requestOptions).then(r => r.status).then(statusCode => {
-      if (statusCode != 200) {
+      if (statusCode !== 200) {
         this.setState({ changed: false, errors: ["Incorrect Password!"] })
       } else {
         this.setState({ changed: true, errors: [] });
@@ -144,6 +145,19 @@ class UserSettings extends Component {
         this.fetchUserDetails();
       });
 
+  }
+
+  async handleDeleteAccount(event) {
+    event.preventDefault();
+
+    if(this.state.username === this.state.confirmUsername) {
+     await authFetch('/api/delete-account')
+      .then(r => r.status).then(statusCode => {
+        if(statusCode === 200) {
+          logout();
+        }
+      });
+    }
   }
 
   render() {
@@ -207,6 +221,18 @@ class UserSettings extends Component {
                   />
                 </Form.Group>
                 <Button variant="secondary" type="submit">Save</Button>
+              </Form>
+            </Card.Body>
+          </Card>
+          <Card className="mt-4">
+            <Card.Body>
+              <Form onSubmit={this.handleDeleteAccount.bind(this)}>
+                <Form.Group>
+                  <Alert variant="danger"><b>WARNING: </b>THIS ACTION IS IRREVERSIBLE!</Alert>
+                  <Form.Text>Enter your username to confirm: </Form.Text>
+                  <Form.Control type="input" name="confirmUsername" onChange={this.handleChange.bind(this)} value={this.state.confirmUsername}></Form.Control>
+                </Form.Group>
+                <Button variant="secondary" type="submit" disabled={this.state.username !== this.state.confirmUsername}>Delete Account</Button>
               </Form>
             </Card.Body>
           </Card>
