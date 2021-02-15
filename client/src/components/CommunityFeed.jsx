@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { BookmarkPlus } from "react-bootstrap-icons";
 import { authFetch } from '../auth';
 import MiniPostCreator from "./MiniPostCreator";
+import CommunitySubscribeButton from "./CommunitySubscribeButton";
 
 class CommunityFeed extends Component {
   state = {
@@ -15,7 +16,8 @@ class CommunityFeed extends Component {
     host: this.props.match.params.instance ? this.props.match.params.instance : "local",
     newPostText: "",
     isAdmin: false,
-    communityData: null
+    communityData: null,
+    isSubscribed: false,
   }
 
   componentDidMount() {
@@ -27,7 +29,8 @@ class CommunityFeed extends Component {
     authFetch("/api/get-user").then(response => response.json())
       .then(data =>
         this.setState({
-          isAdmin: data.adminOf.includes(this.state.currentCommunity)
+          isAdmin: data.adminOf.includes(this.state.currentCommunity),
+          isSubscribed: data.subscriptions.includes(this.state.currentCommunity)
         })
       )
 
@@ -90,11 +93,10 @@ class CommunityFeed extends Component {
                   <Link to="#" className="px-0 py-0" variant="none" style={{ color: "black", fontSize: "36px" }}>{communityData.title}
                   </Link></OverlayTrigger>
               </Card.Title>
-
+              
               : <h2> Loading... </h2>}
-          <Button className="h-50 ml-4 mt-1" variant="outline-secondary">
-              <BookmarkPlus className="mr-2"/>Folloow
-          </Button>
+          
+              <CommunitySubscribeButton community={this.state.currentCommunity} />
           </div>
 
           <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>

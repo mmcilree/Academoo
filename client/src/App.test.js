@@ -20,6 +20,23 @@ import UserSettings from "./components/UserSettings";
 import Welcome from "./components/Welcome";
 import PageNotFound from "./components/PageNotFound";
 
+const auth = require('./auth');
+
+jest.mock('./auth', () => ({
+  useAuth: () => [false],
+  authFetch: () =>
+      Promise.resolve({
+          json: () => Promise.resolve(
+              {
+                  id: "academoo",
+                  email: "academoo@academoo.com",
+                  host: "academoo",
+                  subscriptions: [],
+                  adminOf: []
+              }),
+      })
+}));
+
 it("App renders without crashing", () => {
   shallow(<App />);
 });

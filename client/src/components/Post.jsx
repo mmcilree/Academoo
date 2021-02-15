@@ -197,7 +197,7 @@ class Post extends Component {
 
 
   render() {
-    const { postData, displayCommunityName } = this.props;
+    const {postData, displayCommunityName} = this.props;
     if (!postData.id) return <div />;
     return (
       <React.Fragment>

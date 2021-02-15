@@ -27,7 +27,9 @@ jest.mock('../auth', () => ({
                 {
                     id: "academoo",
                     email: "academoo@academoo.com",
-                    host: "academoo"
+                    host: "academoo",
+                    subscriptions: [],
+                    adminOf: []
                 }),
         })
 }));

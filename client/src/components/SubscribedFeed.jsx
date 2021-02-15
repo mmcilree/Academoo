@@ -7,103 +7,101 @@ import { HostContext } from "./HostContext";
 import { PlusCircle } from "react-bootstrap-icons";
 import MiniPostCreator from "./MiniPostCreator";
 import PostsViewer from "./PostsViewer";
+import { authFetch } from '../auth';
 
 class SubscribedFeed extends Component {
-  state = {
-    isLoading: true,
-    posts: [],
-    currentCommunity: "",
-    error: null,
-    host: "local",
-    newPostText: ""
-  }
-
-  componentDidMount() {
-    this.fetchCommunity();
-  }
-
-  componentDidUpdate() {
-    if (this.state.host !== this.state.host) {
-      this.fetchCommunity();
-    } else if (this.state.isLoading) {
-      this.fetchPosts();
+    state = {
+        isLoading: true,
+        posts: [],
+        error: null,
+        subscribedCommunities: []
     }
-  }
 
-  async fetchCommunity() {
-    await fetch('/api/communities' + (this.state.host !== "local" ? "?external=" + this.state.host : ""))
-      .then(response => response.json())
-      .then(data =>
-        this.setState({
-          currentCommunity: data.length > 0 ? data[0] : "?"
-        })
-      )
+    componentDidMount() {
+        this.fetchSubscribedCommunities();
+    }
 
-    this.fetchPosts();
-  }
+    async fetchSubscribedCommunities() {
+        this.setState({isLoading: true});
+        await authFetch("/api/get-user").then(response => response.json())
+            .then(data => {
+                // console.log("data = "  + data.subcriptions);
+                this.setState({
+                    subscribedCommunities: data.subscriptions,
+                    posts: []
+                })
+            }
+            )
+        
+        this.fetchPosts();
+    }
 
-  fetchPosts() {
-    fetch('/api/posts?community=' + this.state.currentCommunity + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
-      .then(response => response.json())
-      .then(data =>
-        this.setState({
-          posts: data,
-          isLoading: false,
-          host: this.state.host
-        })
-      )
-      .catch(error => this.setState({ error, isLoading: false }));
-  }
+    fetchPosts() {
+        this.state.subscribedCommunities.map((community, i) => {
+            this.appendPostsFromCommunity(community, i);
+        });
+        this.state.subscribedCommunities.length == 0 && this.setState({isLoading: false});
+    }
 
-  render() {
-    
-    const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
-    console.log(this.state);
-    return currentCommunity && (
-      <Container>
-        <Row>
-          <Col xs={12} lg={8}>
-            <Card className="mt-4">
-              <Card.Header>
-                <Nav variant="tabs" defaultActiveKey="#recent">
-                  <Nav.Item>
-                    <Nav.Link href="#recent"><div className="d-none d-sm-inline">Most</div> Recent</Nav.Link>
-                  </Nav.Item>
-                  <Nav.Item>
-                    <Nav.Link href="#commented">Most Commented</Nav.Link>
-                  </Nav.Item>
-                  <Nav.Item>
-                  <Nav.Link href="#top">
-                      Top <div className="d-none d-sm-inline">Posts</div>
-                  </Nav.Link>
-                  </Nav.Item>
-                </Nav>
-              </Card.Header>
-              <Card.Body>
-                <MiniPostCreator currentCommunity={null} />
+    async appendPostsFromCommunity(community, i) {
+        await fetch('/api/posts?community=' + community)
+            .then(response => response.json())
+            .then(data =>
+                this.setState({
+                    posts: [...this.state.posts, ...data],
+                })
+            )
+            .catch(error => this.setState({ error, isLoading: false }));
+        this.setState({posts: this.state.posts.slice().sort((a, b) => b.created - a.created)});
+        
+        (i == this.state.subscribedCommunities.length - 1) && this.setState({isLoading: false});
+    }
 
-                {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
-                {!isLoading ? (
-                  <PostsViewer posts={posts} displayCommunityName/>
-                ) : (
-                    <h3>Loading Posts...</h3>
-                  )}
-                {!isLoading && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
-              </Card.Body>
-            </Card>
-          </Col>
+    render() {
 
-          <Col>
-            <Sidebar currentCommunity={currentCommunity}
-              changeCommunity={(community) => this.setState({
-                currentCommunity: community,
-                isLoading: true
-              })} />
-          </Col>
-        </Row>
-      </Container>
-    );
-  }
+        const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
+        return (
+            <Container>
+                <Row>
+                    <Col xs={12} lg={8}>
+                        <Card className="mt-4">
+                            <Card.Header>
+                                <Nav variant="tabs" defaultActiveKey="#recent">
+                                    <Nav.Item>
+                                        <Nav.Link href="#recent"><div className="d-none d-sm-inline">Most</div> Recent</Nav.Link>
+                                    </Nav.Item>
+                                    <Nav.Item>
+                                        <Nav.Link href="#commented">Most Commented</Nav.Link>
+                                    </Nav.Item>
+                                    <Nav.Item>
+                                        <Nav.Link href="#top">
+                                            Top <div className="d-none d-sm-inline">Posts</div>
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                </Nav>
+                            </Card.Header>
+                            <Card.Body>
+                                <MiniPostCreator currentCommunity={null} />
+
+                                {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
+                                {!isLoading ? (
+                                    <PostsViewer posts={posts} displayCommunityName />
+                                ) : (
+                                        <h3>Loading Posts...</h3>
+                                    )}
+                                {!isLoading && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
+                            </Card.Body>
+                        </Card>
+                    </Col>
+
+                    <Col>
+                        <Sidebar currentCommunity={currentCommunity}
+                            fetchSubscribedCommunities={this.fetchSubscribedCommunities.bind(this)} />
+                    </Col>
+                </Row>
+            </Container>
+        );
+    }
 }
 
 export default SubscribedFeed;
