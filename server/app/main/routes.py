@@ -125,3 +125,9 @@ def add_instance():
 @bp.route("/get-instances", methods=["GET"])
 def get_all_instances():
     return jsonify(federation.get_instances())
+
+@bp.route("/delete-account", methods=["GET"])
+@auth_required
+def delete_user():
+    username = current_user().user_id
+    return Response(status=200) if actions.deleteUser(username) else Response(status=400)

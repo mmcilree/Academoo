@@ -5,13 +5,12 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import Image from "react-bootstrap/Image";
-import { logout, useAuth } from "../auth";
+import { logout, useAuth, authFetch } from "../auth";
 import defaultProfile from "../images/default_profile.png";
 import logo from "../images/logo.svg";
 // import logo from "../images/logo.png";
 import { HostContext } from './HostContext';
 import { useState, useEffect, useContext } from "react";
-import { authFetch } from '../auth';
 
 
 import {
@@ -41,8 +40,13 @@ function HeaderBar() {
 
       logged && authFetch("/api/get-user").then(response => response.json())
         .then(data => {
-          setEmail(md5(data.email))
-          setUsername(data.id)
+          if(data.status_code !== 401) {
+            setEmail(md5(data.email));
+            setUsername(data.id);
+          } else {
+            console.log(data.status_code);
+            logout();
+          }
         }
         )
     }
