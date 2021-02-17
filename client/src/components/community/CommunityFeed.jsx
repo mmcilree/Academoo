@@ -4,6 +4,14 @@ import { Card, Button, Alert, OverlayTrigger, Popover, Row, Col } from "react-bo
 import { Link } from "react-router-dom";
 import { BookmarkPlus } from "react-bootstrap-icons";
 import { authFetch } from '../../auth';
+import MiniPostCreator from "../posts/MiniPostCreator";
+import React, { Component, useContext } from "react";
+import Post from "../posts/Post";
+import Sidebar from "../layout/Sidebar";
+import { Nav, Card, Container, Row, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { BookmarkPlus } from "react-bootstrap-icons";
+import { authFetch } from '../../auth';
 import { PlusCircle } from "react-bootstrap-icons";
 import MiniPostCreator from "../posts/MiniPostCreator";
 import CommunitySubscribeButton from "./CommunitySubscribeButton";
@@ -17,8 +25,12 @@ class CommunityFeed extends Component {
     host: this.props.match.params.instance ? this.props.match.params.instance : "local",
     newPostText: "",
     isAdmin: false,
+<<<<<<< HEAD
     communityData: null,
     isSubscribed: false,
+=======
+    communityData: null
+>>>>>>> d45dea93... feat: changes
   }
 
   componentDidMount() {
@@ -30,8 +42,12 @@ class CommunityFeed extends Component {
     authFetch("/api/get-user").then(response => response.json())
       .then(data =>
         this.setState({
+<<<<<<< HEAD
           isAdmin: data.adminOf.includes(this.state.currentCommunity),
           isSubscribed: data.subscriptions.includes(this.state.currentCommunity)
+=======
+          isAdmin: data.adminOf.includes(this.state.currentCommunity)
+>>>>>>> d45dea93... feat: changes
         })
       )
 
@@ -94,10 +110,18 @@ class CommunityFeed extends Component {
                   <Link to="#" className="px-0 py-0" variant="none" style={{ color: "black", fontSize: "36px" }}>{communityData.title}
                   </Link></OverlayTrigger>
               </Card.Title>
+<<<<<<< HEAD
               
               : <h2> Loading... </h2>}
           
               <CommunitySubscribeButton community={this.state.currentCommunity} />
+=======
+
+              : <h2> Loading... </h2>}
+          <Button className="h-50 ml-4 mt-1" variant="outline-secondary">
+              <BookmarkPlus className="mr-2"/>Folloow
+          </Button>
+>>>>>>> d45dea93... feat: changes
           </div>
 
           <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>
