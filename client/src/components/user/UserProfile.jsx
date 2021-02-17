@@ -104,7 +104,12 @@ class UserProfile extends Component {
                 <p>Bio: {bio ? bio : "No bio has been set yet!"} </p>
               </Media.Body>) : <h3>Loading Profile...</h3>}
           </Media>
+        </Card.Body> 
+        <Card className = "mt-4">
+        <Card.Body>
+          <h5>Posts from {username} :</h5>
         </Card.Body>
+        </Card>
       </Card>
     );
   }
