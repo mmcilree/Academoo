@@ -18,7 +18,6 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { PrivateRoute } from "./components/authentication/PrivateRoute";
 import { LoggedOutRoute } from "./components/authentication/LoggedOutRoute";
 import CommunityCreator from "./components/community/CommunityCreator";
-import { HostContext } from "./components/HostContext";
 import SubscribedFeed from "./components/user/SubscribedFeed";
 import AdminKeyAuth from "./components/authentication/AdminKeyAuth";
 import ControlPanel from "./components/authentication/ControlPanel";
