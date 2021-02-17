@@ -6,10 +6,13 @@ import { shallow, mount } from "enzyme";
 import App from "../App";
 import SubscribedFeed from "../components/user/SubscribedFeed"
 import Welcome from "../components/static/Welcome";
+import CommunityFeed from "../components/community/CommunityFeed";
 import CommentsViewer from "../components/comments/CommentsViewer";
 import PostCreator from "../components/posts/PostCreator";
 import UserSettings from "../components/user/UserSettings";
 import UserProfile from "../components/user/UserProfile";
+import Login from "../components/authentication/Login";
+import SignUp from "../components/authentication/SignUp";
 import { MemoryRouter as Router, Route } from "react-router-dom";
 
 // const App = require('../App').default;

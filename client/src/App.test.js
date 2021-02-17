@@ -7,6 +7,7 @@ import { shallow, mount } from "enzyme";
 import App from "./App";
 import Post from "./components/posts/Post";
 import SubscribedFeed from "./components/user/SubscribedFeed";
+import CommunityFeed from "./components/community/CommunityFeed";
 import CommunityExplorer from "./components/community/CommunityExplorer";
 import CommentsViewer from "./components/comments/CommentsViewer";
 import HeaderBar from './components/layout/HeaderBar';

@@ -20,6 +20,7 @@ class CommunityFeed extends Component {
     isAdmin: false,
     communityData: null,
     isSubscribed: false,
+
   }
 
   componentDidMount() {

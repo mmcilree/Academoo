@@ -5,11 +5,19 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import Image from "react-bootstrap/Image";
+<<<<<<< HEAD:client/src/components/layout/HeaderBar.jsx
 import { logout, useAuth, authFetch } from "../../auth";
+=======
+import { logout, useAuth } from "../../auth";
+>>>>>>> d45dea93b981d591778714c2303da9d154404384:client/src/components/HeaderBar.jsx
 import defaultProfile from "../../images/default_profile.png";
 import logo from "../../images/logo.svg";
 // import logo from "../images/logo.png";
 import { useState, useEffect, useContext } from "react";
+<<<<<<< HEAD:client/src/components/layout/HeaderBar.jsx
+=======
+import { authFetch } from '../../auth';
+>>>>>>> d45dea93b981d591778714c2303da9d154404384:client/src/components/HeaderBar.jsx
 
 
 import {
