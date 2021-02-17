@@ -4,15 +4,15 @@ import Adapter from "enzyme-adapter-react-16";
 configure({ adapter: new Adapter() });
 import { shallow, mount } from "enzyme";
 import App from "../App";
-import Welcome from "../components/Welcome";
-import CommunityFeed from "../components/CommunityFeed";
-import SubscribedFeed from "../components/SubscribedFeed"
-import CommentsViewer from "../components/CommentsViewer";
-import PostCreator from "../components/PostCreator";
-import UserSettings from "../components/UserSettings";
-import UserProfile from "../components/UserProfile";
-import Login from "../components/Login";
-import SignUp from "../components/SignUp";
+import SubscribedFeed from "../components/user/SubscribedFeed"
+import Welcome from "../components/static/Welcome";
+import CommunityFeed from "../components/community/CommunityFeed";
+import CommentsViewer from "../components/comments/CommentsViewer";
+import PostCreator from "../components/posts/PostCreator";
+import UserSettings from "../components/user/UserSettings";
+import UserProfile from "../components/user/UserProfile";
+import Login from "../components/authentication/Login";
+import SignUp from "../components/authentication/SignUp";
 import { MemoryRouter as Router, Route } from "react-router-dom";
 
 // const App = require('../App').default;

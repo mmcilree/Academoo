@@ -1,10 +1,12 @@
 import React, { Component } from "react";
-import PostViewer from "./PostsViewer";
+import PostViewer from "../posts/PostsViewer";
 import { Card, Button, Alert, OverlayTrigger, Popover, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { BookmarkPlus } from "react-bootstrap-icons";
-import { authFetch } from '../auth';
-import MiniPostCreator from "./MiniPostCreator";
+import { authFetch } from '../../auth';
+import MiniPostCreator from "../posts/MiniPostCreator";
+import Post from "../posts/Post";
+import Sidebar from "../layout/Sidebar";
 import CommunitySubscribeButton from "./CommunitySubscribeButton";
 
 class CommunityFeed extends Component {
@@ -18,6 +20,7 @@ class CommunityFeed extends Component {
     isAdmin: false,
     communityData: null,
     isSubscribed: false,
+
   }
 
   componentDidMount() {

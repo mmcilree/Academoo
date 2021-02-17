@@ -2,7 +2,7 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import { BookmarkPlus, BookmarkCheck } from "react-bootstrap-icons";
 
-import { authFetch } from '../auth';
+import { authFetch } from '../../auth';
 
 class CommunitySubscribeButton extends React.Component {
     state = {

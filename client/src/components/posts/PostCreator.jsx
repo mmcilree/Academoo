@@ -1,10 +1,10 @@
 import React from 'react';
-import MarkdownPreviewer from './MarkdownPreviewer';
+import MarkdownPreviewer from '../layout/MarkdownPreviewer';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
-import { authFetch } from '../auth';
+import { authFetch } from '../../auth';
 import { Route } from 'react-router-dom';
 import { Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
 

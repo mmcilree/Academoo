@@ -2,7 +2,7 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
-import { authFetch } from "../auth";
+import { authFetch } from "../../auth";
 
 import {
   BadgeTm,
@@ -22,11 +22,11 @@ class Welcome extends React.Component {
       <Card className="mt-4">
         <Card.Body>
           <h1>Hello,</h1>
-          <h1>  Welcome to Academoo!</h1>
+          <h1> Welcome to Academoo!</h1>
           <p>We are part of a new federated social media platform for universities. We connect with similar sites to allow communciation between sites and to allow people from all over to connect and discuss things they enjoy! </p>
           <p>There is lots of things you can do on Academoo: 
             <ul>
-              <li>Create your own community</li>
+              <li>Create your own commoonity</li>
               <li>Post on communities on our server, and others</li>
               <li>Upvote and downvote members posts</li>
               <li>Personalise your profile</li>
