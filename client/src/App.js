@@ -44,15 +44,15 @@ class App extends React.Component {
                 <PrivateRoute exact path="/" component={Welcome} />
                 <PrivateRoute path="/home" component={Welcome} />
                 <PrivateRoute exact path="/moosfeed" component={SubscribedFeed} />
-                <PrivateRoute path="/communities/:id" component={CommunityFeed} />
-                <PrivateRoute path="/communities/:id/manage" component={CommunityManager} />
+                <PrivateRoute exact path="/communities/:id" component={CommunityFeed} />
+                <PrivateRoute exact path="/communities/:id/manage" component={CommunityManager} />
                 <PrivateRoute path="/communities/:instance/:id" component={CommunityFeed} />
                 <PrivateRoute path="/create-post" component={PostCreator} />
-                <PrivateRoute path="/comments/:id" component={CommentsViewer} />
+                <PrivateRoute exact path="/comments/:id" component={CommentsViewer} />
                 <PrivateRoute path="/comments/:instance/:id" component={CommentsViewer} />
                 <PrivateRoute path="/user-settings" component={UserSettings} />
                 <PrivateRoute path="/help" component={Help} />
-                <PrivateRoute path="/user-profile/:id" component={UserProfile} />
+                <PrivateRoute exact path="/user-profile/:id" component={UserProfile} />
                 <PrivateRoute path="/user-profile/:instance/:id" component={UserProfile} />
                 <PrivateRoute path="/explore" component={CommunityExplorer} />
                 <PrivateRoute path="/create-community" component={CommunityCreator} />
