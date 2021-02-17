@@ -66,7 +66,7 @@ class SubscribedFeed extends Component {
                     <Col xs={12} lg={8}>
                         <Card className="mt-4">
                             <Card.Header>
-                                <Nav variant="tabs" defaultActiveKey="#recent">
+                                <Nav variant="tabs" defaultActiveKey="recent">
                                     <Nav.Item>
                                         <Nav.Link eventKey="recent"><div className="d-none d-sm-inline">Most</div> Recent</Nav.Link>
                                     </Nav.Item>
