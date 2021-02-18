@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { Card, Media } from "react-bootstrap";
+import { Card, Media, Alert } from "react-bootstrap";
 import defaultProfile from "../../images/default_profile.png";
 import { authFetch } from '../../auth';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import PostsViewer from '../posts/PostsViewer';
 var md5 = require("md5");
 
 class UserProfile extends Component {
@@ -15,6 +16,8 @@ class UserProfile extends Component {
       username: this.props.match.params.id,
       email: null,
       bio: "",
+      error: null,
+      posts: [],
       host: this.props.match.params.instance ? this.props.match.params.instance : "local",
       isLoading: true
     };
@@ -50,8 +53,21 @@ class UserProfile extends Component {
       )
   }
 
+  async fetchPosts() {
+    await fetch('/api/posts?=' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
+      .then(response => response.json())
+      .then(data =>
+        this.setState({
+          posts: data,
+          host: this.state.host
+        })
+      )
+      .catch(error => this.setState({ error, isLoading: false }));
+  }
+
   componentDidMount() {
     this.fetchCurrentUser();
+    this.fetchPosts();
   }
 
 
@@ -84,7 +100,7 @@ class UserProfile extends Component {
       emailHash = !this.state.isLoading && md5(this.state.email);
     }
 
-    const { username, email, bio } = this.state;
+    const { username, email, bio, posts, error, isLoading } = this.state;
     return username && (
       <Card className="mt-4">
         <Card.Body>
@@ -108,6 +124,14 @@ class UserProfile extends Component {
         <Card className = "mt-4">
         <Card.Body>
           <h5>Posts from {username} :</h5>
+
+          {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
+          {!isLoading ? (
+            <PostsViewer posts={posts} />
+          ) : (
+              <h3>Loading Posts...</h3>
+            )}
+          {!isLoading && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
         </Card.Body>
         </Card>
       </Card>
