@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Card, Media, Alert } from "react-bootstrap";
+import { Link } from 'react-router-dom';
 import defaultProfile from "../../images/default_profile.png";
 import { authFetch } from '../../auth';
 import Form from 'react-bootstrap/Form';
@@ -120,20 +121,22 @@ class UserProfile extends Component {
                 <p>Bio: {bio ? bio : "No bio has been set yet!"} </p>
               </Media.Body>) : <h3>Loading Profile...</h3>}
           </Media>
-        </Card.Body> 
-        <Card className = "mt-4">
-        <Card.Body>
-          <h5>Posts from {username} :</h5>
-
-          {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
-          {!isLoading ? (
-            <PostsViewer posts={posts} />
-          ) : (
-              <h3>Loading Posts...</h3>
-            )}
-          {!isLoading && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
         </Card.Body>
-        </Card>
+        <h4> &nbsp;&nbsp;&nbsp;Posts from {username} :</h4>
+        <Card.Body>
+          <Card className="mt-1">
+            <Card.Body>
+              {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
+              {!isLoading ? (
+                <PostsViewer posts={posts} />
+              ) : (
+                  <h3>Loading Posts...</h3>
+                )}
+              {!isLoading && posts.length === 0 ? <h6>OMG... You haven't posted a Moo yet! What are you waiting for? <Link to='/create-post'> Create a Moo</Link> now!</h6> : null}
+            </Card.Body>
+          </Card>
+        </Card.Body>
+
       </Card>
     );
   }
