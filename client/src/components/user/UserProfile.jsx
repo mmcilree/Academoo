@@ -55,7 +55,8 @@ class UserProfile extends Component {
   }
 
   async fetchPosts() {
-    await fetch('/api/posts?=' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
+    this.fetchCurrentUser();
+    await fetch('/api/posts?author=' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
       .then(response => response.json())
       .then(data =>
         this.setState({
@@ -104,13 +105,12 @@ class UserProfile extends Component {
     const { username, email, bio, posts, error, isLoading } = this.state;
     return username && (
       <Card className="mt-4">
-        <Card.Body>
-
+        <Card.Body className="mb-0">
           <Media>
             <img
               width={150}
               height={150}
-              className="mr-5 mb-3 rounded-circle border border-primary"
+              className="mr-5 rounded-circle border border-primary"
               src={email ? "https://en.gravatar.com/avatar/" + emailHash : defaultProfile}
               alt="Profile image placeholder"
             />
@@ -122,10 +122,10 @@ class UserProfile extends Component {
               </Media.Body>) : <h3>Loading Profile...</h3>}
           </Media>
         </Card.Body>
-        <h4> &nbsp;&nbsp;&nbsp;Posts from {username} :</h4>
         <Card.Body>
-          <Card className="mt-1">
+          <Card >
             <Card.Body>
+            <Card.Title> Posts from {username} :</Card.Title>
               {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
               {!isLoading ? (
                 <PostsViewer posts={posts} />
