@@ -174,7 +174,7 @@ class ControlPanel extends Component {
         const { isLoading, isAdmin, isModerator } = this.state;
         return (
             isLoading ? <Card className="mt-4"><Card.Body><Card.Title>Loading ...</Card.Title></Card.Body></Card> :
-                !isAdmin ? <Redirect to='/forbidden' /> :
+                (!isAdmin && !isModerator) ? <Redirect to='/forbidden' /> :
                     <Card className="mt-4">
                         <Card.Body>
                             <Card.Title>{isAdmin ? "Admin " : "Moderator "} Control Panel</Card.Title>
