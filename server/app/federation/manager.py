@@ -1,7 +1,7 @@
 import os
 import functools
 from app.federation.instance import Instance
-
+import time
 
 class Manager(object):
     def __init__(self):
@@ -15,7 +15,8 @@ class Manager(object):
             self.instances = {
                 "cs3099-group1": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
                 "nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/"),
-                "unifier": Instance("http://unifier-prod.herokuapp.com")
+                "unifier": Instance("http://unifier-prod.herokuapp.com"),
+                "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/")
             }
 
     def create_post(self, host, data):
@@ -28,6 +29,10 @@ class Manager(object):
         return self.instances[host].delete_post(data)
 
     def _get_latest_timestamp(self, host, community):
+        timestamps = self.instances[host].get_timestamps(community)
+        if timestamps is None:
+            return max([x["modified"] for x in self.instances[host].get_posts(community)] + [0])
+
         return max([x["modified"] for x in self.instances[host].get_timestamps(community)] + [0])
 
     @functools.lru_cache() # timestamp purely for caching purposes

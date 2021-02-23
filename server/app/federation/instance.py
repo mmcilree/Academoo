@@ -16,6 +16,9 @@ class Instance(object):
 
     def get_timestamps(self, community):
         ret = requests.get(urljoin(self.url, f"/fed/communities/{community}/timestamps"))
+        print(ret.status_code)
+        if(ret.status_code != 200):
+            return None
         return ret.json()
 
     # If the timestamp is different, then the cache is invalidated
