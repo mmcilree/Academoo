@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { ListGroup, Card, ListGroupItem } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import CommunityList from "./CommunityList";
-import { authFetch } from '../auth';
-import CommunitySubscribeButton from "./CommunitySubscribeButton";
+import CommunityList from "../community/CommunityList";
+import { authFetch } from '../../auth';
+import CommunitySubscribeButton from "../community/CommunitySubscribeButton";
 
 class Sidebar extends Component {
     state = {
