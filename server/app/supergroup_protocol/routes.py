@@ -33,30 +33,46 @@ def get_user_by_id(id):
 # Community
 @bp.route("/communities", methods=["GET"])
 def get_all_communities():
+    host = request.headers.get("Client-Host")
+    if host is None:
+        print("GET ALL COMS DEAD")
+        return Response(status = 400)
     external = request.args.get("external")
 
     if not external:
         body, status = actions.getCommunityIDs()
         return respond_with_action(actions.getCommunityIDs())
     else:
-        return jsonify(federation.get_communities(external))
+        headers = {"Client-Host": host}
+        return jsonify(federation.get_communities(external, headers))
 
 @bp.route("/communities/<id>", methods=["GET"])
 def get_community_by_id(id):
+    host = request.headers.get("Client-Host")
+    if host is None:
+        print("GET COM BY ID DEAD")
+        return Response(status = 400)
     external = request.args.get("external")
 
     if not external:
         return respond_with_action(actions.getCommunity(id))
     else:
-        return jsonify(federation.get_communities(external, id=id))
+        headers = {"Client-Host": host}
+        return jsonify(federation.get_communities(external, headers, id=id))
 
 @bp.route("/communities/<id>/timestamps")
 def get_community_timestamps(id):
+    ##headers = request.headers['Client-Host']
     return respond_with_action(actions.getAllCommunityPostsTimeModified(id))
 
 # Posts
 @bp.route("/posts", methods=["GET"])
 def get_all_posts():
+    host = request.headers.get("Client-Host")
+    requester_str = request.headers.get("User-ID")
+    if host is None or requester_str is None:
+        print("GET ALL POSTS DEAD")
+        return Response(status = 400)
     # limit, community, min_date
     limit = int(request.args.get("limit", 20))
     community_id = request.args.get("community")
@@ -73,7 +89,8 @@ def get_all_posts():
     if not external:
         return respond_with_action(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type))
     else:
-        responseArr = federation.get_posts(external, community_id)
+        headers = {"Client-Host": host, "User-ID": requester_str}
+        responseArr = federation.get_posts(external, community_id, headers)
         for post in responseArr:
             post['host'] = external
         
@@ -82,11 +99,17 @@ def get_all_posts():
 @bp.route("/posts/<id>", methods=["GET"])
 def get_post_by_id(id):
     external = request.args.get("external")
+    host = request.headers.get("Client-Host")
+    requester_str = request.headers.get("User-ID")
+    if host is None or requester_str is None:
+        print("GET POST BY ID DEAD")
+        return Response(status = 400)
 
     if not external:
         return respond_with_action(actions.getPost(id))
     else:
-        post = federation.get_post_by_id(external, id)
+        headers = {"Client-Host": host, "User-ID": requester_str}
+        post = federation.get_post_by_id(external, id, headers)
         post['host'] = external
         
         return jsonify(post)
@@ -97,13 +120,14 @@ def create_post():
     print("EXTERNAL IS " + str(external))
     host = request.headers.get("Client-Host")
     requester_str = request.headers.get("User-ID")
-    if host is None:
+    if host is None or requester_str is None:
+        print("CREATE POST DEAD")
         return Response(status = 400)
 
     if check_create_post(request.get_json(silent=True)): return check_create_post(request.get_json(silent=True))
 
+    requester = User.lookup(requester_str)
     if external is None:
-        requester = User.lookup(requester_str)
         community_id = request.json["community"]
         if not requester.has_role(community_id, "guest"):
             community = Community.lookup(community_id)
@@ -116,19 +140,19 @@ def create_post():
         
         return respond_with_action(actions.createPost(request.json))
     else:
-        return federation.create_post(external, request.json)
+        headers = {"Client-Host": host, "User-ID": requester_str}
+        return federation.create_post(external, request.json, headers)
 
     #return Response(status = 201)
 
 @bp.route("/posts/<id>", methods=["PUT"])
 def edit_post(id):
-    external = request.json.get("external") # Changed from request.json.get("external") as external not field in create_post json
-    print("EXTERNAL IS " + str(external))
-
-    host = request.headers.get("Client-Host") 
+    host = request.headers.get("Client-Host")
     requester_str = request.headers.get("User-ID")
     if host is None or requester_str is None:
         return Response(status = 400)
+    external = request.json.get("external") # Changed from request.json.get("external") as external not field in create_post json
+    print("EXTERNAL IS " + str(external))
 
     if check_edit_post(request.get_json(silent=True)): return check_edit_post(request.get_json(silent=True))
 
@@ -137,7 +161,8 @@ def edit_post(id):
     if external is None:
         actions.editPost(id, request.json, requester)
     else:
-        federation.edit_post(external, request.json)
+        headers = {"Client-Host": host, "User-ID": requester_str}
+        federation.edit_post(external, request.json, headers)
 
     return Response(status = 200)
 
@@ -156,6 +181,7 @@ def delete_post(id):
     if external is None:
         actions.deletePost(id, requester)
     else:
-        federation.delete_post(external, request.json)
+        headers = {"Client-Host": host, "User-ID": requester_str}
+        federation.delete_post(external, request.json, headers)
 
     return Response(status = 200)
