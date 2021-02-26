@@ -279,12 +279,14 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if content_type is not None:
         valid_posts = [content_field.post_id for content_field in PostContentField.query.filter(content_type=content_type).all()]
         query = query.filter(Post.id.in_(valid_posts))
-
+    if include_children is not None:
+        query = query.filter(Post.parent_id == None)
     query = query.order_by(desc(Post.created))
     if limit is not None:
         query = query.limit(limit)
 
-    '''
+
+    ''' leave for just now maybe useless idk
     if include_children:
         for post in query:
             post_children = getFilteredPosts(limit, community_id, min_date, author, host, post.id, True, content_type)
