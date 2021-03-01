@@ -105,7 +105,13 @@ def create_post():
     if external is None:
         requester = User.lookup(requester_str)
         community_id = request.json["community"]
-        if not requester.has_role(community_id, "guest"):
+
+        if requester is None:
+            community = Community.lookup(community_id)
+            role = community.default_role
+            if ((role != "contributor") & (role != "admin")):
+                return Response(status = 403)
+        elif not requester.has_role(community_id, "guest"):
             community = Community.lookup(community_id)
             role = community.default_role
             if ((role != "contributor") & (role != "admin")):
