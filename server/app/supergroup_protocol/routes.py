@@ -35,7 +35,7 @@ def get_user_by_id(id):
 def get_all_communities():
     host = request.headers.get("Client-Host")
     if host is None:
-        print("GET ALL COMS DEAD")
+        print("GET ALL COMS DEAD : " + str(request.headers))
         return Response(status = 400)
     external = request.args.get("external")
 
@@ -61,7 +61,7 @@ def get_community_by_id(id):
         return jsonify(federation.get_communities(external, headers, id=id))
 
 @bp.route("/communities/<id>/timestamps")
-def get_community_timestamps(id):
+def get_community_timestamps(id): ############################################################# NO SUPPORT FOR FEDERATION?????????????/
     ##headers = request.headers['Client-Host']
     return respond_with_action(actions.getAllCommunityPostsTimeModified(id))
 
@@ -77,8 +77,8 @@ def get_all_posts():
     limit = int(request.args.get("limit", 20))
     community_id = request.args.get("community")
     min_date = request.args.get("minDate", 0)
-    author = request.args.get("author")
-    host = request.args.get("host")
+    author = request.args.get("author") #####
+    #host = request.args.get("host") ###### removed from protocol
     parent_post = request.args.get("parentPost")
     include_children = request.args.get("includeSubChildrenPosts")
     content_type = request.args.get("contentType")

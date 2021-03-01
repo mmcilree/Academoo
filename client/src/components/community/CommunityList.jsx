@@ -20,7 +20,12 @@ class CommunityList extends React.Component {
     }
 
     fetchCommunities() {
-        fetch('/api/communities' + (this.props.instance !== "local" ? "?external=" + this.props.instance : ""))
+        fetch('/api/communities' + (this.props.instance !== "local" ? "?external=" + this.props.instance : ""), 
+        {
+            headers: {
+                'Client-Host': window.location.protocol + "//" + window.location.hostname
+            }
+        })
             .then(response => response.json())
             .then(data =>
                 this.setState({

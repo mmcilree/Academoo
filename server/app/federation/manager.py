@@ -31,11 +31,11 @@ class Manager(object):
     def _get_latest_timestamp(self, host, community, headers):
         timestamps = self.instances[host].get_timestamps(community, headers)
         if timestamps is None:
-            return max([x["modified"] for x in self.instances[host].get_posts(community)] + [0])
+            return max([x["modified"] for x in self.instances[host].get_posts(community, headers)] + [0])
 
-        return max([x["modified"] for x in self.instances[host].get_timestamps(community)] + [0])
+        return max([x["modified"] for x in self.instances[host].get_timestamps(community, headers)] + [0])
 
-    @functools.lru_cache() # timestamp purely for caching purposes
+    #@functools.lru_cache() # timestamp purely for caching purposes      ######getting key error: unhashable type: dict
     def _get_posts(self, host, community, _timestamp, headers):
         return self.instances[host].get_posts(community, headers)
 

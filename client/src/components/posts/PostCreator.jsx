@@ -74,7 +74,12 @@ class PostCreator extends React.Component {
     }
 
     async fetchCommunities(host) {
-        await fetch('/api/communities' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
+        await fetch('/api/communities' + (host !== "local" ? "?external=" + host : ""), 
+        {
+            headers: {
+                'Client-Host': window.location.protocol + "//" + window.location.hostname
+            }
+        }).then(response => response.json())
             .then(data =>
                 this.setState({
                     communities: [...this.state.communities, ...data.map(community => ({ host: host, community: community }))],

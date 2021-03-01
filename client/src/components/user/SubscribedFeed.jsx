@@ -43,7 +43,13 @@ class SubscribedFeed extends Component {
     }
 
     async appendPostsFromCommunity(community, i) {
-        await fetch('/api/posts?community=' + community)
+        await fetch('/api/posts?community=' + community, 
+        {
+            headers: {
+                'User-ID': this.state.user_id,
+                'Client-Host': window.location.protocol + "//" + window.location.hostname
+            }
+        })
             .then(response => response.json())
             .then(data =>
                 this.setState({
