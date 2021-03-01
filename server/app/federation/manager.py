@@ -14,8 +14,10 @@ class Manager(object):
         else:
             self.instances = {
                 "cs3099-group1": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
+                "group-a10": Instance("https://cs3099user-a10.host.cs.st-andrews.ac.uk/"),
+                "group-a5": Instance("https://cs3099user-a5.host.cs.st-andrews.ac.uk/"),
                 "nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/"),
-                "unifier": Instance("http://unifier-prod.herokuapp.com"),
+                #"unifier": Instance("http://unifier-prod.herokuapp.com/"),
                 "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/")
             }
 
