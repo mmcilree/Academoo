@@ -1,5 +1,5 @@
 import React from "react";
-import Accordion from "react-bootstrap/Accordion";
+import {Accordion, Alert } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import "bootstrap/dist/css/bootstrap.min.css";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -12,6 +12,7 @@ class CommunityList extends React.Component {
         this.state = {
             communities: [],
             isLoading: true,
+            errors: []
         }
     }
 
@@ -20,23 +21,39 @@ class CommunityList extends React.Component {
     }
 
     fetchCommunities() {
+        client/src/components/community/CommunityList.jsx
         fetch('/api/communities' + (this.props.instance !== "local" ? "?external=" + this.props.instance : ""), 
         {
             headers: {
                 'Client-Host': window.location.protocol + "//" + window.location.hostname
             }
         })
-            .then(response => response.json())
-            .then(data =>
-                this.setState({
-                    communities: data,
-                    isLoading: false,
-                })
+            .then(response => {
+                if(!response.ok) {
+                    
+                    throw new Error();
+                }
+                return response.json()
+            }
             )
+            .then(data => {
+        client/src/components/community/CommunityList.jsx
+                this.setState({
+                    communities: [...this.state.communities, ...data],
+                    isLoading: false
+                })
+                
+            }
+            ).catch((err) => {
+                this.setState({errors: [...this.state.errors, err.message], isLoading: false});
+                console.log(err)});
+
     }
 
     render() {
-        const { communities, isLoading } = this.state;
+        const { communities, isLoading, errors } = this.state;
+        console.log(this.props.instance);
+        console.log(this.state);
         return (
             <Accordion defaultActiveKey="0">
                 <Card className="mt-4">
@@ -48,17 +65,25 @@ class CommunityList extends React.Component {
                     <Accordion.Collapse eventKey="0">
                         <Card.Body className="px-0 py-1">
                             <ListGroup variant="flush"  >
+
+                                {errors.map(error => (
+                                    <ListGroup.Item>
+                                        <Alert variant='warning' key={error}>{"Error: " + error}</Alert>
+                                    </ListGroup.Item>
+                                    
+                                ))}
+
                                 {!isLoading ?
                                     communities.map((community) =>
                                         community !== "" &&
-                                        
-                                            <ListGroup.Item key={community} className="d-flex justify-content-between">
-                                                <Link to={this.props.instance === "local" ? 
+
+                                        <ListGroup.Item key={community} className="d-flex justify-content-between">
+                                            <Link to={this.props.instance === "local" ?
                                                 "communities/" + community : "communities/" + this.props.instance + "/" + community} >
                                                 {community}
-                                                </Link>
-                                                <CommunitySubscribeButton community={community}/>
-                                            </ListGroup.Item>)
+                                            </Link>
+                                            <CommunitySubscribeButton community={community} />
+                                        </ListGroup.Item>)
                                     : <ListGroup.Item>Loading Communities...</ListGroup.Item>
                                 }
                             </ListGroup>
