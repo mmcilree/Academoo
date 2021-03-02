@@ -21,7 +21,13 @@ class CommunityList extends React.Component {
     }
 
     fetchCommunities() {
-        fetch('/api/communities' + (this.props.instance !== "local" ? "?external=" + this.props.instance : ""))
+        client/src/components/community/CommunityList.jsx
+        fetch('/api/communities' + (this.props.instance !== "local" ? "?external=" + this.props.instance : ""), 
+        {
+            headers: {
+                'Client-Host': window.location.protocol + "//" + window.location.hostname
+            }
+        })
             .then(response => {
                 if(!response.ok) {
                     
@@ -31,6 +37,7 @@ class CommunityList extends React.Component {
             }
             )
             .then(data => {
+        client/src/components/community/CommunityList.jsx
                 this.setState({
                     communities: [...this.state.communities, ...data],
                     isLoading: false

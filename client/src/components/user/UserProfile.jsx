@@ -56,7 +56,13 @@ class UserProfile extends Component {
 
   async fetchPosts() {
     this.fetchCurrentUser();
-    await fetch('/api/posts?author=' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
+    await fetch('/api/posts?author=' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""), 
+    {
+      headers: {
+          'User-ID': this.state.currentUser,
+          'Client-Host': window.location.protocol + "//" + window.location.hostname
+      }
+    })
       .then(response => response.json())
       .then(data =>
         this.setState({

@@ -43,7 +43,12 @@ class CommunityCreator extends React.Component {
     }
 
     fetchCommunities(host) {
-        fetch('/api/communities').then(response => response.json())
+        fetch('/api/communities').then(response => response.json(), 
+        {
+            headers: {
+                'Client-Host': window.location.protocol + "//" + window.location.hostname
+            }
+        })
             .then(data =>
                 this.setState({
                     communities: data,
@@ -93,7 +98,9 @@ class CommunityCreator extends React.Component {
         }
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(
                 {
                     id: this.state.id,
