@@ -40,7 +40,6 @@ def validate_role(role):
 
 def validate_post_id(post_id):
     if not isUUID(post_id):
-        print("VAL POST")
         return ({"title": "post id is not in the correct format", "message": "Format of post id should be uuid4 string"}, 400)
 
 def validate_json(file): # IS REDUNDANT, REMOVE EVENTUALLY

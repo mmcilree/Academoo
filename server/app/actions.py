@@ -340,7 +340,6 @@ def getPost(post_id):
 
 def editPost(post_id, post_data, requester):
     if validate_post_id(post_id): return validate_post_id(post_id)
-    print("AFTER VAL EDIT")
 
     update_title = post_data["title"]
     update_content_json = post_data["content"]
