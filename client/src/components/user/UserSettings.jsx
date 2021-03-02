@@ -240,6 +240,8 @@ class UserSettings extends Component {
                   <p></p>
                   <Form.Text>Enter your username to confirm: </Form.Text>
                   <Form.Control type="input" name="confirmUsername" onChange={this.handleChange.bind(this)} value={this.state.confirmUsername}></Form.Control>
+                  <Form.Text>Enter your password to confirm: </Form.Text>
+                  <Form.Control type="input" name="confirmPassword" onChange={this.handleChange.bind(this)} value={this.state.confirmPassword}></Form.Control>
                   </Form.Group>
                 <Button variant="secondary" type="submit" disabled={(this.state.username !== this.state.confirmUsername)}>Delete Account</Button>
               </Form>
