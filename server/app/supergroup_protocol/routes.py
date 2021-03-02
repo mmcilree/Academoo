@@ -111,7 +111,7 @@ def get_post_by_id(id):
 
 @bp.route("/posts", methods=["POST"])
 def create_post():
-    external = request.json.get("external")
+    external = request.json.get("external", None)
     host = request.headers.get("Client-Host")
     requester_str = request.headers.get("User-ID")
     if host is None or requester_str is None:
@@ -150,7 +150,7 @@ def edit_post(id):
     requester_str = request.headers.get("User-ID")
     if host is None or requester_str is None:
         return Response(status = 400)
-    external = request.json.get("external") # Changed from request.json.get("external") as external not field in create_post json
+    external = request.json.get("external", None) # Changed from request.json.get("external") as external not field in create_post json
 
     if check_edit_post(request.get_json(silent=True)): return check_edit_post(request.get_json(silent=True))
 
