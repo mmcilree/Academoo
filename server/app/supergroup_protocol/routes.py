@@ -117,7 +117,7 @@ def create_post():
     if host is None or requester_str is None:
         return Response(status = 400)
 
-    if check_create_post(request.get_json(silent=True)): return check_create_post(request.get_json(silent=True))
+    if check_create_post(request.get_json(silent=True, force=True)): return check_create_post(request.get_json(silent=True, force=True))
 
     requester = User.lookup(requester_str)
     if external is None:
@@ -137,7 +137,7 @@ def create_post():
             if not requester.has_role(community_id, "contributor"):
                 return Response(status = 403)
         
-        return respond_with_action(actions.createPost(request.json))
+        return respond_with_action(actions.createPost(request.json, requester_str, host))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
         return federation.create_post(external, request.json, headers)
@@ -152,7 +152,7 @@ def edit_post(id):
         return Response(status = 400)
     external = request.json.get("external", None) # Changed from request.json.get("external") as external not field in create_post json
 
-    if check_edit_post(request.get_json(silent=True)): return check_edit_post(request.get_json(silent=True))
+    if check_edit_post(request.get_json(silent=True, force=True)): return check_edit_post(request.get_json(silent=True, force=True))
 
     requester = User.lookup(requester_str)
 

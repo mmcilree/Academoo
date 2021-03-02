@@ -39,6 +39,7 @@ class Instance(object):
     def create_post(self, data, headers):
         data.pop("external")
         ret = requests.post(urljoin(self.url, f"/fed/posts"), json=data, headers=headers)
+        print(ret)
         return Response(status=ret.status_code)
     
     def edit_post(self, data, id, headers):
