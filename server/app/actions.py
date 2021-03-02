@@ -298,17 +298,20 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
 
 # Post host may not be tied to author idk
 # Author host is not in json file so will need to passed in manually :(
-def createPost(post_data, host="NULL"):
+def createPost(post_data, author_id, author_host):
     community_id = post_data["community"]
     parent_post = post_data["parentPost"]
     title = post_data["title"]
     content_json = post_data["content"]
-    author = post_data["author"]
-    author_id = author["id"]
-    author_host = author["host"]
+    author_id = author_id
+    author_host = author_host
 
     if validate_community_id(community_id): return validate_community_id(community_id)
     if validate_username(author_id): return validate_username(author_id)
+
+    if len(parent_post) == 0:
+        parent_post = None
+        
     if parent_post is not None: 
         if validate_post_id(parent_post): return validate_post_id(parent_post)
 
@@ -340,7 +343,6 @@ def getPost(post_id):
 
 def editPost(post_id, post_data, requester):
     if validate_post_id(post_id): return validate_post_id(post_id)
-    print("AFTER VAL EDIT")
 
     update_title = post_data["title"]
     update_content_json = post_data["content"]

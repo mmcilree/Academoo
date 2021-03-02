@@ -32,6 +32,7 @@ class CommunityFeed extends Component {
     authFetch("/api/get-user").then(response => response.json())
       .then(data =>
         this.setState({
+          userID: data.userID,
           isAdmin: data.adminOf.includes(this.state.currentCommunity),
           isSubscribed: data.subscriptions.includes(this.state.currentCommunity)
         })
@@ -43,7 +44,7 @@ class CommunityFeed extends Component {
     await fetch('/api/posts?community=' + this.state.currentCommunity + (this.state.host !== "local" ? "&external=" + this.state.host : ""),
     {
       headers: {
-          'User-ID': this.state.user_id,
+          'User-ID': this.state.userID,
           'Client-Host': window.location.protocol + "//" + window.location.hostname
       }
     })
@@ -54,7 +55,10 @@ class CommunityFeed extends Component {
           host: this.state.host
         })
       )
-      .catch(error => this.setState({ error, isLoading: false }));
+      .catch(error => {
+        console.log(error)
+        this.setState({ error, isLoading: false })
+        });
     this.fetchCommunityDetails();
   }
 
@@ -89,6 +93,7 @@ class CommunityFeed extends Component {
 
   render() {
     const { isLoading, posts, error, currentCommunity, newPostText, host, communityData, isAdmin } = this.state;
+    console.log(this.state);
     const popover = (
       <Popover id="popover-basic">
         <Popover.Title as="h3">Community description</Popover.Title>
@@ -97,7 +102,7 @@ class CommunityFeed extends Component {
         </Popover.Content>
       </Popover>
     );
-    return currentCommunity && (
+    return (
       <Card className="mt-4 mb-10">
         <Card.Header className="pt-4 pr-4">
           <div className="d-flex justify-content-right">

@@ -13,9 +13,8 @@ class PostsViewer extends Component {
 
     return this.props.posts && (
       this.props.posts.map(data => {
-        const { parentPost, id } = data;
+        const { id } = data;
         return (
-          (parentPost === null) ? (
             <Card key={id} className="mt-4">
               <Card.Body className="pb-2">
                 <Post postData={data} postType="preview" displayCommunityName={this.props.displayCommunityName} />
@@ -28,7 +27,7 @@ class PostsViewer extends Component {
                   </small> </Link>
               </Card.Body>
             </Card>
-          ) : null);
+          )
       })
     )
   }

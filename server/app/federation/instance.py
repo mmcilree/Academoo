@@ -22,7 +22,6 @@ class Instance(object):
 
     # If the timestamp is different, then the cache is invalidated
     def get_posts(self, community, headers):
-        print("GET POSTS HEADERS ARE: " + str(headers))
         ret = requests.get(urljoin(self.url, f"/fed/posts?community={community}"), headers=headers)
         return ret.json()
 
@@ -38,19 +37,17 @@ class Instance(object):
         return ret.json()
 
     def create_post(self, data, headers):
-        print("CREATE POST HEADERS ARE: " + str(headers))
         data.pop("external")
         ret = requests.post(urljoin(self.url, f"/fed/posts"), json=data, headers=headers)
+        print(ret)
         return Response(status=ret.status_code)
     
     def edit_post(self, data, id, headers):
-        print("EDIT POST HEADERS ARE: " + str(headers))
         data.pop("external")
         ret = requests.put(urljoin(self.url, f"/fed/posts/{id}"), json=data, headers=headers) 
         return ret.json()
     
     def delete_post(self, data, id, headers):
-        print("DELETE POST HEADERS ARE: " + str(headers))
         data.pop("external")
         ret = requests.delete(urljoin(self.url, f"/fed/posts/{id}"), headers=headers) 
         return ret.json()
