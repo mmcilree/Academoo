@@ -279,7 +279,7 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if content_type is not None:
         valid_posts = [content_field.post_id for content_field in PostContentField.query.filter(content_type=content_type).all()]
         query = query.filter(Post.id.in_(valid_posts))
-    if include_children is not None:
+    if include_children is None:
         query = query.filter(Post.parent_id == None)
     query = query.order_by(desc(Post.created))
     if limit is not None:
@@ -294,6 +294,7 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     '''
     
     post_dicts = [{"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], "author": {"id": post.author.user_id if post.author else None, "host": post.author.host if post.author else None}, "modified": post.modified, "created": post.created} for post in query]
+    
     return (post_dicts, 200)
 
 # Post host may not be tied to author idk
