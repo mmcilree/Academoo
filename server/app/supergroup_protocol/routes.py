@@ -34,8 +34,8 @@ def get_user_by_id(id):
 @bp.route("/communities", methods=["GET"])
 def get_all_communities():
     host = request.headers.get("Client-Host")
-    if host is None:
-        return Response(status = 400)
+    #if host is None:
+    #    return Response(status = 400)
     external = request.args.get("external")
 
     if not external:
@@ -48,8 +48,8 @@ def get_all_communities():
 @bp.route("/communities/<id>", methods=["GET"])
 def get_community_by_id(id):
     host = request.headers.get("Client-Host")
-    if host is None:
-        return Response(status = 400)
+    #if host is None:
+    #    return Response(status = 400)
     external = request.args.get("external")
 
     if not external:
@@ -68,8 +68,8 @@ def get_community_timestamps(id): ##############################################
 def get_all_posts():
     host = request.headers.get("Client-Host")
     requester_str = request.headers.get("User-ID")
-    if host is None or requester_str is None:
-        return Response(status = 400)
+    #if host is None or requester_str is None:
+    #    return Response(status = 400)
     # limit, community, min_date
     limit = int(request.args.get("limit", 20))
     community_id = request.args.get("community")
@@ -97,8 +97,8 @@ def get_post_by_id(id):
     external = request.args.get("external")
     host = request.headers.get("Client-Host")
     requester_str = request.headers.get("User-ID")
-    if host is None or requester_str is None:
-        return Response(status = 400)
+    #if host is None or requester_str is None:
+    #    return Response(status = 400)
 
     if not external:
         return respond_with_action(actions.getPost(id))
@@ -111,11 +111,15 @@ def get_post_by_id(id):
 
 @bp.route("/posts", methods=["POST"])
 def create_post():
-    external = request.json.get("external", None)
+    if request.json is not None:
+        external = request.json.get("external", None)
+    else: external = None
+
     host = request.headers.get("Client-Host")
     requester_str = request.headers.get("User-ID")
-    if host is None or requester_str is None:
-        return Response(status = 400)
+
+    #if host is None or requester_str is None:
+    #    return Response(status = 400)
 
     if check_create_post(request.get_json(silent=True, force=True)): return check_create_post(request.get_json(silent=True, force=True))
 
@@ -148,9 +152,11 @@ def create_post():
 def edit_post(id):
     host = request.headers.get("Client-Host")
     requester_str = request.headers.get("User-ID")
-    if host is None or requester_str is None:
-        return Response(status = 400)
-    external = request.json.get("external", None) # Changed from request.json.get("external") as external not field in create_post json
+    #if host is None or requester_str is None:
+    #    return Response(status = 400)
+   if request.json is not None:
+        external = request.json.get("external", None)
+    else: external = None # Changed from request.json.get("external") as external not field in create_post json
 
     if check_edit_post(request.get_json(silent=True, force=True)): return check_edit_post(request.get_json(silent=True, force=True))
 
@@ -170,8 +176,8 @@ def delete_post(id):
 
     host = request.headers.get("Client-Host") 
     requester_str = request.headers.get("User-ID")
-    if host is None or requester_str is None:
-        return Response(status = 400)
+    #if host is None or requester_str is None:
+    #    return Response(status = 400)
 
     requester = User.lookup(requester_str)
 

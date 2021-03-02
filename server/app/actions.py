@@ -309,9 +309,9 @@ def createPost(post_data, author_id, author_host):
     if validate_community_id(community_id): return validate_community_id(community_id)
     if validate_username(author_id): return validate_username(author_id)
 
-    if len(parent_post) == 0:
+    if parent_post is not None and len(parent_post) == 0:
         parent_post = None
-        
+
     if parent_post is not None: 
         if validate_post_id(parent_post): return validate_post_id(parent_post)
 
