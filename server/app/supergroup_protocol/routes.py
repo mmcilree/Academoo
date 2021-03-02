@@ -154,7 +154,7 @@ def edit_post(id):
     requester_str = request.headers.get("User-ID")
     #if host is None or requester_str is None:
     #    return Response(status = 400)
-   if request.json is not None:
+    if request.json is not None:
         external = request.json.get("external", None)
     else: external = None # Changed from request.json.get("external") as external not field in create_post json
 
