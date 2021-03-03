@@ -23,11 +23,11 @@ class Manager(object):
     def create_post(self, host, data, headers):
         return self.instances[host].create_post(data, headers)
     
-    def edit_post(self, host, data, headers):
-        return self.instances[host].edit_post(data, headers)
+    def edit_post(self, host, data, id, headers):
+        return self.instances[host].edit_post(data, id, headers)
     
-    def delete_post(self, host, data, headers):
-        return self.instances[host].delete_post(data, headers)
+    def delete_post(self, host, data, id, headers):
+        return self.instances[host].delete_post(data, id, headers)
 
     def _get_latest_timestamp(self, host, community, headers):
         timestamps = self.instances[host].get_timestamps(community, headers)

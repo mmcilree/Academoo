@@ -39,15 +39,14 @@ class Instance(object):
     def create_post(self, data, headers):
         data.pop("external")
         ret = requests.post(urljoin(self.url, f"/fed/posts"), json=data, headers=headers)
-        print(ret)
         return Response(status=ret.status_code)
     
     def edit_post(self, data, id, headers):
         data.pop("external")
-        ret = requests.put(urljoin(self.url, f"/fed/posts/{id}"), json=data, headers=headers) 
-        return ret.json()
+        ret = requests.put(urljoin(self.url, f"/fed/posts/{id}"), json=data, headers=headers)
+        return Response(status=ret.status_code)
     
     def delete_post(self, data, id, headers):
         data.pop("external")
         ret = requests.delete(urljoin(self.url, f"/fed/posts/{id}"), headers=headers) 
-        return ret.json()
+        return Response(status=ret.status_code)

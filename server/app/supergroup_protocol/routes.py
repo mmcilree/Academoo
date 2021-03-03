@@ -111,7 +111,7 @@ def get_post_by_id(id):
 
 @bp.route("/posts", methods=["POST"])
 def create_post():
-    if request.json is not None:
+    if request.json is not None: # ??? wont there be nothing to post if request.json is None????
         external = request.json.get("external", None)
     else: external = None
 
@@ -166,11 +166,11 @@ def edit_post(id):
         actions.editPost(id, request.json, requester)
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        federation.edit_post(external, request.json, headers)
+        federation.edit_post(external, request.json, id, headers)
 
     return Response(status = 200)
 
-@bp.route("/posts/<id>", methods=["DELETE"])
+@bp.route("/posts/<id>", methods=["DELETE"]) ################################### NO EXTERNAL FIELD FOR DELETING ON OTHER SERVERS :(
 def delete_post(id):
     external = request.args.get("external")
 
@@ -180,11 +180,10 @@ def delete_post(id):
     #    return Response(status = 400)
 
     requester = User.lookup(requester_str)
-
     if external is None:
         actions.deletePost(id, requester)
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        federation.delete_post(external, request.json, headers)
+        federation.delete_post(external, request.json, id, headers)
 
     return Response(status = 200)
