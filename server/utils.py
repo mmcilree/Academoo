@@ -50,11 +50,11 @@ content_schema = {
     "type": "array",
     "items": {
         "type": "object",
-        "properties": {
-            "text": {
+        "patternProperties": {
+            "^.*$": {
                 "type": "object",
-                "properties": {
-                    "text": {"type": "string"}
+                "patternProperties": {
+                    "^.*$": {"type": "string"}
                 }
             }
         }
@@ -66,12 +66,12 @@ def check_create_post(file):
         "type": "object",
         "properties": {
             "community": {"type": "string"},
-            "parentPost": {"type": ["string", "null"]}, #change to uuid if possible
+            "parentPost": {"type": ["string", "null"], "default": "null"},
             "title": {"type": "string"},
             "content": content_schema
         },
         #"additionalProperties": False,
-        "required": ["community", "parentPost", "title", "content"]
+        "required": ["community", "title", "content"]
     }
 
     try:
