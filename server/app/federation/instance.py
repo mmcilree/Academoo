@@ -1,18 +1,24 @@
 import requests
 from urllib.parse import urljoin
-from flask import jsonify, request, Response
+from flask import jsonify, Response
+import json
 
 class Instance(object):
     def __init__(self, url):
         self.url = url
     
     def get_users(self, id=None):
+        ret = None
         if id:
             ret = requests.get(urljoin(self.url, f"/fed/users/{id}"))
         else:
             ret = requests.get(urljoin(self.url, "/fed/users"))
 
-        return ret.json()
+        try:
+            json.loads(ret.content)
+            return jsonify(ret.json()), ret.status_code
+        except:
+            return Response(status=ret.status_code)
 
     def get_timestamps(self, community, headers):
         ret = requests.get(urljoin(self.url, f"/fed/communities/{community}/timestamps"), headers=headers)
@@ -23,31 +29,42 @@ class Instance(object):
     # If the timestamp is different, then the cache is invalidated
     def get_posts(self, community, headers):
         ret = requests.get(urljoin(self.url, f"/fed/posts?community={community}"), headers=headers)
-        return ret.json()
+        return ret.json(), ret.status_code # ret.json is iterated over before sending
 
     def get_post_by_id(self, id, headers):
         ret = requests.get(urljoin(self.url, f"/fed/posts/{id}"), headers=headers)
-        return ret.json()
+        return ret.json(), ret.status_code
 
     def get_communities(self, headers, id=None):
         if id:
             ret = requests.get(urljoin(self.url, f"/fed/communities/{id}"), headers=headers)
         else:
             ret = requests.get(urljoin(self.url, "/fed/communities"), headers=headers)
-        return ret.json()
+        return jsonify(ret.json()), ret.status_code
 
     def create_post(self, data, headers):
         data.pop("external")
         ret = requests.post(urljoin(self.url, f"/fed/posts"), json=data, headers=headers)
-        print(ret)
-        return Response(status=ret.status_code)
+        try:
+            json.loads(ret.content)
+            return jsonify(ret.json()), ret.status_code
+        except:
+            return Response(status=ret.status_code)
     
     def edit_post(self, data, id, headers):
         data.pop("external")
-        ret = requests.put(urljoin(self.url, f"/fed/posts/{id}"), json=data, headers=headers) 
-        return ret.json()
+        ret = requests.put(urljoin(self.url, f"/fed/posts/{id}"), json=data, headers=headers)
+        try:
+            json.loads(ret.content)
+            return jsonify(ret.json()), ret.status_code
+        except:
+            return Response(status=ret.status_code)
     
     def delete_post(self, data, id, headers):
         data.pop("external")
         ret = requests.delete(urljoin(self.url, f"/fed/posts/{id}"), headers=headers) 
-        return ret.json()
+        try:
+            json.loads(ret.content)
+            return jsonify(ret.json()), ret.status_code
+        except:
+            return Response(status=ret.status_code)

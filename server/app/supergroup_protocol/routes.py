@@ -19,7 +19,7 @@ def get_all_users():
     if not external:
         return respond_with_action(actions.getUserIDs())
     else:
-        return jsonify(federation.get_users(external))
+        return federation.get_users(external)
 
 @bp.route("/users/<id>", methods=["GET"])
 def get_user_by_id(id):
@@ -28,14 +28,14 @@ def get_user_by_id(id):
     if not external:
         return jsonify(actions.getLocalUser(id))
     else:
-        return jsonify(federation.get_users(external, id=id))
+        return federation.get_users(external, id=id)
 
 # Community
 @bp.route("/communities", methods=["GET"])
 def get_all_communities():
     host = request.headers.get("Client-Host")
     #if host is None:
-    #    return Response(status = 400)
+    #    return Response(status = 400) #### remember to include json error message with it
     external = request.args.get("external")
 
     if not external:
@@ -43,7 +43,7 @@ def get_all_communities():
         return respond_with_action(actions.getCommunityIDs())
     else:
         headers = {"Client-Host": host}
-        return jsonify(federation.get_communities(external, headers))
+        return federation.get_communities(external, headers)
 
 @bp.route("/communities/<id>", methods=["GET"])
 def get_community_by_id(id):
@@ -56,10 +56,10 @@ def get_community_by_id(id):
         return respond_with_action(actions.getCommunity(id))
     else:
         headers = {"Client-Host": host}
-        return jsonify(federation.get_communities(external, headers, id=id))
+        return federation.get_communities(external, headers, id=id)
 
 @bp.route("/communities/<id>/timestamps")
-def get_community_timestamps(id): ############################################################# NO SUPPORT FOR FEDERATION?????????????/
+def get_community_timestamps(id): # no option for federation?
     ##headers = request.headers['Client-Host']
     return respond_with_action(actions.getAllCommunityPostsTimeModified(id))
 
@@ -74,7 +74,7 @@ def get_all_posts():
     limit = int(request.args.get("limit", 20))
     community_id = request.args.get("community")
     min_date = request.args.get("minDate", 0)
-    author = request.args.get("author") #####
+    author = request.args.get("author")
     #host = request.args.get("host") ###### removed from protocol
     parent_post = request.args.get("parentPost")
     include_children = request.args.get("includeSubChildrenPosts")
@@ -86,11 +86,12 @@ def get_all_posts():
         return respond_with_action(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        responseArr = federation.get_posts(external, community_id, headers)
+        response = federation.get_posts(external, community_id, headers)
+        responseArr = response[0]
         for post in responseArr:
             post['host'] = external
         
-        return jsonify(responseArr)
+        return jsonify(responseArr), response[1]
 
 @bp.route("/posts/<id>", methods=["GET"])
 def get_post_by_id(id):
@@ -104,14 +105,15 @@ def get_post_by_id(id):
         return respond_with_action(actions.getPost(id))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        post = federation.get_post_by_id(external, id, headers)
+        response = federation.get_post_by_id(external, id, headers)
+        post = response[0]
         post['host'] = external
         
-        return jsonify(post)
+        return jsonify(post), response[1]
 
 @bp.route("/posts", methods=["POST"])
 def create_post():
-    if request.json is not None:
+    if request.json is not None: # ??? wont there be nothing to post if request.json is None????
         external = request.json.get("external", None)
     else: external = None
 
@@ -131,22 +133,23 @@ def create_post():
             community = Community.lookup(community_id)
             role = community.default_role
             if ((role != "contributor") & (role != "admin")):
-                return Response(status = 403)
+                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                return message, Response(status = 403)
         elif not requester.has_role(community_id, "guest"):
             community = Community.lookup(community_id)
             role = community.default_role
             if ((role != "contributor") & (role != "admin")):
-                return Response(status = 403)
+                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                return message, Response(status = 403)
         else :
             if not requester.has_role(community_id, "contributor"):
-                return Response(status = 403)
+                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                return message, Response(status = 403)
         
         return respond_with_action(actions.createPost(request.json, requester_str, host))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
         return federation.create_post(external, request.json, headers)
-
-    #return Response(status = 201)
 
 @bp.route("/posts/<id>", methods=["PUT"])
 def edit_post(id):
@@ -163,14 +166,12 @@ def edit_post(id):
     requester = User.lookup(requester_str)
 
     if external is None:
-        actions.editPost(id, request.json, requester)
+        return respond_with_action(actions.editPost(id, request.json, requester))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        federation.edit_post(external, request.json, headers)
+        return federation.edit_post(external, request.json, id, headers)
 
-    return Response(status = 200)
-
-@bp.route("/posts/<id>", methods=["DELETE"])
+@bp.route("/posts/<id>", methods=["DELETE"]) ################################### NO EXTERNAL FIELD FOR DELETING ON OTHER SERVERS :(
 def delete_post(id):
     external = request.args.get("external")
 
@@ -180,11 +181,8 @@ def delete_post(id):
     #    return Response(status = 400)
 
     requester = User.lookup(requester_str)
-
     if external is None:
-        actions.deletePost(id, requester)
+        return respond_with_action(actions.deletePost(id, requester))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        federation.delete_post(external, request.json, headers)
-
-    return Response(status = 200)
+        return federation.delete_post(external, request.json, id, headers)
