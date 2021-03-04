@@ -148,7 +148,7 @@ def getUser(user_id):
     user = User.query.filter_by(user_id = user_id).first()
     if user is None:
         return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 404)
-    user_dict = {"id": user.user_id, "posts": [{"id": post.id, "host": "post.host doesn't exist for now oops"} for post in Post.query.filter_by(author_id=user.id)]}#########################
+    user_dict = {"id": user.user_id, "about": "not implemented", "avatarUrl": "not implemented", "posts": [{"id": post.id, "host": "post.host doesn't exist for now oops"} for post in Post.query.filter_by(author_id=user.id)]}#########################
     return (user_dict, 200)
 
 def searchUsers(prefix):
@@ -393,6 +393,28 @@ def deletePost(post_id, requester):
 
     # probably needs a cascade delete or something
     db.session.delete(post)
+    db.session.commit()
+    return (None, 200)
+
+def upvotePost(post_id):
+    if validate_post_id(post_id): return validate_post_id(post_id)
+
+    post = Post.query.filter_by(id = post_id).first()
+    if post is None:
+        return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
+
+    post.upvotes += 1
+    db.session.commit()
+    return (None, 200)
+
+def downvotePost(post_id):
+    if validate_post_id(post_id): return validate_post_id(post_id)
+
+    post = Post.query.filter_by(id = post_id).first()
+    if post is None:
+        return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
+
+    post.downvotes += 1
     db.session.commit()
     return (None, 200)
 

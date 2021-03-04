@@ -131,6 +131,8 @@ class Post(db.Model):
     created = db.Column(db.BigInteger, default=getTime)
     modified = db.Column(db.BigInteger, default=getTime, onupdate=getTime)
     parent_id = db.Column(db.String(1000), db.ForeignKey('post.id'))
+    upvotes = db.Column(db.Integer, default=0)
+    downvotes = db.Column(db.Integer, default=0)
     parent = db.relationship('Post', remote_side=[id], backref='comments')
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
 
