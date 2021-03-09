@@ -3,9 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from config import Config
 import unittest
 from app import create_app, db
-from app.models import User, Post, Community
+from app.models import *
 import uuid
-import time
 
 class TestConfig(Config):
     TESTING = True
@@ -24,12 +23,6 @@ class DBCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    #def test_user_password(self):
-     #   pass
-
-    #def test_user_uuid(self):
-     #   pass
-
     def test_user_posts_created(self):
         u = User(user_id='arnold06', host='test.com')
         db.session.add(u)
@@ -42,19 +35,6 @@ class DBCase(unittest.TestCase):
         db.session.add(p2)
         db.session.commit()
         self.assertEqual(u.posts_created, [p1, p2])
-
-    def test_user_admin_of(self):
-        u = User(user_id='bob09', host='test.com')
-        db.session.add(u)
-        db.session.commit()
-        self.assertEqual(u.admin_of, [])
-
-        c = Community(id='testCom', title='test community')
-        db.session.add(c)
-        u.admin_of.append(c)
-        db.session.commit()
-        self.assertEqual(u.admin_of, [c])
-        self.assertEqual(c.admins, [u])
 
     def test_community_posts(self):
         c = Community(id='testCom', title='test community')
@@ -69,22 +49,29 @@ class DBCase(unittest.TestCase):
         db.session.commit()
         self.assertEqual(c.posts, [p1, p2])
 
-    def test_community_admins(self):
+    def test_community_roles(self):
         c = Community(id='testCom', title='test community')
         db.session.add(c)
         db.session.commit()
-        self.assertEqual(c.admins, [])
+        self.assertEqual(c.roles_granted, [])
 
         u1 = User(user_id='bob09', host='test.com')
         u2 = User(user_id='jon01', host='test.com')
         db.session.add(u1)
         db.session.add(u2)
         db.session.commit()
-        c.admins.append(u1)
-        c.admins.append(u2)
-        self.assertEqual(c.admins, [u1, u2])
-        self.assertEqual(u1.admin_of, [c])
-        self.assertEqual(u2.admin_of, [c])
+        u1_role = UserRole(user_id='bob09', community_id='testCom', role='admin')
+        u2_role = UserRole(user_id='jon01', community_id='testCom', role='contributor')
+        db.session.add(u1_role)
+        db.session.add(u2_role)
+        db.session.commit()
+        print(str(c.roles_granted))
+        c.roles_granted.append(u1_role)
+        c.roles_granted.append(u2_role)
+        print(str(c.roles_granted))
+        self.assertTrue(set([u1_role, u2_role]).issubset(c.roles_granted))
+        self.assertEqual(u1.roles, [u1_role])
+        self.assertEqual(u2.roles, [u2_role])
 
     def test_post_uuid(self):
         p = Post(title='test post')
@@ -108,7 +95,6 @@ class DBCase(unittest.TestCase):
         db.session.commit()
         self.assertIsInstance(p.created, int)
 
-    """
     def test_post_modified(self):
         p = Post(title='test post')
         db.session.add(p)
@@ -119,8 +105,7 @@ class DBCase(unittest.TestCase):
         db.session.commit()
         after = p.modified
         self.assertTrue(before < after)
-    """
-
+    
     def test_post_community(self):
         c = Community(id='testCom', title='test community')
         db.session.add(c)

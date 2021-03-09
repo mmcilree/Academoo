@@ -26,7 +26,6 @@ def createCommunity(community_id, title, description, admin):
     db.session.commit()
     return (None, 200)
 
-# TODO: We need to handle granting roles to external users too
 def grantRole(username, community_id, current_user, role="member", external=False, user_host=None):
     if validate_community_id(community_id): return validate_community_id(community_id)
     if validate_username(username): return validate_username(username)
