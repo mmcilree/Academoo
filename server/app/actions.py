@@ -255,7 +255,6 @@ def getAllCommunityPostsTimeModified(community_id):
     post_dicts = [{"id":post.id, "modified":post.modified} for post in Post.query.filter_by(community_id = community_id)]
     return (post_dicts, 200)
 
-# Post host isnt a thing right now
 def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type):
     if community_id is not None: 
         if validate_community_id(community_id): return validate_community_id(community_id)
@@ -394,6 +393,9 @@ def deletePost(post_id, requester):
     db.session.delete(post)
     db.session.commit()
     return (None, 200)
+
+def order_post_arr(post_arr, reverse=False):
+    return sorted(post_arr, key=lambda post: post['created'], reverse= reverse)
 
 def upvotePost(post_id):
     if validate_post_id(post_id): return validate_post_id(post_id)

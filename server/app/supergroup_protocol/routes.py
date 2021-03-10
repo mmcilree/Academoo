@@ -75,7 +75,6 @@ def get_all_posts():
     community_id = request.args.get("community")
     min_date = request.args.get("minDate", 0)
     author = request.args.get("author")
-    #host = request.args.get("host") ###### removed from protocol
     parent_post = request.args.get("parentPost")
     include_children = request.args.get("includeSubChildrenPosts")
     content_type = request.args.get("contentType")
@@ -90,7 +89,8 @@ def get_all_posts():
         responseArr = response[0]
         for post in responseArr:
             post['host'] = external
-        
+
+        responseArr = actions.order_post_arr(responseArr, True)
         return jsonify(responseArr), response[1]
 
 @bp.route("/posts/<id>", methods=["GET"])
