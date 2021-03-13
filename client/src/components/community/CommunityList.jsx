@@ -29,10 +29,10 @@ class CommunityList extends React.Component {
         })
             .then(response => {
                 if(!response.ok) {
-                    
                     throw new Error();
                 }
-                return response.json()
+                console.log(response)
+                return response.json
             }
             )
             .then(data => {
@@ -50,8 +50,6 @@ class CommunityList extends React.Component {
 
     render() {
         const { communities, isLoading, errors } = this.state;
-        console.log(this.props.instance);
-        console.log(this.state);
         return (
             <Accordion defaultActiveKey="0">
                 <Card className="mt-4">
@@ -62,10 +60,10 @@ class CommunityList extends React.Component {
 
                     <Accordion.Collapse eventKey="0">
                         <Card.Body className="px-0 py-1">
-                            <ListGroup variant="flush"  >
+                            <ListGroup variant="flush">
 
                                 {errors.map(error => (
-                                    <ListGroup.Item>
+                                    <ListGroup.Item key={error}>
                                         <Alert variant='warning' key={error}>{"Error: " + error}</Alert>
                                     </ListGroup.Item>
                                     

@@ -6,8 +6,8 @@ import { shallow, mount } from "enzyme";
 import App from "../App";
 import { Router, Route, Switch } from "react-router-dom";
 import { createMemoryHistory } from 'history';
-import CommunityExplorer from "../components/community/CommunityExplorer";
-import {fetchMock} from './fetchMocks.js';
+import PostCreator from "../components/posts/PostCreator";
+import {fetchMock} from './fetchMocks';
 
 import each from 'jest-each';
 
@@ -33,34 +33,27 @@ jest.mock('../auth', () => ({
 
 
 const history = createMemoryHistory();
-jest.mock('../auth', () => ({
-    useAuth: () => [false],
-    authFetch: () =>
-        Promise.resolve({
-            json: () => Promise.resolve(
-                {
-                    id: "academoo",
-                    email: "academoo@academoo.com",
-                    host: "academoo"
-                }),
-        })
-}));
 
 beforeEach(() => {
-    
     global.fetch = jest.fn().mockImplementation(fetchMock);
-    history.push('/explore')
+
+    history.push('/create-post')
     wrapper = mount(
         <Router history={history}>
-            <CommunityExplorer />
+            <PostCreator />
         </Router>
     );
+
+
+    wrapper.update();
+
+    
 });
 
 
 it("Routes to welcome page", () => {
 
-    expect(wrapper.find(CommunityExplorer)).toHaveLength(1);
+    expect(wrapper.find(PostCreator)).toHaveLength(1);
 });
 
 
