@@ -19,6 +19,7 @@ import {
   Tools,
   BoxArrowRight,
   QuestionCircle,
+  Pencil
 } from "react-bootstrap-icons";
 
 import { Link } from "react-router-dom";
@@ -79,7 +80,7 @@ function HeaderBar() {
               <Nav.Link as={Link} to="/moosfeed">
                 Moosfeed
               </Nav.Link>
-              <Nav.Link as={Link} to="/explore">
+              <Nav.Link as={Link} to="/communities">
                 Commoonities
               </Nav.Link>
               <Nav.Link as={Link} to="/create-post">
@@ -89,6 +90,10 @@ function HeaderBar() {
               <Nav.Link as={Link} to="/create-community">
                 <PlusCircle className="mb-1" />
                 <span> New Commoonity</span>
+              </Nav.Link>
+              <Nav.Link as={Link} to="/sketchamoo">
+                <Pencil className="mb-1" />
+                <span> Sketch-A-Moo!</span>
               </Nav.Link>
             </Nav>
 
