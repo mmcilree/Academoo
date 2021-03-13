@@ -20,24 +20,41 @@ class Whiteboard extends React.Component {
         this.setState({ currentTool: event.target.value });
     }
 
-    _clear = () => {
-        this._sketch.clear();
-        this._sketch.setBackgroundFromDataUrl('');
-        this.setState({backgroundColour: "transparent"})
+    clear = () => {
+        console.log("here")
+        this.sketch.clear();
+        this.sketch.setBackgroundFromDataUrl('');
+        this.setState({ backgroundColour: "transparent" })
+    }
+
+    download = () => {
+        this.downloadURL(this.sketch.toDataURL(), "sketchamoo.png");
+    };
+
+    downloadURL(url, filename) {
+        fetch(url).then(function (t) {
+            return t.blob().then((b) => {
+                var a = document.createElement("a");
+                a.href = URL.createObjectURL(b);
+                a.setAttribute("download", filename);
+                a.click();
+            }
+            );
+        });
     }
 
     render() {
         const { currentTool, lineColour, backgroundColour } = this.state;
         const popover = (
             <Popover id="popover-basic">
-              <Popover.Title as="h3">Pick a Colour!</Popover.Title>
-              <Popover.Content>
-              <CompactPicker
-                    id='lineColour' color={this.state.lineColour}
-                    onChange={(color) => this.setState({ lineColour: color.hex })}/>
-              </Popover.Content>
+                <Popover.Title as="h3">Pick a Colour!</Popover.Title>
+                <Popover.Content>
+                    <CompactPicker
+                        id='lineColour' color={this.state.lineColour}
+                        onChange={(color) => this.setState({ lineColour: color.hex })} />
+                </Popover.Content>
             </Popover>
-          );
+        );
         return (
 
             <Card className="mt-4 p-4">
@@ -66,28 +83,30 @@ class Whiteboard extends React.Component {
                                 onClick={this.setTool.bind(this)}
                             ><ArrowsMove /></ToggleButton>
 
-                        </ToggleButtonGroup>                            
-                        
+                        </ToggleButtonGroup>
+
                         <OverlayTrigger trigger={['click', 'focus']} placement="right" overlay={popover}>
                             <Button className="ml-4" >
-                                <Palette/>
+                                <Palette />
                             </Button>
                         </OverlayTrigger>
 
-                        <Button className="ml-4">
-                            <Download/> Save
+                        <Button className="ml-4" onClick={this.download}>
+                            <Download /> Save
                             </Button>
-                            <Button className="ml-2" onClick={this._click}>
-                                <Trash/> Clear
+                        <Button className="ml-2" onClick={this.clear}>
+                            <Trash /> Clear
                             </Button>
                     </Card.Header>
                     <Card.Body>
                         <SketchField width='1024px'
+                            name="sketch"
+                            ref={c => (this.sketch = c)}
                             height='768px'
                             tool={currentTool}
                             lineColor={lineColour}
-                            lineWidth={3} 
-                            backgroundColor={backgroundColour}/>
+                            lineWidth={3}
+                            backgroundColor={backgroundColour} />
                     </Card.Body>
                 </Card>
 
