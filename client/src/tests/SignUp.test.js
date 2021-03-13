@@ -9,6 +9,7 @@ import { createMemoryHistory } from 'history';
 import SignUp from "../components/authentication/SignUp";
 import Login from "../components/authentication/Login";
 import each from 'jest-each';
+import { authFetchMock } from "./fetchMocks";
 
 let wrapper;
 let usernameField;
@@ -18,18 +19,14 @@ let passwordConfirmField;
 let submitButton;
 let signUpForm;
 const history = createMemoryHistory();
-jest.mock('../auth', () => ({
-    useAuth: () => [false],
-    authFetch: () =>
-        Promise.resolve({
-            json: () => Promise.resolve(
-                {
-                    id: "academoo",
-                    email: "academoo@academoo.com",
-                    host: "academoo"
-                }),
-        })
-}));
+jest.mock('../auth', () => {
+    const { authFetchMock } = require('./fetchMocks');
+    return ({
+        useAuth: () => [false],
+        authFetch: authFetchMock
+    })
+}
+);
 
 function setFormDataAndSubmit(email, username, password, passwordConfirm) {
     emailField.simulate('change', { target: { name: "email", value: email } })
@@ -38,7 +35,6 @@ function setFormDataAndSubmit(email, username, password, passwordConfirm) {
     passwordConfirmField.simulate('change', { target: { name: "passwordConfirm", value: passwordConfirm } })
     submitButton.simulate('submit');
 }
-
 
 
 beforeEach(() => {

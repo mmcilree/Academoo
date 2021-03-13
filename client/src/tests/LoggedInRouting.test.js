@@ -19,20 +19,14 @@ import { MemoryRouter as Router, Route } from "react-router-dom";
 const auth = require('../auth');
 
 // Mock the necessary API calls for authentication
-jest.mock('../auth', () => ({
-    useAuth: () => [true],
-    authFetch: () =>
-        Promise.resolve({
-            json: () => Promise.resolve(
-                {
-                    id: "academoo",
-                    email: "academoo@academoo.com",
-                    host: "academoo",
-                    subscriptions: [],
-                    adminOf: []
-                }),
-        })
-}));
+jest.mock('../auth', () => {
+    const { authFetchMock } = require('./fetchMocks');
+    return ({
+        useAuth: () => [true],
+        authFetch: authFetchMock
+    })
+}
+);
 
 it("Routes to default page", () => {
     const wrapper = mount(

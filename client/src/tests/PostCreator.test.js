@@ -7,7 +7,7 @@ import App from "../App";
 import { Router, Route, Switch } from "react-router-dom";
 import { createMemoryHistory } from 'history';
 import PostCreator from "../components/posts/PostCreator";
-import {fetchMock} from './fetchMocks';
+import {authFetchMock, fetchMock} from './fetchMocks';
 
 import each from 'jest-each';
 
@@ -16,20 +16,14 @@ const auth = require('../auth');
 let wrapper;
 
 // Mock the necessary API calls for authentication
-jest.mock('../auth', () => ({
-    useAuth: () => [true],
-    authFetch: () =>
-        Promise.resolve({
-            json: () => Promise.resolve(
-                {
-                    id: "academoo",
-                    email: "academoo@academoo.com",
-                    host: "academoo",
-                    subscriptions: [],
-                    adminOf: []
-                }),
-        })
-}));
+jest.mock('../auth', () => {
+    const { authFetchMock } = require('./fetchMocks');
+    return ({
+        useAuth: () => [true],
+        authFetch: authFetchMock
+    })
+}
+);
 
 
 const history = createMemoryHistory();
