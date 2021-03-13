@@ -7,6 +7,7 @@ import App from "../App";
 import { Router, Route, Switch } from "react-router-dom";
 import { createMemoryHistory } from 'history';
 import CommunityExplorer from "../components/community/CommunityExplorer";
+import CommunityList from "../components/community/CommunityList";
 import { fetchMock, authFetchMock } from './fetchMocks.js';
 
 import each from 'jest-each';
@@ -39,9 +40,16 @@ beforeEach(() => {
 });
 
 
-it("Routes to welcome page", () => {
-    expect(wrapper.find(CommunityExplorer)).toHaveLength(1);
+it("has 3 community lists", (done) => {
+    setTimeout(() => {
+      try {
+        wrapper.update();
+        expect(wrapper.find(CommunityList)).toHaveLength(4);
+        done();
+      } catch (error) {
+        done(error);
+      }
+    }, 1000);
 });
-
 
 

@@ -7,6 +7,7 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "bootstrap": "^4.6.0",
+    "flush-promises": "^1.0.2",
     "md5": "^2.3.0",
     "node-sass": "^4.14.1",
     "npm": "^7.5.4",

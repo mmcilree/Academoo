@@ -24,7 +24,7 @@ class CommunitySubscribeButton extends React.Component {
                     isSubscribed: data.subscriptions.includes(this.props.community),
                     isLoading: false
                 })
-            )
+            ).catch(() => {})
     }
 
     async handleSubscribe() {

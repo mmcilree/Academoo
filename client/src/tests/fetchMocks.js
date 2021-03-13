@@ -2,7 +2,8 @@ function promiseJson(jsonValue) {
     return Promise.resolve({
         json: () => Promise.resolve(
             jsonValue
-        )
+        ),
+        ok: true
     });
 }
 export const fetchMock =
@@ -22,7 +23,8 @@ export const authFetchMock =
         return promiseJson({
             id: "academoo",
             email: "academoo@academoo.com",
-            host: "academoo"
+            host: "academoo",
+            subscriptions: ["community1", "community2", "community3"]
         })
     };
 
