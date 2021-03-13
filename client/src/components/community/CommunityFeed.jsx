@@ -56,7 +56,7 @@ class CommunityFeed extends Component {
         })
       )
       .catch(error => {
-        console.log(error)
+
         this.setState({ error, isLoading: false })
         });
     this.fetchCommunityDetails();
@@ -93,7 +93,7 @@ class CommunityFeed extends Component {
 
   render() {
     const { isLoading, posts, error, currentCommunity, newPostText, host, communityData, isAdmin } = this.state;
-    console.log(this.state);
+    
     const popover = (
       <Popover id="popover-basic">
         <Popover.Title as="h3">Community description</Popover.Title>

@@ -30,7 +30,7 @@ class SubscribedFeed extends Component {
                     posts: []
                 })
             }
-            )
+        ).catch(() => {})
         
         this.fetchPosts();
     }
@@ -60,6 +60,13 @@ class SubscribedFeed extends Component {
         this.setState({posts: this.state.posts.slice().sort((a, b) => b.created - a.created)});
         
         (i == this.state.subscribedCommunities.length - 1) && this.setState({isLoading: false});
+    }
+
+    componentWillUnmount() {
+        // fix Warning: Can't perform a React state update on an unmounted component
+        this.setState = (state,callback)=>{
+            return;
+        };
     }
 
     render() {

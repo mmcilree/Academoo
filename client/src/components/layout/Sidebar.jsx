@@ -22,7 +22,7 @@ class Sidebar extends Component {
                     subscribedCommunities: data.subscriptions,
                     isLoading: false
                 })
-            )
+            ).catch(() => {});
     }
 
     updateSubscriptions() {
@@ -45,7 +45,7 @@ class Sidebar extends Component {
 
 
                         {!isLoading ?
-                            subscribedCommunities.length == 0 ?
+                            subscribedCommunities && subscribedCommunities.length == 0 ?
                                 <ListGroupItem>
                                     You haven't subscribed to any communities!
                                 </ListGroupItem>

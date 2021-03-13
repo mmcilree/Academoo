@@ -29,13 +29,13 @@ class CommunityList extends React.Component {
         })
             .then(response => {
                 if(!response.ok) {
-                    
                     throw new Error();
                 }
                 return response.json()
             }
             )
             .then(data => {
+                
                 this.setState({
                     communities: [...this.state.communities, ...data],
                     isLoading: false
@@ -44,14 +44,13 @@ class CommunityList extends React.Component {
             }
             ).catch((err) => {
                 this.setState({errors: [...this.state.errors, err.message], isLoading: false});
-                console.log(err)});
+                });
 
     }
 
     render() {
         const { communities, isLoading, errors } = this.state;
-        console.log(this.props.instance);
-        console.log(this.state);
+        
         return (
             <Accordion defaultActiveKey="0">
                 <Card className="mt-4">
@@ -62,10 +61,10 @@ class CommunityList extends React.Component {
 
                     <Accordion.Collapse eventKey="0">
                         <Card.Body className="px-0 py-1">
-                            <ListGroup variant="flush"  >
+                            <ListGroup variant="flush">
 
                                 {errors.map(error => (
-                                    <ListGroup.Item>
+                                    <ListGroup.Item key={error}>
                                         <Alert variant='warning' key={error}>{"Error: " + error}</Alert>
                                     </ListGroup.Item>
                                     
@@ -75,14 +74,14 @@ class CommunityList extends React.Component {
                                     communities.map((community) =>
                                         community !== "" &&
 
-                                        <ListGroup.Item key={community} className="d-flex justify-content-between">
+                                        <ListGroup.Item key={"" + this.props.instance + community} className="d-flex justify-content-between">
                                             <Link to={this.props.instance === "local" ?
                                                 "communities/" + community : "communities/" + this.props.instance + "/" + community} >
                                                 {community}
                                             </Link>
                                             <CommunitySubscribeButton community={community} />
                                         </ListGroup.Item>)
-                                    : <ListGroup.Item>Loading Communities...</ListGroup.Item>
+                                    : <ListGroup.Item key={this.props.instance}>Loading Communities...</ListGroup.Item>
                                 }
                             </ListGroup>
                         </Card.Body>

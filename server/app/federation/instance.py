@@ -7,6 +7,7 @@ import json
 def bad_json_error():
     return ({"title": "Invalid JSON file received", "message": "JSON received did not match JSON schema."}, 400)
 class Instance(object):
+    
     def __init__(self, url):
         self.url = url
     
