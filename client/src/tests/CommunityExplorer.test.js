@@ -5,6 +5,7 @@ configure({ adapter: new Adapter() });
 import { shallow, mount } from "enzyme";
 import App from "../App";
 import { Router, Route, Switch } from "react-router-dom";
+import {ListGroupItem} from "react-bootstrap";
 import { createMemoryHistory } from 'history';
 import CommunityExplorer from "../components/community/CommunityExplorer";
 import CommunityList from "../components/community/CommunityList";
@@ -40,11 +41,23 @@ beforeEach(() => {
 });
 
 
-it("has 3 community lists", (done) => {
+it("Has 4 community lists", (done) => {
     setTimeout(() => {
       try {
         wrapper.update();
         expect(wrapper.find(CommunityList)).toHaveLength(4);
+        done();
+      } catch (error) {
+        done(error);
+      }
+    }, 1000);
+});
+
+it("Has 12 list group items", (done) => {
+    setTimeout(() => {
+      try {
+        wrapper.update();
+        expect(wrapper.find(ListGroupItem)).toHaveLength(12);
         done();
       } catch (error) {
         done(error);
