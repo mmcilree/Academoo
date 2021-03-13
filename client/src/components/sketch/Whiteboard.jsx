@@ -1,8 +1,18 @@
 import React from 'react';
-import { Card, Button, ToggleButton, ToggleButtonGroup, Popover, OverlayTrigger } from 'react-bootstrap';
 import { SketchField, Tools } from 'react-sketch-whiteboard';
-import { Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash } from 'react-bootstrap-icons';
+import { Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth } from 'react-bootstrap-icons';
 import { CompactPicker } from 'react-color';
+import { 
+        Card,
+        Button, 
+        ToggleButton, 
+        ToggleButtonGroup, 
+        Popover, 
+        OverlayTrigger, 
+        Form, 
+        Dropdown,
+        } from 'react-bootstrap';
+
 
 class Whiteboard extends React.Component {
     constructor(props) {
@@ -10,10 +20,19 @@ class Whiteboard extends React.Component {
         this.state = {
             currentTool: Tools.Pencil,
             lineColour: "black",
-            backgroundColour: "transparent"
+            backgroundColour: "white",
+            lineWidth: 10,
+            canUndo: false
         }
     }
 
+    onSketchChange = () => {
+        let prev = this.state.canUndo;
+        let now = this.sketch.canUndo();
+        if (prev !== now) {
+        this.setState({ canUndo: now });
+        }
+    };
 
     setTool(event) {
         console.log(event.target.value);
@@ -24,7 +43,7 @@ class Whiteboard extends React.Component {
         console.log("here")
         this.sketch.clear();
         this.sketch.setBackgroundFromDataUrl('');
-        this.setState({ backgroundColour: "transparent" })
+        this.setState({ backgroundColour: "white" })
     }
 
     download = () => {
@@ -41,10 +60,10 @@ class Whiteboard extends React.Component {
             }
             );
         });
-    }
+    }    
 
     render() {
-        const { currentTool, lineColour, backgroundColour } = this.state;
+        const { currentTool, lineColour, backgroundColour, lineWidth, canUndo } = this.state;
         const popover = (
             <Popover id="popover-basic">
                 <Popover.Title as="h3">Pick a Colour!</Popover.Title>
@@ -55,13 +74,14 @@ class Whiteboard extends React.Component {
                 </Popover.Content>
             </Popover>
         );
+        console.log(lineWidth)
         return (
 
             <Card className="mt-4 p-4">
                 <h1>Whiteboard</h1>
                 <p>Share your moosings on the sketch-a-moo!</p>
                 <Card>
-                    <Card.Header className="">
+                    <Card.Header className="d-flex">
                         <ToggleButtonGroup name="tools" >
                             <ToggleButton type="radio" value={Tools.Select}
                                 onClick={this.setTool.bind(this)}
@@ -85,11 +105,24 @@ class Whiteboard extends React.Component {
 
                         </ToggleButtonGroup>
 
-                        <OverlayTrigger trigger={['click', 'focus']} placement="right" overlay={popover}>
+                        <OverlayTrigger trigger={['click', 'focus']} placement="bottom" overlay={popover}>
                             <Button className="ml-4" >
                                 <Palette />
                             </Button>
                         </OverlayTrigger>
+
+                        <Dropdown >
+                        <Dropdown.Toggle variant="primary" className="ml-2" id="dropdown-basic">
+                            <BorderWidth/>
+                        </Dropdown.Toggle>
+
+                            <Dropdown.Menu>
+                                <Dropdown.Header>Pick a Line Thickness</Dropdown.Header>
+                                <Dropdown.Item onClick={() => this.setState({ lineWidth: 10})}>Small</Dropdown.Item>
+                                <Dropdown.Item onClick={() => this.setState({ lineWidth: 25})} >Medium</Dropdown.Item>
+                                <Dropdown.Item onClick={() => this.setState({ lineWidth: 50})}>Thiccc</Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
 
                         <Button className="ml-4" onClick={this.download}>
                             <Download /> Save
@@ -105,8 +138,11 @@ class Whiteboard extends React.Component {
                             height='768px'
                             tool={currentTool}
                             lineColor={lineColour}
-                            lineWidth={3}
-                            backgroundColor={backgroundColour} />
+                            lineWidth={lineWidth}
+                            backgroundColor={backgroundColour} 
+                            canUndo={canUndo}
+                            onChange={this.onSketchChange}
+                        />
                     </Card.Body>
                 </Card>
 
