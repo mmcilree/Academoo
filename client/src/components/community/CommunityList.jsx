@@ -31,7 +31,6 @@ class CommunityList extends React.Component {
                 if(!response.ok) {
                     throw new Error();
                 }
-                console.log(response)
                 return response.json
             }
             )

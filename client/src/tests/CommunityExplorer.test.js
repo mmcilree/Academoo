@@ -25,7 +25,6 @@ jest.mock('../auth', () => {
 }
 );
 
-
 const history = createMemoryHistory();
 
 beforeEach(() => {
@@ -41,7 +40,6 @@ beforeEach(() => {
 
 
 it("Routes to welcome page", () => {
-
     expect(wrapper.find(CommunityExplorer)).toHaveLength(1);
 });
 

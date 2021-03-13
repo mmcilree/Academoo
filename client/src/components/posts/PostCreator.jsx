@@ -164,7 +164,6 @@ class PostCreator extends React.Component {
 
     render() {
         const { markdown, errors } = this.state;
-        console.log(this.state);
         return this.state.communities && (
             <Card className="mt-4">
                 <Card.Header className="pt-4">
