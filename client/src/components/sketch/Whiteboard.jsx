@@ -1,17 +1,18 @@
 import React from 'react';
 import { SketchField, Tools } from 'react-sketch-whiteboard';
-import { Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth } from 'react-bootstrap-icons';
+import { Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth, CursorText, PlusCircle } from 'react-bootstrap-icons';
 import { CompactPicker } from 'react-color';
-import { 
-        Card,
-        Button, 
-        ToggleButton, 
-        ToggleButtonGroup, 
-        Popover, 
-        OverlayTrigger, 
-        Form, 
-        Dropdown,
-        } from 'react-bootstrap';
+import {
+    Card,
+    Button,
+    ToggleButton,
+    ToggleButtonGroup,
+    Popover,
+    OverlayTrigger,
+    Form,
+    Dropdown,
+    InputGroup
+} from 'react-bootstrap';
 
 
 class Whiteboard extends React.Component {
@@ -22,7 +23,8 @@ class Whiteboard extends React.Component {
             lineColour: "black",
             backgroundColour: "white",
             lineWidth: 10,
-            canUndo: false
+            canUndo: false,
+            text: ""
         }
     }
 
@@ -30,7 +32,7 @@ class Whiteboard extends React.Component {
         let prev = this.state.canUndo;
         let now = this.sketch.canUndo();
         if (prev !== now) {
-        this.setState({ canUndo: now });
+            this.setState({ canUndo: now });
         }
     };
 
@@ -44,6 +46,17 @@ class Whiteboard extends React.Component {
         this.sketch.clear();
         this.sketch.setBackgroundFromDataUrl('');
         this.setState({ backgroundColour: "white" })
+    }
+    
+    handleChangeText(event) {
+        this.setState({text: event.target.value});
+    }
+    
+    addText = (event) => {
+        console.log(this.state)
+        event.preventDefault();
+        this.sketch.addText(this.state.text);
+        this.setState({text: ""});
     }
 
     download = () => {
@@ -60,11 +73,11 @@ class Whiteboard extends React.Component {
             }
             );
         });
-    }    
+    }
 
     render() {
-        const { currentTool, lineColour, backgroundColour, lineWidth, canUndo } = this.state;
-        const popover = (
+        const { currentTool, lineColour, backgroundColour, lineWidth, canUndo, text } = this.state;
+        const colourPopover = (
             <Popover id="popover-basic">
                 <Popover.Title as="h3">Pick a Colour!</Popover.Title>
                 <Popover.Content>
@@ -74,6 +87,25 @@ class Whiteboard extends React.Component {
                 </Popover.Content>
             </Popover>
         );
+
+        const textPopover = (
+            <Popover id="popover-basic">
+                <Popover.Title as="h3">Add text to sketch:</Popover.Title>
+                <Popover.Content>
+                    <Form onSubmit={this.addText.bind(this)}>
+                        <InputGroup controlId="addText">
+                            <Form.Control placeholder="Mooo" value={text} onChange={this.handleChangeText.bind(this)}/>
+                            <InputGroup.Append>
+                                <Button type="submit" variant="outline-secondary"><PlusCircle /></Button>
+                            </InputGroup.Append>
+                        </InputGroup>
+
+                    </Form>
+
+                </Popover.Content>
+            </Popover>
+        );
+
         console.log(lineWidth)
         return (
 
@@ -98,29 +130,34 @@ class Whiteboard extends React.Component {
                             <ToggleButton type="radio" value={Tools.Circle}
                                 onClick={this.setTool.bind(this)}
                             ><Circle /></ToggleButton>
-
                             <ToggleButton type="radio" value={Tools.Pan}
                                 onClick={this.setTool.bind(this)}
                             ><ArrowsMove /></ToggleButton>
 
                         </ToggleButtonGroup>
 
-                        <OverlayTrigger trigger={['click', 'focus']} placement="bottom" overlay={popover}>
+                        <OverlayTrigger trigger={['click', 'focus']} placement="bottom" overlay={colourPopover}>
                             <Button className="ml-4" >
                                 <Palette />
                             </Button>
                         </OverlayTrigger>
 
+                        <OverlayTrigger trigger={['click', 'focus']} placement="bottom" overlay={textPopover}>
+                            <Button className="ml-2" >
+                                <CursorText />
+                            </Button>
+                        </OverlayTrigger>
+
                         <Dropdown >
-                        <Dropdown.Toggle variant="primary" className="ml-2" id="dropdown-basic">
-                            <BorderWidth/>
-                        </Dropdown.Toggle>
+                            <Dropdown.Toggle variant="primary" className="ml-2" id="dropdown-basic">
+                                <BorderWidth />
+                            </Dropdown.Toggle>
 
                             <Dropdown.Menu>
                                 <Dropdown.Header>Pick a Line Thickness</Dropdown.Header>
-                                <Dropdown.Item onClick={() => this.setState({ lineWidth: 10})}>Small</Dropdown.Item>
-                                <Dropdown.Item onClick={() => this.setState({ lineWidth: 25})} >Medium</Dropdown.Item>
-                                <Dropdown.Item onClick={() => this.setState({ lineWidth: 50})}>Thiccc</Dropdown.Item>
+                                <Dropdown.Item onClick={() => this.setState({ lineWidth: 10 })}>Small</Dropdown.Item>
+                                <Dropdown.Item onClick={() => this.setState({ lineWidth: 25 })} >Medium</Dropdown.Item>
+                                <Dropdown.Item onClick={() => this.setState({ lineWidth: 50 })}>Thiccc</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
 
@@ -139,7 +176,7 @@ class Whiteboard extends React.Component {
                             tool={currentTool}
                             lineColor={lineColour}
                             lineWidth={lineWidth}
-                            backgroundColor={backgroundColour} 
+                            backgroundColor={backgroundColour}
                             canUndo={canUndo}
                             onChange={this.onSketchChange}
                         />
