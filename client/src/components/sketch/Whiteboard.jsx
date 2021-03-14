@@ -1,6 +1,6 @@
 import React from 'react';
 import { SketchField, Tools } from 'react-sketch-whiteboard';
-import { Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth, CursorText, PlusCircle } from 'react-bootstrap-icons';
+import { Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth, CursorText, PlusCircle, Share } from 'react-bootstrap-icons';
 import { CompactPicker } from 'react-color';
 import {
     Card,
@@ -11,8 +11,9 @@ import {
     OverlayTrigger,
     Form,
     Dropdown,
-    InputGroup
+    InputGroup,
 } from 'react-bootstrap';
+import { Route } from 'react-router-dom';
 
 
 class Whiteboard extends React.Component {
@@ -47,16 +48,16 @@ class Whiteboard extends React.Component {
         this.sketch.setBackgroundFromDataUrl('');
         this.setState({ backgroundColour: "white" })
     }
-    
+
     handleChangeText(event) {
-        this.setState({text: event.target.value});
+        this.setState({ text: event.target.value });
     }
-    
+
     addText = (event) => {
         console.log(this.state)
         event.preventDefault();
         this.sketch.addText(this.state.text);
-        this.setState({text: ""});
+        this.setState({ text: "" });
     }
 
     download = () => {
@@ -73,6 +74,17 @@ class Whiteboard extends React.Component {
             }
             );
         });
+    }
+
+    share = () => {
+        const dataURL = this.sketch.toDataURL();
+        this.props.history.push({
+            pathname: "/create-post",
+            state: {
+                body: "![sketchamoo](" + dataURL + ")",
+                markdown: true,
+            }
+        })
     }
 
     render() {
@@ -94,7 +106,7 @@ class Whiteboard extends React.Component {
                 <Popover.Content>
                     <Form onSubmit={this.addText.bind(this)}>
                         <InputGroup controlId="addText">
-                            <Form.Control placeholder="Mooo" value={text} onChange={this.handleChangeText.bind(this)}/>
+                            <Form.Control placeholder="Mooo" value={text} onChange={this.handleChangeText.bind(this)} />
                             <InputGroup.Append>
                                 <Button type="submit" variant="outline-secondary"><PlusCircle /></Button>
                             </InputGroup.Append>
@@ -164,9 +176,17 @@ class Whiteboard extends React.Component {
                         <Button className="ml-4" onClick={this.download}>
                             <Download /> Save
                             </Button>
+
                         <Button className="ml-2" onClick={this.clear}>
                             <Trash /> Clear
                             </Button>
+
+                        <Route render={({ history }) => (
+                            <Button variant="secondary" className="justify-content-right ml-4" onClick={this.share}>
+                                <Share /> Share on Academoo
+                            </Button>
+                        )} />
+
                     </Card.Header>
                     <Card.Body>
                         <SketchField width='1024px'
