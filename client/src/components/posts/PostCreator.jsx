@@ -26,7 +26,7 @@ class PostCreator extends React.Component {
                 community: this.props.location && this.props.location.state && this.props.location.state.community ?
                     this.props.location.state.community : "",
             }],
-            markdown: false,
+            markdown: this.props.location && this.props.location.state && this.props.location.state.markdown ? true: false,
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleContentSwitch = this.handleContentSwitch.bind(this);
