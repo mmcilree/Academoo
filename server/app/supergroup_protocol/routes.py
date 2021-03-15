@@ -1,9 +1,11 @@
 from app import actions, federation
 from app.supergroup_protocol import bp
-from flask import jsonify, request, Response
+from flask import jsonify, request, Response, current_app
 from app.models import User, Community
 from utils import *
 import json
+
+from cryptography.hazmat.primitives import serialization
 
 def respond_with_action(actionResponse):
     data, status = actionResponse
@@ -11,6 +13,12 @@ def respond_with_action(actionResponse):
         return Response(status=status)
     else:
         return jsonify(data), status
+
+@bp.route("/key", methods=["GET"])
+def get_key():
+    response = Response(current_app.config["PUBLIC_KEY"], mimetype="application/x-pem-file")
+    return response
+
 # User
 @bp.route("/users", methods=["GET"])
 def get_all_users():
