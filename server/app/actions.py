@@ -312,10 +312,25 @@ def createPost(post_data, author_id, author_host):
     if parent_post is not None and len(parent_post) == 0:
         parent_post = None
 
+    author = User.query.filter_by(user_id = author_id).first()
+    
     if parent_post is not None: 
         if validate_post_id(parent_post): return validate_post_id(parent_post)
+    
+    #Permissions for top-level post
+    if parent_post is None:
+        if author is None:
+            community = Community.lookup(community_id)
+            role = community.default_role
+            if ((role != "contributor") & (role != "admin")):
+                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                return (message, 403)
+        else :
+            if not author.has_role(community_id, "contributor"):
+                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                return (message, 403)
 
-    if User.query.filter_by(user_id = author_id).first() is None:
+    if author is None:
         new_user = User(user_id = author_id, host = author_host)
         db.session.add(new_user)
     
@@ -331,13 +346,24 @@ def createPost(post_data, author_id, author_host):
     db.session.commit()
     return (None, 200)
 
-def getPost(post_id):
+def getPost(post_id, requester_str):
     if validate_post_id(post_id): return validate_post_id(post_id)
 
     post = Post.query.filter_by(id = post_id).first()
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
-
+    
+    requester = User.lookup(requester_str)
+    if requester is None:
+        community = Community.lookup(post.community_id)
+        role = community.default_role
+        if ((role == "prohibited")):
+            message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+            return (message, 403);
+    elif requester.has_role(post.community_id, "prohibited"):
+        message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+        return (message, 403)
+    
     post_dict = {"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], "author": {"id": post.author.user_id if post.author else None, "host": post.author.host if post.author else None}, "modified": post.modified, "created": post.created}
     return (post_dict, 200)
 
@@ -378,7 +404,7 @@ def deletePost(post_id, requester):
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
-    if requester.user_id != post.author.user_id:
+    if ((requester.user_id != post.author.user_id) and (not requester.has_role("admin"))):
         return ({"title": "Permission denied " + post_id, "message": "User does not have permission to delete this post"}, 403)
 
     #will need to recursively delete comments

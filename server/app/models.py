@@ -78,9 +78,25 @@ class User(db.Model):
         return self.password_hash
     
     def has_role(self, community_id, role):
-        role_tiers = {"admin": 1, "contributor": 2, "member": 3, "guest": 4, "prohibited": 5}
+        role_tiers = {"admin": 1, "contributor": 2, "member": 3, "guest": 4}
         entry = UserRole.query.filter_by(user_id=self.identity, community_id=community_id).first()
-        if entry is None or role_tiers[entry.role] > role_tiers[role]:
+        if entry is None:
+            community  = Community.lookup(community_id)
+            if(role == "prohibited"):
+                if(community.default_role == role):
+                    return True
+                else:
+                    return False
+            if(role_tiers[community.default_role] <= role_tiers[role]):
+                return True
+            return False
+
+        if(role == "prohibited"):
+            if(entry.role == role):
+                return True
+            else:
+                return False
+        elif role_tiers[entry.role] > role_tiers[role]:
             return False
         return True
 

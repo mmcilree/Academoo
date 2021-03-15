@@ -37,13 +37,13 @@ class CommentsViewer extends React.Component {
 
 
   async fetchParentPost() {
-    await fetch('/api/posts/' + this.state.parentPostId + (this.state.host !== "local" ? "?external=" + this.state.host : ""), 
-    {
-      headers: {
+    await fetch('/api/posts/' + this.state.parentPostId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
+      {
+        headers: {
           'User-ID': this.state.user_id,
           'Client-Host': window.location.protocol + "//" + window.location.hostname
-      }
-    })
+        }
+      })
       .then(response => response.json())
       .then(data =>
         this.setState({
@@ -61,13 +61,13 @@ class CommentsViewer extends React.Component {
     const new_children = await Promise.all(parentPost.children.filter(childId => !fetchedChildren.has(childId)).map(
       async (childId) => {
         fetchedChildren.add(childId);
-        return fetch('/api/posts/' + childId + (this.state.host !== "local" ? "?external=" + this.state.host : ""), 
-        {
-          headers: {
+        return fetch('/api/posts/' + childId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
+          {
+            headers: {
               'User-ID': this.state.user_id,
               'Client-Host': window.location.protocol + "//" + window.location.hostname
-          }
-        })
+            }
+          })
           .then(response => response.json())
           .then(data => data)
           .catch(error => this.setState({ error, isLoading: false }));
@@ -105,7 +105,9 @@ class CommentsViewer extends React.Component {
                     {" "} <ChatRight />
                   </Button>
                   <Modal show={this.state.showCommentEditor} onHide={() => this.setState({ showCommentEditor: false })}>
-                    <Modal.Header closeButton />
+                    <Modal.Header closeButton>
+                      <Modal.Title>Add a Comment!</Modal.Title>
+                    </Modal.Header>
                     <Modal.Body>
                       <CommentCreator parentPost={this.state.parentPost} host={this.state.host} onSubmit={this.handleCloseCommentEditor.bind(this)} />
                     </Modal.Body>

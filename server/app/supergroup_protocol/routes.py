@@ -83,26 +83,17 @@ def get_all_posts():
     external = request.args.get("external")
     
     requester = User.lookup(requester_str)
-    print(requester_str)
     if not external:
         if requester is None:
-            print("here")
             community = Community.lookup(community_id)
             role = community.default_role
             if ((role == "prohibited")):
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
                 return jsonify(message), 403
         elif requester.has_role(community_id, "prohibited"):
-            # community = Community.lookup(community_id)
-            # role = community.default_role
-            # if ((role != "contributor") & (role != "admin")):
             message = {"title": "Permission error", "message": "Do not have permission to perform action"}
             return jsonify(message), 403
-        # else :
-        #     if not requester_str.has_role(community_id, "contributor"):
-        #         message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-        #         return message, Response(status = 403)
-        
+
         return respond_with_action(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
@@ -121,8 +112,9 @@ def get_post_by_id(id):
     #if host is None or requester_str is None:
     #    return Response(status = 400)
 
+
     if not external:
-        return respond_with_action(actions.getPost(id))
+        return respond_with_action(actions.getPost(id, requester_str))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
         response = federation.get_post_by_id(external, id, headers)
@@ -148,21 +140,15 @@ def create_post():
     requester = User.lookup(requester_str)
     if external is None:
         community_id = request.json["community"]
-
+        #Permissions for comments as minimum
         if requester is None:
             community = Community.lookup(community_id)
             role = community.default_role
-            if ((role != "contributor") & (role != "admin")):
-                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-                return jsonify(message), 403
-        elif not requester.has_role(community_id, "guest"):
-            community = Community.lookup(community_id)
-            role = community.default_role
-            if ((role != "contributor") & (role != "admin")):
+            if ((role != "member") & (role != "contributor") & (role != "admin")):
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
                 return jsonify(message), 403
         else :
-            if not requester.has_role(community_id, "contributor"):
+            if not requester.has_role(community_id, "member") :
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
                 return jsonify(message), 403
         
