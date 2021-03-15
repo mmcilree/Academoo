@@ -291,7 +291,18 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
             query += post_children
     '''
     
-    post_dicts = [{"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], "author": {"id": post.author.user_id if post.author else None, "host": post.author.host if post.author else None}, "modified": post.modified, "created": post.created} for post in query]
+    post_dicts = [
+        {
+            "id": post.id, 
+            "community": post.community_id, 
+            "parentPost": post.parent_id, 
+            "children": [comment.id for comment in post.comments], 
+            "title": post.title, 
+            "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], 
+            "author": {"id": post.author.user_id if post.author else None, "host": post.author.host if post.author else None}, 
+            "modified": post.modified, 
+            "created": post.created,
+        } for post in query]
     
     return (post_dicts, 200)
 
@@ -397,26 +408,56 @@ def deletePost(post_id, requester):
 def order_post_arr(post_arr, reverse=False):
     return sorted(post_arr, key=lambda post: post['created'], reverse= reverse)
 
-def upvotePost(post_id):
+def upvotePost(user_id, post_id):
     if validate_post_id(post_id): return validate_post_id(post_id)
+
+    user = User.query.filter_by(user_id = user_id).first()
+    if user is None:
+        return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 400)
 
     post = Post.query.filter_by(id = post_id).first()
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
-    post.upvotes += 1
+    current_vote = UserRole.query.filter_by(user_id=user_id, post_id=post_id).first()
+
+    if current_vote is None:
+        new_vote = UserVote(user_id=user_id, post_id=post_id, value="upvote")
+        db.session.add(new_vote)
+        db.session.commit() 
+    else:
+        existing_vote = UserRole.query.filter_by(user_id=user_id, post_id=post_id).first()
+        existing_vote.value = "upvote"
+        db.session.commit()
+
     db.session.commit()
+    
     return (None, 200)
 
-def downvotePost(post_id):
+def downvotePost(user_id, post_id):
     if validate_post_id(post_id): return validate_post_id(post_id)
+
+    user = User.query.filter_by(user_id = user_id).first()
+    if user is None:
+        return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 400)
 
     post = Post.query.filter_by(id = post_id).first()
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
-    post.downvotes += 1
+    current_vote = UserRole.query.filter_by(user_id=user_id, post_id=post_id).first()
+
+    if current_vote is None:
+        new_vote = UserVote(user_id=user_id, post_id=post_id, value="downvote")
+        db.session.add(new_vote)
+        db.session.commit() 
+    else:
+        existing_vote = UserRole.query.filter_by(user_id=user_id, post_id=post_id).first()
+        existing_vote.value = "downvote"
+        db.session.commit()
+
     db.session.commit()
+    
     return (None, 200)
 
 def changePassword(username, old_password, new_password):
