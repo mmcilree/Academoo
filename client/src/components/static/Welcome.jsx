@@ -34,7 +34,7 @@ class Welcome extends React.Component {
               </ul>
               <p>If you need any help operating our social media site, visit our <Link to="/help">help page</Link> for guidance.</p>
           <p>To get started, scroll through our list of communities and follow ones you are interested in!</p>
-          <Link to="/explore" className="btn btn-secondary">
+          <Link to="/communities" className="btn btn-secondary">
             Explore Commoonities
           </Link>
         </Card.Body>

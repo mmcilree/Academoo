@@ -115,7 +115,7 @@ class CommunityCreator extends React.Component {
         this.setState(
             { id: "", title: "", description: "", admin: "" }
         );
-        this.props.history.push('/explore');
+        this.props.history.push('/communities');
     }
 
     render() {

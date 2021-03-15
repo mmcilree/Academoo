@@ -11,7 +11,8 @@ import CommunitySubscribeButton from "./CommunitySubscribeButton";
 
 class CommunityFeed extends Component {
   state = {
-    isLoading: true,
+    isLoadingCommunity: true,
+    isLoadingPosts: true,
     posts: [],
     currentCommunity: this.props.match.params.id,
     error: null,
@@ -20,24 +21,26 @@ class CommunityFeed extends Component {
     isAdmin: false,
     communityData: null,
     isSubscribed: false,
+    userID: null
 
   }
 
   componentDidMount() {
-    this.fetchPosts();
     this.fetchUserDetails();
   }
 
   fetchUserDetails() {
     authFetch("/api/get-user").then(response => response.json())
-      .then(data =>
+      .then(data =>{
         this.setState({
-          userID: data.userID,
+          userID: data.id,
           isAdmin: data.adminOf.includes(this.state.currentCommunity),
           isSubscribed: data.subscriptions.includes(this.state.currentCommunity)
         })
-      )
-
+        console.log(this.state.userID)
+        this.fetchPosts()
+      })
+    
   }
 
   async fetchPosts() {
@@ -52,14 +55,15 @@ class CommunityFeed extends Component {
       .then(data =>
         this.setState({
           posts: data,
-          host: this.state.host
+          host: this.state.host,
+          isLoadingPosts: false
         })
       )
       .catch(error => {
 
-        this.setState({ error, isLoading: false })
+        this.setState({ error, isLoadingPosts: false })
         });
-    this.fetchCommunityDetails();
+      this.fetchCommunityDetails();
   }
 
   handleChange(event) {
@@ -82,7 +86,7 @@ class CommunityFeed extends Component {
       .then(data =>
         this.setState({
           communityData: data,
-          isLoading: false,
+          isLoadingCommunity: false,
         })
       )
   }
@@ -92,13 +96,13 @@ class CommunityFeed extends Component {
   }
 
   render() {
-    const { isLoading, posts, error, currentCommunity, newPostText, host, communityData, isAdmin } = this.state;
+    const { isLoadingPosts, isLoadingCommunity, posts, error, currentCommunity, newPostText, host, communityData, isAdmin } = this.state;
     
     const popover = (
       <Popover id="popover-basic">
         <Popover.Title as="h3">Community description</Popover.Title>
         <Popover.Content>
-          {!isLoading && communityData.description}
+          {!isLoadingCommunity && communityData.description}
         </Popover.Content>
       </Popover>
     );
@@ -106,7 +110,7 @@ class CommunityFeed extends Component {
       <Card className="mt-4 mb-10">
         <Card.Header className="pt-4 pr-4">
           <div className="d-flex justify-content-right">
-            {!isLoading ?
+            {!isLoadingCommunity ?
               <Card.Title >
                 <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={popover}>
                   <Link to="#" className="px-0 py-0" variant="none" style={{ color: "black", fontSize: "36px" }}>{communityData.title}
@@ -131,13 +135,12 @@ class CommunityFeed extends Component {
             </Alert>}
           <MiniPostCreator currentCommunity={currentCommunity} host={host}/>
           {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
-          {!isLoading ? (
+          {!isLoadingPosts ? (
             <PostViewer posts={posts} />
           ) : (
               <h3>Loading Posts...</h3>
             )}
-          {!isLoading && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
-
+          {!isLoadingPosts && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
         </Card.Body>
       </Card>
     );

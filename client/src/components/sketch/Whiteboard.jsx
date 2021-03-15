@@ -12,6 +12,8 @@ import {
     Form,
     Dropdown,
     InputGroup,
+    Tooltip,
+    Container
 } from 'react-bootstrap';
 import { Route } from 'react-router-dom';
 
@@ -25,7 +27,8 @@ class Whiteboard extends React.Component {
             backgroundColour: "white",
             lineWidth: 10,
             canUndo: false,
-            text: ""
+            text: "",
+            selected: false
         }
     }
 
@@ -39,7 +42,11 @@ class Whiteboard extends React.Component {
 
     setTool(event) {
         console.log(event.target.value);
-        this.setState({ currentTool: event.target.value });
+        this.setState({ currentTool: event.target.value, selected:false });
+    }
+
+    handleSelect(event){
+        this.setState({ currentTool: event.target.value, selected: true})
     }
 
     clear = () => {
@@ -88,7 +95,7 @@ class Whiteboard extends React.Component {
     }
 
     render() {
-        const { currentTool, lineColour, backgroundColour, lineWidth, canUndo, text } = this.state;
+        const { currentTool, lineColour, backgroundColour, lineWidth, canUndo, text, selected } = this.state;
         const colourPopover = (
             <Popover id="popover-basic">
                 <Popover.Title as="h3">Pick a Colour!</Popover.Title>
@@ -120,15 +127,14 @@ class Whiteboard extends React.Component {
 
         console.log(lineWidth)
         return (
-
-            <Card className="mt-4 p-4">
+            <Card className="mt-4 p-4" style={{ width: '1200px' }}>
                 <h1>Whiteboard</h1>
                 <p>Share your moosings on the sketch-a-moo!</p>
                 <Card>
-                    <Card.Header className="d-flex">
+                    <Card.Header className="d-flex justifycontent-between">
                         <ToggleButtonGroup name="tools" >
                             <ToggleButton type="radio" value={Tools.Select}
-                                onClick={this.setTool.bind(this)}
+                                onClick={this.handleSelect.bind(this)}
                             ><Cursor /></ToggleButton>
                             <ToggleButton type="radio" value={Tools.Line}
                                 onClick={this.setTool.bind(this)}
@@ -149,19 +155,19 @@ class Whiteboard extends React.Component {
                         </ToggleButtonGroup>
 
                         <OverlayTrigger trigger={['click', 'focus']} placement="bottom" overlay={colourPopover}>
-                            <Button className="ml-4" >
+                            <Button className="ml-4">
                                 <Palette />
                             </Button>
                         </OverlayTrigger>
 
                         <OverlayTrigger trigger={['click', 'focus']} placement="bottom" overlay={textPopover}>
-                            <Button className="ml-2" >
+                            <Button className="ml-2">
                                 <CursorText />
                             </Button>
                         </OverlayTrigger>
 
-                        <Dropdown >
-                            <Dropdown.Toggle variant="primary" className="ml-2" id="dropdown-basic">
+                        <Dropdown>
+                            <Dropdown.Toggle variant="primary" className="ml-2" id="dropdown-basic" >
                                 <BorderWidth />
                             </Dropdown.Toggle>
 
@@ -172,17 +178,35 @@ class Whiteboard extends React.Component {
                                 <Dropdown.Item onClick={() => this.setState({ lineWidth: 50 })}>Thiccc</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
-
-                        <Button className="ml-4" onClick={this.download}>
-                            <Download /> Save
+                        
+                        <OverlayTrigger
+                            key="save"
+                            placement="bottom"
+                            overlay={
+                                <Tooltip id="tooltip-save">
+                                    Save
+                                </Tooltip>
+                            }
+                        >
+                            <Button variant="outline-primary" className="ml-4" onClick={this.download}>
+                                <Download />
                             </Button>
-
-                        <Button className="ml-2" onClick={this.clear}>
-                            <Trash /> Clear
+                        </OverlayTrigger>
+                        <OverlayTrigger
+                            key="clear"
+                            placement="bottom"
+                            overlay={
+                                <Tooltip id="tooltip-clear">
+                                    Clear
+                                </Tooltip>
+                            }
+                        >
+                            <Button variant="outline-primary" className="ml-2" onClick={this.clear}>
+                                <Trash />
                             </Button>
-
+                        </OverlayTrigger>
                         <Route render={({ history }) => (
-                            <Button variant="secondary" className="justify-content-right ml-4" onClick={this.share}>
+                            <Button variant="outline-secondary" className="justify-content-right ml-4" onClick={this.share}>
                                 <Share /> Share on Academoo
                             </Button>
                         )} />
