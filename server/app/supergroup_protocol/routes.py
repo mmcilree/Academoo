@@ -91,13 +91,13 @@ def get_all_posts():
             role = community.default_role
             if ((role == "prohibited")):
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-                return message, Response(status = 403)
+                return jsonify(message), 403
         elif requester.has_role(community_id, "prohibited"):
             # community = Community.lookup(community_id)
             # role = community.default_role
             # if ((role != "contributor") & (role != "admin")):
             message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-            return message, Response(status = 403)
+            return jsonify(message), 403
         # else :
         #     if not requester_str.has_role(community_id, "contributor"):
         #         message = {"title": "Permission error", "message": "Do not have permission to perform action"}
@@ -154,17 +154,17 @@ def create_post():
             role = community.default_role
             if ((role != "contributor") & (role != "admin")):
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-                return message, Response(status = 403)
+                return jsonify(message), 403
         elif not requester.has_role(community_id, "guest"):
             community = Community.lookup(community_id)
             role = community.default_role
             if ((role != "contributor") & (role != "admin")):
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-                return message, Response(status = 403)
+                return jsonify(message), 403
         else :
             if not requester.has_role(community_id, "contributor"):
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-                return message, Response(status = 403)
+                return jsonify(message), 403
         
         return respond_with_action(actions.createPost(request.json, requester_str, host))
     else:

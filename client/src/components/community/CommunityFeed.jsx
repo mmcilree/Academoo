@@ -31,7 +31,7 @@ class CommunityFeed extends Component {
 
   fetchUserDetails() {
     authFetch("/api/get-user").then(response => response.json())
-      .then(data =>{
+      .then(data => {
         this.setState({
           userID: data.id,
           isAdmin: data.adminOf.includes(this.state.currentCommunity),
@@ -40,30 +40,38 @@ class CommunityFeed extends Component {
         console.log(this.state.userID)
         this.fetchPosts()
       })
-    
+
   }
 
   async fetchPosts() {
     await fetch('/api/posts?community=' + this.state.currentCommunity + (this.state.host !== "local" ? "&external=" + this.state.host : ""),
-    {
-      headers: {
+      {
+        headers: {
           'User-ID': this.state.userID,
           'Client-Host': window.location.protocol + "//" + window.location.hostname
-      }
-    })
-      .then(response => response.json())
-      .then(data =>
+        }
+      })
+      .then((response) => {
+        if (response.status >= 400 && response.status < 600) {
+          return response.json().then((error) => {
+            let err = error.title + ": " + error.message
+            throw new Error(err);
+          })
+        } else {
+          return response.json();
+        }
+      })
+      .then(data => {
         this.setState({
           posts: data,
           host: this.state.host,
           isLoadingPosts: false
         })
-      )
+      })
       .catch(error => {
-
-        this.setState({ error, isLoadingPosts: false })
-        });
-      this.fetchCommunityDetails();
+        this.setState({ error: error.message, isLoadingPosts: false })
+      });
+    this.fetchCommunityDetails();
   }
 
   handleChange(event) {
@@ -77,11 +85,11 @@ class CommunityFeed extends Component {
 
   fetchCommunityDetails() {
     fetch('/api/communities/' + this.state.currentCommunity + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
-    {
-      headers: {
+      {
+        headers: {
           'Client-Host': window.location.protocol + "//" + window.location.hostname
-      }
-    })
+        }
+      })
       .then(response => response.json())
       .then(data =>
         this.setState({
@@ -97,7 +105,6 @@ class CommunityFeed extends Component {
 
   render() {
     const { isLoadingPosts, isLoadingCommunity, posts, error, currentCommunity, newPostText, host, communityData, isAdmin } = this.state;
-    
     const popover = (
       <Popover id="popover-basic">
         <Popover.Title as="h3">Community description</Popover.Title>
@@ -116,14 +123,14 @@ class CommunityFeed extends Component {
                   <Link to="#" className="px-0 py-0" variant="none" style={{ color: "black", fontSize: "36px" }}>{communityData.title}
                   </Link></OverlayTrigger>
               </Card.Title>
-              
+
               : <h2> Loading... </h2>}
-          
-              <CommunitySubscribeButton community={this.state.currentCommunity} />
+
+            <CommunitySubscribeButton community={this.state.currentCommunity} />
           </div>
 
           <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>
-          
+
 
         </Card.Header>
         <Card.Body>
@@ -133,8 +140,8 @@ class CommunityFeed extends Component {
                 Manage Community
               </Link>
             </Alert>}
-          <MiniPostCreator currentCommunity={currentCommunity} host={host}/>
-          {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
+          <MiniPostCreator currentCommunity={currentCommunity} host={host} />
+          {error ? <Alert variant="danger">Error fetching posts: {error}</Alert> : null}
           {!isLoadingPosts ? (
             <PostViewer posts={posts} />
           ) : (
