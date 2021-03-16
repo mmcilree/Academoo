@@ -431,6 +431,9 @@ def deletePost(post_id, requester):
     db.session.commit()
     return (None, 200)
 
+def order_post_arr(post_arr, reverse=False):
+    return sorted(post_arr, key=lambda post: post['created'], reverse= reverse)
+
 def upvotePost(post_id):
     if validate_post_id(post_id): return validate_post_id(post_id)
 
