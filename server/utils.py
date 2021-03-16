@@ -40,7 +40,6 @@ def validate_role(role):
 
 def validate_post_id(post_id):
     if not isUUID(post_id):
-        print("VAL POST")
         return ({"title": "post id is not in the correct format", "message": "Format of post id should be uuid4 string"}, 400)
 
 def validate_json(file): # IS REDUNDANT, REMOVE EVENTUALLY
@@ -51,28 +50,172 @@ content_schema = {
     "type": "array",
     "items": {
         "type": "object",
-        "properties": {
-            "text": {
+        "patternProperties": {
+            "^.*$": {
                 "type": "object",
-                "properties": {
-                    "text": {"type": "string"}
+                "patternProperties": {
+                    "^.*$": {"type": "string"}
                 }
             }
         }
     }
 }
 
+def check_array_json(file):
+    schema = {
+        "type": "array",
+        "items": {"type": "string"}
+    }
+    try:
+        validate(instance=file, schema=schema)
+    except:
+        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
+
+def check_get_community(file):
+    schema = {
+        "type": "object",
+        "properties": {
+            "id": {"type": "string"},
+            "title": {"type": "string"},
+            "description": {"type": "string"},
+            "admins": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {"type": "string"},
+                        "host": {"type": "string"}
+                    },
+                    "required": ["id", "host"]
+                }
+            }
+        },
+        "required": ["id", "title", "description", "admins"]
+    }
+    try:
+        validate(instance=file, schema=schema)
+    except:
+        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
+
+def check_get_timestamps(file):
+    schema = {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "id": {"type": "string"},
+                "modified": {"type": "integer"}
+            },
+            "required": ["id", "modified"]
+        }
+    }
+    try:
+        validate(instance=file, schema=schema)
+    except:
+        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
+
+def check_get_filtered_post(file):
+    schema = {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "id": {"type": "string"},
+                "community": {"type": "string"},
+                "parentPost": {"type": "string"},
+                "children": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "title": {"type": "string"},
+                "content": content_schema,
+                "author": {
+                    "type": "object",
+                    "properties": {
+                        "id": {"type": "string"},
+                        "host": {"type": "string"}
+                    },
+                    "required": ["id", "host"]
+                },
+                "modified": {"type": "integer"},
+                "created": {"type": "integer"}
+            },
+            "required": ["id", "community", "children", "title", "content", "author", "modified", "created"]
+        }
+    }
+    try:
+        validate(instance=file, schema=schema)
+    except:
+        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
+
+def check_get_post(file):
+    schema = {
+            "type": "object",
+            "properties": {
+                "id": {"type": "string"},
+                "community": {"type": "string"},
+                "parentPost": {"type": "string"},
+                "children": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                },
+                "title": {"type": "string"},
+                "content": content_schema,
+                "author": {
+                    "type": "object",
+                    "properties": {
+                        "id": {"type": "string"},
+                        "host": {"type": "string"}
+                    },
+                    "required": ["id", "host"]
+                },
+                "modified": {"type": "integer"},
+                "created": {"type": "integer"}
+            },
+            "required": ["id", "community", "children", "title", "content", "author", "modified", "created"]
+        }
+    try:
+        validate(instance=file, schema=schema)
+    except:
+        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
+
+def check_get_user(file):
+    schema = {
+        "type": "object",
+        "properties": {
+            "id": {"type": "string"},
+            "about": {"type": "string"},
+            "avatarUrl": {"type": "string"},
+            "posts": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "id": {"type": "string"},
+                        "host": {"type": "string"}
+                    },
+                    "required": ["id", "host"]
+                }
+            }
+        },
+        "required": ["id", "posts"]
+    }
+    try:
+        validate(instance=file, schema=schema)
+    except:
+        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
+
 def check_create_post(file):
     create_schema = {
         "type": "object",
         "properties": {
             "community": {"type": "string"},
-            "parentPost": {"type": ["string", "null"]}, #change to uuid if possible
+            "parentPost": {"type": ["string", "null"], "default": "null"},
             "title": {"type": "string"},
             "content": content_schema
         },
         #"additionalProperties": False,
-        "required": ["community", "parentPost", "title", "content"]
+        "required": ["community", "title", "content"]
     }
 
     try:

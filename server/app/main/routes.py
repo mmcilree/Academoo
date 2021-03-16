@@ -155,3 +155,11 @@ def delete_user():
     username = current_user().user_id
     password = req["password"]
     return Response(status=200) if actions.deleteUser(username, password) else Response(status=400)
+
+@bp.route("/post-vote/<post_id>")
+def post_vote(post_id):
+    choice = request.args['vote']
+    if choice == "upvote":
+        return respond_with_action(actions.upvotePost(post_id))
+    else:
+        return respond_with_action(actions.downvotePost(post_id))

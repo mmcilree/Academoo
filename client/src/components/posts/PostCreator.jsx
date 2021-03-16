@@ -26,7 +26,7 @@ class PostCreator extends React.Component {
                 community: this.props.location && this.props.location.state && this.props.location.state.community ?
                     this.props.location.state.community : "",
             }],
-            markdown: false,
+            markdown: this.props.location && this.props.location.state && this.props.location.state.markdown ? true: false,
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleContentSwitch = this.handleContentSwitch.bind(this);
@@ -74,7 +74,12 @@ class PostCreator extends React.Component {
     }
 
     async fetchCommunities(host) {
-        await fetch('/api/communities' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
+        await fetch('/api/communities' + (host !== "local" ? "?external=" + host : ""), 
+        {
+            headers: {
+                'Client-Host': window.location.protocol + "//" + window.location.hostname
+            }
+        }).then(response => response.json())
             .then(data =>
                 this.setState({
                     communities: [...this.state.communities, ...data.map(community => ({ host: host, community: community }))],

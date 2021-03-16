@@ -13,25 +13,20 @@ import UserProfile from "../components/user/UserProfile";
 import Login from "../components/authentication/Login";
 import SignUp from "../components/authentication/SignUp";
 import { MemoryRouter as Router, Route } from "react-router-dom";
+import { authFetchMock } from "./fetchMocks";
 
 // const App = require('../App').default;
 const auth = require('../auth');
 
 // Mock the necessary API calls for authentication
-jest.mock('../auth', () => ({
+jest.mock('../auth', () => {
+  const {authFetchMock} = require('./fetchMocks');
+  return ({
     useAuth: () => [false],
-    authFetch: () =>
-        Promise.resolve({
-            json: () => Promise.resolve(
-                {
-                    id: "academoo",
-                    email: "academoo@academoo.com",
-                    host: "academoo",
-                    subscriptions: [],
-                    adminOf: []
-                }),
-        })
-}));
+    authFetch: authFetchMock
+  })
+}
+);
 
 it("Routes to default page", () => {
   const wrapper = mount(

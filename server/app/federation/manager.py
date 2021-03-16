@@ -8,48 +8,47 @@ class Manager(object):
         # host name : <Instance Objects>
         if os.environ.get("FLASK_ENV") == "production":
             self.instances = {
-                "nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/"),
-                "unifier": Instance("http://unifier-prod.herokuapp.com")
+                "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
+                "unifier": Instance("http://unifier-prod.herokuapp.com/")
+                
             }
         else:
             self.instances = {
+                "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
                 "cs3099-group1": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
-                "group-a10": Instance("https://cs3099user-a10.host.cs.st-andrews.ac.uk/"),
-                "group-a5": Instance("https://cs3099user-a5.host.cs.st-andrews.ac.uk/"),
-                "nnv2host": Instance("https://nnv2.host.cs.st-andrews.ac.uk/"),
-                #"unifier": Instance("http://unifier-prod.herokuapp.com/"),
-                "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/")
+                "unifier": Instance("http://unifier-prod.herokuapp.com/")
+                
             }
 
-    def create_post(self, host, data):
-        return self.instances[host].create_post(data)
+    def create_post(self, host, data, headers):
+        return self.instances[host].create_post(data, headers)
     
-    def edit_post(self, host, data):
-        return self.instances[host].edit_post(data)
+    def edit_post(self, host, data, id, headers):
+        return self.instances[host].edit_post(data, id, headers)
     
-    def delete_post(self, host, data):
-        return self.instances[host].delete_post(data)
+    def delete_post(self, host, data, id, headers):
+        return self.instances[host].delete_post(data, id, headers)
 
-    def _get_latest_timestamp(self, host, community):
-        timestamps = self.instances[host].get_timestamps(community)
+    def _get_latest_timestamp(self, host, community, headers):
+        timestamps = self.instances[host].get_timestamps(community, headers)
         if timestamps is None:
-            return max([x["modified"] for x in self.instances[host].get_posts(community)] + [0])
+            return max([x["modified"] for x in self.instances[host].get_posts(community, headers)[0]] + [0]) #Added [0] at end of call as now returns a tuple of (json list, status_code) may be good idea to check status code before iterating over list
 
-        return max([x["modified"] for x in self.instances[host].get_timestamps(community)] + [0])
+        return max([x["modified"] for x in self.instances[host].get_timestamps(community, headers)] + [0])
 
-    @functools.lru_cache() # timestamp purely for caching purposes
-    def _get_posts(self, host, community, _timestamp):
-        return self.instances[host].get_posts(community)
+    #@functools.lru_cache() # timestamp purely for caching purposes      ######getting key error: unhashable type: dict
+    def _get_posts(self, host, community, _timestamp, headers):
+        return self.instances[host].get_posts(community, headers)
 
-    def get_post_by_id(self, host, id):
-        return self.instances[host].get_post_by_id(id=id)
+    def get_post_by_id(self, host, id, headers):
+        return self.instances[host].get_post_by_id(id=id, headers=headers)
 
-    def get_posts(self, host, community):
-        timestamp = self._get_latest_timestamp(host, community)
-        return self._get_posts(host, community, timestamp)
+    def get_posts(self, host, community, headers):
+        timestamp = self._get_latest_timestamp(host, community, headers)
+        return self._get_posts(host, community, timestamp, headers)
 
-    def get_communities(self, host, id=None):
-        return self.instances[host].get_communities(id=id)
+    def get_communities(self, host, headers, id=None):
+        return self.instances[host].get_communities(headers, id=id)
     
     def get_users(self, host, id=None):
         return self.instances[host].get_users(id=id)

@@ -30,7 +30,7 @@ class SubscribedFeed extends Component {
                     posts: []
                 })
             }
-            )
+        ).catch(() => {})
         
         this.fetchPosts();
     }
@@ -43,7 +43,13 @@ class SubscribedFeed extends Component {
     }
 
     async appendPostsFromCommunity(community, i) {
-        await fetch('/api/posts?community=' + community)
+        await fetch('/api/posts?community=' + community, 
+        {
+            headers: {
+                'User-ID': this.state.user_id,
+                'Client-Host': window.location.protocol + "//" + window.location.hostname
+            }
+        })
             .then(response => response.json())
             .then(data =>
                 this.setState({
@@ -54,6 +60,13 @@ class SubscribedFeed extends Component {
         this.setState({posts: this.state.posts.slice().sort((a, b) => b.created - a.created)});
         
         (i == this.state.subscribedCommunities.length - 1) && this.setState({isLoading: false});
+    }
+
+    componentWillUnmount() {
+        // fix Warning: Can't perform a React state update on an unmounted component
+        this.setState = (state,callback)=>{
+            return;
+        };
     }
 
     render() {

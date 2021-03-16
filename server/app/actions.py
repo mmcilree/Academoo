@@ -26,7 +26,6 @@ def createCommunity(community_id, title, description, admin):
     db.session.commit()
     return (None, 200)
 
-# TODO: We need to handle granting roles to external users too
 def grantRole(username, community_id, current_user, role="member", external=False, user_host=None):
     if validate_community_id(community_id): return validate_community_id(community_id)
     if validate_username(username): return validate_username(username)
@@ -148,7 +147,7 @@ def getUser(user_id):
     user = User.query.filter_by(user_id = user_id).first()
     if user is None:
         return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 404)
-    user_dict = {"id": user.user_id, "posts": [{"id": post.id, "host": "post.host doesn't exist for now oops"} for post in Post.query.filter_by(author_id=user.id)]}#########################
+    user_dict = {"id": user.user_id, "about": "not implemented", "avatarUrl": "not implemented", "posts": [{"id": post.id, "host": "post.host doesn't exist for now oops"} for post in Post.query.filter_by(author_id=user.id)]}#########################
     return (user_dict, 200)
 
 def searchUsers(prefix):
@@ -256,7 +255,6 @@ def getAllCommunityPostsTimeModified(community_id):
     post_dicts = [{"id":post.id, "modified":post.modified} for post in Post.query.filter_by(community_id = community_id)]
     return (post_dicts, 200)
 
-# Post host isnt a thing right now
 def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type):
     if community_id is not None: 
         if validate_community_id(community_id): return validate_community_id(community_id)
@@ -279,12 +277,14 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if content_type is not None:
         valid_posts = [content_field.post_id for content_field in PostContentField.query.filter(content_type=content_type).all()]
         query = query.filter(Post.id.in_(valid_posts))
-
+    if include_children is None:
+        query = query.filter(Post.parent_id == None)
     query = query.order_by(desc(Post.created))
     if limit is not None:
         query = query.limit(limit)
 
-    '''
+
+    ''' leave for just now maybe useless idk
     if include_children:
         for post in query:
             post_children = getFilteredPosts(limit, community_id, min_date, author, host, post.id, True, content_type)
@@ -292,21 +292,25 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     '''
     
     post_dicts = [{"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], "author": {"id": post.author.user_id if post.author else None, "host": post.author.host if post.author else None}, "modified": post.modified, "created": post.created} for post in query]
+    
     return (post_dicts, 200)
 
 # Post host may not be tied to author idk
 # Author host is not in json file so will need to passed in manually :(
-def createPost(post_data, host="NULL"):
+def createPost(post_data, author_id, author_host):
     community_id = post_data["community"]
     parent_post = post_data["parentPost"]
     title = post_data["title"]
     content_json = post_data["content"]
-    author = post_data["author"]
-    author_id = author["id"]
-    author_host = author["host"]
+    author_id = author_id
+    author_host = author_host
 
     if validate_community_id(community_id): return validate_community_id(community_id)
     if validate_username(author_id): return validate_username(author_id)
+
+    if parent_post is not None and len(parent_post) == 0:
+        parent_post = None
+
     if parent_post is not None: 
         if validate_post_id(parent_post): return validate_post_id(parent_post)
 
@@ -338,7 +342,6 @@ def getPost(post_id):
 
 def editPost(post_id, post_data, requester):
     if validate_post_id(post_id): return validate_post_id(post_id)
-    print("AFTER VAL EDIT")
 
     update_title = post_data["title"]
     update_content_json = post_data["content"]
@@ -388,6 +391,31 @@ def deletePost(post_id, requester):
 
     # probably needs a cascade delete or something
     db.session.delete(post)
+    db.session.commit()
+    return (None, 200)
+
+def order_post_arr(post_arr, reverse=False):
+    return sorted(post_arr, key=lambda post: post['created'], reverse= reverse)
+
+def upvotePost(post_id):
+    if validate_post_id(post_id): return validate_post_id(post_id)
+
+    post = Post.query.filter_by(id = post_id).first()
+    if post is None:
+        return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
+
+    post.upvotes += 1
+    db.session.commit()
+    return (None, 200)
+
+def downvotePost(post_id):
+    if validate_post_id(post_id): return validate_post_id(post_id)
+
+    post = Post.query.filter_by(id = post_id).first()
+    if post is None:
+        return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
+
+    post.downvotes += 1
     db.session.commit()
     return (None, 200)
 
