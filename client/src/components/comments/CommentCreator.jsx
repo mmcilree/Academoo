@@ -81,7 +81,7 @@ class CommentCreator extends React.Component {
                         throw new Error(err);
                     })
                 } else {
-                    return response.json();
+                    return response;
                 }
             })
             .then(response => this.setState({ email: "", host: "", title: "", body: "" }))

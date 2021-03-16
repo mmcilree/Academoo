@@ -256,7 +256,7 @@ def getAllCommunityPostsTimeModified(community_id):
     return (post_dicts, 200)
 
 # Post host isnt a thing right now
-def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type):
+def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type, requester_str):
     if community_id is not None: 
         if validate_community_id(community_id): return validate_community_id(community_id)
     if author is not None: 
@@ -266,6 +266,16 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     
     query = db.session.query(Post)
     if community_id is not None:
+        requester = User.lookup(requester_str)
+        if requester is None:
+            community = Community.lookup(community_id)
+            role = community.default_role
+            if ((role == "prohibited")):
+                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                return (message, 403)
+        elif requester.has_role(community_id, "prohibited"):
+            message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+            return (message, 403)
         query = query.filter(Post.community_id == community_id)
     if min_date is not None:
         query = query.filter(Post.created >= min_date)

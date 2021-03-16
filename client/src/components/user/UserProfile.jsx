@@ -17,7 +17,8 @@ class UserProfile extends Component {
       username: this.props.match.params.id,
       email: null,
       bio: "",
-      error: null,
+      postError: null,
+      userError: null,
       posts: [],
       host: this.props.match.params.instance ? this.props.match.params.instance : "local",
       isLoading: true
@@ -56,21 +57,30 @@ class UserProfile extends Component {
 
   async fetchPosts() {
     this.fetchCurrentUser();
-    await fetch('/api/posts?author=' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""), 
-    {
-      headers: {
+    await fetch('/api/posts?author=' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""),
+      {
+        headers: {
           'User-ID': this.state.currentUser,
           'Client-Host': window.location.protocol + "//" + window.location.hostname
-      }
-    })
-      .then(response => response.json())
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then((error) => {
+            let err = error.title + ": " + error.message
+            throw new Error(err);
+          })
+        } else {
+          return response.json()
+        }
+      })
       .then(data =>
         this.setState({
           posts: data,
           host: this.state.host
         })
       )
-      .catch(error => this.setState({ error, isLoading: false }));
+      .catch(error => this.setState({ postError: error.message, isLoading: false }));
   }
 
   componentDidMount() {
@@ -99,7 +109,7 @@ class UserProfile extends Component {
           error: null,
         })
       )
-      .catch(error => this.setState({ error, isLoading: false }));
+      .catch(error => this.setState({ userError: error, isLoading: false }));
   }
 
   render() {
@@ -108,10 +118,11 @@ class UserProfile extends Component {
       emailHash = !this.state.isLoading && md5(this.state.email);
     }
 
-    const { username, email, bio, posts, error, isLoading } = this.state;
+    const { username, email, bio, posts, postError, userError, isLoading } = this.state;
     return username && (
       <Card className="mt-4">
         <Card.Body className="mb-0">
+          {userError ? <Alert variant="danger">Error fetching user details: {userError.message}</Alert> : null}
           <Media>
             <img
               width={150}
@@ -131,8 +142,8 @@ class UserProfile extends Component {
         <Card.Body>
           <Card >
             <Card.Body>
-            <Card.Title> Posts from {username} :</Card.Title>
-              {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
+              <Card.Title> Posts from {username} :</Card.Title>
+              {postError ? <Alert variant="danger">Error fetching posts: {postError}</Alert> : null}
               {!isLoading ? (
                 <PostsViewer posts={posts} />
               ) : (

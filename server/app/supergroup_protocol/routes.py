@@ -82,19 +82,9 @@ def get_all_posts():
 
     external = request.args.get("external")
     
-    requester = User.lookup(requester_str)
+    # requester = User.lookup(requester_str)
     if not external:
-        if requester is None:
-            community = Community.lookup(community_id)
-            role = community.default_role
-            if ((role == "prohibited")):
-                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-                return jsonify(message), 403
-        elif requester.has_role(community_id, "prohibited"):
-            message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-            return jsonify(message), 403
-
-        return respond_with_action(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type))
+        return respond_with_action(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type, requester_str))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
         response = federation.get_posts(external, community_id, headers)

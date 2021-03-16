@@ -141,7 +141,7 @@ class CommunityFeed extends Component {
               </Link>
             </Alert>}
           <MiniPostCreator currentCommunity={currentCommunity} host={host} />
-          {error ? <Alert variant="danger">Error fetching posts: {error}</Alert> : null}
+          {error ? <Alert variant="warning">Error fetching posts: {error}</Alert> : null}
           {!isLoadingPosts ? (
             <PostViewer posts={posts} />
           ) : (
