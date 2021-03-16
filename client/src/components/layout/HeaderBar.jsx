@@ -87,10 +87,6 @@ function HeaderBar() {
                 <PlusCircle className="mb-1" />
                 <span> New Moo</span>
               </Nav.Link>
-              <Nav.Link as={Link} to="/create-community">
-                <PlusCircle className="mb-1" />
-                <span> New Commoonity</span>
-              </Nav.Link>
               <Nav.Link as={Link} to="/sketchamoo">
                 <Pencil className="mb-1" />
                 <span> Sketch-A-Moo!</span>

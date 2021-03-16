@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import CommunityList from "../community/CommunityList";
 import { authFetch } from '../../auth';
 import CommunitySubscribeButton from "../community/CommunitySubscribeButton";
+import { PlusCircle } from "react-bootstrap-icons"
 
 class Sidebar extends Component {
     state = {
@@ -22,11 +23,11 @@ class Sidebar extends Component {
                     subscribedCommunities: data.subscriptions,
                     isLoading: false
                 })
-            ).catch(() => {});
+            ).catch(() => { });
     }
 
     updateSubscriptions() {
-        this.setState({isLoading: true});
+        this.setState({ isLoading: true });
         this.fetchUserDetails();
         this.props.fetchSubscribedCommunities();
     }
@@ -58,7 +59,7 @@ class Sidebar extends Component {
                                             "communities/" + community}>
                                             {community}
                                         </Link>
-                                        <CommunitySubscribeButton community={community} updateParent={this.updateSubscriptions.bind(this)}/>
+                                        <CommunitySubscribeButton community={community} updateParent={this.updateSubscriptions.bind(this)} />
                                     </ListGroup.Item>)
 
                             : <p>Loading...</p>}
@@ -66,6 +67,10 @@ class Sidebar extends Component {
                         <ListGroupItem>
                             <Link to="/communities" className="btn btn-secondary">
                                 Explore Communities
+                            </Link>
+                            <Link to="/create-community" className="btn btn-secondary mt-2">
+                                <PlusCircle className="mb-1" />
+                                <span> New Commoonity</span>
                             </Link>
                         </ListGroupItem>
                     </ListGroup>
