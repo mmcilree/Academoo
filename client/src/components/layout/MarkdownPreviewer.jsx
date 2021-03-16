@@ -1,9 +1,11 @@
 import React from 'react';
 import { Card, Form, Button, Modal, Table } from 'react-bootstrap';
 import { QuestionCircle } from 'react-bootstrap-icons';
+import MarkdownRender from './MarkdownRender';
 
 const ReactMarkdown = require('react-markdown');
 const gfm = require('remark-gfm');
+
 class MarkdownPreviewer extends React.Component {
     constructor(props) {
         super(props);
@@ -47,7 +49,7 @@ class MarkdownPreviewer extends React.Component {
                 <Card >
                     <Card.Body style={{ height: "400px", "overflowY": "scroll" }}>
                         {/* <Card.Text> */}
-                        <ReactMarkdown plugins={[gfm]} renderers={renderers} children={body} />
+                        <MarkdownRender renderers={renderers} children={body} />
                         {/* </Card.Text> */}
                     </Card.Body>
                 </Card>

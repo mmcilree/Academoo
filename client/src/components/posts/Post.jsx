@@ -6,6 +6,7 @@ import { ThreeDots, PencilSquare, Trash } from "react-bootstrap-icons";
 import Dropdown from "react-bootstrap/Dropdown";
 import PostEditor from "./PostEditor"
 import { authFetch } from '../../auth';
+import MarkdownRender from '../layout/MarkdownRender';
 
 class Post extends Component {
   constructor(props) {
@@ -292,8 +293,6 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
         <Card.Link className="text-primary" href={part}>{part} </Card.Link>
       : part + " ");
 
-  const ReactMarkdown = require('react-markdown');
-  const gfm = require('remark-gfm');
   const renderers = { heading: HeadingRenderer, image: ImageRenderer };
   switch (contentType) {
     case "text":
@@ -317,7 +316,7 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
     case "markdown":
       return (
         <React.Fragment>
-          <ReactMarkdown plugins={[gfm]} renderers={renderers} children={body} />
+          <MarkdownRender renderers={renderers} children={body} />
         </React.Fragment>
       )
     default:
