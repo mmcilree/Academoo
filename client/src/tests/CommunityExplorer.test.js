@@ -32,7 +32,7 @@ const history = createMemoryHistory();
 beforeEach(() => {
 
     global.fetch = jest.fn().mockImplementation(fetchMock);
-    history.push('/explore')
+    history.push('/communities')
     wrapper = mount(
         <Router history={history}>
             <CommunityExplorer />

@@ -80,8 +80,28 @@ def get_all_posts():
     content_type = request.args.get("contentType")
 
     external = request.args.get("external")
-
+    
+    requester = User.lookup(requester_str)
+    print(requester_str)
     if not external:
+        if requester is None:
+            print("here")
+            community = Community.lookup(community_id)
+            role = community.default_role
+            if ((role == "prohibited")):
+                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                return message, Response(status = 403)
+        elif requester.has_role(community_id, "prohibited"):
+            # community = Community.lookup(community_id)
+            # role = community.default_role
+            # if ((role != "contributor") & (role != "admin")):
+            message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+            return message, Response(status = 403)
+        # else :
+        #     if not requester_str.has_role(community_id, "contributor"):
+        #         message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+        #         return message, Response(status = 403)
+        
         return respond_with_action(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}

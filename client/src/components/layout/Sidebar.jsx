@@ -64,7 +64,7 @@ class Sidebar extends Component {
                             : <p>Loading...</p>}
 
                         <ListGroupItem>
-                            <Link to="/explore" className="btn btn-secondary">
+                            <Link to="/communities" className="btn btn-secondary">
                                 Explore Communities
                             </Link>
                         </ListGroupItem>
