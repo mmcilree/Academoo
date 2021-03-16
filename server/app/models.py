@@ -25,7 +25,7 @@ subscriptions = db.Table('subscriptions',
 
 class UserVote(db.Model):
     user_id = db.Column(db.String(50), db.ForeignKey('user.user_id'), primary_key=True)
-    post_id = db.Column(db.String(1000), db.ForeignKey('post.post_id'), primary_key=True)
+    post_id = db.Column(db.String(1000), db.ForeignKey('post.id'), primary_key=True)
     value = db.Column(db.String(50)) # upvote / downvote
 
 class User(db.Model):
