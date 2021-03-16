@@ -1,5 +1,5 @@
 import ReactMarkdown from 'react-markdown';
-import MathJax from 'react-mathjax';
+import MathJax from 'react-mathjax2';
 import RemarkMathPlugin from 'remark-math';
 
 const gfm = require('remark-gfm');
@@ -13,15 +13,15 @@ function MarkdownRender(props) {
         renderers: {
             ...props.renderers,
             math: (props) =>
-                <MathJax.Node formula={props.value} />,
+                <MathJax.Node>{props.value}</MathJax.Node>,
             inlineMath: (props) =>
-                <MathJax.Node inline formula={props.value} />
+                <MathJax.Node inline>{props.value}</MathJax.Node>
         }
     };
     return (
-        <MathJax.Provider input="tex">
+        <MathJax.Context input="tex">
             <ReactMarkdown {...newProps} />
-        </MathJax.Provider>
+        </MathJax.Context>
     );
 }
 
