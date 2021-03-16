@@ -148,11 +148,13 @@ def add_instance():
 def get_all_instances():
     return jsonify(federation.get_instances())
 
-@bp.route("/delete-account", methods=["GET"])
+@bp.route("/delete-account", methods=["POST"])
 @auth_required
 def delete_user():
+    req = request.json
     username = current_user().user_id
-    return Response(status=200) if actions.deleteUser(username) else Response(status=400)
+    password = req["password"]
+    return Response(status=200) if actions.deleteUser(username, password) else Response(status=400)
 
 @bp.route("/post-vote/<post_id>")
 def post_vote(post_id):
@@ -161,4 +163,3 @@ def post_vote(post_id):
         return respond_with_action(actions.upvotePost(post_id))
     else:
         return respond_with_action(actions.downvotePost(post_id))
-    

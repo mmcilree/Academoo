@@ -9,6 +9,7 @@ class UserSettings extends Component {
     this.state = {
       oldPassword: "",
       newPassword: "",
+      password:"",
       errors: [],
       changed: false,
       username: "",
@@ -19,6 +20,7 @@ class UserSettings extends Component {
       privUpdated: false,
       isLoading: false,
       confirmUsername: "",
+      confirmPassword: "",
 
     }
   }
@@ -147,17 +149,31 @@ class UserSettings extends Component {
 
   }
 
-  async handleDeleteAccount(event) {
-    event.preventDefault();
 
-    if(this.state.username === this.state.confirmUsername) {
-     await authFetch('/api/delete-account')
-      .then(r => r.status).then(statusCode => {
-        if(statusCode === 200) {
-          logout();
+  async handleDeleteAccount(event) {
+    var deleteConfirm = window.confirm("Are you sure you want to delete your Academoo account?");
+    if(deleteConfirm){
+      event.preventDefault();
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: {
+          password: this.state.confirmPassword,
         }
-      });
+      };
+      requestOptions.body = JSON.stringify(requestOptions.body);
+
+      if((this.state.username === this.state.confirmUsername)) {
+        await authFetch('/api/delete-account', requestOptions)
+         .then(r => r.status).then(statusCode => {
+           if(statusCode === 200) {
+             logout();
+           }
+         });
+       }
     }
+    
   }
 
   render() {
@@ -227,12 +243,18 @@ class UserSettings extends Component {
           <Card className="mt-4">
             <Card.Body>
               <Form onSubmit={this.handleDeleteAccount.bind(this)}>
-                <Form.Group>
-                  <Alert variant="danger"><b>WARNING: </b>THIS ACTION IS IRREVERSIBLE!</Alert>
+                <Form.Group controlId="deleteAccount">
+                  <Form.Label>Delete Account</Form.Label>
+                  <Form.Text>If you would like to delete your Academoo account, pleaser enter your username to confirm you would like to delete.</Form.Text>
+                  <p></p>
+                  <Form.Text> <b>Please note: This action is irreversible</b></Form.Text>
+                  <p></p>
                   <Form.Text>Enter your username to confirm: </Form.Text>
                   <Form.Control type="input" name="confirmUsername" onChange={this.handleChange.bind(this)} value={this.state.confirmUsername}></Form.Control>
-                </Form.Group>
-                <Button variant="secondary" type="submit" disabled={this.state.username !== this.state.confirmUsername}>Delete Account</Button>
+                  <Form.Text>Enter your password to confirm: </Form.Text>
+                  <Form.Control type="password" name="confirmPassword" onChange={this.handleChange.bind(this)} value={this.state.confirmPassword}></Form.Control>
+                  </Form.Group>
+                <Button variant="secondary" type="submit" disabled={(this.state.username !== this.state.confirmUsername)}>Delete Account</Button>
               </Form>
             </Card.Body>
           </Card>
