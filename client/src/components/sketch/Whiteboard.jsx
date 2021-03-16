@@ -231,7 +231,7 @@ class Whiteboard extends React.Component {
                                 </Tooltip>
                             }
                         >
-                            <Button variant="outline-primary" className="ml-4" onClick={this.download}>
+                            <Button variant="outline-secondary" className="ml-4" onClick={this.download}>
                                 <Download />
                             </Button>
                         </OverlayTrigger>
@@ -244,7 +244,7 @@ class Whiteboard extends React.Component {
                                 </Tooltip>
                             }
                         >
-                            <Button variant="outline-primary" className="ml-2" onClick={this.clear}>
+                            <Button variant="outline-secondary" className="ml-2" onClick={this.clear}>
                                 <Trash />
                             </Button>
                         </OverlayTrigger>
