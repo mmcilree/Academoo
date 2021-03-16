@@ -149,12 +149,23 @@ class UserSettings extends Component {
 
   }
 
+
   async handleDeleteAccount(event) {
     var deleteConfirm = window.confirm("Are you sure you want to delete your Academoo account?");
     if(deleteConfirm){
       event.preventDefault();
+
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: {
+          password: this.state.confirmPassword,
+        }
+      };
+      requestOptions.body = JSON.stringify(requestOptions.body);
+
       if((this.state.username === this.state.confirmUsername)) {
-        await authFetch('/api/delete-account')
+        await authFetch('/api/delete-account', requestOptions)
          .then(r => r.status).then(statusCode => {
            if(statusCode === 200) {
              logout();
@@ -241,7 +252,7 @@ class UserSettings extends Component {
                   <Form.Text>Enter your username to confirm: </Form.Text>
                   <Form.Control type="input" name="confirmUsername" onChange={this.handleChange.bind(this)} value={this.state.confirmUsername}></Form.Control>
                   <Form.Text>Enter your password to confirm: </Form.Text>
-                  <Form.Control type="input" name="confirmPassword" onChange={this.handleChange.bind(this)} value={this.state.confirmPassword}></Form.Control>
+                  <Form.Control type="password" name="confirmPassword" onChange={this.handleChange.bind(this)} value={this.state.confirmPassword}></Form.Control>
                   </Form.Group>
                 <Button variant="secondary" type="submit" disabled={(this.state.username !== this.state.confirmUsername)}>Delete Account</Button>
               </Form>

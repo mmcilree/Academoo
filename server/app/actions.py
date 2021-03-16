@@ -400,9 +400,9 @@ def changePassword(username, old_password, new_password):
     
     return False
 
-def deleteUser(username):
-    user = User.query.get(username)
-    db.session.delete(user)
-    db.session.commit()
-
-    return True
+def deleteUser(username, password):
+    user = guard.authenticate(username, password)
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        return True
