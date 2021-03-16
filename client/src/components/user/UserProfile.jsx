@@ -134,7 +134,7 @@ class UserProfile extends Component {
             <Card.Title> Posts from {username} :</Card.Title>
               {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
               {!isLoading ? (
-                <PostsViewer posts={posts} />
+                <PostsViewer posts={posts} displayCommunityName/>
               ) : (
                   <h3>Loading Posts...</h3>
                 )}
