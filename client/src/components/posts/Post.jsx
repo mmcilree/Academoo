@@ -20,8 +20,8 @@ class Post extends Component {
       title: this.props.postData.title,
       body: this.props.postData.content[0].text ? this.props.postData.content[0].text.text : this.props.postData.content[0].markdown.text,
       contentType: this.props.postData.content[0].text ? "text" : "markdown",
-      canEdit: true,
-      canDelete: true,
+      cannotEdit: true,
+      cannotDelete: true,
       errors: [],
       error: null,
       isLoading: false,
@@ -37,11 +37,12 @@ class Post extends Component {
 
   async fetchUserDetails() {
     await authFetch("/api/get-user").then(response => response.json())
-      .then(data =>
+      .then(data => {
         this.setState({
           currentUser: data.id,
           isLoading: false
         })
+      }
       )
       .catch(error => this.setState({ error, isLoading: false }));
     this.checkPermissions();
@@ -50,13 +51,14 @@ class Post extends Component {
   checkPermissions() {
     if (this.props.postData.author.id === this.state.currentUser) {
       this.setState({
-        canEdit: false,
-        canDelete: false
+        cannotEdit: false,
+        cannotDelete: false
       })
-    } else {
+    }
+    else {
       this.setState({
-        canEdit: true,
-        canDelete: true
+        cannotEdit: true,
+        cannotDelete: true
       })
     }
   }
@@ -231,8 +233,8 @@ class Post extends Component {
                 <Dropdown.Toggle as={CustomToggle} />
                 <Dropdown.Menu size="sm" title="">
                   <Dropdown.Header>Options</Dropdown.Header>
-                  <Dropdown.Item disabled={this.state.canEdit} onClick={this.handleShowEdit.bind(this)}><PencilSquare /> Edit Post</Dropdown.Item>
-                  <Dropdown.Item disabled={this.state.canDelete} onClick={this.handleShowDelete.bind(this)}><Trash /> Delete Post</Dropdown.Item>
+                  <Dropdown.Item disabled={this.state.cannotEdit} onClick={this.handleShowEdit.bind(this)}><PencilSquare /> Edit Post</Dropdown.Item>
+                  <Dropdown.Item disabled={this.state.cannotDelete} onClick={this.handleShowDelete.bind(this)}><Trash /> Delete Post</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </Card.Subtitle>
