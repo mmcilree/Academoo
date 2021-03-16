@@ -1,6 +1,6 @@
 import React from 'react';
 import { SketchField, Tools } from 'react-sketch-whiteboard';
-import { Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth, CursorText, PlusCircle, Share } from 'react-bootstrap-icons';
+import { Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth, CursorText, PlusCircle, Share, ArrowCounterclockwise, ArrowClockwise, Eraser } from 'react-bootstrap-icons';
 import { CompactPicker } from 'react-color';
 import {
     Card,
@@ -27,8 +27,9 @@ class Whiteboard extends React.Component {
             backgroundColour: "white",
             lineWidth: 10,
             canUndo: false,
+            canRedo: false,
             text: "",
-            selected: false
+            enableRemoveSelected: false
         }
     }
 
@@ -42,19 +43,27 @@ class Whiteboard extends React.Component {
 
     setTool(event) {
         console.log(event.target.value);
-        this.setState({ currentTool: event.target.value, selected:false });
-    }
-
-    handleSelect(event){
-        this.setState({ currentTool: event.target.value, selected: true})
+        this.setState({
+            currentTool: event.target.value,
+            enableRemoveSelected: event.target.value === Tools.Select
+        });
     }
 
     clear = () => {
         console.log("here")
         this.sketch.clear();
         this.sketch.setBackgroundFromDataUrl('');
-        this.setState({ backgroundColour: "white" })
+        this.setState({
+            backgroundColour: "white",
+            canUndo: this.sketch.canUndo(),
+            canRedo: this.sketch.canRedo(),
+        })
     }
+
+    removeSelected = () => {
+        this.sketch.removeSelected()
+    };
+
 
     handleChangeText(event) {
         this.setState({ text: event.target.value });
@@ -66,6 +75,26 @@ class Whiteboard extends React.Component {
         this.sketch.addText(this.state.text);
         this.setState({ text: "" });
     }
+
+    undo = () => {
+        this.sketch.undo();
+        this.setState({
+            canUndo: this.sketch.canUndo(),
+            canRedo: this.sketch.canRedo(),
+        });
+    };
+
+    redo = () => {
+        this.sketch.redo();
+        this.setState({
+            canUndo: this.sketch.canUndo(),
+            canRedo: this.sketch.canRedo(),
+        });
+    };
+
+    // remove = index => {
+    //     this.sketch.removeSelected();
+    // }
 
     download = () => {
         this.downloadURL(this.sketch.toDataURL(), "sketchamoo.png");
@@ -95,7 +124,7 @@ class Whiteboard extends React.Component {
     }
 
     render() {
-        const { currentTool, lineColour, backgroundColour, lineWidth, canUndo, text, selected } = this.state;
+        const { currentTool, lineColour, backgroundColour, lineWidth, text, selected } = this.state;
         const colourPopover = (
             <Popover id="popover-basic">
                 <Popover.Title as="h3">Pick a Colour!</Popover.Title>
@@ -134,7 +163,7 @@ class Whiteboard extends React.Component {
                     <Card.Header className="d-flex justifycontent-between">
                         <ToggleButtonGroup name="tools" >
                             <ToggleButton type="radio" value={Tools.Select}
-                                onClick={this.handleSelect.bind(this)}
+                                onClick={this.setTool.bind(this)}
                             ><Cursor /></ToggleButton>
                             <ToggleButton type="radio" value={Tools.Line}
                                 onClick={this.setTool.bind(this)}
@@ -151,6 +180,20 @@ class Whiteboard extends React.Component {
                             <ToggleButton type="radio" value={Tools.Pan}
                                 onClick={this.setTool.bind(this)}
                             ><ArrowsMove /></ToggleButton>
+                            {/* <ToggleButton type="radio" value={this.state.canUndo}
+                                disabled={!this.state.canUndo} onChange={this.undo}>
+                                <ArrowCounterclockwise />
+                            </ToggleButton> */}
+
+                            {/* <ToggleButton type="radio" value={this.state.canRedo}
+                                disabled={!this.state.canRedo} onChange={this.redo}>
+                                <ArrowClockwise />
+                            </ToggleButton> */}
+
+                            <ToggleButton type="radio" value={this.state.enableRemoveSelected}
+                                disabled={!this.state.enableRemoveSelected} onChange={this.removeSelected}>
+                                <Eraser />
+                            </ToggleButton>
 
                         </ToggleButtonGroup>
 
@@ -178,7 +221,7 @@ class Whiteboard extends React.Component {
                                 <Dropdown.Item onClick={() => this.setState({ lineWidth: 50 })}>Thiccc</Dropdown.Item>
                             </Dropdown.Menu>
                         </Dropdown>
-                        
+
                         <OverlayTrigger
                             key="save"
                             placement="bottom"
@@ -221,8 +264,11 @@ class Whiteboard extends React.Component {
                             lineColor={lineColour}
                             lineWidth={lineWidth}
                             backgroundColor={backgroundColour}
-                            canUndo={canUndo}
-                            onChange={this.onSketchChange}
+                            // canUndo={this.state.canUndo}
+                            // canRedo={this.state.canRedo}
+                            // defaultValue={dataJson}
+                            forceValue
+                            onChange={this.onSketchChange.bind(this)}
                         />
                     </Card.Body>
                 </Card>
