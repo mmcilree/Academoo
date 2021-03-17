@@ -190,7 +190,7 @@ class CommunityManager extends React.Component {
         }
         const requestOptions = {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'User-ID': this.state.currentUser,
                 'Client-Host': window.location.protocol + "//" + window.location.hostname
@@ -232,6 +232,7 @@ class CommunityManager extends React.Component {
                                                 <InputGroup>
                                                     <DropdownButton
                                                         variant="outline-secondary"
+                                                        id="instance-selector"
                                                         title={this.state.serverDropdown}
                                                         as={InputGroup.Prepend}>
 

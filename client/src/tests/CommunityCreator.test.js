@@ -3,7 +3,6 @@ import { configure } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 configure({ adapter: new Adapter() });
 import { shallow, mount, dive } from "enzyme";
-import App from "../App";
 import { Router, Route, Switch } from "react-router-dom";
 import { createMemoryHistory } from 'history';
 import { Alert } from 'react-bootstrap'
