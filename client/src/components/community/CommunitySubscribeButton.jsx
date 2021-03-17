@@ -24,20 +24,20 @@ class CommunitySubscribeButton extends React.Component {
                     isSubscribed: data.subscriptions.includes(this.props.community),
                     isLoading: false
                 })
-            ).catch(() => {})
+            ).catch(() => { })
     }
 
     async handleSubscribe() {
         const requestOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: {
-            id: this.props.community
-          }
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: {
+                id: this.props.community
+            }
         };
-    
+
         requestOptions.body = JSON.stringify(requestOptions.body);
-        
+
         await authFetch('/api/subscribe', requestOptions);
         this.props.updateParent && this.props.updateParent();
         this.fetchUserDetails();
@@ -45,15 +45,15 @@ class CommunitySubscribeButton extends React.Component {
 
     async handleUnsubscribe() {
         const requestOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: {
-            id: this.props.community
-          }
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: {
+                id: this.props.community
+            }
         };
-    
+
         requestOptions.body = JSON.stringify(requestOptions.body);
-        
+
         await authFetch('/api/unsubscribe', requestOptions);
         this.props.updateParent && this.props.updateParent();
         this.fetchUserDetails();
@@ -61,10 +61,10 @@ class CommunitySubscribeButton extends React.Component {
 
     render() {
         return !this.state.isLoading && (this.state.isSubscribed ?
-            <Button onClick={this.handleUnsubscribe.bind(this)} className="h-50 ml-4 mt-1" variant="outline-primary">
+            <Button onClick={this.handleUnsubscribe.bind(this)} className="h-50" variant="outline-primary">
                 <BookmarkCheck className="mr-2" />Unfolloow
             </Button> :
-            <Button onClick={this.handleSubscribe.bind(this)} className="h-50 ml-4 mt-1" variant="outline-secondary">
+            <Button onClick={this.handleSubscribe.bind(this)} className="h-50" variant="outline-secondary">
                 <BookmarkPlus className="mr-2" />&nbsp; Folloow &nbsp;
             </Button>)
     }

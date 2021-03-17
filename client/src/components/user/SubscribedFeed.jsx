@@ -21,7 +21,7 @@ class SubscribedFeed extends Component {
     }
 
     async fetchSubscribedCommunities() {
-        this.setState({isLoading: true});
+        this.setState({ isLoading: true });
         await authFetch("/api/get-user").then(response => response.json())
             .then(data => {
                 // console.log("data = "  + data.subcriptions);
@@ -30,8 +30,8 @@ class SubscribedFeed extends Component {
                     posts: []
                 })
             }
-        ).catch(() => {})
-        
+            ).catch(() => { })
+
         this.fetchPosts();
     }
 
@@ -39,17 +39,17 @@ class SubscribedFeed extends Component {
         this.state.subscribedCommunities.map((community, i) => {
             this.appendPostsFromCommunity(community, i);
         });
-        this.state.subscribedCommunities.length == 0 && this.setState({isLoading: false});
+        this.state.subscribedCommunities.length == 0 && this.setState({ isLoading: false });
     }
 
     async appendPostsFromCommunity(community, i) {
-        await fetch('/api/posts?community=' + community, 
-        {
-            headers: {
-                'User-ID': this.state.user_id,
-                'Client-Host': window.location.protocol + "//" + window.location.hostname
-            }
-        })
+        await fetch('/api/posts?community=' + community,
+            {
+                headers: {
+                    'User-ID': this.state.user_id,
+                    'Client-Host': window.location.protocol + "//" + window.location.hostname
+                }
+            })
             .then(response => response.json())
             .then(data =>
                 this.setState({
@@ -57,14 +57,14 @@ class SubscribedFeed extends Component {
                 })
             )
             .catch(error => this.setState({ error, isLoading: false }));
-        this.setState({posts: this.state.posts.slice().sort((a, b) => b.created - a.created)});
-        
-        (i == this.state.subscribedCommunities.length - 1) && this.setState({isLoading: false});
+        this.setState({ posts: this.state.posts.slice().sort((a, b) => b.created - a.created) });
+
+        (i == this.state.subscribedCommunities.length - 1) && this.setState({ isLoading: false });
     }
 
     componentWillUnmount() {
         // fix Warning: Can't perform a React state update on an unmounted component
-        this.setState = (state,callback)=>{
+        this.setState = (state, callback) => {
             return;
         };
     }
@@ -73,7 +73,7 @@ class SubscribedFeed extends Component {
 
         const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
         return (
-            <Container>
+            <Container fluid>
                 <Row>
                     <Col xs={12} lg={8}>
                         <Card className="mt-4">
@@ -106,7 +106,7 @@ class SubscribedFeed extends Component {
                         </Card>
                     </Col>
 
-                    <Col>
+                    <Col xs={6} lg={4}>
                         <Sidebar currentCommunity={currentCommunity}
                             fetchSubscribedCommunities={this.fetchSubscribedCommunities.bind(this)} />
                     </Col>

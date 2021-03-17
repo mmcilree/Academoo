@@ -37,14 +37,12 @@ class Sidebar extends Component {
 
         return (
             <Card className="mt-4">
-                <Card.Header className="pt-4">
-                    <h3>Folloowing:</h3>
+                <Card.Header>
+                    <Card.Title>Folloowing:</Card.Title>
                 </Card.Header>
 
-                <Card.Body className="px-0 py-1">
+                <Card.Body className="p-0">
                     <ListGroup variant="flush">
-
-
                         {!isLoading ?
                             subscribedCommunities && subscribedCommunities.length == 0 ?
                                 <ListGroupItem>
@@ -54,7 +52,7 @@ class Sidebar extends Component {
                                 subscribedCommunities.map((community) =>
                                     community !== "" &&
 
-                                    <ListGroup.Item key={community} className="d-flex justify-content-between">
+                                    <ListGroup.Item key={community} className="d-flex flex-column align-items-left flex-wrap">
                                         <Link to={
                                             "communities/" + community}>
                                             {community}
@@ -69,7 +67,7 @@ class Sidebar extends Component {
                                 Explore Communities
                             </Link>
                             <Link to="/create-community" className="btn btn-secondary mt-2">
-                                <PlusCircle className="mb-1" />
+                                <PlusCircle className="m-1" />
                                 <span> New Commoonity</span>
                             </Link>
                         </ListGroupItem>
