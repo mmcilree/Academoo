@@ -118,6 +118,8 @@ class CommunityCreator extends React.Component {
                 );
                 this.props.history.push('/communities');
             })
+            .catch(error => { })
+
     }
 
     render() {
