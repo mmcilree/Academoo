@@ -108,7 +108,7 @@ function HeaderBar() {
                       width="25"
                       height="25"
                     ></Image>
-                    Yoo
+                    {username}
                   </span>
                 }
                 id="collasible-nav-dropdown"
