@@ -6,3 +6,5 @@ __pycache__/
 app.db
 build/
 client/.eslintcache
+.venv/
+.coverage
