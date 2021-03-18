@@ -177,33 +177,32 @@ def test_edit_post(client):
                 }
             ]
     }
-
-    response = client.put("api/posts/existent", json=data, headers=headers_with_user)
+    response = client.put("api/posts/dafca76d-5883-4eff-959a-d32bc9f72e1a", json=data, headers=headers_with_user)
     assert response.status_code == 200
 
-#     response = client.put("api/posts/nonexistent", json=data, headers=headers_with_user)
-#     assert response.status_code == 404
+    response = client.put("api/posts/b78b29f4-88d2-4500-b3f9-704449b262e2", json=data, headers=headers_with_user)
+    assert response.status_code == 404
 
-#     response = client.put("api/posts/existent", json=data)
-#     assert response.status_code == 400
+    response = client.put("api/posts/dafca76d-5883-4eff-959a-d32bc9f72e1a", json=data)
+    assert response.status_code == 400
 
-#     response.client.put("api/posts/existent", headers=headers_with_user)
-#     assert resposne.status_code == 400
+    response.client.put("api/posts/dafca76d-5883-4eff-959a-d32bc9f72e1a", headers=headers_with_user)
+    assert resposne.status_code == 400
 
-#     # TODO: Test Error 403 forbidden
+    # TODO: Test Error 403 forbidden
 
 
-# def test_delete_post(client):
-#     response = client.delete("api/posts/existent")
-#     assert response.status_code == 400
+def test_delete_post(client):
+    response = client.delete("api/posts/dafca76d-5883-4eff-959a-d32bc9f72e1a")
+    assert response.status_code == 400
 
-#     response = client.delete("api/posts/existent", headers=headers_with_user)
-#     assert response.status_code == 200
+    response = client.delete("api/posts/dafca76d-5883-4eff-959a-d32bc9f72e1a", headers=headers_with_user)
+    assert response.status_code == 200
 
-#     response = client.delete("api/posts/nonexistent", headers=headers_with_user)
-#     assert response.status_code == 404
+    response = client.delete("api/posts/b78b29f4-88d2-4500-b3f9-704449b262e2", headers=headers_with_user)
+    assert response.status_code == 404
 
-#     # TODO: Test Error 403 forbidden
+    # TODO: Test Error 403 forbidden
 
 
 # # Users
