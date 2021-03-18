@@ -37,6 +37,7 @@ export const authFetchMock =
             id: "academoo",
             email: "academoo@academoo.com",
             host: "academoo",
+            site_roles: "site-admin",
             subscriptions: ["community1", "community2", "community3"]
         })
     };
