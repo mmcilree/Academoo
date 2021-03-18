@@ -151,6 +151,11 @@ class Post(db.Model):
     downvotes = db.Column(db.Integer, default=0)
     parent = db.relationship('Post', remote_side=[id], backref='comments')
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
+    tags = db.relationship('PostTag', backref='post', cascade="all, delete")
+
+class PostTag(db.Model):
+    post_id = db.Column(db.String(1000), db.ForeignKey('post.id'), primary_key=True)
+    tag = db.Column(db.String(50), primary_key=True)
 
 class PostContentField(db.Model):
     post_id = db.Column(db.String(1000), db.ForeignKey('post.id'), primary_key=True)
