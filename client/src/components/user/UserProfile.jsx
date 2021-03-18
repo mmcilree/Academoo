@@ -42,9 +42,9 @@ class UserProfile extends Component {
           this.setState({
             currentUser: data.id,
           })
-
+          this.fetchUserDetails();
         }
-        this.fetchUserDetails();
+        this.fetchPosts();
       }
 
       )
@@ -80,7 +80,7 @@ class UserProfile extends Component {
 
   componentDidMount() {
     this.fetchCurrentUser();
-    this.fetchPosts();
+    // this.fetchPosts();
   }
 
 
