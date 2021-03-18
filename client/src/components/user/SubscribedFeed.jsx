@@ -1,7 +1,6 @@
 import React, { Component, useContext } from "react";
 import Post from "../posts/Post";
 import Sidebar from "../layout/Sidebar";
-import NewCommunityButton from "../layout/NewCommunityButton";
 import { Nav, Card, Container, Row, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { PlusCircle } from "react-bootstrap-icons";
@@ -108,7 +107,6 @@ class SubscribedFeed extends Component {
                     </Col>
 
                     <Col xs={6} lg={4}>
-                        <NewCommunityButton />
                         <Sidebar currentCommunity={currentCommunity}
                             fetchSubscribedCommunities={this.fetchSubscribedCommunities.bind(this)} />
 

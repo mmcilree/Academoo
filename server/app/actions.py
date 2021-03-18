@@ -208,10 +208,10 @@ def getLocalUser(id):
         return False
     else:
         if user.private_account:
-            user_dict = {"id":user.user_id, "email": "", "host":user.host, "bio":"", "site_roles" : user.site_roles}
+            user_dict = {"id":user.user_id, "email": "", "host":user.host, "bio":"", "private": user.private_account, "site_roles" : user.site_roles}
             return user_dict
         else:
-            user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio, "site_roles" : user.site_roles}
+            user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio, "private": user.private_account,  "site_roles" : user.site_roles}
             return user_dict
 
 def addSubscriber(user_id, community_id):
@@ -280,7 +280,12 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if min_date is not None:
         query = query.filter(Post.created >= min_date)
     if author is not None:
-        query = query.filter(Post.author_id == author)
+        user = User.lookup(author)
+        if (author == requester_str or (not user.private_account)):
+            query = query.filter(Post.author_id == author)
+        else:
+            message = {"title": "Private Account", "message": "These posts cannot be viewed as the specified user has a private account."}
+            return (message, 403)
     #if host is not None:
         #query = query.filter(Post.host == host)
     if parent_post is not None:
