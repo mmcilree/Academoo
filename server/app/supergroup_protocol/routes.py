@@ -142,7 +142,6 @@ def get_post_by_id(id):
     #if host is None or requester_str is None:
     #    return Response(status = 400)
 
-
     if not external:
         message, status_code = verify_request(headers=request.headers, request_target=f"get /fed/posts/{id}")
         if status_code != 200: return jsonify(message), status_code
