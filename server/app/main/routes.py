@@ -163,3 +163,17 @@ def post_vote(post_id):
         return respond_with_action(actions.upvotePost(post_id))
     else:
         return respond_with_action(actions.downvotePost(post_id))
+
+@bp.route("/add-post-tag/<post_id>", methods=['POST'])
+def add_post_tag(post_id):
+    tag_name = request.args['tag']
+    return respond_with_action(actions.addTag(post_id, tag_name))
+
+@bp.route("/delete-post-tag/<post_id>", methods=['DELETE'])
+def delete_post_tag(post_id):
+    tag_name = request.args['tag']
+    return respond_with_action(actions.deleteTag(post_id, tag_name))
+
+@bp.route("/get-post-tags", methods=["GET"])
+def get_post_tags(post_id):
+    return respond_with_action(actions.getPostTags(post_id))

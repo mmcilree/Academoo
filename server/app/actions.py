@@ -1,5 +1,5 @@
 from app import db, guard
-from app.models import User, Community, Post, UserRole, PostContentField, getTime
+from app.models import User, Community, Post, UserRole, PostContentField, getTime, PostTag
 from sqlalchemy import desc
 import json
 from uuid import UUID
@@ -471,3 +471,26 @@ def deleteUser(username, password):
         db.session.delete(user)
         db.session.commit()
         return True
+
+def addTag(post_id, tag_name):
+    post = Post.query.filter_by(id = post_id).first()
+    if post is None:
+        return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
+    new_tag = PostTag(post_id=post_id, tag=tag_name)
+    db.session.add(new_tag)
+    db.session.commit()
+    return (None, 200)
+
+def deleteTag(post_id, tag_name):
+    post_tag = PostTag.query.filter_by(post_id=post_id, tag=tag_name)
+    if post_tag is None:
+        return ({"title": "could not find post tag", "message": "either post does not exist or post does not have tag"}, 404)
+    db.session.delete(post_tag)
+    db.session.commit()
+    return (None, 200)
+
+def getPostTags(post_id):
+    post = Post.query.filter_by(id = post_id).first()
+    if post is None:
+        return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
+    return [post_tag.tag for post_tag in post.tags]

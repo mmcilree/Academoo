@@ -87,6 +87,8 @@ def get_all_posts():
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
         response = federation.get_posts(external, community_id, headers)
+        if response[1] != 200:
+            return response
         responseArr = response[0]
         for post in responseArr:
             post['host'] = external
@@ -108,6 +110,8 @@ def get_post_by_id(id):
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
         response = federation.get_post_by_id(external, id, headers)
+        if response[1] != 200:
+            return response
         post = response[0]
         post['host'] = external
         

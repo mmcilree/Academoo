@@ -1,6 +1,4 @@
-from app import db, guard
-from app.models import User, Community, Post, UserRole, getTime
-from sqlalchemy import desc
+#from app.models import User, Community, Post, UserRole, getTime ////circular import error
 import json
 from uuid import UUID
 import re
@@ -69,6 +67,9 @@ def check_array_json(file):
     try:
         validate(instance=file, schema=schema)
     except:
+        check_error = check_is_error_message(file)
+        if check_error is not None:
+            return check_error
         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
 
 def check_get_community(file):
@@ -95,7 +96,24 @@ def check_get_community(file):
     try:
         validate(instance=file, schema=schema)
     except:
+        check_error = check_is_error_message(file)
+        if check_error is not None:
+            return check_error
         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
+
+def check_is_error_message(file):
+    schema = {
+        "type": "object",
+        "properties": {
+            "title": {"type": "string"},
+            "message": {"type": "string"}
+        },
+        "required": ["title", "message"]
+    }
+    try:
+        validate(instance=file, schema=schema)
+    except:
+        return ({"title": "Invalid JSON file passed", "message": "Make sure the JSON file conforms to protocol schema"}, 400)
 
 def check_get_timestamps(file):
     schema = {
@@ -112,6 +130,9 @@ def check_get_timestamps(file):
     try:
         validate(instance=file, schema=schema)
     except:
+        check_error = check_is_error_message(file)
+        if check_error is not None:
+            return check_error
         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
 
 def check_get_filtered_post(file):
@@ -122,7 +143,7 @@ def check_get_filtered_post(file):
             "properties": {
                 "id": {"type": "string"},
                 "community": {"type": "string"},
-                "parentPost": {"type": "string"},
+                "parentPost": {"type": ["string", "null"], "default": "null"},
                 "children": {
                     "type": "array",
                     "items": {"type": "string"}
@@ -146,6 +167,10 @@ def check_get_filtered_post(file):
     try:
         validate(instance=file, schema=schema)
     except:
+        print("Failed filtered post validation")
+        check_error = check_is_error_message(file)
+        if check_error is not None:
+            return check_error
         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
 
 def check_get_post(file):
@@ -154,7 +179,7 @@ def check_get_post(file):
             "properties": {
                 "id": {"type": "string"},
                 "community": {"type": "string"},
-                "parentPost": {"type": "string"},
+                "parentPost": {"type": ["string", "null"], "default": "null"},
                 "children": {
                     "type": "array",
                     "items": {"type": "string"}
@@ -177,6 +202,10 @@ def check_get_post(file):
     try:
         validate(instance=file, schema=schema)
     except:
+        print(str(file))
+        check_error = check_is_error_message(file)
+        if check_error is not None:
+            return check_error
         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
 
 def check_get_user(file):
@@ -203,6 +232,9 @@ def check_get_user(file):
     try:
         validate(instance=file, schema=schema)
     except:
+        check_error = check_is_error_message(file)
+        if check_error is not None:
+            return check_error
         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
 
 def check_create_post(file):
@@ -221,6 +253,9 @@ def check_create_post(file):
     try:
         validate(instance=file, schema=create_schema)
     except:
+        check_error = check_is_error_message(file)
+        if check_error is not None:
+            return check_error
         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
     
 
@@ -238,4 +273,7 @@ def check_edit_post(file):
     try:
         validate(instance=file, schema=edit_schema)
     except:
+        check_error = check_is_error_message(file)
+        if check_error is not None:
+            return check_error
         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
