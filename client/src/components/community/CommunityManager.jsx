@@ -45,7 +45,7 @@ class CommunityManager extends React.Component {
     componentDidMount() {
         this.fetchUserDetails();
         this.fetchInstances();
-        this.fetchUsers(this.state.host)
+        this.fetchUsers(this.state.host);
         this.fetchDefaultRole();
         this.fetchUserRoles();
     }
@@ -80,6 +80,7 @@ class CommunityManager extends React.Component {
                     isAdmin: data.adminOf.includes(this.state.currentCommunity),
                 })
             )
+            .catch(() => { })
     }
 
     fetchDefaultRole() {
@@ -88,6 +89,7 @@ class CommunityManager extends React.Component {
                 this.setState({
                     currentDefaultRole: data.default_role
                 }))
+            .catch(() => { })
     }
 
     async fetchUserRoles() {
@@ -111,7 +113,7 @@ class CommunityManager extends React.Component {
                 // prohibitedUsers: data.prohibited,
                 // }
                 // })
-            )
+            ).catch(() => { })
     }
 
     async fetchInstances() {
@@ -122,6 +124,7 @@ class CommunityManager extends React.Component {
                     instances: ["local", ...data],
                 })
             )
+            .catch(() => { })
         // this.state.instances.map(host => (this.fetchCommunities(host)));
     }
 
@@ -133,6 +136,7 @@ class CommunityManager extends React.Component {
                 this.setState({
                     users: [...data.map(user => ({ host: host, user: user }))],
                 }))
+            .catch(() => { })
     }
 
     handleHostChange(name) {
@@ -172,7 +176,8 @@ class CommunityManager extends React.Component {
                     this.fetchUserRoles();
 
                 }
-            });
+            })
+            .catch(() => { })
 
 
         this.setState(
@@ -202,11 +207,14 @@ class CommunityManager extends React.Component {
                 }
             )
         };
-        fetch('/api/set-default-role', requestOptions);
-        this.setState(
-            { defaultRole: "" }
-        );
-        this.fetchDefaultRole();
+        fetch('/api/set-default-role', requestOptions)
+            .then(response => {
+                this.setState(
+                    { defaultRole: "" }
+                );
+                this.fetchDefaultRole();
+            })
+            .catch(() => { })
     }
 
     render() {
@@ -268,6 +276,7 @@ class CommunityManager extends React.Component {
                                             <Form.Group as={Col} xs={12} sm={6} md={7} lg={4}>
                                                 <DropdownButton
                                                     variant="outline-secondary"
+                                                    id="role-selector"
                                                     title={(this.state.role == "" ? "Select Role" : this.state.role)}>
                                                     {this.state.roles.map(role => {
                                                         return <Dropdown.Item key={role} onClick={() => this.setState({ role: role })}>{role}</Dropdown.Item>
@@ -291,6 +300,7 @@ class CommunityManager extends React.Component {
                                                 <DropdownButton
                                                     variant="outline-secondary"
                                                     title={(this.state.defaultRole == "" ? "Select Role" : this.state.defaultRole)}
+                                                    id="default-role-selector"
                                                 >
                                                     {this.state.roles.map(role => {
                                                         return <Dropdown.Item key={role} onClick={() => this.setState({ defaultRole: role })}>{(role === this.state.currentDefaultRole ? "current default: " + role : role)}</Dropdown.Item>
