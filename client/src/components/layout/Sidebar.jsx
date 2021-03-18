@@ -63,13 +63,10 @@ class Sidebar extends Component {
                             : <p>Loading...</p>}
 
                         <ListGroupItem>
-                            <Link to="/communities" className="btn btn-secondary">
-                                Explore Communities
+                            <Link to="/communities" className="btn btn-secondary d-flex justify-content-center">
+                                <span>Explore Communities</span>
                             </Link>
-                            <Link to="/create-community" className="btn btn-secondary mt-2">
-                                <PlusCircle className="m-1" />
-                                <span> New Commoonity</span>
-                            </Link>
+
                         </ListGroupItem>
                     </ListGroup>
 
