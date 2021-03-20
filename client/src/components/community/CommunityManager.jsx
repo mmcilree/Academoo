@@ -284,7 +284,7 @@ class CommunityManager extends React.Component {
                                                     }
                                                 </DropdownButton>
                                             </Form.Group>
-                                            <Form.Group as={Col} xs={12} sm={6} md={5} lg={2}>
+                                            <Form.Group controlId="user-role-button" as={Col} xs={12} sm={6} md={5} lg={2}>
                                                 <Button type="submit"><PlusCircle className="mb-1" /> Assign</Button>
                                             </Form.Group>
                                         </Form.Row>
@@ -308,7 +308,7 @@ class CommunityManager extends React.Component {
                                                     }
                                                 </DropdownButton>
                                             </Form.Group>
-                                            <Form.Group as={Col} xs={10} sm={8}>
+                                            <Form.Group controlId="default-role-button" as={Col} xs={10} sm={8}>
                                                 <Button type="submit">Set default role</Button>
                                             </Form.Group>
                                         </Form.Row>

@@ -2,21 +2,14 @@ import React from "react";
 import { configure } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 configure({ adapter: new Adapter() });
-import { shallow, mount, dive } from "enzyme";
-import { Router, Route, Switch } from "react-router-dom";
-import { createMemoryHistory } from 'history';
+import { mount } from "enzyme";
 import { Alert, Dropdown } from 'react-bootstrap'
 import { fetchMock } from './fetchMocks.js';
 import ControlPanel from "../components/authentication/ControlPanel";
 import AccessForbidden from "../components/static/AccessForbidden";
 
 let wrapper;
-let instanceField;
-let usernameField;
-let roleField;
-let instanceButton;
 let submitButton;
-let controlPanel;
 
 jest.mock('../auth', () => {
     const { authFetchMock } = require('./fetchMocks');
@@ -28,39 +21,19 @@ jest.mock('../auth', () => {
 );
 
 function setFormDataAndSubmit(instance, username, role) {
-    instanceButton.simulate('click')
-    instanceField.simulate('click', { instance })
-    usernameField.simulate('change', { selected: [{ user: username }] })
-    roleField.find({ key: role }).simulate('click', { role })
+    wrapper.instance().handleHostChange(instance);
+    wrapper.instance().setState({ selected: [{ user: username }] })
+    wrapper.instance().setState({ role: role })
+    submitButton = (wrapper.find('[controlId="user-role-button"]')).find('[type="submit"]').hostNodes();
     submitButton.simulate('submit');
 }
 
 beforeEach(() => {
-    // { initialEntries: ["/communities/community1/manage"] }
-    const history = createMemoryHistory();
     global.fetch = jest.fn().mockImplementation(fetchMock);
-    history.push('/communities/control-panel')
     wrapper = mount(
-        <Router history={history}>
-            <ControlPanel />
-        </Router>
+        <ControlPanel />
     );
-
-
-    instanceButton = wrapper.find('[id="instance-selector"]').hostNodes()
-    instanceField = wrapper.find(Dropdown.Item).hostNodes();
-    usernameField = wrapper.find('[id="user-choice"]').hostNodes();
-    roleField = wrapper.find('[id="role-selector"]').hostNodes();
-    submitButton = wrapper.find('[type="submit"]').hostNodes();
-    controlPanel = wrapper.find(ControlPanel);
 });
-
-it('routes to community manager', () => {
-    setTimeout(() => {
-        console.log(wrapper.debug())
-        expect(wrapper.find(ConrolPanel)).toHaveLength(1);
-    }, 1000);
-})
 
 
 describe('Control Panel user roles form is valid', () => {
@@ -70,10 +43,16 @@ describe('Control Panel user roles form is valid', () => {
     ${"instance2"}      | ${"user2"}        | ${"site-moderator"}
     ${"instance3"}      | ${"user3"}        | ${"Remove-all"}
   `('for input [$instance, $username, $role]', ({ instance, username, role }) => {
-        // expect(communityManager.state().errors).toHaveLength(0)
         setTimeout(() => {
-            setFormDataAndSubmit(instance, username, role);
-            expect(wrapper.find(ControlPanel)).containsMatchingElement(<Alert variant="warning"></Alert>).to.equal(false);
+            try {
+                wrapper.update();
+                setFormDataAndSubmit(instance, username, role);
+                let alert = wrapper.find(Alert)
+                expect(alert).toHaveLength(0);
+                done();
+            } catch (error) {
+                done(error);
+            }
         }, 1000);
     });
 });
@@ -86,9 +65,16 @@ describe('Control Panel user roles form is invalid (blank fields)', () => {
     ${"instance3"}      | ${""}        | ${""}
   `('for input [$instance, $username, $role]', ({ instance, username, role }) => {
         setTimeout(() => {
-            setFormDataAndSubmit(instance, username, role);
-            setFormDataAndSubmit(instance, username, role);
-            expect(wrapper.find(ControlPanel)).containsMatchingElement(<Alert variant="warning" key="Required fields have been left blank."></Alert>).to.equal(true);
+            try {
+                wrapper.update();
+                setFormDataAndSubmit(instance, username, role);
+                let alert = wrapper.find(Alert)
+                expect(alert).toHaveLength(1);
+                expect(alert.containsMatchingElement(<div>Required fields have been left blank.</div>)).toEqual(true);
+                done();
+            } catch (error) {
+                done(error);
+            }
         }, 1000);
     });
 });
@@ -99,8 +85,17 @@ describe('Control Panel user roles form is invalid (user tries to change own rol
     ${"instance1"}      | ${"academoo"}     | ${"site-admin"}
   `('for input [$instance, $username, $role]', ({ instance, username, role }) => {
         setTimeout(() => {
-            setFormDataAndSubmit(instance, username, role);
-            expect(wrapper.find(ControlPanel)).containsMatchingElement(<Alert variant="warning" key="You cannot change your own role"></Alert>).to.equal(true);
+            try {
+                wrapper.update();
+                setFormDataAndSubmit(instance, username, role);
+                let alert = wrapper.find(Alert)
+                expect(alert).toHaveLength(1);
+                expect(alert.containsMatchingElement(<div>You cannot change your own role</div>)).toEqual(true);
+
+                done();
+            } catch (error) {
+                done(error);
+            }
         }, 1000);
     });
 });
