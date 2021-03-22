@@ -10,6 +10,7 @@ def get_date():
     return datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
 def get_signature(body):
+    body = bytes(body, "utf-8")
     s = 'keyId="rsa-global",algorithm="hs2019",headers="(request-target) host client-host user-id date digest",signature="{}"'
     return s.format(generate_signature(body))
 
@@ -19,26 +20,20 @@ class Instance(object):
         self.url = url
 
         # Possibly the worst signature specification possible
-        self.request_data = """(request-target): {req}
+        self.request_data = \
+"""(request-target): {req}
 host: cs3099user-a1.host.cs.st-andrews.ac.uk
 client-host: cs3099user-a1.host.cs.st-andrews.ac.uk
 user-id: {user_id}
 date: {date}
-digest: {digest}
-"""
-
-        self.request_data_without_user_id = """(request-target): {req}
-host: cs3099user-a1.host.cs.st-andrews.ac.uk
-client-host: cs3099user-a1.host.cs.st-andrews.ac.uk
-date: {date}
-digest: {digest}
-"""
+digest: {digest}"""
     
     def get_users(self, id=None):
-        body = self.request_data_without_user_id.format(
+        body = self.request_data.format(
             req="get /fed/users", 
+            user_id=None,
             date=get_date(),
-            digest=generate_digest("")
+            digest=generate_digest(b"")
         )
 
         headers = {
@@ -61,9 +56,9 @@ digest: {digest}
     def get_timestamps(self, community, headers):
         body = self.request_data.format(
             req=f"get /fed/communities/{community}/timestamps",
-            user_id= headers["User-ID"],
+            user_id= headers.get("User-ID"),
             date=get_date(),
-            digest=generate_digest("")
+            digest=generate_digest(b"")
         )
 
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
@@ -77,10 +72,12 @@ digest: {digest}
     def get_posts(self, community, headers):
         body = self.request_data.format(
             req=f"get /fed/posts?community={community}",
-            user_id= headers["User-ID"],
+            user_id= headers.get("User-ID"),
             date=get_date(),
-            digest=generate_digest("")
+            digest=generate_digest(b"")
         )
+
+        # print(body)
 
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
         
@@ -93,9 +90,9 @@ digest: {digest}
     def get_post_by_id(self, id, headers):
         body = self.request_data.format(
             req=f"get /fed/posts/{id}",
-            user_id= headers["User-ID"],
+            user_id= headers.get("User-ID"),
             date=get_date(),
-            digest=generate_digest("")
+            digest=generate_digest(b"")
         )
 
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
@@ -107,9 +104,9 @@ digest: {digest}
     def get_communities(self, headers, id=None):
         body = self.request_data.format(
             req=f"get /fed/communities",
-            user_id= headers["User-ID"],
+            user_id= headers.get("User-ID"),
             date=get_date(),
-            digest=generate_digest("")
+            digest=generate_digest(b"")
         )
 
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
@@ -128,9 +125,9 @@ digest: {digest}
 
         body = self.request_data.format(
             req=f"post /fed/posts",
-            user_id= headers["User-ID"],
+            user_id= headers.get("User-ID"),
             date=get_date(),
-            digest=generate_digest(str(data))
+            digest=generate_digest(bytes(data))
         )
 
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
@@ -148,9 +145,9 @@ digest: {digest}
 
         body = self.request_data.format(
             req=f"put /fed/posts/{id}",
-            user_id= headers["User-ID"],
+            user_id= headers.get("User-ID"),
             date=get_date(),
-            digest=generate_digest(str(data))
+            digest=generate_digest(bytes(data))
         )
 
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
@@ -168,9 +165,9 @@ digest: {digest}
 
         body = self.request_data.format(
             req=f"delete /fed/posts/{id}",
-            user_id= headers["User-ID"],
+            user_id= headers.get("User-ID"),
             date=get_date(),
-            digest=generate_digest(str(data))
+            digest=generate_digest(bytes(data))
         )
 
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
