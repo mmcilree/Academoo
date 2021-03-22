@@ -1,5 +1,6 @@
 import pytest
-from tests.conftest import Constants
+from app import create_app
+from conftest import Constants, TestConfig
 
 headers = {
     "Client-Host": "localhost:5000"
@@ -91,13 +92,13 @@ def test_create_posts(client):
     assert response.status_code == 400
 
 def test_get_post_by_id(client):
-    response = client.get("api/posts/dafca76d-5883-4eff-959a-d32bc9f72e1a", headers=headers_with_user)
+    response = client.get(f"api/posts/{Constants.POST1_ID}", headers=headers_with_user)
     assert response.status_code == 200
 
-    response = client.get("api/posts/b78b29f4-88d2-4500-b3f9-704449b262e2", headers=headers_with_user)
+    response = client.get(f"api/posts/{Constants.FAKE_POST_ID}", headers=headers_with_user)
     assert response.status_code == 404
 
-    response = client.get("api/posts/b78b29f4-88d2-4500-b3f9-704449b262e2")
+    response = client.get(f"api/posts/{Constants.POST1_ID}")
     assert response.status_code == 400
 
 def test_edit_post(client):
@@ -111,29 +112,29 @@ def test_edit_post(client):
                 }
             ]
     }
-    response = client.put("api/posts/dafca76d-5883-4eff-959a-d32bc9f72e1a", json=data, headers=headers_with_user)
+    response = client.put(f"api/posts/{Constants.POST1_ID}", json=data, headers=headers_with_user)
     assert response.status_code == 200
 
-    response = client.put("api/posts/b78b29f4-88d2-4500-b3f9-704449b262e2", json=data, headers=headers_with_user)
+    response = client.put(f"api/posts/{Constants.FAKE_POST_ID}", json=data, headers=headers_with_user)
     assert response.status_code == 404
 
-    response = client.put("api/posts/dafca76d-5883-4eff-959a-d32bc9f72e1a", json=data)
+    response = client.put(f"api/posts/{Constants.POST1_ID}", json=data)
     assert response.status_code == 400
 
-    response.client.put("api/posts/dafca76d-5883-4eff-959a-d32bc9f72e1a", headers=headers_with_user)
+    response.client.put(f"api/posts/{Constants.POST1_ID}", headers=headers_with_user)
     assert resposne.status_code == 400
 
     # TODO: Test Error 403 forbidden
 
 
 def test_delete_post(client):
-    response = client.delete("api/posts/dafca76d-5883-4eff-959a-d32bc9f72e1a")
+    response = client.delete(f"api/posts/{Constants.POST1_ID}")
     assert response.status_code == 400
 
-    response = client.delete("api/posts/dafca76d-5883-4eff-959a-d32bc9f72e1a", headers=headers_with_user)
+    response = client.delete(f"api/posts/{Constants.POST1_ID}", headers=headers_with_user)
     assert response.status_code == 200
 
-    response = client.delete("api/posts/b78b29f4-88d2-4500-b3f9-704449b262e2", headers=headers_with_user)
+    response = client.delete(f"api/posts/{Constants.POST1_ID}", headers=headers_with_user)
     assert response.status_code == 404
 
     # TODO: Test Error 403 forbidden
