@@ -2,6 +2,9 @@ import pytest
 from app import create_app, db
 from app.models import User, Community, Post
 
+class Constants(object):
+    POST1_ID = "dafca76d-5883-4eff-959a-d32bc9f72e1a"
+    POST2_ID = "5ab3acce-e9d1-4b3a-be97-60d2cbe32a4c"
 class TestConfig(object):
     TESTING = True
     SECRET_KEY = "testing-is-so-much-fun"
@@ -21,14 +24,14 @@ def setup_db():
     )
 
     post1 = Post(
-        id="dafca76d-5883-4eff-959a-d32bc9f72e1a", 
+        id=Constants.POST1_ID, 
         title="Post 1", 
         modified=0, 
         author=test_user, 
         community=community1,
     )
     post2 = Post(
-        id="5ab3acce-e9d1-4b3a-be97-60d2cbe32a4c", 
+        id=Constants.POST2_ID, 
         title="Post 2", 
         modified=1, 
         author=test_user,

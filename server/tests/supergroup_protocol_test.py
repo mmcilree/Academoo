@@ -1,4 +1,5 @@
 import pytest
+from tests.conftest import Constants
 
 headers = {
     "Client-Host": "localhost:5000"
@@ -11,7 +12,6 @@ def test_config():
     assert create_app(TestConfig).testing
 
 # Supergroup protocol
-
 # Communities
 def test_get_communities(client):
     response = client.get("api/communities", headers=headers)
@@ -41,8 +41,8 @@ def test_get_community_timestamps(client):
     response = client.get("api/communities/TestCommunity/timestamps", headers=headers)
     assert response.status_code == 200
     assert response.json == [
-        {"id": "dafca76d-5883-4eff-959a-d32bc9f72e1a", "modified": 0}, 
-        {"id": "5ab3acce-e9d1-4b3a-be97-60d2cbe32a4c", "modified": 1},
+        {"id": Constants.POST1_ID, "modified": 0}, 
+        {"id": Constants.POST2_ID, "modified": 1},
     ]
 
     response = client.get("api/communities/nonexistent/timestamps", headers=headers)
