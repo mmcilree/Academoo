@@ -4,7 +4,7 @@ from cryptography.hazmat.primitives import serialization
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 def get_pub_key():
-    with open("../.ssh/private.pem", "rb") as key_file:
+    with open("../.ssh/private", "rb") as key_file:
         private_key = serialization.load_pem_private_key(
             key_file.read(),
             password=None,
@@ -29,3 +29,4 @@ class Config(object):
     JWT_REFRESH_LIFESPAN = {'days': 30}
 
     PUBLIC_KEY = get_pub_key()
+    SIGNATURE_FEATURE = True

@@ -5,7 +5,6 @@ from app.models import User, Community
 from utils import *
 import json
 
-from cryptography.hazmat.primitives import serialization
 
 def respond_with_action(actionResponse):
     data, status = actionResponse
