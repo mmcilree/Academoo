@@ -120,6 +120,10 @@ class MarkdownPreviewer extends React.Component {
                                     <th className="font-weight-normal">![Cow](https://cow.jpg)</th>
                                     <th className="font-weight-normal">[COW IMAGE!]</th>
                                 </tr>
+                                <tr>
+                                    <th className="font-weight-normal">$ x = \sqrt(5y^2+2) $</th>
+                                    <th className="font-weight-normal"><MarkdownRender renderers={renderers}>$ x = \sqrt(5y^2+2) $</MarkdownRender></th>
+                                </tr>
                             </tbody>
                         </Table>
                     </Modal.Body>

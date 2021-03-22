@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import PostViewer from "../posts/PostsViewer";
-import { Card, Button, Alert, OverlayTrigger, Popover, Row, Col } from "react-bootstrap";
+import { Card, Button, Alert, OverlayTrigger, Popover, Row, Col, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { BookmarkPlus } from "react-bootstrap-icons";
 import { authFetch } from '../../auth';
 import MiniPostCreator from "../posts/MiniPostCreator";
 import Post from "../posts/Post";
 import Sidebar from "../layout/Sidebar";
+import logo from "../../images/logo.svg";
 import CommunitySubscribeButton from "./CommunitySubscribeButton";
 
 class CommunityFeed extends Component {
@@ -116,7 +117,7 @@ class CommunityFeed extends Component {
     return (
       <Card className="mt-4 mb-10">
         <Card.Header className="pt-4 pr-4">
-          <div className="d-flex justify-content-right">
+          <div className="d-flex justify-content-between">
             {!isLoadingCommunity ?
               <Card.Title >
                 <OverlayTrigger trigger={['hover', 'focus']} placement="right" overlay={popover}>
@@ -124,7 +125,10 @@ class CommunityFeed extends Component {
                   </Link></OverlayTrigger>
               </Card.Title>
 
-              : <h2> Loading... </h2>}
+              : <h2>
+                <Spinner animation="border" role="status" variant="light"><img src={logo} width="40"
+                  height="40"></img></Spinner>
+                <span>Loading... </span></h2>}
 
             <CommunitySubscribeButton community={this.state.currentCommunity} />
           </div>
@@ -149,7 +153,7 @@ class CommunityFeed extends Component {
             )}
           {!isLoadingPosts && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
         </Card.Body>
-      </Card>
+      </Card >
     );
   }
 }

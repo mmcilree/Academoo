@@ -267,7 +267,6 @@ class Post extends Component {
             <Button onClick={this.handleCloseDelete}>No, cancel</Button>
           </Modal.Footer>
         </Modal>
-
         <ContentTypeComponent
           contentType={this.state.contentType}
           body={this.state.updatedBody}
@@ -316,7 +315,12 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
     case "markdown":
       return (
         <React.Fragment>
-          <MarkdownRender renderers={renderers} children={body} />
+          <Card.Text variant="top" style={{
+            whiteSpace: "nowrap",
+            maxHeight: "50vh", overflow: "hidden", textOverflow: "ellipsis"
+          }}>
+            <MarkdownRender renderers={renderers} children={body} />
+          </Card.Text>
         </React.Fragment>
       )
     default:

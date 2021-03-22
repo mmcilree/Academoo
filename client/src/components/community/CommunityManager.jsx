@@ -7,7 +7,7 @@ import Card from 'react-bootstrap/Card';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 import { authFetch } from '../../auth';
-import { Redirect } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { Typeahead, Menu, MenuItem } from 'react-bootstrap-typeahead';
 import { InputGroup, Col } from 'react-bootstrap';
 import { PlusCircle } from 'react-bootstrap-icons';
@@ -190,7 +190,7 @@ class CommunityManager extends React.Component {
         }
         const requestOptions = {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
                 'User-ID': this.state.currentUser,
                 'Client-Host': window.location.protocol + "//" + window.location.hostname
@@ -215,7 +215,11 @@ class CommunityManager extends React.Component {
                 !this.state.isAdmin ? <Redirect to='/forbidden' /> :
                     <Card className="mt-4">
                         <Card.Header className="pt-4">
-                            <Card.Title>Manage your community: {this.state.currentCommunity}</Card.Title>
+                            <Card.Title>Manage your community:
+                                <Link to={"/communities/" + this.state.currentCommunity} >
+                                    {this.state.currentCommunity}
+                                </Link>
+                            </Card.Title>
                         </Card.Header>
                         <Card.Body>
                             {this.state.errors.map(error => (

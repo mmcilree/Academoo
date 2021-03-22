@@ -94,9 +94,9 @@ class CommentsViewer extends React.Component {
         <Card className="mt-4">
           {!isLoading ? (
             <Card.Body>
-              <Link to="/moosfeed" className="btn btn-secondary">
-                Back to Moosfeed <ArrowReturnLeft />
-              </Link>
+              <Button variant="secondary" onClick={() => {
+                this.props.history.goBack();
+              }}>Go Back</Button>
               <Card className="mt-4">
                 <Card.Body>
                   <Post postData={this.state.parentPost} />
