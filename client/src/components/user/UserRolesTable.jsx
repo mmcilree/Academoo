@@ -18,7 +18,7 @@ class UserRolesTable extends Component {
                 <tbody>
                     {this.props.userRoles.adminUsers.map(admin => {
                         return (
-                            <tr>
+                            <tr key={admin}>
                                 <td>{admin}</td>
                                 <td>Admin</td>
                             </tr>
@@ -26,7 +26,7 @@ class UserRolesTable extends Component {
                     })}
                     {this.props.userRoles.contributorUsers.map(contributor => {
                         return (
-                            <tr>
+                            <tr key={contributor}>
                                 <td>{contributor}</td>
                                 <td>Contributor</td>
                             </tr>
@@ -34,7 +34,7 @@ class UserRolesTable extends Component {
                     })}
                     {this.props.userRoles.memberUsers.map(member => {
                         return (
-                            <tr>
+                            <tr key={member}>
                                 <td>{member}</td>
                                 <td>Member</td>
                             </tr>
@@ -42,7 +42,7 @@ class UserRolesTable extends Component {
                     })}
                     {this.props.userRoles.guestUsers.map(guest => {
                         return (
-                            <tr>
+                            <tr key={guest}>
                                 <td>{guest}</td>
                                 <td>Guest</td>
                             </tr>
