@@ -105,7 +105,7 @@ class Instance(object):
     # If the timestamp is different, then the cache is invalidated
     def get_posts(self, community, headers):
         body = self.request_data.format(
-            req=f"get /fed/posts?community={community}",
+            req=f"get /fed/posts",
             user_id=headers.get("User-ID"),
             date=get_date(),
             digest=generate_digest(b"")
