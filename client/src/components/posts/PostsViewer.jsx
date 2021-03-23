@@ -15,19 +15,19 @@ class PostsViewer extends Component {
       this.props.posts.map(data => {
         const { id } = data;
         return (
-            <Card key={id} className="mt-4">
-              <Card.Body className="pb-2">
-                <Post postData={data} postType="preview" displayCommunityName={this.props.displayCommunityName} />
-                <Link
-                  to={data.host ? '/comments/' + data.host + `/${id}` : `/comments/${id}`}
-                  className="text-muted stretched-link"
-                  size="xs"
-                >
-                  <small><ChatSquare /> Comments ({data.children.length})
+          <Card key={id} className="mt-4">
+            <Card.Body className="pb-2">
+              <Post postData={data} postType="preview" displayCommunityName={this.props.displayCommunityName} />
+              <Link
+                to={data.host ? '/comments/' + data.host + `/${id}` : `/comments/${id}`}
+                className="text-muted stretched-link"
+                size="xs"
+              >
+                <small><ChatSquare /> Comments ({data.children.length})
                   </small> </Link>
-              </Card.Body>
-            </Card>
-          )
+            </Card.Body>
+          </Card>
+        )
       })
     )
   }

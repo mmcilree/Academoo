@@ -3,7 +3,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
-import { Route } from 'react-router-dom';
+import { Route, withRouter } from 'react-router-dom';
 import { authFetch } from '../../auth';
 
 class CommunityCreator extends React.Component {
@@ -43,12 +43,12 @@ class CommunityCreator extends React.Component {
     }
 
     fetchCommunities(host) {
-        fetch('/api/communities').then(response => response.json(), 
-        {
-            headers: {
-                'Client-Host': window.location.protocol + "//" + window.location.hostname
-            }
-        })
+        fetch('/api/communities').then(response => response.json(),
+            {
+                headers: {
+                    'Client-Host': window.location.protocol + "//" + window.location.hostname
+                }
+            })
             .then(data =>
                 this.setState({
                     communities: data,
@@ -90,7 +90,7 @@ class CommunityCreator extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        
+
         const errors = this.validateForm();
         if (errors.length > 0) {
             this.setState({ errors });
@@ -98,7 +98,7 @@ class CommunityCreator extends React.Component {
         }
         const requestOptions = {
             method: 'POST',
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(
@@ -110,12 +110,16 @@ class CommunityCreator extends React.Component {
                 }
             )
         };
-        
-        fetch('/api/create-community', requestOptions);
-        this.setState(
-            { id: "", title: "", description: "", admin: "" }
-        );
-        this.props.history.push('/communities');
+
+        fetch('/api/create-community', requestOptions)
+            .then(response => {
+                this.setState(
+                    { id: "", title: "", description: "", admin: "" }
+                );
+                this.props.history.push('/communities');
+            })
+            .catch(error => { })
+
     }
 
     render() {
