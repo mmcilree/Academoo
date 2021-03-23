@@ -3,13 +3,14 @@ from urllib.parse import urljoin
 from flask import jsonify, Response, current_app
 from app.digital_signatures import generate_digest, generate_signature
 from datetime import datetime
-import json
 from utils import *
+import json
 
 import base64
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
+from cryptography.exceptions import InvalidSignature
 
 
 def get_date():
@@ -21,20 +22,20 @@ def get_signature(body):
     return s.format(generate_signature(body))
 
 class Instance(object):
-    
     def __init__(self, url):
         self.url = url
+        self.public_key = None
 
         # Possibly the worst signature specification possible
-        self.request_data = \
-"""(request-target): {req}
-host: {url}
-client-host: {url}
-user-id: {user_id}
-date: {date}
-digest: {digest}"""
-
-        self.request_data = self.request_data.replace("{url}", self.url) # little formatting hack
+        # what's the difference between host and client-host?
+        self.request_data = "\n".join(
+            "(request-target): {req}", 
+            "host: {url}".format(url=self.url), 
+            "client-host: {url}".format(url=self.url), 
+            "user-id: {user_id}", 
+            "date: {date}", 
+            "digest: {digest}"
+        )
 
     def verify_signature(self, encoded_signature, request_target, headers, body=""):
         message = self.request_data.format(
@@ -44,18 +45,20 @@ digest: {digest}"""
             digest=generate_digest(body)
         )
 
-        public_key = serialization.load_pem_public_key(current_app.config["PUBLIC_KEY"])
-
+        public_key = serialization.load_pem_public_key(self.public_key)
         decoded_signature = base64.b64decode(encoded_signature)
 
-        ret = public_key.verify(
-            decoded_signature,
-            bytes(message, "utf-8"),
-            padding.PKCS1v15(),
-            hashes.SHA512()
-        )
+        try:
+            public_key.verify(
+                decoded_signature,
+                bytes(message, "utf-8"),
+                padding.PKCS1v15(),
+                hashes.SHA512()
+            )
+        except InvalidSignature:
+            return False
 
-        print(ret)
+        return True
     
     def get_users(self, id=None):
         body = self.request_data.format(
@@ -85,7 +88,7 @@ digest: {digest}"""
     def get_timestamps(self, community, headers):
         body = self.request_data.format(
             req=f"get /fed/communities/{community}/timestamps",
-            user_id= headers.get("User-ID"),
+            user_id=headers.get("User-ID"),
             date=get_date(),
             digest=generate_digest(b"")
         )
@@ -101,17 +104,13 @@ digest: {digest}"""
     def get_posts(self, community, headers):
         body = self.request_data.format(
             req=f"get /fed/posts?community={community}",
-            user_id= headers.get("User-ID"),
+            user_id=headers.get("User-ID"),
             date=get_date(),
             digest=generate_digest(b"")
         )
 
-        print(body)
-
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
         
-        print(headers)
-
         ret = requests.get(urljoin(self.url, f"/fed/posts?community={community}"), headers=headers)
         if check_get_filtered_post(ret.json()): return check_get_filtered_post(ret.json())
         return ret.json(), ret.status_code
@@ -119,7 +118,7 @@ digest: {digest}"""
     def get_post_by_id(self, id, headers):
         body = self.request_data.format(
             req=f"get /fed/posts/{id}",
-            user_id= headers.get("User-ID"),
+            user_id=headers.get("User-ID"),
             date=get_date(),
             digest=generate_digest(b"")
         )
@@ -133,7 +132,7 @@ digest: {digest}"""
     def get_communities(self, headers, id=None):
         body = self.request_data.format(
             req=f"get /fed/communities",
-            user_id= headers.get("User-ID"),
+            user_id=headers.get("User-ID"),
             date=get_date(),
             digest=generate_digest(b"")
         )
@@ -154,7 +153,7 @@ digest: {digest}"""
 
         body = self.request_data.format(
             req=f"post /fed/posts",
-            user_id= headers.get("User-ID"),
+            user_id=headers.get("User-ID"),
             date=get_date(),
             digest=generate_digest(bytes(str(data), "utf-8"))
         )
@@ -174,7 +173,7 @@ digest: {digest}"""
 
         body = self.request_data.format(
             req=f"put /fed/posts/{id}",
-            user_id= headers.get("User-ID"),
+            user_id=headers.get("User-ID"),
             date=get_date(),
             digest=generate_digest(bytes(str(data), "utf-8"))
         )
@@ -194,7 +193,7 @@ digest: {digest}"""
 
         body = self.request_data.format(
             req=f"delete /fed/posts/{id}",
-            user_id= headers.get("User-ID"),
+            user_id=headers.get("User-ID"),
             date=get_date(),
             digest=generate_digest(bytes(str(data), "utf-8"))
         )

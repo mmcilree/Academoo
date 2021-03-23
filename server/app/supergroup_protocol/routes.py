@@ -12,15 +12,7 @@ def respond_with_action(actionResponse):
         return Response(status=status)
     else:
         return jsonify(data), status
-
-@bp.route("/verify/<sig>", methods=["GET"])
-def verify(sig):
-    from app.digital_signatures import verify_signature
-    sig = "t2ExjnL2sW1Kz9Kwg1mE2aIQW2UdybRKdZf0VGpJZkNJY0l9MHbvU8C6cjXfY2+WmOlWfaHdYBeRYlaMACXlOwdYedb0wdF+RDpuzCbS9p6CQwlAyWEStEZ7+msLCJvxSobJfDAGthbdeuYkuiX85JribDafZaBl1/maYwEBRBJYxc1vBnVwNg4kP5YrHv5xQaLoVKui6kFW41nW2vzVP1AvJsyuHmDftgMn0q69kfPPrAJrdpv41oHZGN7I7RJlSjrYZ0PVRDWI9KUlVM5c/wzKfoRTReZQJJxCAXA7knrvJFkCM+967KOG7dnRKzfd/PjjnfCMZhC4ROo5NlIiel5+mpUJ6P03/VumIniQhuMSctxeNoOsLlLf/cpfkD3JBlK0NWQMITeHB0ken+UirMIXy3/ZAWU+v8B2LIIsqSU5Br6VEtGiatggIaGXtg117o5Q+kKU84+kWK4GB4qpsBkySqWYJ00JuGM9FdCSBJ5LUUF/rTlghG6EpNfilAz4ruy4U92uzmrlmKyad5XlgjfH9r31gOrU/hrzmAa6s/wDktHCI2hF+c3XLu06MmyGZoZXQuboO7ab4ubMZvmFO43nLDQfOjJ0MZ2Fu2WHajnixcoGBvs4SmLoueDljRHKVnjriyNxylAmHlLpQZWtuJras+rdT8gib5coZjglgdg="
-    verify_signature(sig, bytes(current_app.config["PUBLIC_KEY"], "utf-8"))
-
-    return "Hello World"
-
+        
 @bp.route("/key", methods=["GET"])
 def get_key():
     response = Response(current_app.config["PUBLIC_KEY"], mimetype="application/x-pem-file")
