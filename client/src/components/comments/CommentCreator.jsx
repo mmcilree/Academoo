@@ -73,7 +73,7 @@ class CommentCreator extends React.Component {
 
         requestOptions.body = JSON.stringify(requestOptions.body);
 
-        await fetch('/api/posts', requestOptions)
+        await authFetch('/api/posts', requestOptions)
             .then((response) => {
                 if (response.status >= 400 && response.status < 600) {
                     return response.json().then((error) => {
