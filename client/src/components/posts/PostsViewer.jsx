@@ -16,23 +16,12 @@ class PostsViewer extends Component {
   }
 
   async voteOnPost(post, value) {
-    console.log(this.state.voteStatus[post])
-    console.log(value)
-    if(this.state.voteStatus[post] === value)
-      this.setState({voteStatus: {...this.state.voteStatus, [post]: "none"}})
+    if (this.state.voteStatus[post] === value)
+      this.setState({ voteStatus: { ...this.state.voteStatus, [post]: "none" } })
     else
-      this.setState({voteStatus: {...this.state.voteStatus, [post]: value}})
-
+      this.setState({ voteStatus: { ...this.state.voteStatus, [post]: value } })
     await authFetch('/api/post-vote/' + post + "?vote=" + value);
-    await fetch('/api/posts/' + post,
-      {
-        headers: {
-          'User-ID': this.state.user_id,
-          'Client-Host': window.location.protocol + "//" + window.location.hostname
-        }
-      })
-      .then(response => response.json())
-      .then(data => this.setState({postData: this.state.postData.map(o => o.id === post? data: o)}));
+    this.props.refreshPost(post)
   }
 
   componentDidMount() {
@@ -45,10 +34,15 @@ class PostsViewer extends Component {
       .then(data =>
         this.setState({
           userID: data.userID,
-        })
-      )
-
+        }))
   }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.posts !== this.props.posts) {
+        this.setState({postData: this.props.posts});
+    }
+  }
+
 
   fetchVotes(postId) {
     authFetch('/api/get-vote/' + postId)
@@ -59,13 +53,13 @@ class PostsViewer extends Component {
         return response.json()
       }
       ).then(data =>
-        this.setState({ voteStatus: {...this.state.voteStatus, [postId]: data.vote }})
+        this.setState({ voteStatus: { ...this.state.voteStatus, [postId]: data.vote } })
       ).catch((err) => {
       });
   }
 
   render() {
-    
+    console.log(this.state)
     return this.state.postData && (
       this.state.postData.map(data => {
         const { id } = data;
