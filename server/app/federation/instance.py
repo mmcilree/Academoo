@@ -70,9 +70,7 @@ class Instance(object):
             digest=generate_digest(b"")
         )
 
-        headers = {
-            "Signature": get_signature(body)
-        }
+        headers = {"Signature": get_signature(body)}
 
         ret = None
         if id:
