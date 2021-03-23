@@ -9,14 +9,14 @@ class Manager(object):
         if os.environ.get("FLASK_ENV") == "production":
             self.instances = {
                 "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
-                "unifier": Instance("http://unifier-prod.herokuapp.com/")
+                "unifier": Instance("https://unifier-prod.herokuapp.com/")
                 
             }
         else:
             self.instances = {
                 "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
                 "cs3099-group1": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
-                "unifier": Instance("http://unifier-prod.herokuapp.com/")
+                "unifier": Instance("https://unifier-prod.herokuapp.com/")
                 
             }
 

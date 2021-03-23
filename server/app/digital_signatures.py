@@ -3,6 +3,29 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 
+def verify_signature(encoded_signature, pkey):
+    ok = b"""(request-target): get /fed/posts?community=General
+host: cs3099user-a1.host.cs.st-andrews.ac.uk
+client-host: cs3099user-a1.host.cs.st-andrews.ac.uk
+user-id: nnv2
+date: Tue, 23 Mar 2021 14:23:01 GMT
+digest: z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg=="""
+
+    public_key = serialization.load_pem_public_key(pkey)
+
+    decoded_signature = base64.b64decode(encoded_signature)
+    ret = public_key.verify(
+        decoded_signature,
+        ok,
+        padding.PKCS1v15(),
+        hashes.SHA512()
+    )
+
+    print(ret)
+
+def verify_digest():
+    pass
+
 def generate_signature(body):
     with open("../.ssh/private", "rb") as key_file:
         private_key = serialization.load_pem_private_key(
