@@ -6,7 +6,6 @@ from app.models import User, Community
 from utils import *
 import json
 
-# TODO: Fetch public api keys
 # TODO: Attach error message to 403s
 # TODO: Get client-host and host from data
 

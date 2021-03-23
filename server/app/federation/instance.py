@@ -25,6 +25,7 @@ class Instance(object):
     def __init__(self, url):
         self.url = url
         self.public_key = None
+        self.get_public_key()
 
         # Possibly the worst signature specification possible
         # what's the difference between host and client-host?
@@ -38,8 +39,18 @@ class Instance(object):
                 "digest: {digest}"
             )
         )
+    
+    def get_public_key(self):
+        # Getting the instance's public key
+        req = requests.get(urljoin(self.url, "/fed/key"))
+        if req.status_code == 200: 
+            self.public_key = req.content; return True
+        
+        return False
 
     def verify_signature(self, encoded_signature, request_target, headers, body):
+        if not self.public_key and not self.get_public_key(): return False
+
         message = self.request_data.format(
             req=request_target,
             user_id=headers.get("User-ID"),
