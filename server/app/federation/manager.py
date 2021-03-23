@@ -8,16 +8,15 @@ class Manager(object):
         # host name : <Instance Objects>
         if os.environ.get("FLASK_ENV") == "production":
             self.instances = {
-                "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
-                "unifier": Instance("https://unifier-prod.herokuapp.com/")
+                "freddit": Instance("cs3099user-a7.host.cs.st-andrews.ac.uk"),
+                "unifier": Instance("unifier-prod.herokuapp.com")
                 
             }
         else:
             self.instances = {
-                "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
-                "cs3099-group1": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
-                "unifier": Instance("https://unifier-prod.herokuapp.com/")
-                
+                "freddit": Instance("//cs3099user-a7.host.cs.st-andrews.ac.uk"),
+                "cs3099-group1": Instance("cs3099user-a1.host.cs.st-andrews.ac.uk"),
+                "unifier": Instance("unifier-prod.herokuapp.com")
             }
 
     def create_post(self, host, data, headers):
