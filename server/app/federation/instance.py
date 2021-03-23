@@ -39,7 +39,7 @@ class Instance(object):
             )
         )
 
-    def verify_signature(self, encoded_signature, request_target, headers, body=""):
+    def verify_signature(self, encoded_signature, request_target, headers, body):
         message = self.request_data.format(
             req=request_target,
             user_id=headers.get("User-ID"),

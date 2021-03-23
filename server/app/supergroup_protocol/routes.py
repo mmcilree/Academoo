@@ -1,5 +1,6 @@
 from app import actions, federation
 from app.supergroup_protocol import bp
+from app.digital_signatures import verify_request
 from flask import jsonify, request, Response, current_app
 from app.models import User, Community
 from utils import *
@@ -24,6 +25,12 @@ def get_all_users():
     external = request.args.get("external")
 
     if not external:
+        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
+            headers=request.headers, 
+            request_target=f"get /fed/users",
+        ):
+            return Response(status=403)
+
         return respond_with_action(actions.getUserIDs())
     else:
         return federation.get_users(external)
@@ -33,6 +40,12 @@ def get_user_by_id(id):
     external = request.args.get("external")
 
     if not external:
+        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
+            headers=request.headers, 
+            request_target=f"get /fed/users/{id}",
+        ):
+            return Response(status=403)
+
         return jsonify(actions.getLocalUser(id))
     else:
         return federation.get_users(external, id=id)
@@ -46,7 +59,13 @@ def get_all_communities():
     external = request.args.get("external")
 
     if not external:
-        body, status = actions.getCommunityIDs()
+        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
+            headers=request.headers, 
+            request_target=f"get /fed/communities",
+        ):
+            return Response(status=403)
+
+        body, status = actions.getCommunityIDs() # what does this line achieve?
         return respond_with_action(actions.getCommunityIDs())
     else:
         headers = {"Client-Host": host}
@@ -60,6 +79,12 @@ def get_community_by_id(id):
     external = request.args.get("external")
 
     if not external:
+        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
+            headers=request.headers, 
+            request_target=f"get /fed/communities/{id}",
+        ):
+            return Response(status=403)
+
         return respond_with_action(actions.getCommunity(id))
     else:
         headers = {"Client-Host": host}
@@ -68,6 +93,12 @@ def get_community_by_id(id):
 @bp.route("/communities/<id>/timestamps")
 def get_community_timestamps(id): # no option for federation?
     ##headers = request.headers['Client-Host']
+    if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
+        headers=request.headers, 
+        request_target=f"get /communities/{id}/timestamps",
+    ):
+        return Response(status=403)
+
     return respond_with_action(actions.getAllCommunityPostsTimeModified(id))
 
 # Posts
@@ -90,6 +121,12 @@ def get_all_posts():
     
     # requester = User.lookup(requester_str)
     if not external:
+        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
+            headers=request.headers, 
+            request_target=f"get /fed/posts",
+        ):
+            return Response(status=403)
+
         return respond_with_action(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type, requester_str))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
@@ -113,6 +150,12 @@ def get_post_by_id(id):
 
 
     if not external:
+        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
+            headers=request.headers, 
+            request_target=f"get /fed/posts/{id}",
+        ):
+            return Response(status=403)
+
         return respond_with_action(actions.getPost(id, requester_str))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
@@ -140,6 +183,14 @@ def create_post():
 
     requester = User.lookup(requester_str)
     if external is None:
+        # NOTE: This part should be cleaned up later
+        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
+            headers=request.headers, 
+            request_target=f"post /fed/posts",
+            body=bytes(str(request.json), "utf-8")
+        ):
+            return Response(status=403)
+
         community_id = request.json["community"]
         #Permissions for comments as minimum
         if requester is None:
@@ -173,6 +224,13 @@ def edit_post(id):
     requester = User.lookup(requester_str)
 
     if external is None:
+        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
+            headers=request.headers, 
+            request_target=f"put /fed/posts",
+            body=bytes(str(request.json), "utf-8")
+        ):
+            return Response(status=403)
+
         return respond_with_action(actions.editPost(id, request.json, requester))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
@@ -189,7 +247,14 @@ def delete_post(id):
 
     requester = User.lookup(requester_str)
     if external is None:
+        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
+            headers=request.headers, 
+            request_target=f"delete /fed/posts/{id}",
+            body=bytes(str(request.json), "utf-8")
+        ):
+            return Response(status=403)
+
         return respond_with_action(actions.deletePost(id, requester))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        return federation.delete_post(external, request.json, id, headers)
+        return federation.delete_post(external, request.json, id, headers) # wait why does delete post have json?

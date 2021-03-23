@@ -26,7 +26,7 @@ from flask_praetorian.exceptions import InvalidTokenHeader, MissingTokenHeader
 
 #     print(ret)
 
-def verify_request(headers, request_target):
+def verify_request(headers, request_target, body=b""):
     try:
         # Authentication Check
         token = app.guard.read_token_from_header()
@@ -34,10 +34,14 @@ def verify_request(headers, request_target):
     except (MissingTokenHeader, InvalidTokenHeader):
         # Otherwise, perform a signature check
         host = headers.get("Client-Host")
-        signature = headers.get("Signature").split("signature=")[-1].replace('"', '') # zzzzz
+        signature = headers.get("Signature")
+
+        if not host or not signature: return False
+
+        signature = signature.split("signature=")[-1].replace('"', '') # zzzzz
         instance = app.federation.url_to_instance.get(host)
         
-        if not instance.verify_signature(signature, request_target, headers):
+        if not instance.verify_signature(signature, request_target, headers, body=body):
             return False
         
     return True
