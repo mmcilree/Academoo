@@ -13,7 +13,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.exceptions import InvalidSignature
 
 
-def get_date():
+def get_date(): # just why this instead of timestamp like a normal person??
     return datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
 def get_signature(body):
@@ -29,12 +29,14 @@ class Instance(object):
         # Possibly the worst signature specification possible
         # what's the difference between host and client-host?
         self.request_data = "\n".join(
-            "(request-target): {req}", 
-            "host: {url}".format(url=self.url), 
-            "client-host: {url}".format(url=self.url), 
-            "user-id: {user_id}", 
-            "date: {date}", 
-            "digest: {digest}"
+            (
+                "(request-target): {req}", 
+                "host: {url}".format(url=self.url), 
+                "client-host: {url}".format(url=self.url), 
+                "user-id: {user_id}", 
+                "date: {date}", 
+                "digest: {digest}"
+            )
         )
 
     def verify_signature(self, encoded_signature, request_target, headers, body=""):

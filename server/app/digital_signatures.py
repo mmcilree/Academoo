@@ -3,6 +3,9 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 
+import app
+from flask_praetorian.exceptions import InvalidTokenHeader, MissingTokenHeader
+
 # def verify_signature(encoded_signature, pkey):
 #     ok = b"""(request-target): get /fed/posts?community=General
 # host: cs3099user-a1.host.cs.st-andrews.ac.uk
@@ -22,6 +25,22 @@ from cryptography.hazmat.primitives.asymmetric import padding
 #     )
 
 #     print(ret)
+
+def verify_request(headers, request_target):
+    try:
+        # Authentication Check
+        token = app.guard.read_token_from_header()
+        app.guard.extract_jwt_token(token)
+    except (MissingTokenHeader, InvalidTokenHeader):
+        # Otherwise, perform a signature check
+        host = headers.get("Client-Host")
+        signature = headers.get("Signature").split("signature=")[-1].replace('"', '') # zzzzz
+        instance = app.federation.url_to_instance.get(host)
+        
+        if not instance.verify_signature(signature, request_target, headers):
+            return False
+        
+    return True
 
 def generate_signature(body):
     with open("../.ssh/private", "rb") as key_file:
