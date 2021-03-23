@@ -282,9 +282,10 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if author is not None:
         author_entry = User.lookup(author)
         requester_entry = User.lookup(requester_str)
+        requester_roles = UserRole.lookup(user_id=requester_str)
         if (author == requester_str or (not author_entry.private_account)):
             query = query.filter(Post.author_id == author)
-            if requester_entry is None:
+            if requester_entry is None and requester_roles is None:
                 query = query.filter(Post.community.default_role != "prohibited")
             else:
                 requester_prohibited = UserRole.query.filter(UserRole.user_id == requester_str and UserRole.role == "prohibited")
