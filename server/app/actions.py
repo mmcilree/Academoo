@@ -280,9 +280,17 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if min_date is not None:
         query = query.filter(Post.created >= min_date)
     if author is not None:
-        user = User.lookup(author)
-        if (author == requester_str or (not user.private_account)):
+        author_entry = User.lookup(author)
+        requester_entry = User.lookup(requester_str)
+        requester_roles = UserRole.lookup(user_id=requester_str)
+        if (author == requester_str or (not author_entry.private_account)):
             query = query.filter(Post.author_id == author)
+            if requester_entry is None and requester_roles is None:
+                query = query.filter(Post.community.default_role != "prohibited")
+            else:
+                requester_prohibited = UserRole.query.filter(UserRole.user_id == requester_str and UserRole.role == "prohibited")
+                prohibited_communities = [role.community.id for role in requester_prohibited]
+                query = query.filter(Post.community_id.notin_(prohibited_communities))
         else:
             message = {"title": "Private Account", "message": "These posts cannot be viewed as the specified user has a private account."}
             return (message, 403)
@@ -299,13 +307,6 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if limit is not None:
         query = query.limit(limit)
 
-
-    ''' leave for just now maybe useless idk
-    if include_children:
-        for post in query:
-            post_children = getFilteredPosts(limit, community_id, min_date, author, host, post.id, True, content_type)
-            query += post_children
-    '''
     
     post_dicts = [{"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], "author": {"id": post.author.user_id if post.author else None, "host": post.author.host if post.author else None}, "modified": post.modified, "created": post.created} for post in query]
     
