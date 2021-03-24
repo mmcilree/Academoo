@@ -66,7 +66,7 @@ class PostCreator extends React.Component {
     }
 
     async fetchInstances() {
-        await fetch("/api/get-instances")
+        await authFetch("/api/get-instances")
             .then(response => response.json())
             .then(data =>
                 this.setState({
@@ -77,7 +77,7 @@ class PostCreator extends React.Component {
     }
 
     async fetchCommunities(host) {
-        await fetch('/api/communities' + (host !== "local" ? "?external=" + host : ""),
+        await authFetch('/api/communities' + (host !== "local" ? "?external=" + host : ""),
             {
                 headers: {
                     'Client-Host': window.location.protocol + "//" + window.location.hostname
@@ -153,7 +153,7 @@ class PostCreator extends React.Component {
 
         requestOptions.body = JSON.stringify(requestOptions.body);
 
-        fetch('/api/posts', requestOptions)
+        authFetch('/api/posts', requestOptions)
             .then(response => {
                 if (!response.ok) {
                     return response.json().then((error) => {

@@ -6,6 +6,7 @@ import { ArrowReturnLeft, ChatRight } from "../../../node_modules/react-bootstra
 import { Link } from "../../../node_modules/react-router-dom";
 import Modal from "../../../node_modules/react-bootstrap/Modal";
 import CommentCreator from "./CommentCreator";
+import { authFetch } from '../../auth';
 
 class CommentsViewer extends React.Component {
   constructor(props) {
@@ -37,7 +38,7 @@ class CommentsViewer extends React.Component {
 
 
   async fetchParentPost() {
-    await fetch('/api/posts/' + this.state.parentPostId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
+    await authFetch('/api/posts/' + this.state.parentPostId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
       {
         headers: {
           'User-ID': this.state.user_id,
@@ -61,7 +62,7 @@ class CommentsViewer extends React.Component {
     const new_children = await Promise.all(parentPost.children.filter(childId => !fetchedChildren.has(childId)).map(
       async (childId) => {
         fetchedChildren.add(childId);
-        return fetch('/api/posts/' + childId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
+        return authFetch('/api/posts/' + childId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
           {
             headers: {
               'User-ID': this.state.user_id,
