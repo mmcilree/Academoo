@@ -46,7 +46,7 @@ def validate_post_id(post_id):
 
 def validate_json(file): # IS REDUNDANT, REMOVE EVENTUALLY
     if file is None:
-        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file is properly formatted"}, 400)
+        return ({"title": "Invalid JSON  file passed", "message": "Make sure JSON file is properly formatted"}, 400)
 
 content_schema = {
     "type": "array",
