@@ -43,7 +43,7 @@ class CommunityCreator extends React.Component {
     }
 
     fetchCommunities(host) {
-        fetch('/api/communities').then(response => response.json(),
+        authFetch('/api/communities').then(response => response.json(),
             {
                 headers: {
                     'Client-Host': window.location.protocol + "//" + window.location.hostname

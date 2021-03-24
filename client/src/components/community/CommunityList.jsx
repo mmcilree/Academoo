@@ -6,6 +6,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import { Link } from "react-router-dom";
 import CommunitySubscribeButton from "./CommunitySubscribeButton";
 import { PlusCircle } from "react-bootstrap-icons"
+import { authFetch } from '../../auth';
 
 class CommunityList extends React.Component {
     constructor(props) {
@@ -22,7 +23,7 @@ class CommunityList extends React.Component {
     }
 
     fetchCommunities() {
-        fetch('/api/communities' + (this.props.instance !== "local" ? "?external=" + this.props.instance : ""),
+        authFetch('/api/communities' + (this.props.instance !== "local" ? "?external=" + this.props.instance : ""),
             {
                 headers: {
                     'Client-Host': window.location.protocol + "//" + window.location.hostname

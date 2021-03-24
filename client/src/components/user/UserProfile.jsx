@@ -51,7 +51,7 @@ class UserProfile extends Component {
   }
 
   async fetchPosts() {
-    await fetch('/api/posts?author=' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""),
+    await authFetch('/api/posts?author=' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""),
       {
         headers: {
           'User-ID': this.state.currentUser,
@@ -94,7 +94,7 @@ class UserProfile extends Component {
   }
 
   fetchUserDetails() {
-    fetch('/api/users/' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
+    authFetch('/api/users/' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
       .then(response => response.json())
       .then(data => {
         this.setState({
