@@ -18,7 +18,7 @@ class Instance(object):
 
         try:
             json.loads(ret.content)
-            if check_array_json(ret.json()): return check_array_json(ret.json())
+            if check_array_json(ret.content): return check_array_json(ret.content)
             return jsonify(ret.json()), ret.status_code
         except:
             return Response(status=ret.status_code)
@@ -32,30 +32,31 @@ class Instance(object):
     # If the timestamp is different, then the cache is invalidated
     def get_posts(self, community, headers):
         ret = requests.get(urljoin(self.url, f"/fed/posts?community={community}"), headers=headers)
-        if check_get_filtered_post(ret.json()): return check_get_filtered_post(ret.json())
+        if check_get_filtered_post(ret.content): return check_get_filtered_post(ret.content)
         return ret.json(), ret.status_code
 
     def get_post_by_id(self, id, headers):
         ret = requests.get(urljoin(self.url, f"/fed/posts/{id}"), headers=headers)
-        if check_get_post(ret.json()): return check_get_post(ret.json())
+        if check_get_post(ret.content): return check_get_post(ret.content)
         return ret.json(), ret.status_code
 
     def get_communities(self, headers, id=None):
         if id:
             ret = requests.get(urljoin(self.url, f"/fed/communities/{id}"), headers=headers)
-            if check_get_community(ret.json()): return check_get_community(ret.json())
+            if check_get_community(ret.content): return check_get_community(ret.content)
         else:
             ret = requests.get(urljoin(self.url, "/fed/communities"), headers=headers)
-            if check_array_json(ret.json()): return check_array_json(ret.json())
-
+            if check_array_json(ret.content): return check_array_json(ret.content)
+            
         return jsonify(ret.json()), ret.status_code
+
 
     def create_post(self, data, headers):
         data.pop("external")
         ret = requests.post(urljoin(self.url, f"/fed/posts"), json=data, headers=headers)
         try:
             json.loads(ret.content)
-            if check_is_error_message(ret.json()): return check_is_error_message(ret.json())
+            if check_get_post(ret.content): return check_get_post(ret.content)
             return jsonify(ret.json()), ret.status_code
         except:
             return Response(status=ret.status_code)
@@ -65,7 +66,7 @@ class Instance(object):
         ret = requests.put(urljoin(self.url, f"/fed/posts/{id}"), json=data, headers=headers)
         try:
             json.loads(ret.content)
-            if check_is_error_message(ret.json()): return check_is_error_message(ret.json())
+            if check_get_post(ret.content): return check_get_post(ret.content)
             return jsonify(ret.json()), ret.status_code
         except:
             return Response(status=ret.status_code)
@@ -75,7 +76,7 @@ class Instance(object):
         ret = requests.delete(urljoin(self.url, f"/fed/posts/{id}"), headers=headers) 
         try:
             json.loads(ret.content)
-            if check_is_error_message(ret.json()): return check_is_error_message(ret.json())
+            if check_is_error_message(ret.content): return check_is_error_message(ret.content)
             return jsonify(ret.json()), ret.status_code
         except:
             return Response(status=ret.status_code)
