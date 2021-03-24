@@ -56,7 +56,7 @@ export const authFetchMock =
         } else if (path.startsWith("/api/get-default-role")) {
             return promiseJson({ default_role: "contributor" });
         } else if (path.startsWith("/api/posts/")) {
-            return promiseJson(    {
+            return promiseJson({
                 author: {
                     host: "Academoo",
                     id: "user3"
