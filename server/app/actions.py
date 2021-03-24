@@ -384,7 +384,7 @@ def getPost(post_id, requester_str):
         role = community.default_role
         if ((role == "prohibited")):
             message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-            return (message, 403);
+            return (message, 403)
     elif requester.has_role(post.community_id, "prohibited"):
         message = {"title": "Permission error", "message": "Do not have permission to perform action"}
         return (message, 403)
