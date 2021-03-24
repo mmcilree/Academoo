@@ -280,7 +280,20 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if min_date is not None:
         query = query.filter(Post.created >= min_date)
     if author is not None:
-        query = query.filter(Post.author_id == author)
+        author_entry = User.lookup(author)
+        requester_entry = User.lookup(requester_str)
+        requester_roles = UserRole.lookup(user_id=requester_str)
+        if (author == requester_str or (not author_entry.private_account)):
+            query = query.filter(Post.author_id == author)
+            if requester_entry is None and requester_roles is None:
+                query = query.filter(Post.community.default_role != "prohibited")
+            else:
+                requester_prohibited = UserRole.query.filter(UserRole.user_id == requester_str and UserRole.role == "prohibited")
+                prohibited_communities = [role.community.id for role in requester_prohibited]
+                query = query.filter(Post.community_id.notin_(prohibited_communities))
+        else:
+            message = {"title": "Private Account", "message": "These posts cannot be viewed as the specified user has a private account."}
+            return (message, 403)
     #if host is not None:
         #query = query.filter(Post.host == host)
     if parent_post is not None:
