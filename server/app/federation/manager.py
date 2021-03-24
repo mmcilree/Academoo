@@ -4,6 +4,7 @@ from app.federation.instance import Instance
 from urllib.parse import urlparse, urljoin
 from utils import format_url
 import requests
+from requests.exceptions import ConnectionError, ConnectTimeout
 import time
 
 class Manager(object):
@@ -20,9 +21,10 @@ class Manager(object):
             }
         else:
             self.instances = {
-                "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
-                "academoo": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
-                "unifier": Instance("https://unifier-prod.herokuapp.com/")
+                "Freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
+                "Academoo": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
+                "WabberJocky": Instance("https://cs3099user-a4.host.cs.st-andrews.ac.uk/"),
+                "Feddit": Instance("http://86.176.106.252:8000/"),
             }
 
         # URL to Instance, used for public key retrieval
@@ -37,23 +39,21 @@ class Manager(object):
         memo = set()
         stack = [inst.url for inst in self.instances.values()]
 
-        print(self.instances)
-
         while stack:
             url = stack.pop(); memo.add(url)
-            ret = requests.get(urljoin(url, "/fed/discover"))
 
+            try:
+                ret = requests.get(urljoin(url, "/fed/discover"), timeout=3)
+            except (ConnectTimeout, ConnectionError): continue
+            
             if ret.status_code == 200:
-                children = r.json()
-
-                for child_url in children:
+                for child_url in ret.json():
                     child_url = format_url(child_url)
-                    if child_url not in memo:
-                        stack.append(child_url)
-                        self.add_instance(host=urlparse(child_url).netloc, url=child_url)
-                        
-        print(self.instances)
-
+                    if child_url in memo: continue
+                
+                    stack.append(child_url)
+                    self.add_instance(host=urlparse(child_url).netloc, url=child_url)
+                                
     def create_post(self, host, data, headers):
         return self.instances[host].create_post(data, headers)
     
@@ -91,7 +91,7 @@ class Manager(object):
         return list(self.instances.keys())
 
     def add_instance(self, host, url):
-        if host in self.instances:
+        if host in self.instances or urlparse(url).netloc in self.url_to_instance:
             return False
 
         url = format_url(url)
