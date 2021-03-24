@@ -1,7 +1,8 @@
 import os
 import functools
 from app.federation.instance import Instance
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
+import requests
 import time
 
 class Manager(object):
@@ -23,10 +24,38 @@ class Manager(object):
                 "unifier": Instance("https://unifier-prod.herokuapp.com/")
             }
 
-        # Two-way dictionary 
+        # URL to Instance, used for public key retrieval
         self.url_to_instance = {}
-        for inst in self.instances:
-            self.url_to_instance[urlparse(self.instances[inst].url).netloc] = self.instances[inst]
+        for inst in self.instances.values():
+            self.url_to_instance[urlparse(inst.url).netloc] = inst
+        
+        self.discover_instances()
+    
+    @staticmethod
+    def _convert_url(url):
+        return "http://" + url if "://" not in url else url
+    
+    def discover_instances(self):
+        # Depth-First Search with memoization in production?!? omg! Incredible. 
+        memo = set()
+        stack = [inst.url for inst in self.instances.values()]
+
+        print(self.instances)
+
+        while stack:
+            url = stack.pop(); memo.add(url)
+            ret = requests.get(urljoin(url, "/fed/discover"))
+
+            if ret.status_code == 200:
+                children = r.json()
+
+                for child_url in children:
+                    child_url = Manager._convert_url(child_url)
+                    if child_url not in memo:
+                        stack.append(child_url)
+                        self.add_instance(host=urlparse(child_url).netloc, url=child_url)
+                        
+        print(self.instances)
 
     def create_post(self, host, data, headers):
         return self.instances[host].create_post(data, headers)
@@ -68,7 +97,7 @@ class Manager(object):
         if host in self.instances:
             return False
 
-        url = "http://" + url if "://" not in url else url
+        url = Manager._convert_url(url)
         self.instances[host] = Instance(url)
         self.url_to_instance[urlparse(url).netloc] = self.instances[host]
         
