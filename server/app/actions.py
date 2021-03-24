@@ -288,8 +288,10 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if content_type is not None:
         valid_posts = [content_field.post_id for content_field in PostContentField.query.filter(content_type=content_type).all()]
         query = query.filter(Post.id.in_(valid_posts))
-    if include_children is None:
+    
+    if include_children == "false":
         query = query.filter(Post.parent_id == None)
+    
     query = query.order_by(desc(Post.created))
     if limit is not None:
         query = query.limit(limit)
@@ -310,7 +312,7 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
 # Author host is not in json file so will need to passed in manually :(
 def createPost(post_data, author_id, author_host):
     community_id = post_data["community"]
-    parent_post = post_data["parentPost"]
+    parent_post = post_data.get("parentPost")
     title = post_data["title"]
     content_json = post_data["content"]
     author_id = author_id
