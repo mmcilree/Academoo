@@ -47,6 +47,9 @@ class Instance(object):
             )
         )
     
+    def __repr__(self):
+        return f"(URL: {self.url}, PUB-KEY: {self.public_key})"
+    
     def get_public_key(self):
         # Getting the instance's public key
         try:
