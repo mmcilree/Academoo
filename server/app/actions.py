@@ -65,13 +65,55 @@ def removeSiteWideRoles(username, host):
             return({"title":"Could not find user " + username, "message": "User does not exist in database, use a different username"}, 404)
         
         if(user.site_roles != None):
-            user.site_roles = ""
+            user.site_roles = "basic"
         db.session.commit()
         return(None, 200)
     else:
         # Add support for roles for external users
         return(None, 400)
 
+def userAccountActivation(username, host, activation):
+    if(host == "local"):
+        user = User.query.filter_by(user_id=username).first()
+        if(user is None):
+            return({"title":"Could not find user " + username, "message": "User does not exist in database, use a different username"}, 404)
+        if(activation == "disable"):
+            if(user.site_roles != None):
+                user.site_roles = ""
+                db.session.commit()
+                return(None, 200)
+            else:
+                return({"title":"Account is Already Disabled", "message": "This account is already inactive, activate it to change status or leave it inactive."}, 400)
+        elif (activation == "active"):
+            if((user.site_roles == None) | (user.site_roles == "")):
+                user.site_roles = "basic"
+            else: 
+                assigned_roles = user.site_roles.split(",");  
+                for r in assigned_roles:
+                    if(r == "basic"):
+                        return({"title":"User Account is Already Active", "message": "User already has basic privileges"}, 400)
+            roles = user.site_roles + "," + "basic"
+            user.site_roles = roles
+            db.session.commit()
+            return("", 200)
+        else:
+            return({"title":"Invalid Request", "message": "Could not fulfill request to change user activation status"}, 400)
+
+    else:
+        # Add support for roles for external users
+        return(None, 400)
+
+def validLogin(username):
+    print("here!")
+    user = User.lookup(username)
+    roles = user.site_roles.split(",")
+    print(roles)
+    #User has an inactive account
+    if(len(roles) == 0 ):
+        return False
+    elif(roles[0] == ""):
+        return False
+    else: return True
 
 def addSiteWideRole(admin, username, role, key, host):
     if (host == "local"):
@@ -92,12 +134,10 @@ def addSiteWideRole(admin, username, role, key, host):
             user.site_roles = role
         else: 
             assigned_roles = user.site_roles.split(",");  
-            if(len(assigned_roles) == 1):
-                if(assigned_roles[0] == role):
+            for r in assigned_roles:
+                if(r == role):
                     return({"title":"Cannot Add Role " + role, "message": "User already has " + role + " privileges"}, 400)
-            elif(len(assigned_roles) == 2):
-                return({"title":"Cannot Add Role " + role, "message": "User already has admin and moderator privileges"}, 400)
-            
+
             roles = user.site_roles + "," + role
             user.site_roles = roles
         db.session.commit()

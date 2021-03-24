@@ -63,6 +63,15 @@ def remove_site_roles():
     host = req["host"]
     return respond_with_action(actions.removeSiteWideRoles(username, host))
 
+@bp.route("/account-activation/", methods=["PUT"])
+@roles_required("site-moderator")
+def account_activation():
+    req = request.json
+    username = req["username"]
+    host = req["host"]
+    activation = req["activation"]
+    return respond_with_action(actions.userAccountActivation(username, host, activation))
+
 @bp.route("/create-community", methods=["POST"])
 def create_community():
     req = request.json

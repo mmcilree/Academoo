@@ -45,9 +45,8 @@ class UserProfile extends Component {
           this.fetchUserDetails();
         }
         this.fetchPosts();
-      }
-
-      )
+      })
+      .catch(error => this.setState({ userError: error, isLoading: false }));
   }
 
   async fetchPosts() {

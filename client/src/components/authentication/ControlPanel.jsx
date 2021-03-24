@@ -14,6 +14,7 @@ import { PlusCircle } from "react-bootstrap-icons";
 import { Redirect } from "react-router-dom";
 import { authFetch } from "../../auth";
 import { Typeahead, Menu, MenuItem } from 'react-bootstrap-typeahead';
+import ModeratorControls from "./ModeratorControls";
 
 
 class ControlPanel extends Component {
@@ -131,7 +132,8 @@ class ControlPanel extends Component {
                         this.setState({ changed: true, errors: [], host: "local", serverDropdown: "Select Server", role: "", selected: [{ user: "" }] });
                     }
                 });
-        } else {
+        }
+        else {
 
             const requestOptions = {
                 method: 'POST',
@@ -248,8 +250,9 @@ class ControlPanel extends Component {
                                 </Card.Body>
                             </Card>}
 
-                            {/* <p>Block a user</p>
-                            <p>Remove or verify communities</p> */}
+                            {isModerator &&
+                                < ModeratorControls instances={this.state.instances} users={this.state.users} />
+                            }
                         </Card.Body>
                     </Card>
         );
