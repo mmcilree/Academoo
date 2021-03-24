@@ -52,7 +52,7 @@ class CommunityCreator extends React.Component {
             .then(data =>
                 this.setState({
                     communities: data,
-                }))
+                })).catch(() => {})
     }
 
     fetchUserDetails() {
@@ -61,7 +61,7 @@ class CommunityCreator extends React.Component {
                 this.setState({
                     currentUser: data.id,
                 })
-            )
+            ).catch(() => {})
     }
 
     handleChange(event) {

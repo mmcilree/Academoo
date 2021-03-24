@@ -14,7 +14,7 @@ class Welcome extends React.Component {
       .then(data => {
         return (<p>{data}</p>)
       }
-      )
+      ).catch(() => {})
   }
 
   render() {

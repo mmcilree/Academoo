@@ -62,7 +62,7 @@ class PostCreator extends React.Component {
                     user_id: data.id,
                     email: data.email,
                 })
-            )
+            ).catch(() => {})
     }
 
     async fetchInstances() {
@@ -72,7 +72,7 @@ class PostCreator extends React.Component {
                 this.setState({
                     instances: ["local", ...data],
                 })
-            )
+            ).catch(() => {})
         this.state.instances.map(host => (this.fetchCommunities(host)));
     }
 
@@ -86,7 +86,7 @@ class PostCreator extends React.Component {
             .then(data =>
                 this.setState({
                     communities: [...this.state.communities, ...data.map(community => ({ host: host, community: community }))],
-                }))
+                })).catch(() => {})
     }
 
     handleContentSwitch(event) {

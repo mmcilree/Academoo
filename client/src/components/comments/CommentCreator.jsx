@@ -27,7 +27,7 @@ class CommentCreator extends React.Component {
                     email: data.email,
                     userHost: data.host
                 })
-            )
+            ).catch(() => {})
     }
 
     handleChange(event) {

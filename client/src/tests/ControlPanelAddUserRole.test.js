@@ -4,12 +4,16 @@ import Adapter from "enzyme-adapter-react-16";
 configure({ adapter: new Adapter() });
 import { mount } from "enzyme";
 import { Alert, Dropdown } from 'react-bootstrap'
+import { Router, Route, Switch } from "react-router-dom";
 import { fetchMock } from './fetchMocks.js';
+import { createMemoryHistory } from 'history';
 import ControlPanel from "../components/authentication/ControlPanel";
 import AccessForbidden from "../components/static/AccessForbidden";
 
 let wrapper;
 let submitButton;
+
+const history = createMemoryHistory();
 
 jest.mock('../auth', () => {
     const { authFetchMock } = require('./fetchMocks');
@@ -21,9 +25,9 @@ jest.mock('../auth', () => {
 );
 
 function setFormDataAndSubmit(instance, username, role) {
-    wrapper.instance().handleHostChange(instance);
-    wrapper.instance().setState({ selected: [{ user: username }] })
-    wrapper.instance().setState({ role: role })
+    wrapper.find(ControlPanel).instance().handleHostChange(instance);
+    wrapper.find(ControlPanel).instance().setState({ selected: [{ user: username }] })
+    wrapper.find(ControlPanel).instance().setState({ role: role })
     submitButton = (wrapper.find('[controlId="user-role-button"]')).find('[type="submit"]').hostNodes();
     submitButton.simulate('submit');
 }
@@ -31,7 +35,10 @@ function setFormDataAndSubmit(instance, username, role) {
 beforeEach(() => {
     global.fetch = jest.fn().mockImplementation(fetchMock);
     wrapper = mount(
-        <ControlPanel />
+        <Router history={history}>
+            <ControlPanel />
+        </Router>
+        
     );
 });
 

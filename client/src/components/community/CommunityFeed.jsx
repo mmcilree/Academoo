@@ -40,7 +40,7 @@ class CommunityFeed extends Component {
         })
         console.log(this.state.userID)
         this.fetchPosts()
-      })
+      }).catch(() => {})
 
   }
 
@@ -97,7 +97,7 @@ class CommunityFeed extends Component {
           communityData: data,
           isLoadingCommunity: false,
         })
-      )
+      ).catch(() => {})
   }
 
   handleSubmit(event) {
