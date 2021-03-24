@@ -2,6 +2,7 @@ import os
 import functools
 from app.federation.instance import Instance
 from urllib.parse import urlparse, urljoin
+from utils import format_url
 import requests
 import time
 
@@ -31,10 +32,6 @@ class Manager(object):
         
         self.discover_instances()
     
-    @staticmethod
-    def _convert_url(url):
-        return "http://" + url if "://" not in url else url
-    
     def discover_instances(self):
         # Depth-First Search with memoization in production?!? omg! Incredible. 
         memo = set()
@@ -50,7 +47,7 @@ class Manager(object):
                 children = r.json()
 
                 for child_url in children:
-                    child_url = Manager._convert_url(child_url)
+                    child_url = format_url(child_url)
                     if child_url not in memo:
                         stack.append(child_url)
                         self.add_instance(host=urlparse(child_url).netloc, url=child_url)
@@ -97,7 +94,7 @@ class Manager(object):
         if host in self.instances:
             return False
 
-        url = Manager._convert_url(url)
+        url = format_url(url)
         self.instances[host] = Instance(url)
         self.url_to_instance[urlparse(url).netloc] = self.instances[host]
         
