@@ -360,7 +360,8 @@ def createPost(post_data, author_id, author_host):
         db.session.add(content_field)
 
     db.session.commit()
-    return (None, 200)
+    return getPost(new_post.id, author_id)
+    #return (None, 200)
 
 def getPost(post_id, requester_str):
     if validate_post_id(post_id): return validate_post_id(post_id)
@@ -375,7 +376,7 @@ def getPost(post_id, requester_str):
         role = community.default_role
         if ((role == "prohibited")):
             message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-            return (message, 403);
+            return (message, 403)
     elif requester.has_role(post.community_id, "prohibited"):
         message = {"title": "Permission error", "message": "Do not have permission to perform action"}
         return (message, 403)
@@ -410,7 +411,8 @@ def editPost(post_id, post_data, requester):
         db.session.add(content_field)
 
     db.session.commit()
-    return (None, 200)
+    return getPost(post_id, requester)
+    #return (None, 200)
 
 def deletePost(post_id, requester):
     # assuming deleting a post will delete all postcontentobjects associated with it until it get proven wrong eventually
