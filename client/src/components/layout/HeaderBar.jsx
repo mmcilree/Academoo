@@ -52,7 +52,7 @@ function HeaderBar() {
             logout();
           }
         }
-        )
+        ).catch(() => {})
     }
 
     fetchData();

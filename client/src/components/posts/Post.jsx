@@ -197,7 +197,7 @@ class Post extends Component {
         })
         this.handleCloseEdit();
       }
-    });
+    }).catch(() => {});
   }
 
 

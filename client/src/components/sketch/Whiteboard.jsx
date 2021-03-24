@@ -109,7 +109,7 @@ class Whiteboard extends React.Component {
                 a.click();
             }
             );
-        });
+        }).catch(() => {});
     }
 
     share = () => {
