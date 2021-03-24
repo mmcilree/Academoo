@@ -37,7 +37,7 @@ def validate_community_id(community_id):
 def validate_role(role):
     available_roles = ["admin", "contributor", "member", "guest", "prohibited"]
     if role not in available_roles:
-        return ({"title": "Invalid role name", "message": "available roles are admin, contributor, member, guest, prohibited"}, 400)
+        return ({"title": "Invalid role name", "message": "available  roles are admin, contributor, member, guest, prohibited"}, 400)
 
 
 def validate_post_id(post_id):
