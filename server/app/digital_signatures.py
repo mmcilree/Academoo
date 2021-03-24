@@ -2,6 +2,7 @@ import base64
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
+from flask.globals import current_app
 
 import app
 from flask_praetorian.exceptions import InvalidTokenHeader, MissingTokenHeader
@@ -27,6 +28,8 @@ from flask_praetorian.exceptions import InvalidTokenHeader, MissingTokenHeader
 #     print(ret)
 
 def verify_request(headers, request_target, body=b""):
+    if not current_app.config["SIGNATURE_FEATURE"]: return None, 200
+
     try:
         # Authentication Check
         token = app.guard.read_token_from_header()
@@ -36,15 +39,15 @@ def verify_request(headers, request_target, body=b""):
         host = headers.get("Client-Host")
         signature = headers.get("Signature")
 
-        if not host or not signature: return False
+        if not host or not signature: return {"title": "Bad Request", "message": "Signature Missing"}, 400
 
         signature = signature.split("signature=")[-1].replace('"', '') # zzzzz
         instance = app.federation.url_to_instance.get(host)
         
         if not instance.verify_signature(signature, request_target, headers, body=body):
-            return False
+            return {"title": "Permission Denied", "message": "Invalid Signature"}, 403
         
-    return True
+    return None, 200
 
 def generate_signature(body):
     with open("../.ssh/private", "rb") as key_file:

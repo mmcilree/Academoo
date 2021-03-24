@@ -10,7 +10,6 @@ class Manager(object):
             self.instances = {
                 "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
                 "unifier": Instance("https://unifier-prod.herokuapp.com/")
-                
             }
         else:
             self.instances = {

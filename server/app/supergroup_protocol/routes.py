@@ -1,3 +1,4 @@
+from requests import status_codes
 from app import actions, federation
 from app.supergroup_protocol import bp
 from app.digital_signatures import verify_request
@@ -6,7 +7,6 @@ from app.models import User, Community
 from utils import *
 import json
 
-# TODO: Attach error message to 403s
 # TODO: Get client-host and host from data
 
 def respond_with_action(actionResponse):
@@ -27,11 +27,8 @@ def get_all_users():
     external = request.args.get("external")
 
     if not external:
-        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
-            headers=request.headers, 
-            request_target=f"get /fed/users",
-        ):
-            return Response(status=403)
+        message, status_code = verify_request(headers=request.headers, request_target=f"get /fed/users")
+        if status_code != 200: return jsonify(message), status_code
 
         return respond_with_action(actions.getUserIDs())
     else:
@@ -42,11 +39,8 @@ def get_user_by_id(id):
     external = request.args.get("external")
 
     if not external:
-        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
-            headers=request.headers, 
-            request_target=f"get /fed/users/{id}",
-        ):
-            return Response(status=403)
+        message, status_code = verify_request(headers=request.headers, request_target=f"get /fed/users/{id}")
+        if status_code != 200: return jsonify(message), status_code
 
         return jsonify(actions.getLocalUser(id))
     else:
@@ -61,11 +55,8 @@ def get_all_communities():
     external = request.args.get("external")
 
     if not external:
-        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
-            headers=request.headers, 
-            request_target=f"get /fed/communities",
-        ):
-            return Response(status=403)
+        message, status_code = verify_request(headers=request.headers, request_target=f"get /fed/communities")
+        if status_code != 200: return jsonify(message), status_code
 
         body, status = actions.getCommunityIDs() # what does this line achieve?
         return respond_with_action(actions.getCommunityIDs())
@@ -81,11 +72,8 @@ def get_community_by_id(id):
     external = request.args.get("external")
 
     if not external:
-        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
-            headers=request.headers, 
-            request_target=f"get /fed/communities/{id}",
-        ):
-            return Response(status=403)
+        message, status_code = verify_request(headers=request.headers, request_target=f"get /fed/communities/{id}")
+        if status_code != 200: return jsonify(message), status_code
 
         return respond_with_action(actions.getCommunity(id))
     else:
@@ -95,11 +83,8 @@ def get_community_by_id(id):
 @bp.route("/communities/<id>/timestamps")
 def get_community_timestamps(id): # no option for federation?
     ##headers = request.headers['Client-Host']
-    if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
-        headers=request.headers, 
-        request_target=f"get /communities/{id}/timestamps",
-    ):
-        return Response(status=403)
+    message, status_code = verify_request(headers=request.headers, request_target=f"get /fed/communities/{id}/timestamps")
+    if status_code != 200: return jsonify(message), status_code
 
     return respond_with_action(actions.getAllCommunityPostsTimeModified(id))
 
@@ -123,11 +108,8 @@ def get_all_posts():
     
     # requester = User.lookup(requester_str)
     if not external:
-        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
-            headers=request.headers, 
-            request_target=f"get /fed/posts",
-        ):
-            return Response(status=403)
+        message, status_code = verify_request(headers=request.headers, request_target=f"get /fed/posts")
+        if status_code != 200: return jsonify(message), status_code
 
         return respond_with_action(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type, requester_str))
     else:
@@ -152,11 +134,8 @@ def get_post_by_id(id):
 
 
     if not external:
-        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
-            headers=request.headers, 
-            request_target=f"get /fed/posts/{id}",
-        ):
-            return Response(status=403)
+        message, status_code = verify_request(headers=request.headers, request_target=f"get /fed/posts/{id}")
+        if status_code != 200: return jsonify(message), status_code
 
         return respond_with_action(actions.getPost(id, requester_str))
     else:
@@ -185,13 +164,12 @@ def create_post():
 
     requester = User.lookup(requester_str)
     if external is None:
-        # NOTE: This part should be cleaned up later
-        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
+        message, status_code = verify_request(
             headers=request.headers, 
             request_target=f"post /fed/posts",
             body=bytes(str(request.json), "utf-8")
-        ):
-            return Response(status=403)
+        )
+        if status_code != 200: return jsonify(message), status_code
 
         community_id = request.json["community"]
         #Permissions for comments as minimum
@@ -226,12 +204,12 @@ def edit_post(id):
     requester = User.lookup(requester_str)
 
     if external is None:
-        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
+        message, status_code = verify_request(
             headers=request.headers, 
             request_target=f"put /fed/posts",
             body=bytes(str(request.json), "utf-8")
-        ):
-            return Response(status=403)
+        )
+        if status_code != 200: return jsonify(message), status_code
 
         return respond_with_action(actions.editPost(id, request.json, requester))
     else:
@@ -249,14 +227,14 @@ def delete_post(id):
 
     requester = User.lookup(requester_str)
     if external is None:
-        if current_app.config["SIGNATURE_FEATURE"] and not verify_request(
+        message, status_code = verify_request(
             headers=request.headers, 
             request_target=f"delete /fed/posts/{id}",
             body=bytes(str(request.json), "utf-8")
-        ):
-            return Response(status=403)
+        )
+        if status_code != 200: return jsonify(message), status_code
 
         return respond_with_action(actions.deletePost(id, requester))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        return federation.delete_post(external, request.json, id, headers) # wait why does delete post have json?
+        return federation.delete_post(external, request.json, id, headers) # NOTE: wait why does delete post have json?
