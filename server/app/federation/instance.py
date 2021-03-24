@@ -16,10 +16,17 @@ from cryptography.exceptions import InvalidSignature
 def get_date(): # just why this instead of timestamp like a normal person??
     return datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
+# NOTE: Some comments about the security protocol
+# What's the difference between host and client-host?
+# Why can't we have a nested json object instead of this string below that is so so complicated to parse
+# Date should really be a timestamp instead of a readable format. Only computers will look at this..
+# Also, what will happen when there is a >1second latency? The signature generated will be different because of the date
+# For consistency, can we not omit User-ID in the body to sign? It's so difficult to remove this cleanly from the string. 
+# Lastly, what do we generate digest from when it's a GET request? For now I just digest an empty string. 
 def get_signature(body):
     body = bytes(body, "utf-8")
-    s = 'keyId="rsa-global",algorithm="hs2019",headers="(request-target) host client-host user-id date digest",signature="{}"'
-    return s.format(generate_signature(body))
+    s = 'keyId="rsa-global",algorithm="hs2019",headers="(request-target) host client-host user-id date digest",signature="{sig}"'
+    return s.format(sig=generate_signature(body))
 
 class Instance(object):
     def __init__(self, url):
