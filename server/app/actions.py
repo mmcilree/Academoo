@@ -316,7 +316,7 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
 # Author host is not in json file so will need to passed in manually :(
 def createPost(post_data, author_id, author_host):
     community_id = post_data["community"]
-    parent_post = post_data["parentPost"]
+    parent_post = post_data.get("parentPost")
     title = post_data["title"]
     content_json = post_data["content"]
     author_id = author_id
