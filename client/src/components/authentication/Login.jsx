@@ -51,7 +51,7 @@ class Login extends React.Component {
             isIncorrect: true
           });
         }
-      })
+      }).catch(() => {})
   }
 
   render() {

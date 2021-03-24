@@ -43,7 +43,7 @@ class SubscribedFeed extends Component {
     }
 
     async appendPostsFromCommunity(community, i) {
-        await authFetch('/api/posts?community=' + community,
+        await authFetch('/api/posts?community=' + community + '&includeSubChildrenPosts=false',
             {
                 headers: {
                     'User-ID': this.state.user_id,

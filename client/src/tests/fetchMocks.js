@@ -55,8 +55,23 @@ export const authFetchMock =
             });
         } else if (path.startsWith("/api/get-default-role")) {
             return promiseJson({ default_role: "contributor" });
+        } else if (path.startsWith("/api/posts/")) {
+            return promiseJson({
+                author: {
+                    host: "Academoo",
+                    id: "user3"
+                },
+                children: [],
+                community: "community1",
+                content: [{ text: { text: "A new post!" } }],
+                created: 1615911509,
+                id: "f3bf4744-bea3-493b-a15f-7745f7006df4",
+                modified: 1615911509,
+                parentPost: null,
+                title: "Most Recent Post"
+            })
         } else {
-            return promiseJson({});
+            return promiseJson([]);
         }
     }
 

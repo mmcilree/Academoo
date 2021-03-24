@@ -41,7 +41,7 @@ class UserSettings extends Component {
           host: data.host,
           isLoading: false
         })
-      )
+      ).catch(() => {})
 
   }
 
@@ -102,7 +102,7 @@ class UserSettings extends Component {
       } else {
         this.setState({ changed: true, errors: [] });
       }
-    });
+    }).catch(() => {});
     this.setState(
       { oldPassword: "", newPassword: "" }
     );
@@ -145,7 +145,7 @@ class UserSettings extends Component {
       .then(response => {
         this.setState({ privUpdated: true });
         this.fetchUserDetails();
-      });
+      }).catch(() => {});
 
   }
 
@@ -170,7 +170,7 @@ class UserSettings extends Component {
            if(statusCode === 200) {
              logout();
            }
-         });
+         }).catch(() => {});
        }
     }
     

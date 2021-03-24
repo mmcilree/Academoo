@@ -51,7 +51,7 @@ class CommentsViewer extends React.Component {
           parentPost: data,
           needsUpdate: false
         })
-      );
+      ).catch(() => {});
 
     this.fetchChildren();
   }
@@ -73,7 +73,7 @@ class CommentsViewer extends React.Component {
           .then(data => data)
           .catch(error => this.setState({ error, isLoading: false }));
       }));
-
+    
     this.setState({ isLoading: false, children: [...children, ...new_children] })
   }
 

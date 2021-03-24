@@ -94,7 +94,7 @@ class AdminKeyAuth extends Component {
                     this.setState({ changed: false, errors: errors })
                 }
 
-            });
+            }).catch(() => {});
     }
 
     render() {

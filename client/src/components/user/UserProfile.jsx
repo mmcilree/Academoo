@@ -34,7 +34,7 @@ class UserProfile extends Component {
           this.setState({
             currentUser: data.id,
             email: data.email,
-            bio: data.bio,
+            bio: data.about,
             private_acc: false,
             isLoading: false
           })
@@ -47,7 +47,7 @@ class UserProfile extends Component {
         this.fetchPosts();
       }
 
-      )
+      ).catch(() => {})
   }
 
   async fetchPosts() {
@@ -82,6 +82,13 @@ class UserProfile extends Component {
     this.fetchCurrentUser();
     // this.fetchPosts();
   }
+
+  componentWillUnmount() {
+    // fix Warning: Can't perform a React state update on an unmounted component
+    this.setState = (state, callback) => {
+        return;
+    };
+}
 
 
   componentDidUpdate(prevProps) {
