@@ -37,12 +37,14 @@ def verify_request(headers, request_target, body=b""):
     else:
         # Otherwise, perform a signature check
         host = headers.get("Client-Host")
+        if not host: host = headers.get("Host")
 
         # If host is not known, then add it to the manager public key tracker
         instance = app.instance_manager.url_to_instance.get(host)
         if not instance:
-            instance = app.federation.instance.Instance(urlparse(host, "http").geturl())
-            app.instance_manager.url_to_instance[urlparse(host).netloc] = instance
+            url = "http://" + host if "://" not in host else host
+            instance = app.federation.instance.Instance(url)
+            app.instance_manager.url_to_instance[urlparse(url).netloc] = instance
 
         signature = headers.get("Signature")
 

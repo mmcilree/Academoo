@@ -64,6 +64,8 @@ class Manager(object):
         if host in self.instances:
             return False
 
-        self.instances[host] = Instance(urlparse(url, "http").geturl())
+        url = "http://" + url if "://" not in url else url
+        self.instances[host] = Instance(url)
         self.url_to_instance[urlparse(url).netloc] = self.instances[host]
+        
         return True
