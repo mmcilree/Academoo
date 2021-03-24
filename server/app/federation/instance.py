@@ -1,5 +1,5 @@
 import requests
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from flask import jsonify, Response, current_app
 from app.digital_signatures import generate_digest, generate_signature
 from datetime import datetime
@@ -28,12 +28,11 @@ class Instance(object):
         self.get_public_key()
 
         # Possibly the worst signature specification possible
-        # what's the difference between host and client-host?
         self.request_data = "\n".join(
             (
                 "(request-target): {req}", 
-                "host: {url}".format(url=self.url), 
-                "client-host: {url}".format(url=self.url), 
+                "host: {url}".format(url=urlparse(self.url).netloc), # this needs changing probs
+                "client-host: {url}".format(url=urlparse(self.url).netloc), 
                 "user-id: {user_id}", 
                 "date: {date}", 
                 "digest: {digest}"
