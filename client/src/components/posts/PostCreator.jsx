@@ -38,7 +38,10 @@ class PostCreator extends React.Component {
         if (this.state.title.length === 0) {
             errors.push("Title field cannot be empty")
         }
-        if (this.state.selected.length === 0) {
+
+        if (this.state.selected.length === 0 || 
+            ! this.state.communities.some(o => 
+                o.community === this.state.selected[0].community && o.host === this.state.selected[0].host)) {
             errors.push(<p>You haven't selected a pre-existing community. You can create new community <a href='./create-community'>here</a></p>)
         }
         if (this.state.title === "Moo" && this.state.body === "Moooo") {
@@ -63,7 +66,7 @@ class PostCreator extends React.Component {
     }
 
     async fetchInstances() {
-        await fetch("/api/get-instances")
+        await authFetch("/api/get-instances")
             .then(response => response.json())
             .then(data =>
                 this.setState({
@@ -74,7 +77,7 @@ class PostCreator extends React.Component {
     }
 
     async fetchCommunities(host) {
-        await fetch('/api/communities' + (host !== "local" ? "?external=" + host : ""),
+        await authFetch('/api/communities' + (host !== "local" ? "?external=" + host : ""),
             {
                 headers: {
                     'Client-Host': window.location.protocol + "//" + window.location.hostname
@@ -150,7 +153,7 @@ class PostCreator extends React.Component {
 
         requestOptions.body = JSON.stringify(requestOptions.body);
 
-        fetch('/api/posts', requestOptions)
+        authFetch('/api/posts', requestOptions)
             .then(response => {
                 if (!response.ok) {
                     return response.json().then((error) => {
@@ -218,6 +221,7 @@ class PostCreator extends React.Component {
                             <Typeahead
                                 labelKey={option => `${option.community}`}
                                 id="community-choice"
+                                className="community-choice"
                                 placeholder="Cows"
                                 renderMenu={(results, menuProps) => (
                                     <Menu {...menuProps} maxHeight="500%">

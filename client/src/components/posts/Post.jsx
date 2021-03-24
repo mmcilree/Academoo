@@ -80,7 +80,7 @@ class Post extends Component {
     }
     requestOptions.body = JSON.stringify(requestOptions.body);
 
-    fetch('/api/posts/' + this.props.postData.id, requestOptions);
+    authFetch('/api/posts/' + this.props.postData.id, requestOptions);
     this.handleCloseDelete();
     this.props.history.push("/communities/" + this.props.postData.community)
   }
@@ -184,7 +184,7 @@ class Post extends Component {
 
     requestOptions.body = JSON.stringify(requestOptions.body);
 
-    fetch('/api/posts/' + this.props.postData.id, requestOptions).then(r => r.status).then(statusCode => {
+    authFetch('/api/posts/' + this.props.postData.id, requestOptions).then(r => r.status).then(statusCode => {
       if (statusCode != 200) {
         this.setState({ errors: ["Could not save edit"] })
       } else {
