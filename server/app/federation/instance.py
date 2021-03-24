@@ -92,10 +92,10 @@ class Instance(object):
         return True
     
     def get_users(self, id=None):
-        body = self.get_request_data("get /fed/users")
+        request_target = f"/fed/users/{id}" if id else f"/fed/users"
+        body = self.get_request_data(request_target)
         headers = {"Signature": get_signature(body)}
-
-        ret = None
+        
         if id:
             ret = requests.get(urljoin(self.url, f"/fed/users/{id}"), headers=headers)
         else:
@@ -136,7 +136,8 @@ class Instance(object):
         return ret.json(), ret.status_code
 
     def get_communities(self, headers, id=None):
-        body = self.get_request_data(f"get /fed/communities", headers.get("User-ID"))
+        request_target = f"get /fed/communities/{id}" if id else f"get /fed/communities"
+        body = self.get_request_data(request_target, headers.get("User-ID"))
         headers["Signature"] = get_signature(body)
 
         if id:
