@@ -45,7 +45,7 @@ class CommunityFeed extends Component {
   }
 
   async fetchPosts() {
-    await fetch('/api/posts?community=' + this.state.currentCommunity + (this.state.host !== "local" ? "&external=" + this.state.host : ""),
+    await fetch('/api/posts?community=' + this.state.currentCommunity + '&includeSubChildrenPosts=false' + (this.state.host !== "local" ? "&external=" + this.state.host : ""),
       {
         headers: {
           'User-ID': this.state.userID,
