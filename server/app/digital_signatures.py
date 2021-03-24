@@ -42,7 +42,7 @@ def verify_request(headers, request_target, body=b""):
         instance = app.instance_manager.url_to_instance.get(host)
         if not instance:
             instance = app.federation.instance.Instance(urlparse(host, "http").geturl())
-            app.instance_manager.url_to_instance[host] = instance
+            app.instance_manager.url_to_instance[urlparse(host).netloc] = instance
 
         signature = headers.get("Signature")
 

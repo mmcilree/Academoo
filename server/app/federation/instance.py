@@ -53,6 +53,15 @@ class Instance(object):
             self.public_key = req.content; return True
         
         return False
+    
+    def get_request_data(self, request_target, user_id=None, body=b""):
+        return self.request_data.format(
+            req=request_target,
+            user_id=user_id,
+            date=get_date(),
+            digest=generate_digest(body),
+            url=current_app.config["HOST"]
+        )
 
     def verify_signature(self, encoded_signature, request_target, headers, body):
         if not self.public_key and not self.get_public_key(): return False
@@ -64,6 +73,8 @@ class Instance(object):
             digest=generate_digest(body),
             url=urlparse(self.url).netloc
         )
+
+        print("Expected Message:"); print(message)
 
         public_key = serialization.load_pem_public_key(self.public_key)
         decoded_signature = base64.b64decode(encoded_signature)
@@ -81,14 +92,7 @@ class Instance(object):
         return True
     
     def get_users(self, id=None):
-        body = self.request_data.format(
-            req="get /fed/users", 
-            user_id=None,
-            date=get_date(),
-            digest=generate_digest(b""),
-            url=current_app.config["HOST"]
-        )
-
+        body = self.get_request_data("get /fed/users")
         headers = {"Signature": get_signature(body)}
 
         ret = None
@@ -105,15 +109,8 @@ class Instance(object):
             return Response(status=ret.status_code)
 
     def get_timestamps(self, community, headers):
-        body = self.request_data.format(
-            req=f"get /fed/communities/{community}/timestamps",
-            user_id=headers.get("User-ID"),
-            date=get_date(),
-            digest=generate_digest(b""),
-            url=current_app.config["HOST"]
-        )
-
-        if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
+        body = self.get_request_data(f"get /fed/communities/{community}/timestamps", headers.get("User-ID"))
+        headers["Signature"] = get_signature(body)
 
         ret = requests.get(urljoin(self.url, f"/fed/communities/{community}/timestamps"), headers=headers)
         if(ret.status_code != 200):
@@ -122,46 +119,26 @@ class Instance(object):
 
     # If the timestamp is different, then the cache is invalidated
     def get_posts(self, community, headers):
-        body = self.request_data.format(
-            req=f"get /fed/posts",
-            user_id=headers.get("User-ID"),
-            date=get_date(),
-            digest=generate_digest(b""),
-            url=current_app.config["HOST"]
-        )
-
-        if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
+        body = self.get_request_data(f"get /fed/posts", headers.get("User-ID"))
+        headers["Signature"] = get_signature(body)
         
         ret = requests.get(urljoin(self.url, f"/fed/posts?community={community}"), headers=headers)
         if check_get_filtered_post(ret.json()): return check_get_filtered_post(ret.json())
         return ret.json(), ret.status_code
 
     def get_post_by_id(self, id, headers):
-        body = self.request_data.format(
-            req=f"get /fed/posts/{id}",
-            user_id=headers.get("User-ID"),
-            date=get_date(),
-            digest=generate_digest(b""),
-            url=current_app.config["HOST"]
-        )
-
-        if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
+        body = self.get_request_data(f"get /fed/posts/{id}", headers.get("User-ID"))
+        headers["Signature"] = get_signature(body)
 
         ret = requests.get(urljoin(self.url, f"/fed/posts/{id}"), headers=headers)
+        # NOTE: We need to check whether the request was successful first now before checking its JSON
         if check_get_post(ret.json()): return check_get_post(ret.json())
         return ret.json(), ret.status_code
 
     def get_communities(self, headers, id=None):
-        body = self.request_data.format(
-            req=f"get /fed/communities",
-            user_id=headers.get("User-ID"),
-            date=get_date(),
-            digest=generate_digest(b""),
-            url=current_app.config["HOST"]
-        )
+        body = self.get_request_data(f"get /fed/communities", headers.get("User-ID"))
+        headers["Signature"] = get_signature(body)
 
-        if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
-        print(headers)
         if id:
             ret = requests.get(urljoin(self.url, f"/fed/communities/{id}"), headers=headers)
             if check_get_community(ret.json()): return check_get_community(ret.json())
@@ -174,15 +151,8 @@ class Instance(object):
     def create_post(self, data, headers):
         data.pop("external")
 
-        body = self.request_data.format(
-            req=f"post /fed/posts",
-            user_id=headers.get("User-ID"),
-            date=get_date(),
-            digest=generate_digest(bytes(str(data), "utf-8")),
-            url=current_app.config["HOST"]
-        )
-
-        if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
+        body = self.get_request_data(f"post /fed/posts", headers.get("User-ID"), bytes(str(data), "utf-8"))
+        headers["Signature"] = get_signature(body)
 
         ret = requests.post(urljoin(self.url, f"/fed/posts"), json=data, headers=headers)
         try:
@@ -195,15 +165,8 @@ class Instance(object):
     def edit_post(self, data, id, headers):
         data.pop("external")
 
-        body = self.request_data.format(
-            req=f"put /fed/posts/{id}",
-            user_id=headers.get("User-ID"),
-            date=get_date(),
-            digest=generate_digest(bytes(str(data), "utf-8")),
-            url=current_app.config["HOST"]
-        )
-
-        if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
+        body = self.get_request_data(f"put /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
+        headers["Signature"] = get_signature(body)
 
         ret = requests.put(urljoin(self.url, f"/fed/posts/{id}"), json=data, headers=headers)
         try:
@@ -216,15 +179,8 @@ class Instance(object):
     def delete_post(self, data, id, headers):
         data.pop("external")
 
-        body = self.request_data.format(
-            req=f"delete /fed/posts/{id}",
-            user_id=headers.get("User-ID"),
-            date=get_date(),
-            digest=generate_digest(bytes(str(data), "utf-8")),
-            url=current_app.config["HOST"]
-        )
-
-        if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
+        body = self.get_request_data(f"delete /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
+        headers["Signature"] = get_signature(body)
 
         ret = requests.delete(urljoin(self.url, f"/fed/posts/{id}"), headers=headers) 
         try:
