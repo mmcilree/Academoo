@@ -2,7 +2,7 @@ import re
 from flask_praetorian.decorators import auth_required, roles_required, roles_accepted
 from app import actions, instance_manager
 from app.main import bp
-from flask import request, Response, jsonify
+from flask import request, Response, jsonify, current_app
 from flask_praetorian import current_user
 from utils import *
 
@@ -177,3 +177,9 @@ def delete_post_tag(post_id):
 @bp.route("/get-post-tags", methods=["GET"])
 def get_post_tags(post_id):
     return respond_with_action(actions.getPostTags(post_id))
+
+@bp.route("/toggle-security", methods=["GET"])
+def toggle_security():
+    current_app.config["SIGNATURE_FEATURE"] = not current_app.config["SIGNATURE_FEATURE"]
+
+    return str(current_app.config["SIGNATURE_FEATURE"])
