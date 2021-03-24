@@ -1,5 +1,5 @@
 from app import db, guard
-from app.models import User, Community, Post, UserRole, PostContentField, getTime
+from app.models import User, Community, Post, UserRole, PostContentField, getTime, PostTag
 from sqlalchemy import desc
 import json
 from uuid import UUID
