@@ -1,5 +1,5 @@
 from requests import status_codes
-from app import actions, federation
+from app import actions, instance_manager
 from app.supergroup_protocol import bp
 from app.digital_signatures import verify_request
 from flask import jsonify, request, Response, current_app
@@ -32,7 +32,7 @@ def get_all_users():
 
         return respond_with_action(actions.getUserIDs())
     else:
-        return federation.get_users(external)
+        return instance_manager.get_users(external)
 
 @bp.route("/users/<id>", methods=["GET"])
 def get_user_by_id(id):
@@ -44,7 +44,7 @@ def get_user_by_id(id):
 
         return jsonify(actions.getLocalUser(id))
     else:
-        return federation.get_users(external, id=id)
+        return instance_manager.get_users(external, id=id)
 
 # Community
 @bp.route("/communities", methods=["GET"])
@@ -62,7 +62,7 @@ def get_all_communities():
         return respond_with_action(actions.getCommunityIDs())
     else:
         headers = {"Client-Host": host}
-        return federation.get_communities(external, headers)
+        return instance_manager.get_communities(external, headers)
 
 @bp.route("/communities/<id>", methods=["GET"])
 def get_community_by_id(id):
@@ -78,7 +78,7 @@ def get_community_by_id(id):
         return respond_with_action(actions.getCommunity(id))
     else:
         headers = {"Client-Host": host}
-        return federation.get_communities(external, headers, id=id)
+        return instance_manager.get_communities(external, headers, id=id)
 
 @bp.route("/communities/<id>/timestamps")
 def get_community_timestamps(id): # no option for federation?
@@ -114,7 +114,7 @@ def get_all_posts():
         return respond_with_action(actions.getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type, requester_str))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        response = federation.get_posts(external, community_id, headers)
+        response = instance_manager.get_posts(external, community_id, headers)
         if response[1] != 200:
             return response
         responseArr = response[0]
@@ -140,7 +140,7 @@ def get_post_by_id(id):
         return respond_with_action(actions.getPost(id, requester_str))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        response = federation.get_post_by_id(external, id, headers)
+        response = instance_manager.get_post_by_id(external, id, headers)
         if response[1] != 200:
             return response
         post = response[0]
@@ -187,7 +187,7 @@ def create_post():
         return respond_with_action(actions.createPost(request.json, requester_str, host))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        return federation.create_post(external, request.json, headers)
+        return instance_manager.create_post(external, request.json, headers)
 
 @bp.route("/posts/<id>", methods=["PUT"])
 def edit_post(id):
@@ -214,7 +214,7 @@ def edit_post(id):
         return respond_with_action(actions.editPost(id, request.json, requester))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        return federation.edit_post(external, request.json, id, headers)
+        return instance_manager.edit_post(external, request.json, id, headers)
 
 @bp.route("/posts/<id>", methods=["DELETE"]) ################################### NO EXTERNAL FIELD FOR DELETING ON OTHER SERVERS :(
 def delete_post(id):
@@ -237,4 +237,4 @@ def delete_post(id):
         return respond_with_action(actions.deletePost(id, requester))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        return federation.delete_post(external, request.json, id, headers) # NOTE: wait why does delete post have json?
+        return instance_manager.delete_post(external, request.json, id, headers) # NOTE: wait why does delete post have json?

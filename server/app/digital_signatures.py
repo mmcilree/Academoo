@@ -3,9 +3,9 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from flask.globals import current_app
+from urllib.parse import urlparse
 
-import app
-from flask_praetorian.exceptions import InvalidTokenHeader, MissingTokenHeader
+import app # circular imports :(
 
 # def verify_signature(encoded_signature, pkey):
 #     ok = b"""(request-target): get /fed/posts?community=General
@@ -30,19 +30,25 @@ from flask_praetorian.exceptions import InvalidTokenHeader, MissingTokenHeader
 def verify_request(headers, request_target, body=b""):
     if not current_app.config["SIGNATURE_FEATURE"]: return None, 200
 
-    try:
-        # Authentication Check
+    # Authentication Check
+    if headers.get("Authorization"):
         token = app.guard.read_token_from_header()
         app.guard.extract_jwt_token(token)
-    except (MissingTokenHeader, InvalidTokenHeader):
+    else:
         # Otherwise, perform a signature check
         host = headers.get("Client-Host")
+
+        # If host is not known, then add it to the manager public key tracker
+        instance = app.instance_manager.url_to_instance.get(host)
+        if not instance:
+            instance = app.federation.instance.Instance(urlparse(host, "http").geturl())
+            app.instance_manager.url_to_instance[host] = instance
+
         signature = headers.get("Signature")
 
         if not host or not signature: return {"title": "Bad Request", "message": "Signature Missing"}, 400
 
         signature = signature.split("signature=")[-1].replace('"', '') # zzzzz
-        instance = app.federation.url_to_instance.get(host)
         
         if not instance.verify_signature(signature, request_target, headers, body=body):
             return {"title": "Permission Denied", "message": "Invalid Signature"}, 403

@@ -1,6 +1,7 @@
 import os
 import functools
 from app.federation.instance import Instance
+from urllib.parse import urlparse
 import time
 
 class Manager(object):
@@ -18,9 +19,10 @@ class Manager(object):
                 "unifier": Instance("https://unifier-prod.herokuapp.com/")
             }
 
+        # Two-way dictionary 
         self.url_to_instance = {}
         for inst in self.instances:
-            self.url_to_instance[self.instances[inst].url] = self.instances[inst]
+            self.url_to_instance[urlparse(self.instances[inst].url).netloc] = self.instances[inst]
 
     def create_post(self, host, data, headers):
         return self.instances[host].create_post(data, headers)
@@ -62,5 +64,6 @@ class Manager(object):
         if host in self.instances:
             return False
 
-        self.instances[host] = Instance(url)
+        self.instances[host] = Instance(urlparse(url, "http").geturl())
+        self.url_to_instance[urlparse(url).netloc] = self.instances[host]
         return True
