@@ -28,5 +28,6 @@ class Config(object):
     JWT_ACCESS_LIFESPAN = {'hours': 24}
     JWT_REFRESH_LIFESPAN = {'days': 30}
 
+    HOST = "cs3099user-a1.host.cs.st-andrews.ac.uk"
     PUBLIC_KEY = get_pub_key()
     SIGNATURE_FEATURE = True

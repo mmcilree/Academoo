@@ -31,8 +31,8 @@ class Instance(object):
         self.request_data = "\n".join(
             (
                 "(request-target): {req}", 
-                "host: {url}".format(url=urlparse(self.url).netloc), # this needs changing probs
-                "client-host: {url}".format(url=urlparse(self.url).netloc), 
+                "host: {url}", # this needs changing probs
+                "client-host: {url}", 
                 "user-id: {user_id}", 
                 "date: {date}", 
                 "digest: {digest}"
@@ -54,7 +54,8 @@ class Instance(object):
             req=request_target,
             user_id=headers.get("User-ID"),
             date=get_date(), # what to do about latency?
-            digest=generate_digest(body)
+            digest=generate_digest(body),
+            url=urlparse(self.url).netloc
         )
 
         public_key = serialization.load_pem_public_key(self.public_key)
@@ -77,7 +78,8 @@ class Instance(object):
             req="get /fed/users", 
             user_id=None,
             date=get_date(),
-            digest=generate_digest(b"")
+            digest=generate_digest(b""),
+            url=current_app.config["HOST"]
         )
 
         headers = {"Signature": get_signature(body)}
@@ -100,7 +102,8 @@ class Instance(object):
             req=f"get /fed/communities/{community}/timestamps",
             user_id=headers.get("User-ID"),
             date=get_date(),
-            digest=generate_digest(b"")
+            digest=generate_digest(b""),
+            url=current_app.config["HOST"]
         )
 
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
@@ -116,7 +119,8 @@ class Instance(object):
             req=f"get /fed/posts",
             user_id=headers.get("User-ID"),
             date=get_date(),
-            digest=generate_digest(b"")
+            digest=generate_digest(b""),
+            url=current_app.config["HOST"]
         )
 
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
@@ -130,7 +134,8 @@ class Instance(object):
             req=f"get /fed/posts/{id}",
             user_id=headers.get("User-ID"),
             date=get_date(),
-            digest=generate_digest(b"")
+            digest=generate_digest(b""),
+            url=current_app.config["HOST"]
         )
 
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
@@ -144,11 +149,12 @@ class Instance(object):
             req=f"get /fed/communities",
             user_id=headers.get("User-ID"),
             date=get_date(),
-            digest=generate_digest(b"")
+            digest=generate_digest(b""),
+            url=current_app.config["HOST"]
         )
 
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
-
+        print(headers)
         if id:
             ret = requests.get(urljoin(self.url, f"/fed/communities/{id}"), headers=headers)
             if check_get_community(ret.json()): return check_get_community(ret.json())
@@ -165,7 +171,8 @@ class Instance(object):
             req=f"post /fed/posts",
             user_id=headers.get("User-ID"),
             date=get_date(),
-            digest=generate_digest(bytes(str(data), "utf-8"))
+            digest=generate_digest(bytes(str(data), "utf-8")),
+            url=current_app.config["HOST"]
         )
 
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
@@ -185,7 +192,8 @@ class Instance(object):
             req=f"put /fed/posts/{id}",
             user_id=headers.get("User-ID"),
             date=get_date(),
-            digest=generate_digest(bytes(str(data), "utf-8"))
+            digest=generate_digest(bytes(str(data), "utf-8")),
+            url=current_app.config["HOST"]
         )
 
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)
@@ -205,7 +213,8 @@ class Instance(object):
             req=f"delete /fed/posts/{id}",
             user_id=headers.get("User-ID"),
             date=get_date(),
-            digest=generate_digest(bytes(str(data), "utf-8"))
+            digest=generate_digest(bytes(str(data), "utf-8")),
+            url=current_app.config["HOST"]
         )
 
         if current_app.config["SIGNATURE_FEATURE"]: headers["Signature"] = get_signature(body)

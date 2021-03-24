@@ -50,7 +50,7 @@ def verify_request(headers, request_target, body=b""):
     return None, 200
 
 def generate_signature(body):
-    with open("../.ssh/private", "rb") as key_file:
+    with open("../.ssh/private.pem", "rb") as key_file:
         private_key = serialization.load_pem_private_key(
             key_file.read(),
             password=None,
