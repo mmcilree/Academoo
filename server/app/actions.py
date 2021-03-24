@@ -208,10 +208,10 @@ def getLocalUser(id):
         return False
     else:
         if user.private_account:
-            user_dict = {"id":user.user_id, "email": "", "host":user.host, "bio":"", "private": user.private_account, "site_roles" : user.site_roles}
+            user_dict = {"id":user.user_id, "email": "", "host":user.host, "about":"", "private": user.private_account, "site_roles" : user.site_roles}
             return user_dict
         else:
-            user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio, "private": user.private_account,  "site_roles" : user.site_roles}
+            user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "about": user.bio, "private": user.private_account,  "site_roles" : user.site_roles}
             return user_dict
 
 def addSubscriber(user_id, community_id):

@@ -34,7 +34,7 @@ class UserProfile extends Component {
           this.setState({
             currentUser: data.id,
             email: data.email,
-            bio: data.bio,
+            bio: data.about,
             private_acc: false,
             isLoading: false
           })
