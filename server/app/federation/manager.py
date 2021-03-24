@@ -1,6 +1,7 @@
 import os
 import functools
 from app.federation.instance import Instance
+from urllib.parse import urlparse
 import time
 
 class Manager(object):
@@ -18,10 +19,14 @@ class Manager(object):
         else:
             self.instances = {
                 "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
-                "cs3099-group1": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
-                "unifier": Instance("http://unifier-prod.herokuapp.com/")
-                
+                "academoo": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
+                "unifier": Instance("https://unifier-prod.herokuapp.com/")
             }
+
+        # Two-way dictionary 
+        self.url_to_instance = {}
+        for inst in self.instances:
+            self.url_to_instance[urlparse(self.instances[inst].url).netloc] = self.instances[inst]
 
     def create_post(self, host, data, headers):
         return self.instances[host].create_post(data, headers)
@@ -63,5 +68,8 @@ class Manager(object):
         if host in self.instances:
             return False
 
+        url = "http://" + url if "://" not in url else url
         self.instances[host] = Instance(url)
+        self.url_to_instance[urlparse(url).netloc] = self.instances[host]
+        
         return True

@@ -45,7 +45,8 @@ class CommunityFeed extends Component {
   }
 
   async fetchPosts() {
-    await fetch('/api/posts?community=' + this.state.currentCommunity + '&includeSubChildrenPosts=false' + (this.state.host !== "local" ? "&external=" + this.state.host : ""),
+
+    await authFetch('/api/posts?community=' + this.state.currentCommunity + '&includeSubChildrenPosts=false' + (this.state.host !== "local" ? "&external=" + this.state.host : ""),
       {
         headers: {
           'User-ID': this.state.userID,
@@ -85,7 +86,7 @@ class CommunityFeed extends Component {
   }
 
   fetchCommunityDetails() {
-    fetch('/api/communities/' + this.state.currentCommunity + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
+    authFetch('/api/communities/' + this.state.currentCommunity + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
       {
         headers: {
           'Client-Host': window.location.protocol + "//" + window.location.hostname

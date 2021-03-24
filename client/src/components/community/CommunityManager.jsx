@@ -93,7 +93,7 @@ class CommunityManager extends React.Component {
     }
 
     async fetchUserRoles() {
-        await fetch("/api/get-community-roles/" + this.state.currentCommunity)
+        await authFetch("/api/get-community-roles/" + this.state.currentCommunity)
             .then(response => response.json())
             .then(data =>
                 this.setState((prevState) => ({
@@ -131,7 +131,7 @@ class CommunityManager extends React.Component {
     //currently fetches user list for specified host every time a host is selected
     //TO-DO: Add local storage/caching of users 
     async fetchUsers(host) {
-        await fetch('/api/users' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
+        await authFetch('/api/users' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
             .then(data =>
                 this.setState({
                     users: [...data.map(user => ({ host: host, user: user }))],
