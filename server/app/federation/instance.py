@@ -11,6 +11,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 from cryptography.exceptions import InvalidSignature
+from requests.exceptions import ConnectTimeout
 
 
 def get_date(): # just why this instead of timestamp like a normal person??
@@ -48,10 +49,11 @@ class Instance(object):
     
     def get_public_key(self):
         # Getting the instance's public key
-        req = requests.get(urljoin(self.url, "/fed/key"))
-        if req.status_code == 200: 
-            self.public_key = req.content; return True
-        
+        try:
+            req = requests.get(urljoin(self.url, "/fed/key"), timeout=3)
+            if req.status_code == 200: 
+                self.public_key = req.content; return True
+        except ConnectTimeout: pass
         return False
     
     def get_request_data(self, request_target, user_id=None, body=b""):
