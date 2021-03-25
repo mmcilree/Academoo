@@ -52,7 +52,7 @@ function HeaderBar() {
             logout();
           }
         }
-        )
+        ).catch(() => {})
     }
 
     fetchData();
@@ -87,10 +87,6 @@ function HeaderBar() {
                 <PlusCircle className="mb-1" />
                 <span> New Moo</span>
               </Nav.Link>
-              <Nav.Link as={Link} to="/create-community">
-                <PlusCircle className="mb-1" />
-                <span> New Commoonity</span>
-              </Nav.Link>
               <Nav.Link as={Link} to="/sketchamoo">
                 <Pencil className="mb-1" />
                 <span> Sketch-A-Moo!</span>
@@ -112,7 +108,7 @@ function HeaderBar() {
                       width="25"
                       height="25"
                     ></Image>
-                    Yoo
+                    {username}
                   </span>
                 }
                 id="collasible-nav-dropdown"

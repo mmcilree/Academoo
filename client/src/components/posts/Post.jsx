@@ -6,6 +6,7 @@ import { ThreeDots, PencilSquare, Trash } from "react-bootstrap-icons";
 import Dropdown from "react-bootstrap/Dropdown";
 import PostEditor from "./PostEditor"
 import { authFetch } from '../../auth';
+import MarkdownRender from '../layout/MarkdownRender';
 
 class Post extends Component {
   constructor(props) {
@@ -19,11 +20,12 @@ class Post extends Component {
       title: this.props.postData.title,
       body: this.props.postData.content[0].text ? this.props.postData.content[0].text.text : this.props.postData.content[0].markdown.text,
       contentType: this.props.postData.content[0].text ? "text" : "markdown",
-      canEdit: true,
-      canDelete: true,
+      cannotEdit: true,
+      cannotDelete: true,
       errors: [],
       error: null,
       isLoading: false,
+      adminCommunities: [],
     }
     this.validateForm = this.validateForm.bind(this);
     this.handleSubmitEdit = this.handleSubmitEdit.bind(this);
@@ -36,26 +38,29 @@ class Post extends Component {
 
   async fetchUserDetails() {
     await authFetch("/api/get-user").then(response => response.json())
-      .then(data =>
+      .then(data => {
         this.setState({
           currentUser: data.id,
-          isLoading: false
+          isLoading: false,
+          adminCommunities: data.adminOf
         })
+      }
       )
       .catch(error => this.setState({ error, isLoading: false }));
     this.checkPermissions();
   }
 
   checkPermissions() {
-    if (this.props.postData.author.id === this.state.currentUser) {
+    if (this.props.postData.author.id === this.state.currentUser || this.state.adminCommunities.includes(this.props.postData.community)) {
       this.setState({
-        canEdit: false,
-        canDelete: false
+        cannotEdit: false,
+        cannotDelete: false
       })
-    } else {
+    }
+    else {
       this.setState({
-        canEdit: true,
-        canDelete: true
+        cannotEdit: true,
+        cannotDelete: true
       })
     }
   }
@@ -77,7 +82,7 @@ class Post extends Component {
     }
     requestOptions.body = JSON.stringify(requestOptions.body);
 
-    fetch('/api/posts/' + this.props.postData.id, requestOptions);
+    authFetch('/api/posts/' + this.props.postData.id, requestOptions);
     this.handleCloseDelete();
     this.props.history.push("/communities/" + this.props.postData.community)
   }
@@ -181,7 +186,7 @@ class Post extends Component {
 
     requestOptions.body = JSON.stringify(requestOptions.body);
 
-    fetch('/api/posts/' + this.props.postData.id, requestOptions).then(r => r.status).then(statusCode => {
+    authFetch('/api/posts/' + this.props.postData.id, requestOptions).then(r => r.status).then(statusCode => {
       if (statusCode != 200) {
         this.setState({ errors: ["Could not save edit"] })
       } else {
@@ -192,12 +197,12 @@ class Post extends Component {
         })
         this.handleCloseEdit();
       }
-    });
+    }).catch(() => {});
   }
 
 
   render() {
-    const {postData, displayCommunityName} = this.props;
+    const { postData, displayCommunityName } = this.props;
     if (!postData.id) return <div />;
     return (
       <React.Fragment>
@@ -213,12 +218,12 @@ class Post extends Component {
 
               <b style={{ zIndex: 2, position: "relative" }}>
 
-                {postData.author.id ? 
-                <Link to={"/user-profile/" + postData.author.id}>
-                  {postData.author.id}
-                </Link> : "[deleted]"}
-                
-              </b> 
+                {postData.author.id ?
+                  <Link to={"/user-profile/" + postData.author.id}>
+                    {postData.author.id}
+                  </Link> : "[deleted]"}
+
+              </b>
               {postData.author.host ? " from " + postData.author.host : ""}
 
               {" · "} {timeSince(postData.created)} ago
@@ -230,8 +235,8 @@ class Post extends Component {
                 <Dropdown.Toggle as={CustomToggle} />
                 <Dropdown.Menu size="sm" title="">
                   <Dropdown.Header>Options</Dropdown.Header>
-                  <Dropdown.Item disabled={this.state.canEdit} onClick={this.handleShowEdit.bind(this)}><PencilSquare /> Edit Post</Dropdown.Item>
-                  <Dropdown.Item disabled={this.state.canDelete} onClick={this.handleShowDelete.bind(this)}><Trash /> Delete Post</Dropdown.Item>
+                  <Dropdown.Item disabled={this.state.cannotEdit} onClick={this.handleShowEdit.bind(this)}><PencilSquare /> Edit Post</Dropdown.Item>
+                  <Dropdown.Item disabled={this.state.cannotDelete} onClick={this.handleShowDelete.bind(this)}><Trash /> Delete Post</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </Card.Subtitle>
@@ -264,7 +269,6 @@ class Post extends Component {
             <Button onClick={this.handleCloseDelete}>No, cancel</Button>
           </Modal.Footer>
         </Modal>
-
         <ContentTypeComponent
           contentType={this.state.contentType}
           body={this.state.updatedBody}
@@ -290,8 +294,6 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
         <Card.Link className="text-primary" href={part}>{part} </Card.Link>
       : part + " ");
 
-  const ReactMarkdown = require('react-markdown');
-  const gfm = require('remark-gfm');
   const renderers = { heading: HeadingRenderer, image: ImageRenderer };
   switch (contentType) {
     case "text":
@@ -315,7 +317,12 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
     case "markdown":
       return (
         <React.Fragment>
-          <ReactMarkdown plugins={[gfm]} renderers={renderers} children={body} />
+          <Card.Text variant="top" style={{
+            whiteSpace: "nowrap",
+            maxHeight: "50vh", overflow: "hidden", textOverflow: "ellipsis"
+          }}>
+            <MarkdownRender renderers={renderers} children={body} />
+          </Card.Text>
         </React.Fragment>
       )
     default:

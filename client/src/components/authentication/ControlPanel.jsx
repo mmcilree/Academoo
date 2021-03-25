@@ -67,17 +67,17 @@ class ControlPanel extends Component {
                 this.setState({
                     instances: ["local", ...data],
                 })
-            )
+            ).catch(() => {})
     }
 
     //currently fetches user list for specified host every time a host is selected
     //TO-DO: Add local storage/caching of users 
     async fetchUsers(host) {
-        await fetch('/api/users' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
+        await authFetch('/api/users' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
             .then(data =>
                 this.setState({
                     users: [...data.map(user => ({ host: host, user: user }))],
-                }))
+                })).catch(() => {})
     }
 
     handleHostChange(name) {
@@ -130,7 +130,7 @@ class ControlPanel extends Component {
                     } else {
                         this.setState({ changed: true, errors: [], host: "local", serverDropdown: "Select Server", role: "", selected: [{ user: "" }] });
                     }
-                });
+                }).catch(() => {});
         } else {
 
             const requestOptions = {
@@ -166,7 +166,7 @@ class ControlPanel extends Component {
                         this.setState({ changed: false, errors: errors })
                     }
 
-                });
+                }).catch(() => {});
         }
     }
 

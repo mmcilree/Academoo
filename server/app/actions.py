@@ -1,5 +1,5 @@
 from app import db, guard
-from app.models import User, Community, Post, UserRole, UserVote, PostContentField, getTime
+from app.models import User, Community, Post, UserRole, PostContentField, UserVote, getTime, PostTag
 from sqlalchemy import desc
 import json
 from uuid import UUID
@@ -208,11 +208,12 @@ def getLocalUser(id):
         return False
     else:
         if user.private_account:
-            user_dict = {"id":user.user_id, "email": "", "host":user.host, "bio":"", "site_roles" : user.site_roles}
+            user_dict = {"id":user.user_id, "email": "", "host":user.host, "bio":"", "private": user.private_account, "site_roles" : user.site_roles}
             return user_dict
         else:
-            user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio, "site_roles" : user.site_roles}
+            user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio, "private": user.private_account,  "site_roles" : user.site_roles}
             return user_dict
+
 
 def addSubscriber(user_id, community_id):
     user = User.query.filter_by(user_id = user_id).first()
@@ -255,7 +256,8 @@ def getAllCommunityPostsTimeModified(community_id):
     post_dicts = [{"id":post.id, "modified":post.modified} for post in Post.query.filter_by(community_id = community_id)]
     return (post_dicts, 200)
 
-def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type):
+# Post host isnt a thing right now
+def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type, requester_str):
     if community_id is not None: 
         if validate_community_id(community_id): return validate_community_id(community_id)
     if author is not None: 
@@ -265,11 +267,34 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     
     query = db.session.query(Post)
     if community_id is not None:
+        requester = User.lookup(requester_str)
+        if requester is None:
+            community = Community.lookup(community_id)
+            role = community.default_role
+            if ((role == "prohibited")):
+                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                return (message, 403)
+        elif requester.has_role(community_id, "prohibited"):
+            message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+            return (message, 403)
         query = query.filter(Post.community_id == community_id)
     if min_date is not None:
         query = query.filter(Post.created >= min_date)
     if author is not None:
-        query = query.filter(Post.author_id == author)
+        author_entry = User.lookup(author)
+        requester_entry = User.lookup(requester_str)
+        requester_roles = UserRole.lookup(user_id=requester_str)
+        if (author == requester_str or (not author_entry.private_account)):
+            query = query.filter(Post.author_id == author)
+            if requester_entry is None and requester_roles is None:
+                query = query.filter(Post.community.default_role != "prohibited")
+            else:
+                requester_prohibited = UserRole.query.filter(UserRole.user_id == requester_str and UserRole.role == "prohibited")
+                prohibited_communities = [role.community.id for role in requester_prohibited]
+                query = query.filter(Post.community_id.notin_(prohibited_communities))
+        else:
+            message = {"title": "Private Account", "message": "These posts cannot be viewed as the specified user has a private account."}
+            return (message, 403)
     #if host is not None:
         #query = query.filter(Post.host == host)
     if parent_post is not None:
@@ -277,8 +302,10 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if content_type is not None:
         valid_posts = [content_field.post_id for content_field in PostContentField.query.filter(content_type=content_type).all()]
         query = query.filter(Post.id.in_(valid_posts))
-    if include_children is None:
+    
+    if include_children == "false":
         query = query.filter(Post.parent_id == None)
+    
     query = query.order_by(desc(Post.created))
     if limit is not None:
         query = query.limit(limit)
@@ -312,7 +339,7 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
 # Author host is not in json file so will need to passed in manually :(
 def createPost(post_data, author_id, author_host):
     community_id = post_data["community"]
-    parent_post = post_data["parentPost"]
+    parent_post = post_data.get("parentPost")
     title = post_data["title"]
     content_json = post_data["content"]
     author_id = author_id
@@ -324,10 +351,25 @@ def createPost(post_data, author_id, author_host):
     if parent_post is not None and len(parent_post) == 0:
         parent_post = None
 
+    author = User.query.filter_by(user_id = author_id).first()
+    
     if parent_post is not None: 
         if validate_post_id(parent_post): return validate_post_id(parent_post)
+    
+    #Permissions for top-level post
+    if parent_post is None:
+        if author is None:
+            community = Community.lookup(community_id)
+            role = community.default_role
+            if ((role != "contributor") & (role != "admin")):
+                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                return (message, 403)
+        else :
+            if not author.has_role(community_id, "contributor"):
+                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                return (message, 403)
 
-    if User.query.filter_by(user_id = author_id).first() is None:
+    if author is None:
         new_user = User(user_id = author_id, host = author_host)
         db.session.add(new_user)
     
@@ -341,27 +383,41 @@ def createPost(post_data, author_id, author_host):
         db.session.add(content_field)
 
     db.session.commit()
-    return (None, 200)
+    return getPost(new_post.id, author_id)
+    #return (None, 200)
 
-def getPost(post_id):
+def getPost(post_id, requester_str):
     if validate_post_id(post_id): return validate_post_id(post_id)
 
     post = Post.query.filter_by(id = post_id).first()
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
-
-    post_dict = {"id": post.id, 
-                "community": post.community_id, 
-                "parentPost": post.parent_id, 
-                "children": [comment.id for comment in post.comments], 
-                "title": post.title, 
-                "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], 
-                "author": {"id": post.author.user_id if post.author else None, "host": post.author.host if post.author else None}, 
-                "modified": post.modified, 
-                "created": post.created,
-                "upvotes": post.upvotes,
-                "downvotes": post.downvotes
-                }
+    
+    requester = User.lookup(requester_str)
+    if requester is None:
+        community = Community.lookup(post.community_id)
+        role = community.default_role
+        if ((role == "prohibited")):
+            message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+            return (message, 403)
+    elif requester.has_role(post.community_id, "prohibited"):
+        message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+        return (message, 403)
+    
+    post_dict = {
+            "id": post.id, 
+            "community": post.community_id, 
+            "parentPost": post.parent_id, 
+            "children": [comment.id for comment in post.comments], 
+            "title": post.title, 
+            "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], 
+            "author": {"id": post.author.user_id if post.author else None, 
+            "host": post.author.host if post.author else None}, 
+            "modified": post.modified, 
+            "created": post.created,
+            "upvotes": post.upvotes,
+            "downvotes": post.downvotes
+            }
     return (post_dict, 200)
 
 def editPost(post_id, post_data, requester):
@@ -391,7 +447,8 @@ def editPost(post_id, post_data, requester):
         db.session.add(content_field)
 
     db.session.commit()
-    return (None, 200)
+    return getPost(post_id, requester)
+    #return (None, 200)
 
 def deletePost(post_id, requester):
     # assuming deleting a post will delete all postcontentobjects associated with it until it get proven wrong eventually
@@ -401,7 +458,7 @@ def deletePost(post_id, requester):
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
-    if requester.user_id != post.author.user_id:
+    if ((requester.user_id != post.author.user_id) and (not requester.has_role(post.community_id, "admin"))):
         return ({"title": "Permission denied " + post_id, "message": "User does not have permission to delete this post"}, 403)
 
     #will need to recursively delete comments
@@ -524,9 +581,32 @@ def changePassword(username, old_password, new_password):
     
     return False
 
-def deleteUser(username):
-    user = User.query.get(username)
-    db.session.delete(user)
-    db.session.commit()
+def deleteUser(username, password):
+    user = guard.authenticate(username, password)
+    if user:
+        db.session.delete(user)
+        db.session.commit()
+        return True
 
-    return True
+def addTag(post_id, tag_name):
+    post = Post.query.filter_by(id = post_id).first()
+    if post is None:
+        return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
+    new_tag = PostTag(post_id=post_id, tag=tag_name)
+    db.session.add(new_tag)
+    db.session.commit()
+    return (None, 200)
+
+def deleteTag(post_id, tag_name):
+    post_tag = PostTag.query.filter_by(post_id=post_id, tag=tag_name)
+    if post_tag is None:
+        return ({"title": "could not find post tag", "message": "either post does not exist or post does not have tag"}, 404)
+    db.session.delete(post_tag)
+    db.session.commit()
+    return (None, 200)
+
+def getPostTags(post_id):
+    post = Post.query.filter_by(id = post_id).first()
+    if post is None:
+        return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
+    return [post_tag.tag for post_tag in post.tags]

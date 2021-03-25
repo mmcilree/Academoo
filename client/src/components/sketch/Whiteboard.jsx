@@ -1,6 +1,6 @@
 import React from 'react';
 import { SketchField, Tools } from 'react-sketch-whiteboard';
-import { Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth, CursorText, PlusCircle, Share } from 'react-bootstrap-icons';
+import { Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth, CursorText, PlusCircle, Share, ArrowCounterclockwise, ArrowClockwise, Eraser } from 'react-bootstrap-icons';
 import { CompactPicker } from 'react-color';
 import {
     Card,
@@ -12,9 +12,11 @@ import {
     Form,
     Dropdown,
     InputGroup,
+    Tooltip,
+    Container
 } from 'react-bootstrap';
 import { Route } from 'react-router-dom';
-
+import { authFetch } from '../../auth';
 
 class Whiteboard extends React.Component {
     constructor(props) {
@@ -25,7 +27,9 @@ class Whiteboard extends React.Component {
             backgroundColour: "white",
             lineWidth: 10,
             canUndo: false,
-            text: ""
+            canRedo: false,
+            text: "",
+            enableRemoveSelected: false
         }
     }
 
@@ -39,15 +43,27 @@ class Whiteboard extends React.Component {
 
     setTool(event) {
         console.log(event.target.value);
-        this.setState({ currentTool: event.target.value });
+        this.setState({
+            currentTool: event.target.value,
+            enableRemoveSelected: event.target.value === Tools.Select
+        });
     }
 
     clear = () => {
         console.log("here")
         this.sketch.clear();
         this.sketch.setBackgroundFromDataUrl('');
-        this.setState({ backgroundColour: "white" })
+        this.setState({
+            backgroundColour: "white",
+            canUndo: this.sketch.canUndo(),
+            canRedo: this.sketch.canRedo(),
+        })
     }
+
+    removeSelected = () => {
+        this.sketch.removeSelected()
+    };
+
 
     handleChangeText(event) {
         this.setState({ text: event.target.value });
@@ -60,12 +76,32 @@ class Whiteboard extends React.Component {
         this.setState({ text: "" });
     }
 
+    undo = () => {
+        this.sketch.undo();
+        this.setState({
+            canUndo: this.sketch.canUndo(),
+            canRedo: this.sketch.canRedo(),
+        });
+    };
+
+    redo = () => {
+        this.sketch.redo();
+        this.setState({
+            canUndo: this.sketch.canUndo(),
+            canRedo: this.sketch.canRedo(),
+        });
+    };
+
+    // remove = index => {
+    //     this.sketch.removeSelected();
+    // }
+
     download = () => {
         this.downloadURL(this.sketch.toDataURL(), "sketchamoo.png");
     };
 
     downloadURL(url, filename) {
-        fetch(url).then(function (t) {
+        authFetch(url).then(function (t) {
             return t.blob().then((b) => {
                 var a = document.createElement("a");
                 a.href = URL.createObjectURL(b);
@@ -73,7 +109,7 @@ class Whiteboard extends React.Component {
                 a.click();
             }
             );
-        });
+        }).catch(() => {});
     }
 
     share = () => {
@@ -88,7 +124,7 @@ class Whiteboard extends React.Component {
     }
 
     render() {
-        const { currentTool, lineColour, backgroundColour, lineWidth, canUndo, text } = this.state;
+        const { currentTool, lineColour, backgroundColour, lineWidth, text, selected } = this.state;
         const colourPopover = (
             <Popover id="popover-basic">
                 <Popover.Title as="h3">Pick a Colour!</Popover.Title>
@@ -120,12 +156,11 @@ class Whiteboard extends React.Component {
 
         console.log(lineWidth)
         return (
-
-            <Card className="mt-4 p-4">
+            <Card className="mt-4 p-4" style={{ width: '1200px' }}>
                 <h1>Whiteboard</h1>
                 <p>Share your moosings on the sketch-a-moo!</p>
                 <Card>
-                    <Card.Header className="d-flex">
+                    <Card.Header className="d-flex justifycontent-between">
                         <ToggleButtonGroup name="tools" >
                             <ToggleButton type="radio" value={Tools.Select}
                                 onClick={this.setTool.bind(this)}
@@ -145,23 +180,37 @@ class Whiteboard extends React.Component {
                             <ToggleButton type="radio" value={Tools.Pan}
                                 onClick={this.setTool.bind(this)}
                             ><ArrowsMove /></ToggleButton>
+                            {/* <ToggleButton type="radio" value={this.state.canUndo}
+                                disabled={!this.state.canUndo} onChange={this.undo}>
+                                <ArrowCounterclockwise />
+                            </ToggleButton> */}
+
+                            {/* <ToggleButton type="radio" value={this.state.canRedo}
+                                disabled={!this.state.canRedo} onChange={this.redo}>
+                                <ArrowClockwise />
+                            </ToggleButton> */}
+
+                            <ToggleButton type="radio" value={this.state.enableRemoveSelected}
+                                disabled={!this.state.enableRemoveSelected} onChange={this.removeSelected}>
+                                <Eraser />
+                            </ToggleButton>
 
                         </ToggleButtonGroup>
 
                         <OverlayTrigger trigger={['click', 'focus']} placement="bottom" overlay={colourPopover}>
-                            <Button className="ml-4" >
+                            <Button className="ml-4">
                                 <Palette />
                             </Button>
                         </OverlayTrigger>
 
                         <OverlayTrigger trigger={['click', 'focus']} placement="bottom" overlay={textPopover}>
-                            <Button className="ml-2" >
+                            <Button className="ml-2">
                                 <CursorText />
                             </Button>
                         </OverlayTrigger>
 
-                        <Dropdown >
-                            <Dropdown.Toggle variant="primary" className="ml-2" id="dropdown-basic">
+                        <Dropdown>
+                            <Dropdown.Toggle variant="primary" className="ml-2" id="dropdown-basic" >
                                 <BorderWidth />
                             </Dropdown.Toggle>
 
@@ -173,16 +222,34 @@ class Whiteboard extends React.Component {
                             </Dropdown.Menu>
                         </Dropdown>
 
-                        <Button className="ml-4" onClick={this.download}>
-                            <Download /> Save
+                        <OverlayTrigger
+                            key="save"
+                            placement="bottom"
+                            overlay={
+                                <Tooltip id="tooltip-save">
+                                    Save
+                                </Tooltip>
+                            }
+                        >
+                            <Button variant="outline-secondary" className="ml-4" onClick={this.download}>
+                                <Download />
                             </Button>
-
-                        <Button className="ml-2" onClick={this.clear}>
-                            <Trash /> Clear
+                        </OverlayTrigger>
+                        <OverlayTrigger
+                            key="clear"
+                            placement="bottom"
+                            overlay={
+                                <Tooltip id="tooltip-clear">
+                                    Clear
+                                </Tooltip>
+                            }
+                        >
+                            <Button variant="outline-secondary" className="ml-2" onClick={this.clear}>
+                                <Trash />
                             </Button>
-
+                        </OverlayTrigger>
                         <Route render={({ history }) => (
-                            <Button variant="secondary" className="justify-content-right ml-4" onClick={this.share}>
+                            <Button variant="outline-secondary" className="justify-content-right ml-4" onClick={this.share}>
                                 <Share /> Share on Academoo
                             </Button>
                         )} />
@@ -197,8 +264,11 @@ class Whiteboard extends React.Component {
                             lineColor={lineColour}
                             lineWidth={lineWidth}
                             backgroundColor={backgroundColour}
-                            canUndo={canUndo}
-                            onChange={this.onSketchChange}
+                            // canUndo={this.state.canUndo}
+                            // canRedo={this.state.canRedo}
+                            // defaultValue={dataJson}
+                            forceValue
+                            onChange={this.onSketchChange.bind(this)}
                         />
                     </Card.Body>
                 </Card>

@@ -83,9 +83,25 @@ class User(db.Model):
         return self.password_hash
     
     def has_role(self, community_id, role):
-        role_tiers = {"admin": 1, "contributor": 2, "member": 3, "guest": 4, "prohibited": 5}
+        role_tiers = {"admin": 1, "contributor": 2, "member": 3, "guest": 4}
         entry = UserRole.query.filter_by(user_id=self.identity, community_id=community_id).first()
-        if entry is None or role_tiers[entry.role] > role_tiers[role]:
+        if entry is None:
+            community  = Community.lookup(community_id)
+            if(role == "prohibited"):
+                if(community.default_role == role):
+                    return True
+                else:
+                    return False
+            if(role_tiers[community.default_role] <= role_tiers[role]):
+                return True
+            return False
+
+        if(role == "prohibited"):
+            if(entry.role == role):
+                return True
+            else:
+                return False
+        elif role_tiers[entry.role] > role_tiers[role]:
             return False
         return True
 
@@ -140,6 +156,11 @@ class Post(db.Model):
     downvotes = db.Column(db.Integer, default=0)
     parent = db.relationship('Post', remote_side=[id], backref='comments')
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
+    tags = db.relationship('PostTag', backref='post', cascade="all, delete")
+
+class PostTag(db.Model):
+    post_id = db.Column(db.String(1000), db.ForeignKey('post.id'), primary_key=True)
+    tag = db.Column(db.String(50), primary_key=True)
 
 class PostContentField(db.Model):
     post_id = db.Column(db.String(1000), db.ForeignKey('post.id'), primary_key=True)

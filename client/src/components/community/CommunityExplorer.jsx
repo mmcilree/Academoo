@@ -39,7 +39,7 @@ class CommunityExplorer extends React.Component {
           <CommunityList instance="local"/>
           {!isLoading ?
             instances.map(name => {
-              return <CommunityList instance={name}> </CommunityList>
+              return <CommunityList key={name} instance={name}> </CommunityList>
             })
         : <h3>Loading External Instances...</h3>}
         </Card.Body>

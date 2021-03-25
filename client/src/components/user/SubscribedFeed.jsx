@@ -43,7 +43,7 @@ class SubscribedFeed extends Component {
     }
 
     async appendPostsFromCommunity(community, i) {
-        await fetch('/api/posts?community=' + community,
+        await authFetch('/api/posts?community=' + community + '&includeSubChildrenPosts=false',
             {
                 headers: {
                     'User-ID': this.state.user_id,
@@ -100,7 +100,7 @@ class SubscribedFeed extends Component {
         console.log(this.state)
         const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
         return (
-            <Container>
+            <Container fluid>
                 <Row>
                     <Col xs={12} lg={8}>
                         <Card className="mt-4">
@@ -133,10 +133,12 @@ class SubscribedFeed extends Component {
                         </Card>
                     </Col>
 
-                    <Col>
+                    <Col xs={6} lg={4}>
                         <Sidebar currentCommunity={currentCommunity}
                             fetchSubscribedCommunities={this.fetchSubscribedCommunities.bind(this)} />
+
                     </Col>
+
                 </Row>
             </Container>
         );

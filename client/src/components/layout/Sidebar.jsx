@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import CommunityList from "../community/CommunityList";
 import { authFetch } from '../../auth';
 import CommunitySubscribeButton from "../community/CommunitySubscribeButton";
+import { PlusCircle } from "react-bootstrap-icons"
 
 class Sidebar extends Component {
     state = {
@@ -22,11 +23,11 @@ class Sidebar extends Component {
                     subscribedCommunities: data.subscriptions,
                     isLoading: false
                 })
-            ).catch(() => {});
+            ).catch(() => { });
     }
 
     updateSubscriptions() {
-        this.setState({isLoading: true});
+        this.setState({ isLoading: true });
         this.fetchUserDetails();
         this.props.fetchSubscribedCommunities();
     }
@@ -36,14 +37,12 @@ class Sidebar extends Component {
 
         return (
             <Card className="mt-4">
-                <Card.Header className="pt-4">
-                    <h3>Folloowing:</h3>
+                <Card.Header>
+                    <Card.Title>Folloowing:</Card.Title>
                 </Card.Header>
 
-                <Card.Body className="px-0 py-1">
+                <Card.Body className="p-0">
                     <ListGroup variant="flush">
-
-
                         {!isLoading ?
                             subscribedCommunities && subscribedCommunities.length == 0 ?
                                 <ListGroupItem>
@@ -53,20 +52,21 @@ class Sidebar extends Component {
                                 subscribedCommunities.map((community) =>
                                     community !== "" &&
 
-                                    <ListGroup.Item key={community} className="d-flex justify-content-between">
+                                    <ListGroup.Item key={community} className="d-flex flex-column align-items-left flex-wrap">
                                         <Link to={
                                             "communities/" + community}>
                                             {community}
                                         </Link>
-                                        <CommunitySubscribeButton community={community} updateParent={this.updateSubscriptions.bind(this)}/>
+                                        <CommunitySubscribeButton community={community} updateParent={this.updateSubscriptions.bind(this)} />
                                     </ListGroup.Item>)
 
                             : <p>Loading...</p>}
 
                         <ListGroupItem>
-                            <Link to="/explore" className="btn btn-secondary">
-                                Explore Communities
+                            <Link to="/communities" className="btn btn-secondary d-flex justify-content-center">
+                                <span>Explore Communities</span>
                             </Link>
+
                         </ListGroupItem>
                     </ListGroup>
 

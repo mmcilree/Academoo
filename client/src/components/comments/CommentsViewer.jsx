@@ -6,6 +6,7 @@ import { ArrowReturnLeft, ChatRight } from "../../../node_modules/react-bootstra
 import { Link } from "../../../node_modules/react-router-dom";
 import Modal from "../../../node_modules/react-bootstrap/Modal";
 import CommentCreator from "./CommentCreator";
+import { authFetch } from '../../auth';
 
 class CommentsViewer extends React.Component {
   constructor(props) {
@@ -37,20 +38,20 @@ class CommentsViewer extends React.Component {
 
 
   async fetchParentPost() {
-    await fetch('/api/posts/' + this.state.parentPostId + (this.state.host !== "local" ? "?external=" + this.state.host : ""), 
-    {
-      headers: {
+    await authFetch('/api/posts/' + this.state.parentPostId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
+      {
+        headers: {
           'User-ID': this.state.user_id,
           'Client-Host': window.location.protocol + "//" + window.location.hostname
-      }
-    })
+        }
+      })
       .then(response => response.json())
       .then(data =>
         this.setState({
           parentPost: data,
           needsUpdate: false
         })
-      );
+      ).catch(() => {});
 
     this.fetchChildren();
   }
@@ -61,18 +62,18 @@ class CommentsViewer extends React.Component {
     const new_children = await Promise.all(parentPost.children.filter(childId => !fetchedChildren.has(childId)).map(
       async (childId) => {
         fetchedChildren.add(childId);
-        return fetch('/api/posts/' + childId + (this.state.host !== "local" ? "?external=" + this.state.host : ""), 
-        {
-          headers: {
+        return authFetch('/api/posts/' + childId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
+          {
+            headers: {
               'User-ID': this.state.user_id,
               'Client-Host': window.location.protocol + "//" + window.location.hostname
-          }
-        })
+            }
+          })
           .then(response => response.json())
           .then(data => data)
           .catch(error => this.setState({ error, isLoading: false }));
       }));
-
+    
     this.setState({ isLoading: false, children: [...children, ...new_children] })
   }
 
@@ -94,9 +95,9 @@ class CommentsViewer extends React.Component {
         <Card className="mt-4">
           {!isLoading ? (
             <Card.Body>
-              <Link to="/moosfeed" className="btn btn-secondary">
-                Back to Moosfeed <ArrowReturnLeft />
-              </Link>
+              <Button variant="secondary" onClick={() => {
+                this.props.history.goBack();
+              }}>Go Back</Button>
               <Card className="mt-4">
                 <Card.Body>
                   <Post postData={this.state.parentPost} />
@@ -105,7 +106,9 @@ class CommentsViewer extends React.Component {
                     {" "} <ChatRight />
                   </Button>
                   <Modal show={this.state.showCommentEditor} onHide={() => this.setState({ showCommentEditor: false })}>
-                    <Modal.Header closeButton />
+                    <Modal.Header closeButton>
+                      <Modal.Title>Add a Comment!</Modal.Title>
+                    </Modal.Header>
                     <Modal.Body>
                       <CommentCreator parentPost={this.state.parentPost} host={this.state.host} onSubmit={this.handleCloseCommentEditor.bind(this)} />
                     </Modal.Body>

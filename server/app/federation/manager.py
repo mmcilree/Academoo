@@ -1,6 +1,7 @@
 import os
 import functools
 from app.federation.instance import Instance
+from urllib.parse import urlparse
 import time
 
 class Manager(object):
@@ -8,17 +9,24 @@ class Manager(object):
         # host name : <Instance Objects>
         if os.environ.get("FLASK_ENV") == "production":
             self.instances = {
-                "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
-                "unifier": Instance("http://unifier-prod.herokuapp.com/")
-                
+                "Freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
+                "Nebula": Instance("https://nebula0.herokuapp.com"),
+                "Fritter": Instance("https://bc89.host.cs.st-andrews.ac.uk/"),
+                "Feddit": Instance("http://86.176.106.252:8000/"),
+                "WabberJocky": Instance("https://cs3099user-a4.host.cs.st-andrews.ac.uk/"),
+                "JHA10": Instance("https://cs3099user-a10.host.cs.st-andrews.ac.uk")  
             }
         else:
             self.instances = {
                 "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
-                "cs3099-group1": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
-                "unifier": Instance("http://unifier-prod.herokuapp.com/")
-                
+                "academoo": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
+                "unifier": Instance("https://unifier-prod.herokuapp.com/")
             }
+
+        # Two-way dictionary 
+        self.url_to_instance = {}
+        for inst in self.instances:
+            self.url_to_instance[urlparse(self.instances[inst].url).netloc] = self.instances[inst]
 
     def create_post(self, host, data, headers):
         return self.instances[host].create_post(data, headers)
@@ -60,5 +68,8 @@ class Manager(object):
         if host in self.instances:
             return False
 
+        url = "http://" + url if "://" not in url else url
         self.instances[host] = Instance(url)
+        self.url_to_instance[urlparse(url).netloc] = self.instances[host]
+        
         return True

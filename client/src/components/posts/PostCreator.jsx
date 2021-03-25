@@ -26,7 +26,7 @@ class PostCreator extends React.Component {
                 community: this.props.location && this.props.location.state && this.props.location.state.community ?
                     this.props.location.state.community : "",
             }],
-            markdown: this.props.location && this.props.location.state && this.props.location.state.markdown ? true: false,
+            markdown: this.props.location && this.props.location.state && this.props.location.state.markdown ? true : false,
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleContentSwitch = this.handleContentSwitch.bind(this);
@@ -38,7 +38,10 @@ class PostCreator extends React.Component {
         if (this.state.title.length === 0) {
             errors.push("Title field cannot be empty")
         }
-        if (this.state.selected.length === 0) {
+
+        if (this.state.selected.length === 0 || 
+            ! this.state.communities.some(o => 
+                o.community === this.state.selected[0].community && o.host === this.state.selected[0].host)) {
             errors.push(<p>You haven't selected a pre-existing community. You can create new community <a href='./create-community'>here</a></p>)
         }
         if (this.state.title === "Moo" && this.state.body === "Moooo") {
@@ -59,31 +62,31 @@ class PostCreator extends React.Component {
                     user_id: data.id,
                     email: data.email,
                 })
-            )
+            ).catch(() => {})
     }
 
     async fetchInstances() {
-        await fetch("/api/get-instances")
+        await authFetch("/api/get-instances")
             .then(response => response.json())
             .then(data =>
                 this.setState({
                     instances: ["local", ...data],
                 })
-            )
+            ).catch(() => {})
         this.state.instances.map(host => (this.fetchCommunities(host)));
     }
 
     async fetchCommunities(host) {
-        await fetch('/api/communities' + (host !== "local" ? "?external=" + host : ""), 
-        {
-            headers: {
-                'Client-Host': window.location.protocol + "//" + window.location.hostname
-            }
-        }).then(response => response.json())
+        await authFetch('/api/communities' + (host !== "local" ? "?external=" + host : ""),
+            {
+                headers: {
+                    'Client-Host': window.location.protocol + "//" + window.location.hostname
+                }
+            }).then(response => response.json())
             .then(data =>
                 this.setState({
                     communities: [...this.state.communities, ...data.map(community => ({ host: host, community: community }))],
-                }))
+                })).catch(() => {})
     }
 
     handleContentSwitch(event) {
@@ -150,16 +153,31 @@ class PostCreator extends React.Component {
 
         requestOptions.body = JSON.stringify(requestOptions.body);
 
-        fetch('/api/posts', requestOptions)
-        .then(response => {
-            const community = this.state.selected[0].community;
-            const host = this.state.selected[0].host;
+        authFetch('/api/posts', requestOptions)
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then((error) => {
+                        let err = error.title + ": " + error.message
+                        throw new Error(err);
+                    })
+                } else {
+                    return response;
+                }
+            })
+            .then(response => {
+                const community = this.state.selected[0].community;
+                const host = this.state.selected[0].host;
 
-            this.setState(
-                { email: "", selected: [{ community: null, host: null }], title: "", body: "" }
-            );
-            this.props.history.push('/communities' + (host !== "local" ? ("/" + host) : "") + "/" + community);
-        })
+                this.setState(
+                    { email: "", selected: [{ community: null, host: null }], title: "", body: "" }
+                );
+                this.props.history.push('/communities' + (host !== "local" ? ("/" + host) : "") + "/" + community);
+            })
+            .catch(error => {
+                let errors = this.state.errors;
+                errors.push(error.message)
+                this.setState({ errors })
+            })
     }
 
     render() {
@@ -203,6 +221,7 @@ class PostCreator extends React.Component {
                             <Typeahead
                                 labelKey={option => `${option.community}`}
                                 id="community-choice"
+                                className="community-choice"
                                 placeholder="Cows"
                                 renderMenu={(results, menuProps) => (
                                     <Menu {...menuProps} maxHeight="500%">
