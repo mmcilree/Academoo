@@ -163,7 +163,6 @@ def post_vote(post_id):
     if choice == "upvote":
         return respond_with_action(actions.upvotePost(username, post_id))
     else:
-<<<<<<< HEAD
         return respond_with_action(actions.downvotePost(username, post_id))
 
 @bp.route("/get-vote/<post_id>")
@@ -171,8 +170,6 @@ def post_vote(post_id):
 def get_vote(post_id):
     username = current_user().user_id
     return respond_with_action(actions.getVote(username, post_id))  
-=======
-        return respond_with_action(actions.downvotePost(post_id))
 
 @bp.route("/add-post-tag/<post_id>", methods=['POST'])
 def add_post_tag(post_id):
@@ -193,4 +190,3 @@ def toggle_security():
     current_app.config["SIGNATURE_FEATURE"] = not current_app.config["SIGNATURE_FEATURE"]
 
     return str(current_app.config["SIGNATURE_FEATURE"])
->>>>>>> master

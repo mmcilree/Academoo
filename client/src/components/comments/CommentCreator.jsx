@@ -30,6 +30,20 @@ class CommentCreator extends React.Component {
             ).catch(() => {})
     }
 
+    fetchVotes(postId) {
+        authFetch('/api/get-vote/' + postId)
+          .then(response => {
+            if (!response.ok || response.status != 200) {
+              throw new Error();
+            }
+            return response.json()
+          }
+          ).then(data =>
+            this.setState({ voteStatus: { ...this.state.voteStatus, [postId]: data.vote } })
+          ).catch((err) => {
+          });
+      }
+
     handleChange(event) {
         const target = event.target;
         const value = target.value;

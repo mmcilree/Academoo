@@ -86,7 +86,7 @@ class SubscribedFeed extends Component {
                 }
             })
             .then(response => response.json())
-            .then(data => this.setState({ postData: this.state.postData.map(o => o.id === post ? data : o) }));
+            .then(data => this.setState({ postData: this.state.posts.map(o => o.id === post ? data : o) }));
     }
 
     componentWillUnmount() {
@@ -123,8 +123,8 @@ class SubscribedFeed extends Component {
                                 <MiniPostCreator currentCommunity={null} />
 
                                 {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
-                                {!isLoading ? (
-                                    <PostsViewer posts={posts} displayCommunityName />
+                                {!isLoading && posts.length !== 0 ? (
+                                    <PostsViewer posts={posts} refreshPost={this.refreshPost.bind(this)} displayCommunityName />
                                 ) : (
                                     <h3>Loading Posts...</h3>
                                 )}
