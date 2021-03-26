@@ -13,6 +13,10 @@ class TestConfig(object):
     SQLALCHEMY_DATABASE_URI = "sqlite://"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    PUBLIC_KEY = "PKEY"
+    SIGNATURE_FEATURE = False
+
+
 def setup_db():
     test_user = User(user_id="existent", host="test.com")
 
