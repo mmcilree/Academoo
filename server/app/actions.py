@@ -1,5 +1,5 @@
 from app import db, guard
-from app.models import User, Community, Post, UserRole, PostContentField, getTime, PostTag
+from app.models import User, Community, Post, UserRole, PostContentField, UserVote, getTime, PostTag
 from sqlalchemy import desc
 import json
 from uuid import UUID
@@ -318,7 +318,20 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
             query += post_children
     '''
     
-    post_dicts = [{"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], "author": {"id": post.author.user_id if post.author else None, "host": post.author.host if post.author else None}, "modified": post.modified, "created": post.created} for post in query]
+    post_dicts = [
+        {
+            "id": post.id, 
+            "community": post.community_id, 
+            "parentPost": post.parent_id, 
+            "children": [comment.id for comment in post.comments], 
+            "title": post.title, 
+            "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], 
+            "author": {"id": post.author.user_id if post.author else None, "host": post.author.host if post.author else None}, 
+            "modified": post.modified, 
+            "created": post.created,
+            "upvotes": post.upvotes,
+            "downvotes": post.downvotes
+        } for post in query]
     
     return (post_dicts, 200)
 
@@ -391,7 +404,20 @@ def getPost(post_id, requester_str):
         message = {"title": "Permission error", "message": "Do not have permission to perform action"}
         return (message, 403)
     
-    post_dict = {"id": post.id, "community": post.community_id, "parentPost": post.parent_id, "children": [comment.id for comment in post.comments], "title": post.title, "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], "author": {"id": post.author.user_id if post.author else None, "host": post.author.host if post.author else None}, "modified": post.modified, "created": post.created}
+    post_dict = {
+            "id": post.id, 
+            "community": post.community_id, 
+            "parentPost": post.parent_id, 
+            "children": [comment.id for comment in post.comments], 
+            "title": post.title, 
+            "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], 
+            "author": {"id": post.author.user_id if post.author else None, 
+            "host": post.author.host if post.author else None}, 
+            "modified": post.modified, 
+            "created": post.created,
+            "upvotes": post.upvotes,
+            "downvotes": post.downvotes
+            }
     return (post_dict, 200)
 
 def editPost(post_id, post_data, requester):
@@ -452,27 +478,99 @@ def deletePost(post_id, requester):
 def order_post_arr(post_arr, reverse=False):
     return sorted(post_arr, key=lambda post: post['created'], reverse= reverse)
 
-def upvotePost(post_id):
+def upvotePost(user_id, post_id):
     if validate_post_id(post_id): return validate_post_id(post_id)
+
+    user = User.query.filter_by(user_id = user_id).first()
+    if user is None:
+        return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 400)
 
     post = Post.query.filter_by(id = post_id).first()
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
-    post.upvotes += 1
+    
+    current_vote = UserVote.query.filter_by(user_id=user_id, post_id=post_id).first()
+    
+    if current_vote is None:
+        new_vote = UserVote(user_id=user_id, post_id=post_id, value="upvote")
+        post.upvotes += 1
+        db.session.add(new_vote)
+        db.session.commit() 
+    else:
+        existing_vote = UserVote.query.filter_by(user_id=user_id, post_id=post_id).first()
+        if existing_vote.value == "upvote":
+            post.upvotes -= 1
+            existing_vote.value =  "none"
+        elif existing_vote.value == "downvote":
+            existing_vote.value = "upvote"
+            post.upvotes += 1
+            post.downvotes -= 1
+        else:
+            existing_vote.value = "upvote"
+            post.upvotes += 1
+
+
+        db.session.commit()
+
     db.session.commit()
+    
     return (None, 200)
 
-def downvotePost(post_id):
+def downvotePost(user_id, post_id):
     if validate_post_id(post_id): return validate_post_id(post_id)
+
+    user = User.query.filter_by(user_id = user_id).first()
+    if user is None:
+        return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 400)
 
     post = Post.query.filter_by(id = post_id).first()
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
-    post.downvotes += 1
+    current_vote = UserVote.query.filter_by(user_id=user_id, post_id=post_id).first()
+
+    if current_vote is None:
+        new_vote = UserVote(user_id=user_id, post_id=post_id, value="downvote")
+        db.session.add(new_vote)
+        db.session.commit() 
+    else:
+        existing_vote = UserVote.query.filter_by(user_id=user_id, post_id=post_id).first()
+        if existing_vote.value == "downvote":
+            post.downvotes -= 1
+            existing_vote.value =  "none"
+        elif existing_vote.value == "upvote":
+            existing_vote.value = "downvote"
+            post.upvotes -= 1
+            post.downvotes += 1
+        else:
+            existing_vote.value = "downvote"
+            post.downvotes += 1
+        db.session.commit()
+
     db.session.commit()
+    
     return (None, 200)
+
+def getVote(user_id, post_id):
+    if validate_post_id(post_id): return validate_post_id(post_id)
+    user = User.query.filter_by(user_id = user_id).first()
+    if user is None:
+        return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 400)
+
+    post = Post.query.filter_by(id = post_id).first()
+    if post is None:
+        return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
+    
+    current_vote = UserVote.query.filter_by(user_id=user_id, post_id=post_id).first()
+    if current_vote is None:
+        vote_dict = {"vote": "none"}
+    else:
+        vote_dict = {"vote": current_vote.value}
+
+    
+    
+    return (vote_dict, 200)
 
 def changePassword(username, old_password, new_password):
     user = guard.authenticate(username, old_password)

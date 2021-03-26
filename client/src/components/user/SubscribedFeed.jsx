@@ -3,7 +3,7 @@ import Post from "../posts/Post";
 import Sidebar from "../layout/Sidebar";
 import { Nav, Card, Container, Row, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { PlusCircle } from "react-bootstrap-icons";
+import { CodeSlash, PlusCircle } from "react-bootstrap-icons";
 import MiniPostCreator from "../posts/MiniPostCreator";
 import PostsViewer from "../posts/PostsViewer";
 import { authFetch } from '../../auth';
@@ -62,6 +62,33 @@ class SubscribedFeed extends Component {
         (i == this.state.subscribedCommunities.length - 1) && this.setState({ isLoading: false });
     }
 
+    sortRecent() {
+        console.log("recent")
+        this.setState({ posts: this.state.posts.slice().sort((a, b) => b.created - a.created) });
+    }
+
+    sortCommented() {
+        console.log("commented")
+        this.setState({ posts: this.state.posts.slice().sort((a, b) => b.children.length - a.children.length) });
+    }
+
+    sortVoted() {
+        console.log("voted")
+        this.setState({ posts: this.state.posts.slice().sort((a, b) => (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes)) });
+    }
+
+    async refreshPost(post) {
+        await fetch('/api/posts/' + post,
+            {
+                headers: {
+                    'User-ID': this.state.user_id,
+                    'Client-Host': window.location.protocol + "//" + window.location.hostname
+                }
+            })
+            .then(response => response.json())
+            .then(data => this.setState({ postData: this.state.posts.map(o => o.id === post ? data : o) }));
+    }
+
     componentWillUnmount() {
         // fix Warning: Can't perform a React state update on an unmounted component
         this.setState = (state, callback) => {
@@ -70,7 +97,7 @@ class SubscribedFeed extends Component {
     }
 
     render() {
-
+        console.log(this.state)
         const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
         return (
             <Container fluid>
@@ -80,13 +107,13 @@ class SubscribedFeed extends Component {
                             <Card.Header>
                                 <Nav variant="tabs" defaultActiveKey="recent">
                                     <Nav.Item>
-                                        <Nav.Link eventKey="recent"><div className="d-none d-sm-inline">Most</div> Recent</Nav.Link>
+                                        <Nav.Link eventKey="recent" onClick={this.sortRecent.bind(this)}><div className="d-none d-sm-inline">Most</div> Recent</Nav.Link>
                                     </Nav.Item>
                                     <Nav.Item>
-                                        <Nav.Link eventKey="commented">Most Commented</Nav.Link>
+                                        <Nav.Link eventKey="commented" onClick={this.sortCommented.bind(this)}>Most Commented</Nav.Link>
                                     </Nav.Item>
                                     <Nav.Item>
-                                        <Nav.Link eventKey="top">
+                                        <Nav.Link eventKey="top" onClick={this.sortVoted.bind(this)}>
                                             Top <div className="d-none d-sm-inline">Posts</div>
                                         </Nav.Link>
                                     </Nav.Item>
@@ -96,11 +123,11 @@ class SubscribedFeed extends Component {
                                 <MiniPostCreator currentCommunity={null} />
 
                                 {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
-                                {!isLoading ? (
-                                    <PostsViewer posts={posts} displayCommunityName />
+                                {!isLoading && posts.length !== 0 ? (
+                                    <PostsViewer posts={posts} refreshPost={this.refreshPost.bind(this)} displayCommunityName />
                                 ) : (
-                                        <h3>Loading Posts...</h3>
-                                    )}
+                                    <h3>Loading Posts...</h3>
+                                )}
                                 {!isLoading && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
                             </Card.Body>
                         </Card>

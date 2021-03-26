@@ -2,29 +2,38 @@ import React, { Component } from "react";
 import Post from "./Post";
 import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { ChatSquare } from "react-bootstrap-icons";
+import { ChatSquare, ArrowUpSquare, ArrowUpSquareFill, ArrowDownSquare, ArrowDownSquareFill } from "react-bootstrap-icons";
+import { authFetch } from '../../auth';
+import VoteDisplay from "./VoteDisplay";
 
 class PostsViewer extends Component {
-  constructor(props) {
-    super(props);
-  }
 
   render() {
-
-    return this.props.posts && (
+    return (
       this.props.posts.map(data => {
         const { id } = data;
+        console.log(this.state);
         return (
           <Card key={id} className="mt-4">
             <Card.Body className="pb-2">
               <Post postData={data} postType="preview" displayCommunityName={this.props.displayCommunityName} />
-              <Link
-                to={data.host ? '/comments/' + data.host + `/${id}` : `/comments/${id}`}
-                className="text-muted stretched-link"
-                size="xs"
-              >
-                <small><ChatSquare /> Comments ({data.children.length})
+              <div className="d-flex justify-content-between">
+                <Link
+                  to={data.host ? '/comments/' + data.host + `/${id}` : `/comments/${id}`}
+                  className="text-muted stretched-link"
+                  size="xs"
+                >
+                  <small><ChatSquare /> Comments ({data.children.length})
                   </small> </Link>
+
+                <VoteDisplay upvotes={data.upvotes} downvotes={data.downvotes} postId={id} />
+
+
+              </div>
+
+
+
+
             </Card.Body>
           </Card>
         )
