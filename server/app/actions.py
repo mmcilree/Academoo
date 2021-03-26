@@ -19,9 +19,9 @@ def createCommunity(community_id, title, description, admin):
     if User.query.filter_by(user_id=admin) is None:
         return ({"title": "Could not find user" + admin, "message": "User does not exist on database, specify a different user"}, 404)
         
-    response = grantRole(admin, community_id, admin, "admin")
-    if response[1] != 200:
-        return response
+
+    new_role = UserRole(user_id=admin, community_id=community_id, role="admin")
+    db.session.add(new_role)
 
     db.session.commit()
     return (None, 200)
@@ -42,9 +42,17 @@ def grantRole(username, community_id, current_user, role="member", external=Fals
             return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 400)
     
     current_role = UserRole.query.filter_by(user_id=current_user, community_id=community_id).first()
-
+    
     if current_role is not None and username == current_user:
         return ({"title": "User cannot change own role", "message": "please choose another user"}, 400)
+    
+    requester = User.lookup(current_user)
+    if(requester is not None):
+        roles = requester.site_roles.split(",")
+        if((not requester.has_role(community_id, "admin")) and ("site-admin" not in roles)):
+            return ({"title":"Permissions Error", "message": "User does not have admin privileges so cannot change another user's role"}, 403)
+    else:
+        return ({"title":"Permissions Error", "message": "User does not have admin privileges so cannot change another user's role"}, 403)
 
     if UserRole.query.filter_by(user_id=username, community_id=community_id).first() is None:
         new_role = UserRole(user_id=username, community_id=community_id, role=role)
@@ -65,13 +73,55 @@ def removeSiteWideRoles(username, host):
             return({"title":"Could not find user " + username, "message": "User does not exist in database, use a different username"}, 404)
         
         if(user.site_roles != None):
-            user.site_roles = ""
+            user.site_roles = "basic"
         db.session.commit()
         return(None, 200)
     else:
         # Add support for roles for external users
         return(None, 400)
 
+def userAccountActivation(username, host, activation):
+    if(host == "local"):
+        user = User.query.filter_by(user_id=username).first()
+        if(user is None):
+            return({"title":"Could not find user " + username, "message": "User does not exist in database, use a different username"}, 404)
+        if(activation == "disable"):
+            if(user.site_roles != None):
+                user.site_roles = ""
+                db.session.commit()
+                return(None, 200)
+            else:
+                return({"title":"Account is Already Disabled", "message": "This account is already inactive, activate it to change status or leave it inactive."}, 400)
+        elif (activation == "active"):
+            if((user.site_roles == None) | (user.site_roles == "")):
+                user.site_roles = "basic"
+            else: 
+                assigned_roles = user.site_roles.split(",");  
+                for r in assigned_roles:
+                    if(r == "basic"):
+                        return({"title":"User Account is Already Active", "message": "User already has basic privileges"}, 400)
+            roles = user.site_roles + "," + "basic"
+            user.site_roles = roles
+            db.session.commit()
+            return("", 200)
+        else:
+            return({"title":"Invalid Request", "message": "Could not fulfill request to change user activation status"}, 400)
+
+    else:
+        # Add support for roles for external users
+        return(None, 400)
+
+def validLogin(username):
+    print("here!")
+    user = User.lookup(username)
+    roles = user.site_roles.split(",")
+    print(roles)
+    #User has an inactive account
+    if(len(roles) == 0 ):
+        return False
+    elif(roles[0] == ""):
+        return False
+    else: return True
 
 def addSiteWideRole(admin, username, role, key, host):
     if (host == "local"):
@@ -92,12 +142,10 @@ def addSiteWideRole(admin, username, role, key, host):
             user.site_roles = role
         else: 
             assigned_roles = user.site_roles.split(",");  
-            if(len(assigned_roles) == 1):
-                if(assigned_roles[0] == role):
+            for r in assigned_roles:
+                if(r == role):
                     return({"title":"Cannot Add Role " + role, "message": "User already has " + role + " privileges"}, 400)
-            elif(len(assigned_roles) == 2):
-                return({"title":"Cannot Add Role " + role, "message": "User already has admin and moderator privileges"}, 400)
-            
+
             roles = user.site_roles + "," + role
             user.site_roles = roles
         db.session.commit()
@@ -275,26 +323,32 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
                 return (message, 403)
         elif requester.has_role(community_id, "prohibited"):
-            message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-            return (message, 403)
+            site_wide_roles = requester.site_roles.split(",")
+            if (("site-admin" not in site_wide_roles) and ("site-moderator" not in site_wide_roles)):
+                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                return (message, 403)
         query = query.filter(Post.community_id == community_id)
     if min_date is not None:
         query = query.filter(Post.created >= min_date)
     if author is not None:
         author_entry = User.lookup(author)
         requester_entry = User.lookup(requester_str)
-        requester_roles = UserRole.lookup(user_id=requester_str)
-        if (author == requester_str or (not author_entry.private_account)):
+        requester_roles = UserRole.query.filter_by(user_id=requester_str)
+        sw_roles = requester_entry.site_roles.split(",")
+        if(("site-admin" in sw_roles) or ("site-moderator" in sw_roles)):
             query = query.filter(Post.author_id == author)
-            if requester_entry is None and requester_roles is None:
-                query = query.filter(Post.community.default_role != "prohibited")
-            else:
-                requester_prohibited = UserRole.query.filter(UserRole.user_id == requester_str and UserRole.role == "prohibited")
-                prohibited_communities = [role.community.id for role in requester_prohibited]
-                query = query.filter(Post.community_id.notin_(prohibited_communities))
         else:
-            message = {"title": "Private Account", "message": "These posts cannot be viewed as the specified user has a private account."}
-            return (message, 403)
+            if (author == requester_str or (not author_entry.private_account)):
+                query = query.filter(Post.author_id == author)
+                if requester_entry is None and requester_roles is None:
+                    query = query.filter(Post.community.default_role != "prohibited")
+                else:
+                    requester_prohibited = UserRole.query.filter(UserRole.user_id == requester_str and UserRole.role == "prohibited")
+                    prohibited_communities = [role.community.id for role in requester_prohibited]
+                    query = query.filter(Post.community_id.notin_(prohibited_communities))
+            else:
+                message = {"title": "Private Account", "message": "These posts cannot be viewed as the specified user has a private account."}
+                return (message, 403)
     #if host is not None:
         #query = query.filter(Post.host == host)
     if parent_post is not None:
@@ -365,9 +419,11 @@ def createPost(post_data, author_id, author_host):
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
                 return (message, 403)
         else :
-            if not author.has_role(community_id, "contributor"):
-                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-                return (message, 403)
+            site_roles = author.site_roles.split(",")
+            if(("site-admin" not in site_roles) and ("site-moderator" not in site_roles)):
+                if not author.has_role(community_id, "contributor"):
+                    message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                    return (message, 403)
 
     if author is None:
         new_user = User(user_id = author_id, host = author_host)
@@ -401,8 +457,10 @@ def getPost(post_id, requester_str):
             message = {"title": "Permission error", "message": "Do not have permission to perform action"}
             return (message, 403)
     elif requester.has_role(post.community_id, "prohibited"):
-        message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-        return (message, 403)
+        site_wide_roles = requester.site_roles.split(",")
+        if (("site-admin" not in site_wide_roles) and ("site-moderator" not in site_wide_roles)):
+            message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+            return (message, 403)
     
     post_dict = {
             "id": post.id, 
@@ -431,10 +489,11 @@ def editPost(post_id, post_data, requester):
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
-    if requester.user_id != post.author.user_id:
+    site_roles = requester.site_roles.split(",")
+
+    if ((requester.user_id != post.author.user_id) and ("site-moderator" not in site_roles)):
         return ({"title": "Permission denied " + post_id, "message": "User does not have permission to edit this post"}, 403)
-
-
+    
     post.title = update_title
     
     for content_field in post.content_objects:
@@ -447,7 +506,7 @@ def editPost(post_id, post_data, requester):
         db.session.add(content_field)
 
     db.session.commit()
-    return getPost(post_id, requester)
+    return getPost(post_id, requester.user_id)
     #return (None, 200)
 
 def deletePost(post_id, requester):
@@ -458,7 +517,8 @@ def deletePost(post_id, requester):
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
-    if ((requester.user_id != post.author.user_id) and (not requester.has_role(post.community_id, "admin"))):
+    site_roles = requester.site_roles.split(",")
+    if ((requester.user_id != post.author.user_id) and (not requester.has_role(post.community_id, "admin")) and  ("site-moderator" not in site_roles)):
         return ({"title": "Permission denied " + post_id, "message": "User does not have permission to delete this post"}, 403)
 
     #will need to recursively delete comments

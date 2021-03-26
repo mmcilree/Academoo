@@ -2,7 +2,7 @@ from flask import request, Response, jsonify
 from app.auth import bp
 from app import actions, guard
 from utils import *
-from flask_praetorian import auth_required, roles_required, current_user
+from flask_praetorian import auth_required, roles_required, roles_accepted, current_user
 
 def respond_with_action(actionResponse):
     data, status = actionResponse
@@ -22,6 +22,10 @@ def login():
     req = request.json
     username = req.get('username')
     password = req.get('password')
+    
+    if(not actions.validLogin(username)):
+        message = {"title": "Permission error", "message": "You do not have permission to perform action, your account has been disabled"}
+        return jsonify(message), 403
 
     user = guard.authenticate(username, password)
     return {'access_token': guard.encode_jwt_token(user)}

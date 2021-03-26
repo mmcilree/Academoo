@@ -36,7 +36,7 @@ class User(db.Model):
     bio = db.Column(db.String(140))
     private_account = db.Column(db.Boolean, default=False, nullable=False)
     password_hash = db.Column(db.String(128))
-    site_roles = db.Column(db.String)
+    site_roles = db.Column(db.String, default="basic")
     #admin_of = db.relationship('Community', secondary=administrating, backref='admins')
     subscriptions = db.relationship('Community', secondary=subscriptions, backref='subscribed_users')
     roles = db.relationship('UserRole', backref='user', cascade="all, delete")
@@ -92,7 +92,9 @@ class User(db.Model):
                     return True
                 else:
                     return False
-            if(role_tiers[community.default_role] <= role_tiers[role]):
+            if community.default_role == "prohibited":
+                return False
+            if((role_tiers[community.default_role] <= role_tiers[role])):
                 return True
             return False
 
@@ -154,7 +156,7 @@ class Post(db.Model):
     parent_id = db.Column(db.String(1000), db.ForeignKey('post.id'))
     upvotes = db.Column(db.Integer, default=0)
     downvotes = db.Column(db.Integer, default=0)
-    parent = db.relationship('Post', remote_side=[id], backref='comments')
+    parent = db.relationship('Post', remote_side=[id], backref=backref('comments', cascade="all, delete-orphan"))
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
     tags = db.relationship('PostTag', backref='post', cascade="all, delete")
 

@@ -11,7 +11,8 @@ class Login extends React.Component {
     this.state = {
       username: "",
       password: "",
-      isIncorrect: false
+      isIncorrect: false,
+      errors: []
     };
   }
 
@@ -35,7 +36,16 @@ class Login extends React.Component {
           password: this.state.password,
         }
       )
-    }).then(r => r.json())
+    }).then(r => {
+      if (!r.ok) {
+        return r.json().then((error) => {
+          let err = error.title + ": " + error.message
+          throw new Error(err);
+        })
+      } else {
+        return r.json()
+      }
+    })
       .then(token => {
         if (token.access_token) {
           this.setState({ isIncorrect: false })
@@ -51,7 +61,12 @@ class Login extends React.Component {
             isIncorrect: true
           });
         }
-      }).catch(() => {})
+      })
+      .catch(error => {
+        let errors = this.state.errors;
+        errors.push(error.message)
+        this.setState({ errors, username: "", password: "" })
+      })
   }
 
   render() {
@@ -81,8 +96,9 @@ class Login extends React.Component {
               </FormGroup>
 
               {this.state.isIncorrect ? (<Alert variant='warning'> Username or password not recognised.</Alert>) : null}
-              {this.state.hasError ? (<Alert variant='error'>Oops, there was an error submitting your login. Please try again later.</Alert>) : null}
-              <Route render={({ history }) => (
+              {this.state.errors.map(error => (
+                <Alert variant='danger' key={error}>{error}</Alert>
+              ))}              <Route render={({ history }) => (
                 <Button
                   type='submit'
                   onClick={this.handleSubmit.bind(this)}

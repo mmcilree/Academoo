@@ -129,6 +129,7 @@ def get_post_by_id(id):
     external = request.args.get("external")
     host = request.headers.get("Client-Host")
     requester_str = request.headers.get("User-ID")
+    print(requester_str)
     #if host is None or requester_str is None:
     #    return Response(status = 400)
 
@@ -180,10 +181,12 @@ def create_post():
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
                 return jsonify(message), 403
         else :
-            if not requester.has_role(community_id, "member") :
-                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-                return jsonify(message), 403
-        
+            site_roles = requester.site_roles.split(",")
+            if(("site-admin" not in site_roles) and ("site-moderator" not in site_roles)):
+                if not requester.has_role(community_id, "member") :
+                    message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                    return jsonify(message), 403
+
         return respond_with_action(actions.createPost(request.json, requester_str, host))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
@@ -202,6 +205,9 @@ def edit_post(id):
     if check_edit_post(request.get_json(silent=True, force=True)): return check_edit_post(request.get_json(silent=True, force=True))
 
     requester = User.lookup(requester_str)
+    if(requester is None):
+        message = {"title": "Permission Denied", "message": "Unknown user " + requester_str}
+        return jsonify(message), 403
 
     if external is None:
         message, status_code = verify_request(

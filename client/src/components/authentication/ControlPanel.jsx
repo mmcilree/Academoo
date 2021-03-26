@@ -14,6 +14,7 @@ import { PlusCircle } from "react-bootstrap-icons";
 import { Redirect } from "react-router-dom";
 import { authFetch } from "../../auth";
 import { Typeahead, Menu, MenuItem } from 'react-bootstrap-typeahead';
+import ModeratorControls from "./ModeratorControls";
 
 
 class ControlPanel extends Component {
@@ -67,7 +68,7 @@ class ControlPanel extends Component {
                 this.setState({
                     instances: ["local", ...data],
                 })
-            ).catch(() => {})
+            ).catch(() => { })
     }
 
     //currently fetches user list for specified host every time a host is selected
@@ -77,7 +78,7 @@ class ControlPanel extends Component {
             .then(data =>
                 this.setState({
                     users: [...data.map(user => ({ host: host, user: user }))],
-                })).catch(() => {})
+                })).catch(() => { })
     }
 
     handleHostChange(name) {
@@ -130,7 +131,7 @@ class ControlPanel extends Component {
                     } else {
                         this.setState({ changed: true, errors: [], host: "local", serverDropdown: "Select Server", role: "", selected: [{ user: "" }] });
                     }
-                }).catch(() => {});
+                }).catch(() => { });
         } else {
 
             const requestOptions = {
@@ -166,7 +167,7 @@ class ControlPanel extends Component {
                         this.setState({ changed: false, errors: errors })
                     }
 
-                }).catch(() => {});
+                }).catch(() => { });
         }
     }
 
@@ -248,8 +249,9 @@ class ControlPanel extends Component {
                                 </Card.Body>
                             </Card>}
 
-                            {/* <p>Block a user</p>
-                            <p>Remove or verify communities</p> */}
+                            {isModerator &&
+                                < ModeratorControls instances={this.state.instances} users={this.state.users} />
+                            }
                         </Card.Body>
                     </Card>
         );

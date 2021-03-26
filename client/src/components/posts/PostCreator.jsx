@@ -39,8 +39,8 @@ class PostCreator extends React.Component {
             errors.push("Title field cannot be empty")
         }
 
-        if (this.state.selected.length === 0 || 
-            ! this.state.communities.some(o => 
+        if (this.state.selected.length === 0 ||
+            !this.state.communities.some(o =>
                 o.community === this.state.selected[0].community && o.host === this.state.selected[0].host)) {
             errors.push(<p>You haven't selected a pre-existing community. You can create new community <a href='./create-community'>here</a></p>)
         }
@@ -62,7 +62,7 @@ class PostCreator extends React.Component {
                     user_id: data.id,
                     email: data.email,
                 })
-            ).catch(() => {})
+            ).catch(() => { })
     }
 
     async fetchInstances() {
@@ -72,7 +72,7 @@ class PostCreator extends React.Component {
                 this.setState({
                     instances: ["local", ...data],
                 })
-            ).catch(() => {})
+            ).catch(() => { })
         this.state.instances.map(host => (this.fetchCommunities(host)));
     }
 
@@ -86,7 +86,7 @@ class PostCreator extends React.Component {
             .then(data =>
                 this.setState({
                     communities: [...this.state.communities, ...data.map(community => ({ host: host, community: community }))],
-                })).catch(() => {})
+                })).catch(() => { })
     }
 
     handleContentSwitch(event) {
@@ -102,7 +102,8 @@ class PostCreator extends React.Component {
         const value = target.value;
         const name = target.name;
         this.setState({
-            [name]: value
+            [name]: value,
+            errors: []
         });
     }
 

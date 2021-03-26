@@ -17,6 +17,7 @@ class CommunityManager extends React.Component {
         super(props);
         this.state = {
             isAdmin: null,
+            isSiteAdmin: false,
             currentUser: "",
             currentCommunity: this.props.match.params.id,
             users: [],
@@ -78,6 +79,7 @@ class CommunityManager extends React.Component {
                 this.setState({
                     currentUser: data.id,
                     isAdmin: data.adminOf.includes(this.state.currentCommunity),
+                    isSiteAdmin: data.site_roles.split(",").includes("site-admin")
                 })
             )
             .catch(() => { })
@@ -170,14 +172,21 @@ class CommunityManager extends React.Component {
         };
 
         fetch('/api/assign-role', requestOptions)
-            .then(r => r.status).then(statusCode => {
-                if (statusCode == 200) {
-
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then((error) => {
+                        let err = error.title + ": " + error.message
+                        throw new Error(err);
+                    })
+                } else {
                     this.fetchUserRoles();
-
                 }
             })
-            .catch(() => { })
+            .catch(error => {
+                let errors = []
+                errors.push(error.message)
+                this.setState({ errors, isLoadingPosts: false })
+            });
 
 
         this.setState(
@@ -220,10 +229,11 @@ class CommunityManager extends React.Component {
     render() {
         return (
             this.state.isAdmin == null ? <h3> Loading... </h3> :
-                !this.state.isAdmin ? <Redirect to='/forbidden' /> :
+                (!this.state.isAdmin && !this.state.isSiteAdmin) ? <Redirect to='/forbidden' /> :
                     <Card className="mt-4">
                         <Card.Header className="pt-4">
-                            <Card.Title>Manage your community:
+                            <Card.Title>
+                                <span className="mr-2">Manage your community:</span>
                                 <Link to={"/communities/" + this.state.currentCommunity} >
                                     {this.state.currentCommunity}
                                 </Link>
