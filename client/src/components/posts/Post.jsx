@@ -25,6 +25,7 @@ class Post extends Component {
       errors: [],
       error: null,
       isLoading: false,
+      adminCommunities: [],
     }
     this.validateForm = this.validateForm.bind(this);
     this.handleSubmitEdit = this.handleSubmitEdit.bind(this);
@@ -40,7 +41,8 @@ class Post extends Component {
       .then(data => {
         this.setState({
           currentUser: data.id,
-          isLoading: false
+          isLoading: false,
+          adminCommunities: data.adminOf
         })
       }
       )
@@ -49,7 +51,7 @@ class Post extends Component {
   }
 
   checkPermissions() {
-    if (this.props.postData.author.id === this.state.currentUser) {
+    if (this.props.postData.author.id === this.state.currentUser || this.state.adminCommunities.includes(this.props.postData.community)) {
       this.setState({
         cannotEdit: false,
         cannotDelete: false
@@ -80,7 +82,7 @@ class Post extends Component {
     }
     requestOptions.body = JSON.stringify(requestOptions.body);
 
-    fetch('/api/posts/' + this.props.postData.id, requestOptions);
+    authFetch('/api/posts/' + this.props.postData.id, requestOptions);
     this.handleCloseDelete();
     this.props.history.push("/communities/" + this.props.postData.community)
   }
@@ -184,7 +186,7 @@ class Post extends Component {
 
     requestOptions.body = JSON.stringify(requestOptions.body);
 
-    fetch('/api/posts/' + this.props.postData.id, requestOptions).then(r => r.status).then(statusCode => {
+    authFetch('/api/posts/' + this.props.postData.id, requestOptions).then(r => r.status).then(statusCode => {
       if (statusCode != 200) {
         this.setState({ errors: ["Could not save edit"] })
       } else {
@@ -195,7 +197,7 @@ class Post extends Component {
         })
         this.handleCloseEdit();
       }
-    });
+    }).catch(() => {});
   }
 
 

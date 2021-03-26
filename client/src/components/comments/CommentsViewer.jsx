@@ -6,6 +6,8 @@ import { ArrowReturnLeft, ChatRight } from "../../../node_modules/react-bootstra
 import { Link } from "../../../node_modules/react-router-dom";
 import Modal from "../../../node_modules/react-bootstrap/Modal";
 import CommentCreator from "./CommentCreator";
+import VoteDisplay from "../posts/VoteDisplay";
+import { authFetch } from '../../auth';
 
 class CommentsViewer extends React.Component {
   constructor(props) {
@@ -16,16 +18,23 @@ class CommentsViewer extends React.Component {
       host: this.props.match.params.instance ? this.props.match.params.instance : "local",
       children: [],
       fetchedChildren: new Set(),
-
+      voteStatus: {},
       isLoading: true,
       needsUpdate: false,
-
+      userID: null,
       error: null,
       showCommentEditor: false,
 
     }
   }
 
+  fetchUserDetails() {
+    authFetch("/api/get-user").then(response => response.json())
+      .then(data =>
+        this.setState({
+          userID: data.userID,
+        }))
+  }
 
   handleOpenCommentEditor() {
     this.setState({ showCommentEditor: true });
@@ -37,7 +46,7 @@ class CommentsViewer extends React.Component {
 
 
   async fetchParentPost() {
-    await fetch('/api/posts/' + this.state.parentPostId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
+    await authFetch('/api/posts/' + this.state.parentPostId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
       {
         headers: {
           'User-ID': this.state.user_id,
@@ -50,7 +59,7 @@ class CommentsViewer extends React.Component {
           parentPost: data,
           needsUpdate: false
         })
-      );
+      ).catch(() => { });
 
     this.fetchChildren();
   }
@@ -61,7 +70,7 @@ class CommentsViewer extends React.Component {
     const new_children = await Promise.all(parentPost.children.filter(childId => !fetchedChildren.has(childId)).map(
       async (childId) => {
         fetchedChildren.add(childId);
-        return fetch('/api/posts/' + childId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
+        return authFetch('/api/posts/' + childId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
           {
             headers: {
               'User-ID': this.state.user_id,
@@ -95,15 +104,19 @@ class CommentsViewer extends React.Component {
           {!isLoading ? (
             <Card.Body>
               <Button variant="secondary" onClick={() => {
-                this.props.history.goBack();
-              }}>Go Back</Button>
+                this.props.history.push("/communities/" + this.state.parentPost.community);
+              }}>All Community Posts <ArrowReturnLeft /></Button>
               <Card className="mt-4">
                 <Card.Body>
-                  <Post postData={this.state.parentPost} />
-                  <Button variant="primary" onClick={this.handleOpenCommentEditor.bind(this)}>
-                    Leave a comment
+                  <Post postData={this.state.parentPost} displayCommunityName />
+                  <div className="d-flex justify-content-between">
+                    <Button variant="primary" onClick={this.handleOpenCommentEditor.bind(this)}>
+                      Leave a comment
                     {" "} <ChatRight />
-                  </Button>
+                    </Button>
+                    <VoteDisplay upvotes={this.state.parentPost.upvotes} downvotes={this.state.parentPost.downvotes} postId={this.state.parentPostId} />
+                  </div>
+
                   <Modal show={this.state.showCommentEditor} onHide={() => this.setState({ showCommentEditor: false })}>
                     <Modal.Header closeButton>
                       <Modal.Title>Add a Comment!</Modal.Title>
@@ -113,6 +126,7 @@ class CommentsViewer extends React.Component {
                     </Modal.Body>
                   </Modal>
 
+
                 </Card.Body>
               </Card>
               {this.state.children.sort(comment => comment.created).reverse().map((child) =>
@@ -120,6 +134,11 @@ class CommentsViewer extends React.Component {
                   <Card key={child.id} className="mt-4 ml-4 comment">
                     <Card.Body>
                       <Post postData={child} />
+                      <div className="d-flex justify-content-between">
+                        <span></span>
+                        <VoteDisplay upvotes={child.upvotes} downvotes={child.downvotes} postId={child.id} />
+                      </div>
+
                     </Card.Body>
                   </Card>
                 ) : null

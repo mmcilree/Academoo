@@ -16,7 +16,7 @@ import {
     Container
 } from 'react-bootstrap';
 import { Route } from 'react-router-dom';
-
+import { authFetch } from '../../auth';
 
 class Whiteboard extends React.Component {
     constructor(props) {
@@ -101,7 +101,7 @@ class Whiteboard extends React.Component {
     };
 
     downloadURL(url, filename) {
-        fetch(url).then(function (t) {
+        authFetch(url).then(function (t) {
             return t.blob().then((b) => {
                 var a = document.createElement("a");
                 a.href = URL.createObjectURL(b);
@@ -109,7 +109,7 @@ class Whiteboard extends React.Component {
                 a.click();
             }
             );
-        });
+        }).catch(() => {});
     }
 
     share = () => {

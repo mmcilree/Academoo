@@ -43,7 +43,7 @@ class CommunityCreator extends React.Component {
     }
 
     fetchCommunities(host) {
-        fetch('/api/communities').then(response => response.json(),
+        authFetch('/api/communities').then(response => response.json(),
             {
                 headers: {
                     'Client-Host': window.location.protocol + "//" + window.location.hostname
@@ -52,7 +52,7 @@ class CommunityCreator extends React.Component {
             .then(data =>
                 this.setState({
                     communities: data,
-                }))
+                })).catch(() => {})
     }
 
     fetchUserDetails() {
@@ -61,7 +61,7 @@ class CommunityCreator extends React.Component {
                 this.setState({
                     currentUser: data.id,
                 })
-            )
+            ).catch(() => {})
     }
 
     handleChange(event) {

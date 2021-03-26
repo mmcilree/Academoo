@@ -34,7 +34,7 @@ class UserProfile extends Component {
           this.setState({
             currentUser: data.id,
             email: data.email,
-            bio: data.bio,
+            bio: data.about,
             private_acc: false,
             isLoading: false
           })
@@ -50,7 +50,7 @@ class UserProfile extends Component {
   }
 
   async fetchPosts() {
-    await fetch('/api/posts?author=' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""),
+    await authFetch('/api/posts?author=' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""),
       {
         headers: {
           'User-ID': this.state.currentUser,
@@ -82,6 +82,13 @@ class UserProfile extends Component {
     // this.fetchPosts();
   }
 
+  componentWillUnmount() {
+    // fix Warning: Can't perform a React state update on an unmounted component
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+
 
   componentDidUpdate(prevProps) {
     if (this.props.match.params.id !== prevProps.match.params.id) {
@@ -93,7 +100,7 @@ class UserProfile extends Component {
   }
 
   fetchUserDetails() {
-    fetch('/api/users/' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
+    authFetch('/api/users/' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
       .then(response => response.json())
       .then(data => {
         this.setState({

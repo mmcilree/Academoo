@@ -27,8 +27,22 @@ class CommentCreator extends React.Component {
                     email: data.email,
                     userHost: data.host
                 })
-            )
+            ).catch(() => {})
     }
+
+    fetchVotes(postId) {
+        authFetch('/api/get-vote/' + postId)
+          .then(response => {
+            if (!response.ok || response.status != 200) {
+              throw new Error();
+            }
+            return response.json()
+          }
+          ).then(data =>
+            this.setState({ voteStatus: { ...this.state.voteStatus, [postId]: data.vote } })
+          ).catch((err) => {
+          });
+      }
 
     handleChange(event) {
         const target = event.target;
@@ -73,7 +87,7 @@ class CommentCreator extends React.Component {
 
         requestOptions.body = JSON.stringify(requestOptions.body);
 
-        await fetch('/api/posts', requestOptions)
+        await authFetch('/api/posts', requestOptions)
             .then((response) => {
                 if (response.status >= 400 && response.status < 600) {
                     return response.json().then((error) => {

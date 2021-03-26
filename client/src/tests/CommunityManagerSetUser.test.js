@@ -3,6 +3,7 @@ import { configure } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
 configure({ adapter: new Adapter() });
 import { mount } from "enzyme";
+import { Router, Route, Switch } from "react-router-dom";
 import { createMemoryHistory } from 'history';
 import { Alert } from 'react-bootstrap'
 import { fetchMock } from './fetchMocks.js';
@@ -21,9 +22,9 @@ jest.mock('../auth', () => {
 );
 
 function setFormDataAndSubmit(instance, username, role) {
-    wrapper.instance().handleHostChange(instance);
-    wrapper.instance().setState({ selected: [{ user: username }] })
-    wrapper.instance().setState({ role: role })
+    wrapper.find(CommunityManager).instance().handleHostChange(instance);
+    wrapper.find(CommunityManager).instance().setState({ selected: [{ user: username }] })
+    wrapper.find(CommunityManager).instance().setState({ role: role })
     submitButton = (wrapper.find('[controlId="user-role-button"]')).find('[type="submit"]').hostNodes();
     submitButton.simulate('submit');
 }
@@ -33,7 +34,9 @@ beforeEach(() => {
     global.fetch = jest.fn().mockImplementation(fetchMock);
     history.push('/communities/community1/manage')
     wrapper = mount(
-        <CommunityManager match={{ params: { id: "community1" }, isExact: true, path: "", url: "" }} />
+        <Router history={history}>
+            <CommunityManager match={{ params: { id: "community1" }, isExact: true, path: "", url: "" }} />
+        </Router>
     );
 });
 

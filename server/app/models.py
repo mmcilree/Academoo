@@ -23,6 +23,11 @@ subscriptions = db.Table('subscriptions',
     db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
     db.Column('community_id', db.String(1000), db.ForeignKey('community.id')))
 
+class UserVote(db.Model):
+    user_id = db.Column(db.String(50), db.ForeignKey('user.user_id'), primary_key=True)
+    post_id = db.Column(db.String(1000), db.ForeignKey('post.id'), primary_key=True)
+    value = db.Column(db.String(50)) # upvote / downvote
+
 class User(db.Model):
     user_id = db.Column(db.String(50), primary_key=True)
     posts_created = db.relationship('Post', backref='author')
