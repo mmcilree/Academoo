@@ -315,8 +315,10 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
                 return (message, 403)
         elif requester.has_role(community_id, "prohibited"):
-            message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-            return (message, 403)
+            site_wide_roles = requester.site_roles.split(",")
+            if (("site-admin" not in site_wide_roles) and ("site-moderator" not in site_wide_roles)):
+                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                return (message, 403)
         query = query.filter(Post.community_id == community_id)
     if min_date is not None:
         query = query.filter(Post.created >= min_date)
@@ -324,17 +326,21 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
         author_entry = User.lookup(author)
         requester_entry = User.lookup(requester_str)
         requester_roles = UserRole.lookup(user_id=requester_str)
-        if (author == requester_str or (not author_entry.private_account)):
+        sw_roles = requester_entry.site_roles.split(",")
+        if(("site-admin" in sw_roles) or ("site-moderator" in sw_roles)):
             query = query.filter(Post.author_id == author)
-            if requester_entry is None and requester_roles is None:
-                query = query.filter(Post.community.default_role != "prohibited")
-            else:
-                requester_prohibited = UserRole.query.filter(UserRole.user_id == requester_str and UserRole.role == "prohibited")
-                prohibited_communities = [role.community.id for role in requester_prohibited]
-                query = query.filter(Post.community_id.notin_(prohibited_communities))
         else:
-            message = {"title": "Private Account", "message": "These posts cannot be viewed as the specified user has a private account."}
-            return (message, 403)
+            if (author == requester_str or (not author_entry.private_account)):
+                query = query.filter(Post.author_id == author)
+                if requester_entry is None and requester_roles is None:
+                    query = query.filter(Post.community.default_role != "prohibited")
+                else:
+                    requester_prohibited = UserRole.query.filter(UserRole.user_id == requester_str and UserRole.role == "prohibited")
+                    prohibited_communities = [role.community.id for role in requester_prohibited]
+                    query = query.filter(Post.community_id.notin_(prohibited_communities))
+            else:
+                message = {"title": "Private Account", "message": "These posts cannot be viewed as the specified user has a private account."}
+                return (message, 403)
     #if host is not None:
         #query = query.filter(Post.host == host)
     if parent_post is not None:
@@ -405,9 +411,11 @@ def createPost(post_data, author_id, author_host):
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
                 return (message, 403)
         else :
-            if not author.has_role(community_id, "contributor"):
-                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-                return (message, 403)
+            site_roles = author.site_roles.split(",")
+            if(("site-admin" not in site_roles) and ("site-moderator" not in site_roles)):
+                if not author.has_role(community_id, "contributor"):
+                    message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                    return (message, 403)
 
     if author is None:
         new_user = User(user_id = author_id, host = author_host)
@@ -441,8 +449,10 @@ def getPost(post_id, requester_str):
             message = {"title": "Permission error", "message": "Do not have permission to perform action"}
             return (message, 403)
     elif requester.has_role(post.community_id, "prohibited"):
-        message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-        return (message, 403)
+        site_wide_roles = requester.site_roles.split(",")
+        if (("site-admin" not in site_wide_roles) and ("site-moderator" not in site_wide_roles)):
+            message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+            return (message, 403)
     
     post_dict = {
             "id": post.id, 

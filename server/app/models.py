@@ -92,7 +92,9 @@ class User(db.Model):
                     return True
                 else:
                     return False
-            if(role_tiers[community.default_role] <= role_tiers[role]):
+            if community.default_role == "prohibited":
+                return False
+            if((role_tiers[community.default_role] <= role_tiers[role])):
                 return True
             return False
 

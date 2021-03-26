@@ -180,10 +180,12 @@ def create_post():
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
                 return jsonify(message), 403
         else :
-            if not requester.has_role(community_id, "member") :
-                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
-                return jsonify(message), 403
-        
+            site_roles = requester.site_roles.split(",")
+            if(("site-admin" not in site_roles) and ("site-moderator" not in site_roles)):
+                if not requester.has_role(community_id, "member") :
+                    message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+                    return jsonify(message), 403
+
         return respond_with_action(actions.createPost(request.json, requester_str, host))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
