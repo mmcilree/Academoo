@@ -156,7 +156,7 @@ class Post(db.Model):
     parent_id = db.Column(db.String(1000), db.ForeignKey('post.id'))
     upvotes = db.Column(db.Integer, default=0)
     downvotes = db.Column(db.Integer, default=0)
-    parent = db.relationship('Post', remote_side=[id], backref='comments')
+    parent = db.relationship('Post', remote_side=[id], backref=backref('comments', cascade="all, delete-orphan"))
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
     tags = db.relationship('PostTag', backref='post', cascade="all, delete")
 

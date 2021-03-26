@@ -19,9 +19,9 @@ def createCommunity(community_id, title, description, admin):
     if User.query.filter_by(user_id=admin) is None:
         return ({"title": "Could not find user" + admin, "message": "User does not exist on database, specify a different user"}, 404)
         
-    response = grantRole(admin, community_id, admin, "admin")
-    if response[1] != 200:
-        return response
+
+    new_role = UserRole(user_id=admin, community_id=community_id, role="admin")
+    db.session.add(new_role)
 
     db.session.commit()
     return (None, 200)
