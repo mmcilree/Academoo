@@ -20,6 +20,7 @@ class CommunityFeed extends Component {
     host: this.props.match.params.instance ? this.props.match.params.instance : "local",
     newPostText: "",
     isAdmin: false,
+    isSiteAdmin: false,
     communityData: null,
     isSubscribed: false,
     userID: null
@@ -36,11 +37,12 @@ class CommunityFeed extends Component {
         this.setState({
           userID: data.id,
           isAdmin: data.adminOf.includes(this.state.currentCommunity),
-          isSubscribed: data.subscriptions.includes(this.state.currentCommunity)
+          isSubscribed: data.subscriptions.includes(this.state.currentCommunity),
+          isSiteAdmin: data.site_roles.split(",").includes("site-admin")
         })
         console.log(this.state.userID)
         this.fetchPosts()
-      }).catch(() => {})
+      }).catch(() => { })
 
   }
 
@@ -97,7 +99,7 @@ class CommunityFeed extends Component {
           communityData: data,
           isLoadingCommunity: false,
         })
-      ).catch(() => {})
+      ).catch(() => { })
   }
 
   handleSubmit(event) {
@@ -105,7 +107,7 @@ class CommunityFeed extends Component {
   }
 
   render() {
-    const { isLoadingPosts, isLoadingCommunity, posts, error, currentCommunity, newPostText, host, communityData, isAdmin } = this.state;
+    const { isLoadingPosts, isLoadingCommunity, posts, error, currentCommunity, newPostText, host, communityData, isAdmin, isSiteAdmin } = this.state;
     const popover = (
       <Popover id="popover-basic">
         <Popover.Title as="h3">Community description</Popover.Title>
@@ -138,7 +140,7 @@ class CommunityFeed extends Component {
 
         </Card.Header>
         <Card.Body>
-          {isAdmin &&
+          {(isAdmin || isSiteAdmin) &&
             <Alert className="d-flex justify-content-between align-itemsp-center" variant="primary">You are an admin!
             <Link to={"/communities/" + currentCommunity + "/manage"}>
                 Manage Community

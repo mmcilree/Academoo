@@ -8,6 +8,7 @@ import Modal from "../../../node_modules/react-bootstrap/Modal";
 import CommentCreator from "./CommentCreator";
 import VoteDisplay from "../posts/VoteDisplay";
 import { authFetch } from '../../auth';
+import { Alert } from "react-bootstrap";
 
 class CommentsViewer extends React.Component {
   constructor(props) {
@@ -30,10 +31,12 @@ class CommentsViewer extends React.Component {
 
   fetchUserDetails() {
     authFetch("/api/get-user").then(response => response.json())
-      .then(data =>
+      .then(data => {
         this.setState({
-          userID: data.userID,
-        }))
+          userID: data.id,
+        })
+        this.fetchParentPost();
+      })
   }
 
   handleOpenCommentEditor() {
@@ -49,19 +52,31 @@ class CommentsViewer extends React.Component {
     await authFetch('/api/posts/' + this.state.parentPostId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
       {
         headers: {
-          'User-ID': this.state.user_id,
+          'User-ID': this.state.userID,
           'Client-Host': window.location.protocol + "//" + window.location.hostname
         }
       })
-      .then(response => response.json())
-      .then(data =>
+      .then(response => {
+        if (!response.ok) {
+          if (!response.ok) {
+            return response.json().then((error) => {
+              let err = error.title + ": " + error.message
+              throw new Error(err);
+            })
+          }
+        } else {
+          return response.json()
+        }
+      })
+      .then(data => {
         this.setState({
           parentPost: data,
           needsUpdate: false
         })
-      ).catch(() => { });
+        this.fetchChildren();
+      })
+      .catch(error => this.setState({ error: error.message, isLoading: false }));
 
-    this.fetchChildren();
   }
 
   async fetchChildren() {
@@ -73,20 +88,29 @@ class CommentsViewer extends React.Component {
         return authFetch('/api/posts/' + childId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
           {
             headers: {
-              'User-ID': this.state.user_id,
+              'User-ID': this.state.userID,
               'Client-Host': window.location.protocol + "//" + window.location.hostname
             }
           })
-          .then(response => response.json())
+          .then(response => {
+            if (!response.ok) {
+              return response.json().then((error) => {
+                let err = error.title + ": " + error.message
+                throw new Error(err);
+              })
+            } else {
+              return response.json();
+            }
+          })
           .then(data => data)
-          .catch(error => this.setState({ error, isLoading: false }));
+          .catch(error => this.setState({ error: error.message, isLoading: false }));
       }));
 
     this.setState({ isLoading: false, children: [...children, ...new_children] })
   }
 
   componentDidMount() {
-    this.fetchParentPost();
+    this.fetchUserDetails();
   }
 
   componentDidUpdate() {
@@ -96,12 +120,12 @@ class CommentsViewer extends React.Component {
   }
 
   render() {
-    const { isLoading } = this.state;
+    const { isLoading, error } = this.state;
 
     return (
       <div className="container-md comments_view">
         <Card className="mt-4">
-          {!isLoading ? (
+          {!isLoading && !error ? (
             <Card.Body>
               <Button variant="secondary" onClick={() => {
                 this.props.history.push("/communities/" + this.state.parentPost.community);
@@ -145,9 +169,8 @@ class CommentsViewer extends React.Component {
               )}
               {this.state.children.length === 0 ?
                 <p className="mt-4 ml-4 comment">No comments to show.</p> : null}
-
             </Card.Body>) :
-            <Card.Body><h3>Loading Post...</h3></Card.Body>}
+            <Card.Body>{error ? <Alert variant="warning">Error fetching posts: {error}</Alert> : <h3>Loading Post...</h3>}</Card.Body>}
         </Card>
       </div>
     );

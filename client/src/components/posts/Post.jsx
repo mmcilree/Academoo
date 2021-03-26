@@ -26,6 +26,7 @@ class Post extends Component {
       error: null,
       isLoading: false,
       adminCommunities: [],
+      isSiteMod: false,
     }
     this.validateForm = this.validateForm.bind(this);
     this.handleSubmitEdit = this.handleSubmitEdit.bind(this);
@@ -42,7 +43,8 @@ class Post extends Component {
         this.setState({
           currentUser: data.id,
           isLoading: false,
-          adminCommunities: data.adminOf
+          adminCommunities: data.adminOf,
+          isSiteMod: data.site_roles.split(",").includes("site-moderator")
         })
       }
       )
@@ -51,9 +53,14 @@ class Post extends Component {
   }
 
   checkPermissions() {
-    if (this.props.postData.author.id === this.state.currentUser || this.state.adminCommunities.includes(this.props.postData.community)) {
+    if (this.props.postData.author.id === this.state.currentUser || this.state.isSiteMod) {
       this.setState({
         cannotEdit: false,
+        cannotDelete: false
+      })
+    }
+    else if (this.state.adminCommunities.includes(this.props.postData.community)) {
+      this.setState({
         cannotDelete: false
       })
     }
@@ -85,6 +92,7 @@ class Post extends Component {
     authFetch('/api/posts/' + this.props.postData.id, requestOptions);
     this.handleCloseDelete();
     this.props.history.push("/communities/" + this.props.postData.community)
+    window.location.reload(false);
   }
 
   handleShowDelete(event) {
@@ -197,7 +205,7 @@ class Post extends Component {
         })
         this.handleCloseEdit();
       }
-    }).catch(() => {});
+    }).catch(() => { });
   }
 
 
@@ -265,8 +273,8 @@ class Post extends Component {
         >
           <Modal.Body>Are you sure you want to delete this post and all its comments?</Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={this.handleDeletePost.bind(this)}>Yes, delete post</Button>
             <Button onClick={this.handleCloseDelete}>No, cancel</Button>
+            <Button variant="secondary" onClick={this.handleDeletePost.bind(this)}>Yes, delete post</Button>
           </Modal.Footer>
         </Modal>
         <ContentTypeComponent

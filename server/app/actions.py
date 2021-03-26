@@ -42,9 +42,17 @@ def grantRole(username, community_id, current_user, role="member", external=Fals
             return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 400)
     
     current_role = UserRole.query.filter_by(user_id=current_user, community_id=community_id).first()
-
+    
     if current_role is not None and username == current_user:
         return ({"title": "User cannot change own role", "message": "please choose another user"}, 400)
+    
+    requester = User.lookup(current_user)
+    if(requester is not None):
+        roles = requester.site_roles.split(",")
+        if((not requester.has_role(community_id, "admin")) and ("site-admin" not in roles)):
+            return ({"title":"Permissions Error", "message": "User does not have admin privileges so cannot change another user's role"}, 403)
+    else:
+        return ({"title":"Permissions Error", "message": "User does not have admin privileges so cannot change another user's role"}, 403)
 
     if UserRole.query.filter_by(user_id=username, community_id=community_id).first() is None:
         new_role = UserRole(user_id=username, community_id=community_id, role=role)
@@ -325,7 +333,7 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     if author is not None:
         author_entry = User.lookup(author)
         requester_entry = User.lookup(requester_str)
-        requester_roles = UserRole.lookup(user_id=requester_str)
+        requester_roles = UserRole.query.filter_by(user_id=requester_str)
         sw_roles = requester_entry.site_roles.split(",")
         if(("site-admin" in sw_roles) or ("site-moderator" in sw_roles)):
             query = query.filter(Post.author_id == author)
@@ -481,10 +489,11 @@ def editPost(post_id, post_data, requester):
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
-    if requester.user_id != post.author.user_id:
+    site_roles = requester.site_roles.split(",")
+
+    if ((requester.user_id != post.author.user_id) and ("site-moderator" not in site_roles)):
         return ({"title": "Permission denied " + post_id, "message": "User does not have permission to edit this post"}, 403)
-
-
+    
     post.title = update_title
     
     for content_field in post.content_objects:
@@ -497,7 +506,7 @@ def editPost(post_id, post_data, requester):
         db.session.add(content_field)
 
     db.session.commit()
-    return getPost(post_id, requester)
+    return getPost(post_id, requester.user_id)
     #return (None, 200)
 
 def deletePost(post_id, requester):
@@ -508,7 +517,8 @@ def deletePost(post_id, requester):
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
 
-    if ((requester.user_id != post.author.user_id) and (not requester.has_role(post.community_id, "admin"))):
+    site_roles = requester.site_roles.split(",")
+    if ((requester.user_id != post.author.user_id) and (not requester.has_role(post.community_id, "admin")) and  ("site-moderator" not in site_roles)):
         return ({"title": "Permission denied " + post_id, "message": "User does not have permission to delete this post"}, 403)
 
     #will need to recursively delete comments
