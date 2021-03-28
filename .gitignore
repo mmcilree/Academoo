@@ -8,3 +8,4 @@ build/
 client/.eslintcache
 .venv/
 .coverage
+.DS_Store
