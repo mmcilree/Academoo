@@ -9,12 +9,12 @@ class Manager(object):
         # host name : <Instance Objects>
         if os.environ.get("FLASK_ENV") == "production":
             self.instances = {
-                "Freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
-                "Nebula": Instance("https://nebula0.herokuapp.com"),
-                "Fritter": Instance("https://bc89.host.cs.st-andrews.ac.uk/"),
-                "Feddit": Instance("http://86.176.106.252:8000/"),
-                "WabberJocky": Instance("https://cs3099user-a4.host.cs.st-andrews.ac.uk/"),
-                "JHA10": Instance("https://cs3099user-a10.host.cs.st-andrews.ac.uk")  
+                "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
+                "nebula": Instance("https://nebula0.herokuapp.com"),
+                "fritter": Instance("https://bc89.host.cs.st-andrews.ac.uk/"),
+                "feddit": Instance("http://86.176.106.252:8000/"),
+                "wabberjocky": Instance("https://cs3099user-a4.host.cs.st-andrews.ac.uk/"),
+                "jha10": Instance("https://cs3099user-a10.host.cs.st-andrews.ac.uk")  
             }
         else:
             self.instances = {
