@@ -96,7 +96,7 @@ class Instance(object):
     def get_users(self, id=None):
         request_target = f"/fed/users/{id}" if id else f"/fed/users"
         body = self.get_request_data(request_target)
-        headers = {"Signature": get_signature(body), "Digest": generate_digest}
+        headers = {"Signature": get_signature(body), "Digest": generate_digest(body)}
         if id:
             ret = requests.get(urljoin(self.url, f"/fed/users/{id}"), headers=headers)
         else:
@@ -190,7 +190,7 @@ class Instance(object):
         body = self.get_request_data(f"delete /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
         headers["Signature"] = get_signature(body)
         headers["Digest"] = generate_digest(body)
-        
+
         ret = requests.delete(urljoin(self.url, f"/fed/posts/{id}"), headers=headers) 
         try:
             json.loads(ret.content)
