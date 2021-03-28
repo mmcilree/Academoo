@@ -60,13 +60,14 @@ class CommunitySubscribeButton extends React.Component {
     }
 
     render() {
-        return !this.state.isLoading && (this.state.isSubscribed ?
+        return !this.state.isLoading ? (this.state.isSubscribed ?
             <Button onClick={this.handleUnsubscribe.bind(this)} className="h-50" variant="outline-primary">
                 <BookmarkCheck className="mr-2" />Unfolloow
             </Button> :
             <Button onClick={this.handleSubscribe.bind(this)} className="h-50" variant="outline-secondary">
                 <BookmarkPlus className="mr-2" />&nbsp; Folloow &nbsp;
-            </Button>)
+            </Button>) 
+            : <Button variant="outline-secondary">&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; ... &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Button>
     }
 }
 
