@@ -21,7 +21,7 @@ class CommunitySubscribeButton extends React.Component {
         await authFetch("/api/get-user").then(response => response.json())
             .then(data =>
                 this.setState({
-                    isSubscribed: data.subscriptions.includes(this.props.community),
+                    isSubscribed: data.subscriptions.some(o => o.communityId === this.props.community),
                     isLoading: false
                 })
             ).catch(() => { })
@@ -32,7 +32,8 @@ class CommunitySubscribeButton extends React.Component {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: {
-                id: this.props.community
+                id: this.props.community,
+                external: this.props.external
             }
         };
 
@@ -48,7 +49,8 @@ class CommunitySubscribeButton extends React.Component {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: {
-                id: this.props.community
+                id: this.props.community,
+                external: this.props.external
             }
         };
 

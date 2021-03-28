@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PostViewer from "../posts/PostsViewer";
 import { Card, Button, Alert, OverlayTrigger, Popover, Row, Col, Spinner } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { BookmarkPlus } from "react-bootstrap-icons";
 import { authFetch } from '../../auth';
 import MiniPostCreator from "../posts/MiniPostCreator";
@@ -23,8 +23,8 @@ class CommunityFeed extends Component {
     isSiteAdmin: false,
     communityData: null,
     isSubscribed: false,
-    userID: null
-
+    userID: null,
+    notFound: false
   }
 
   componentDidMount() {
@@ -42,7 +42,7 @@ class CommunityFeed extends Component {
         })
         console.log(this.state.userID)
         this.fetchPosts()
-      }).catch(() => { })
+      }).catch(() => {})
 
   }
 
@@ -93,13 +93,18 @@ class CommunityFeed extends Component {
           'Client-Host': window.location.protocol + "//" + window.location.hostname
         }
       })
-      .then(response => response.json())
+      .then(response => {
+        if (response.status !== 200) {
+          throw new Error();
+        }
+        return response.json()
+      })
       .then(data =>
         this.setState({
           communityData: data,
           isLoadingCommunity: false,
         })
-      ).catch(() => { })
+      ).catch((error) => {this.setState({notFound: true})})
   }
 
   handleSubmit(event) {
@@ -107,6 +112,7 @@ class CommunityFeed extends Component {
   }
 
   render() {
+    console.log(this.state)
     const { isLoadingPosts, isLoadingCommunity, posts, error, currentCommunity, newPostText, host, communityData, isAdmin, isSiteAdmin } = this.state;
     const popover = (
       <Popover id="popover-basic">
@@ -116,7 +122,7 @@ class CommunityFeed extends Component {
         </Popover.Content>
       </Popover>
     );
-    return (
+    return this.state.notFound ? <Redirect to='/404' /> : (
       <Card className="mt-4 mb-10">
         <Card.Header className="pt-4 pr-4">
           <div className="d-flex justify-content-between">
@@ -132,7 +138,7 @@ class CommunityFeed extends Component {
                   height="40"></img></Spinner>
                 <span>Loading... </span></h2>}
 
-            <CommunitySubscribeButton community={this.state.currentCommunity} />
+            <CommunitySubscribeButton community={this.state.currentCommunity} external={this.state.instance === "local" ? null : this.state.instance}/>
           </div>
 
           <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>

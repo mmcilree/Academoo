@@ -122,9 +122,9 @@ def get_user():
             adminOf.append(userRole.community_id)   
 
     for subscription in u.subscriptions:
-        subscriptions.append(subscription.id)
+        subscriptions.append({"communityId": subscription.community_id, "external": subscription.external})
 
-    return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "adminOf": adminOf, "subscriptions": subscriptions, "bio": u.bio, "private": u.private_account, "site_roles": u.site_roles})
+    return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "adminOf": adminOf, "subscriptions": subscriptions, "about": u.about, "private": u.private_account, "site_roles": u.site_roles})
 
 @bp.route("/subscribe", methods=["POST"])
 @auth_required
@@ -132,7 +132,8 @@ def subscribe():
     u = current_user()
     req = request.json
     community_id = req["id"]
-    return respond_with_action(actions.addSubscriber(u.user_id, community_id))
+    external = req["external"]
+    return respond_with_action(actions.addSubscriber(u.user_id, community_id, external))
 
 @bp.route("/unsubscribe", methods=["POST"])
 @auth_required
@@ -140,7 +141,8 @@ def unsubscribe():
     u = current_user()
     req = request.json
     community_id = req["id"]
-    return respond_with_action(actions.removeSubscriber(u.user_id, community_id))
+    external = req["external"]
+    return respond_with_action(actions.removeSubscriber(u.user_id, community_id, external))
 
 @bp.route("/add-instance", methods=["POST"])
 def add_instance():
