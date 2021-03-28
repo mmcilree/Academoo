@@ -59,9 +59,11 @@ def test_get_posts(client):
     assert len(response.json) == 2
 
     response = client.get("api/posts?limit=1", headers=headers_with_user)
+    assert response.status_code == 200
     assert len(response.json) == 1
 
-    response = client.get("api/posts?community=TestCommunity2")
+    response = client.get("api/posts?community=TestCommunity2", headers=headers_with_user)
+    assert response.status_code == 200
     assert len(response.json) == 0
 
     response = client.get("api/posts")
@@ -121,8 +123,8 @@ def test_edit_post(client):
     response = client.put(f"api/posts/{Constants.POST1_ID}", json=data)
     assert response.status_code == 400
 
-    response.client.put(f"api/posts/{Constants.POST1_ID}", headers=headers_with_user)
-    assert resposne.status_code == 400
+    response = client.put(f"api/posts/{Constants.POST1_ID}", headers=headers_with_user)
+    assert response.status_code == 400
 
     # TODO: Test Error 403 forbidden
 
@@ -150,7 +152,7 @@ def test_get_users(client):
     # assert response.status_code == 200
 
 def test_get_users_by_id(client):
-    response = client.get("api/users/TestUser")
+    response = client.get("api/users/existent")
     assert response.status_code == 200
 
     response = client.get("api/users/nonexistent")

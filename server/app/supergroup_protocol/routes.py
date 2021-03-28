@@ -51,7 +51,8 @@ def get_user_by_id(id):
         message, status_code = verify_request(headers=request.headers, request_target=f"get /fed/users/{id}")
         if status_code != 200: return jsonify(message), status_code
 
-        return jsonify(actions.getLocalUser(id))
+        message, status_code = actions.getLocalUser(id)
+        return jsonify(message), status_code
     else:
         return instance_manager.get_users(external, id=id)
 

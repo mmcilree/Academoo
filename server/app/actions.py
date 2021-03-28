@@ -270,12 +270,12 @@ def getLocalUser(id):
     if validate_username(id): return validate_username(id)
 
     user = User.query.filter_by(user_id=id).first()
-    if(user == None):
-        return False
+    if not user:
+        return {"title": "Could not find user", "message": "User does not exist!"}, 404
     else:
         if user.private_account:
             user_dict = {"id":user.user_id, "email": "", "host":user.host, "bio":"", "private": user.private_account, "site_roles" : user.site_roles}
-            return user_dict
+            return user_dict, 200
         else:
             user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.about, "private": user.private_account,  "site_roles" : user.site_roles}
             return user_dict
