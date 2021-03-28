@@ -5,6 +5,7 @@ from urllib.parse import urlparse, urljoin
 from utils import format_url
 import requests
 from requests.exceptions import ConnectionError, ConnectTimeout
+from flask import current_app
 import time
 
 class Manager(object):
@@ -50,9 +51,8 @@ class Manager(object):
                 for child_url in ret.json():
                     child_url = format_url(child_url)
                     if child_url in memo: continue
-                
-                    stack.append(child_url)
-                    self.add_instance(host=urlparse(child_url).netloc, url=child_url)
+                    if self.add_instance(host=urlparse(child_url).netloc, url=child_url):
+                        stack.append(child_url)
                                 
     def create_post(self, host, data, headers):
         return self.instances[host].create_post(data, headers)
@@ -91,11 +91,12 @@ class Manager(object):
         return list(self.instances.keys())
 
     def add_instance(self, host, url):
-        if host in self.instances or urlparse(url).netloc in self.url_to_instance:
+        netloc = urlparse(url).netloc
+        if host in self.instances or netloc in self.url_to_instance or netloc == current_app.config["HOST"]:
             return False
 
         url = format_url(url)
         self.instances[host] = Instance(url)
-        self.url_to_instance[urlparse(url).netloc] = self.instances[host]
+        self.url_to_instance[netloc] = self.instances[host]
         
         return True
