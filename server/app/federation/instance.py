@@ -57,13 +57,13 @@ class Instance(object):
         return False
     
     def get_request_data(self, request_target, user_id=None, body=b""):
-        return self.request_data.format(
+        return (self.request_data.format(
             req=request_target,
             user_id=user_id,
             date=get_date(),
             digest=generate_digest(body),
             url=current_app.config["HOST"]
-        )
+        ), generate_digest(body))
 
     def verify_signature(self, encoded_signature, request_target, headers, body):
         if not self.public_key and not self.get_public_key(): return False
@@ -95,8 +95,8 @@ class Instance(object):
     
     def get_users(self, id=None):
         request_target = f"/fed/users/{id}" if id else f"/fed/users"
-        body = self.get_request_data(request_target)
-        headers = {"Signature": get_signature(body), "Digest": generate_digest(body)}
+        (body, digest) = self.get_request_data(request_target)
+        headers = {"Signature": get_signature(body), "Digest": digest}
         if id:
             ret = requests.get(urljoin(self.url, f"/fed/users/{id}"), headers=headers)
         else:
@@ -110,9 +110,9 @@ class Instance(object):
             return Response(status=ret.status_code)
 
     def get_timestamps(self, community, headers):
-        body = self.get_request_data(f"get /fed/communities/{community}/timestamps", headers.get("User-ID"))
+        body, digest = self.get_request_data(f"get /fed/communities/{community}/timestamps", headers.get("User-ID"))
         headers["Signature"] = get_signature(body)
-        headers["Digest"] = generate_digest(body)
+        headers["Digest"] = digest
 
         ret = requests.get(urljoin(self.url, f"/fed/communities/{community}/timestamps"), headers=headers)
         if(ret.status_code != 200):
@@ -121,18 +121,18 @@ class Instance(object):
 
     # If the timestamp is different, then the cache is invalidated
     def get_posts(self, community, headers):
-        body = self.get_request_data(f"get /fed/posts", headers.get("User-ID"))
+        body, digest = self.get_request_data(f"get /fed/posts", headers.get("User-ID"))
         headers["Signature"] = get_signature(body)
-        headers["Digest"] = generate_digest(body)
+        headers["Digest"] = digest
 
         ret = requests.get(urljoin(self.url, f"/fed/posts?community={community}"), headers=headers)
         if check_get_filtered_post(ret.content): return check_get_filtered_post(ret.content)
         return ret.json(), ret.status_code
 
     def get_post_by_id(self, id, headers):
-        body = self.get_request_data(f"get /fed/posts/{id}", headers.get("User-ID"))
+        body, digest = self.get_request_data(f"get /fed/posts/{id}", headers.get("User-ID"))
         headers["Signature"] = get_signature(body)
-        headers["Digest"] = generate_digest(body)
+        headers["Digest"] = digest
 
         ret = requests.get(urljoin(self.url, f"/fed/posts/{id}"), headers=headers)
         if check_get_post(ret.content): return check_get_post(ret.content)
@@ -140,9 +140,9 @@ class Instance(object):
 
     def get_communities(self, headers, id=None):
         request_target = f"get /fed/communities/{id}" if id else f"get /fed/communities"
-        body = self.get_request_data(request_target, headers.get("User-ID"))
+        body, digest = self.get_request_data(request_target, headers.get("User-ID"))
         headers["Signature"] = get_signature(body)
-        headers["Digest"] = generate_digest(body)
+        headers["Digest"] = digest
 
         if id:
             ret = requests.get(urljoin(self.url, f"/fed/communities/{id}"), headers=headers)
@@ -157,9 +157,9 @@ class Instance(object):
     def create_post(self, data, headers):
         data.pop("external")
 
-        body = self.get_request_data(f"post /fed/posts", headers.get("User-ID"), bytes(str(data), "utf-8"))
+        body, digest = self.get_request_data(f"post /fed/posts", headers.get("User-ID"), bytes(str(data), "utf-8"))
         headers["Signature"] = get_signature(body)
-        headers["Digest"] = generate_digest(body)
+        headers["Digest"] = digest
 
         ret = requests.post(urljoin(self.url, f"/fed/posts"), json=data, headers=headers)
         try:
@@ -172,9 +172,9 @@ class Instance(object):
     def edit_post(self, data, id, headers):
         data.pop("external")
 
-        body = self.get_request_data(f"put /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
+        body, digest = self.get_request_data(f"put /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
         headers["Signature"] = get_signature(body)
-        headers["Digest"] = generate_digest(body)
+        headers["Digest"] = digest
 
         ret = requests.put(urljoin(self.url, f"/fed/posts/{id}"), json=data, headers=headers)
         try:
@@ -187,9 +187,9 @@ class Instance(object):
     def delete_post(self, data, id, headers):
         data.pop("external")
 
-        body = self.get_request_data(f"delete /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
+        body, generate_digest = self.get_request_data(f"delete /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
         headers["Signature"] = get_signature(body)
-        headers["Digest"] = generate_digest(body)
+        headers["Digest"] = digest
 
         ret = requests.delete(urljoin(self.url, f"/fed/posts/{id}"), headers=headers) 
         try:
