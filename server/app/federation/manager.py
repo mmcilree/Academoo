@@ -5,11 +5,12 @@ from urllib.parse import urlparse, urljoin
 from utils import format_url
 import requests
 from requests.exceptions import ConnectionError, ConnectTimeout
-from flask import current_app
 import time
 
 class Manager(object):
-    def __init__(self):
+    def __init__(self, host):
+        self.host = host
+
         # host name : <Instance Objects>
         if os.environ.get("FLASK_ENV") == "production":
             self.instances = {
@@ -22,10 +23,10 @@ class Manager(object):
             }
         else:
             self.instances = {
-                "Freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
-                "Academoo": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
+                # "Freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
+                # "Academoo": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
                 "WabberJocky": Instance("https://cs3099user-a4.host.cs.st-andrews.ac.uk/"),
-                "Feddit": Instance("http://86.176.106.252:8000/"),
+                # "Feddit": Instance("http://86.176.106.252:8000/"),
             }
 
         # URL to Instance, used for public key retrieval
@@ -92,7 +93,7 @@ class Manager(object):
 
     def add_instance(self, host, url):
         netloc = urlparse(url).netloc
-        if host in self.instances or netloc in self.url_to_instance or netloc == current_app.config["HOST"]:
+        if host in self.instances or netloc in self.url_to_instance or netloc == self.host:
             return False
 
         url = format_url(url)

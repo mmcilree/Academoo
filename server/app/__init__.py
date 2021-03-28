@@ -16,7 +16,7 @@ CORS(app)
 db = SQLAlchemy()
 migrate = Migrate(compare_type=True)
 guard = Praetorian()
-instance_manager = Manager()
+instance_manager = Manager(app.config["HOST"])
 
 from app.models import User
 
