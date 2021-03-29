@@ -92,7 +92,7 @@ def userAccountActivation(username, host, activation):
             return({"title":"Could not find user " + username, "message": "User does not exist in database, use a different username"}, 404)
         if(activation == "disable"):
             if(user.site_roles != None):
-                user.site_roles = ""
+                user.site_roles = None
                 db.session.commit()
                 return(None, 200)
             else:
@@ -138,7 +138,7 @@ def addSiteWideRole(admin, username, role, key, host):
             if not adminMatchesKey(key):
                 return({"title":"Unauthorized request from " + username, "message": "User is unauthorized to request admin priviliges, invalid key"}, 401)
         elif(admin == username):
-            return({"title: User cannot set their own permissions, message: Contact another admin user to allow permission change"}, 401)
+            return({"title": "User cannot set their own permissions", "message": "Contact another admin user to allow permission change"}, 401)
         # Check user is admin or moderator
         if((not role == "site-admin") & (not role == "site-moderator")):
             return({"title":"Invalid role" + role, "message": "Cannot assign this role, make sure role is <site-admin> or <site-moderator>"}, 400)

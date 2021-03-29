@@ -24,7 +24,7 @@ def assign_role():
     user_id = req["user"]
     community_id = req["community"]
     role = req["role"]
-    current_user = request.headers.get("User-ID")
+    current_user = request.headers.get("User-ID") # NOTE: shouldn't we use auth required and get user from there instead?
     if user_host in ["local", "nnv2host"]:
         return respond_with_action(actions.grantRole(user_id, community_id, current_user, role))
     else:
@@ -45,33 +45,45 @@ def get_default_role(id):
 def get_community_roles(id):
     return respond_with_action(actions.getRoles(id))
 
-@bp.route("/add-site-role/", methods=["POST"])
+@bp.route("/add-site-role", methods=["POST"])
 @auth_required
 def add_sitewide_role():
     req = request.json
-    admin = req["admin"]
-    username = req["username"]
-    key = req["key"]
-    role = req["role"]
-    host = req["host"]
+    if not req: return BAD_REQUEST
+
+    try:
+        admin = req["admin"]
+        username = req["username"]
+        key = req["key"]
+        role = req["role"]
+        host = req["host"]
+    except KeyError: return BAD_REQUEST
 
     return respond_with_action(actions.addSiteWideRole(admin, username, role, key, host))
 
-@bp.route("/remove-site-roles/", methods=["PUT"])
+@bp.route("/remove-site-roles", methods=["PUT"])
 @roles_required("site-admin")
 def remove_site_roles():
     req = request.json
-    username = req["username"]
-    host = req["host"]
+    if not req: return BAD_REQUEST
+    
+    try:
+        username = req["username"]
+        host = req["host"]
+    except KeyError: return BAD_REQUEST
     return respond_with_action(actions.removeSiteWideRoles(username, host))
 
-@bp.route("/account-activation/", methods=["PUT"])
-@roles_required("site-moderator")
+@bp.route("/account-activation", methods=["PUT"])
+@roles_accepted("site-moderator", "site-admin")
 def account_activation():
     req = request.json
-    username = req["username"]
-    host = req["host"]
-    activation = req["activation"]
+    if not req: return BAD_REQUEST
+
+    try:
+        username = req["username"]
+        host = req["host"]
+        activation = req["activation"]
+    except KeyError: return BAD_REQUEST
     return respond_with_action(actions.userAccountActivation(username, host, activation))
 
 @bp.route("/create-community", methods=["POST"])

@@ -2,7 +2,44 @@ import pytest
 from conftest import Constants, get_auth_tokens
 
 def test_assign_role(client):
-    pass
+    response = client.post("api/assign-role", 
+        headers={
+            "User-ID": "existent"
+        },
+        json={
+            "host": "local",
+            "user": "existent",
+            "community": "TestCommunity",
+            "role": "admin"
+        }
+    )
+    assert response.status_code == 403
+
+    response = client.post("api/assign-role", 
+        headers={
+            "User-ID": "admin"
+        },
+        json={
+            "host": "local",
+            "user": "existent",
+            "community": "TestCommunity",
+            "role": "admin"
+        }
+    )
+    assert response.status_code == 200
+
+    response = client.post("api/assign-role", 
+        headers={
+            "User-ID": "admin"
+        },
+        json={
+            "host": "local",
+            "user": "nonexistent",
+            "community": "TestCommunity",
+            "role": "admin"
+        }
+    )
+    assert response.status_code == 400
 
 def test_default_role(client):
     # Set and Get for default role
@@ -30,10 +67,144 @@ def test_get_community_roles(client):
     assert len(response.json) == 5
 
 def test_sitewide_roles(client):
-    pass
+    headers = get_auth_tokens(client)
+    headers_for_admin = get_auth_tokens(client, username="admin", password="admin")
+
+    response = client.post("api/add-site-role", headers=headers_for_admin)
+    assert response.status_code == 400
+
+    response = client.post("api/add-site-role", headers=headers_for_admin, json={})
+    assert response.status_code == 400
+
+    response = client.put("api/remove-site-roles", headers=headers_for_admin)
+    assert response.status_code == 400
+
+    response = client.put("api/remove-site-roles", headers=headers_for_admin, json={})
+    assert response.status_code == 400
+
+    response = client.post("api/add-site-role", headers=headers, json={
+        "admin": "admin",
+        "username": "existent",
+        "key": "lh87GFL3DHkkMsw098An",
+        "role": "site-moderator",
+        "host": "local"
+    })
+    assert response.status_code == 200
+
+    response = client.post("api/add-site-role", headers=headers, json={
+        "admin": "admin",
+        "username": "existent",
+        "key": "lh87GFL3DHkkMsw098An",
+        "role": "site-moderator",
+        "host": "local"
+    })
+    assert response.status_code == 400
+
+    response = client.post("api/add-site-role", headers=headers, json={
+        "admin": "TestUser2",
+        "username": "existent",
+        "key": "no-key",
+        "role": "site-moderator",
+        "host": "local"
+    })
+    assert response.status_code == 400
+
+    response = client.post("api/add-site-role", headers=headers, json={
+        "admin": "TestUser2",
+        "username": "TestUser2",
+        "key": "no-key",
+        "role": "site-moderator",
+        "host": "local"
+    })
+    assert response.status_code == 401
+
+    response = client.post("api/add-site-role", headers=headers, json={
+        "admin": "TestUser2",
+        "username": "existent",
+        "key": "lh87GFL3DHkkMsw098An",
+        "role": "site-admin",
+        "host": "local"
+    })
+    assert response.status_code == 200
+
+    response = client.post("api/add-site-role", headers=headers, json={
+        "admin": "admin",
+        "username": "nonexistent",
+        "key": "lh87GFL3DHkkMsw098An",
+        "role": "site-moderator",
+        "host": "local"
+    })
+    assert response.status_code == 404
+
+    response = client.put("api/remove-site-roles", headers=headers, json={
+        "host": "local",
+        "username": "existent"
+    })
+    assert response.status_code == 403
+
+    response = client.put("api/remove-site-roles", headers=headers_for_admin, json={
+        "host": "local",
+        "username": "existent"
+    })
+    assert response.status_code == 200
+
+    response = client.put("api/remove-site-roles", headers=headers_for_admin, json={
+        "host": "local",
+        "username": "nonexistent"
+    })
+    assert response.status_code == 404
+    
 
 def test_account_activation(client):
-    pass
+    headers_for_admin = get_auth_tokens(client, username="admin", password="admin")
+
+    response = client.put("api/account-activation", headers=headers_for_admin)
+    assert response.status_code == 400
+
+    response = client.put("api/account-activation", headers=headers_for_admin, json={})
+    assert response.status_code == 400
+
+    response = client.put("api/account-activation", headers=headers_for_admin, json={
+        "host": "local", 
+        "username": "existent", 
+        "activation": "disable"
+    })
+    assert response.status_code == 200
+
+    response = client.put("api/account-activation", headers=headers_for_admin, json={
+        "host": "local", 
+        "username": "existent", 
+        "activation": "disable"
+    })
+    assert response.status_code == 400
+
+    response = client.put("api/account-activation", headers=headers_for_admin, json={
+        "host": "local", 
+        "username": "existent", 
+        "activation": "active"
+    })
+    assert response.status_code == 200
+
+    response = client.put("api/account-activation", headers=headers_for_admin, json={
+        "host": "local", 
+        "username": "existent", 
+        "activation": "active"
+    })
+    assert response.status_code == 400
+
+    response = client.put("api/account-activation", headers=headers_for_admin, json={
+        "host": "local", 
+        "username": "existent", 
+        "activation": "??"
+    })
+    assert response.status_code == 400
+
+    response = client.put("api/account-activation", headers=headers_for_admin, json={
+        "host": "local", 
+        "username": "nonexistent", 
+        "activation": "disable"
+    })
+    assert response.status_code == 404
 
 def test_create_community(client):
     response = client.post("api/create-community")
