@@ -115,7 +115,7 @@ def update_privacy():
 def change_password():
     req = request.json
     if not (req and "old_password" in req and "new_password" in req): return BAD_REQUEST
-    
+
     username = current_user().user_id
     old_password = req["old_password"]
     new_password = req["new_password"]
@@ -162,9 +162,7 @@ def add_instance():
     host = req["host"]
     url = req["url"]
 
-    instance_manager.add_instance(host, url)
-
-    return Response(status=200)
+    return Response(status=200) if instance_manager.add_instance(host, url) else BAD_REQUEST
 
 @bp.route("/get-instances", methods=["GET"])
 def get_all_instances():
@@ -195,16 +193,19 @@ def get_vote(post_id):
     return respond_with_action(actions.getVote(username, post_id))  
 
 @bp.route("/add-post-tag/<post_id>", methods=['POST'])
+@auth_required
 def add_post_tag(post_id):
     tag_name = request.args['tag']
     return respond_with_action(actions.addTag(post_id, tag_name))
 
 @bp.route("/delete-post-tag/<post_id>", methods=['DELETE'])
+@auth_required
 def delete_post_tag(post_id):
     tag_name = request.args['tag']
     return respond_with_action(actions.deleteTag(post_id, tag_name))
 
-@bp.route("/get-post-tags", methods=["GET"])
+@bp.route("/get-post-tags/<post_id>", methods=["GET"])
+@auth_required
 def get_post_tags(post_id):
     return respond_with_action(actions.getPostTags(post_id))
 

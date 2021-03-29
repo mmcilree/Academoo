@@ -158,3 +158,82 @@ def test_subscription(client):
         "id": "TestCommunity"
     })
     assert response.status_code == 200
+
+def test_instance_management(client):
+    response = client.get("api/get-instances")
+    assert response.status_code == 200
+
+    n = len(response.json)
+    data = {
+        "host": "Test",
+        "url": "test.com"
+    }
+
+    response = client.post("api/add-instance", json=data)
+    assert response.status_code == 200
+
+    response = client.post("api/add-instance", json=data)
+    assert response.status_code == 400
+
+    response = client.get("api/get-instances")
+    assert len(response.json) == n + 1
+
+def test_delete_account(client):
+    headers = get_auth_tokens(client)
+
+    response = client.post("api/delete-account", headers=headers, json={
+        "password": "incorrect password"
+    })
+    assert response.status_code == 401
+
+    response = client.post("api/delete-account", headers=headers, json={
+        "password": "1234"
+    })
+    assert response.status_code == 200
+
+    response = client.get("api/get-user", headers=headers)
+    assert response.status_code == 401
+
+def test_voting(client):
+    headers = get_auth_tokens(client)
+
+    response = client.get(f"api/post-vote/{Constants.POST1_ID}?vote=upvote", headers=headers)
+    assert response.status_code == 200
+
+    response = client.get(f"api/get-vote/{Constants.POST1_ID}", headers=headers)
+    assert response.json["vote"] == "upvote"
+
+    response = client.get(f"api/post-vote/{Constants.POST1_ID}?vote=upvote", headers=headers)
+    assert response.status_code == 200
+
+    response = client.get(f"api/get-vote/{Constants.POST1_ID}", headers=headers)
+    assert response.json["vote"] == "none"
+
+    response = client.get(f"api/post-vote/{Constants.POST1_ID}?vote=downvote", headers=headers)
+    assert response.status_code == 200
+
+    response = client.get(f"api/get-vote/{Constants.POST1_ID}", headers=headers)
+    assert response.json["vote"] == "downvote"
+
+    response = client.get(f"api/post-vote/{Constants.POST1_ID}?vote=downvote", headers=headers)
+    assert response.status_code == 200
+
+    response = client.get(f"api/get-vote/{Constants.POST1_ID}", headers=headers)
+    assert response.json["vote"] == "none"
+
+# def test_post_tags(client):
+    # headers = get_auth_tokens(client)
+    # response = client.get(f"api/get-post-tags/{Constants.POST1_ID}", headers=headers)
+
+    # Deprecated?
+
+def test_security(client):
+    response = client.get("api/users")
+    assert response.status_code == 200
+
+    response = client.get("api/toggle-security")
+    assert response.status_code == 200
+
+    response = client.get("api/users")
+    assert response.status_code == 400
+    assert response.json["message"] == "Signature Missing"
