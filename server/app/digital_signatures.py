@@ -3,6 +3,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from flask.globals import current_app
+from utils import format_url
 from urllib.parse import urlparse
 
 import app # circular imports :(
@@ -42,7 +43,7 @@ def verify_request(headers, request_target, body=b""):
         # If host is not known, then add it to the manager public key tracker
         instance = app.instance_manager.url_to_instance.get(host)
         if not instance:
-            url = "http://" + host if "://" not in host else host
+            url = format_url(host)
             instance = app.federation.instance.Instance(url)
             app.instance_manager.url_to_instance[urlparse(url).netloc] = instance
 

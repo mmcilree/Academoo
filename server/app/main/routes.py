@@ -2,7 +2,7 @@ import re
 from flask_praetorian.decorators import auth_required, roles_required, roles_accepted
 from app import actions, instance_manager
 from app.main import bp
-from flask import request, Response, jsonify, current_app
+from flask import request, Response, jsonify, current_app, redirect, url_for
 from flask_praetorian import current_user
 from utils import *
 
@@ -199,3 +199,9 @@ def toggle_security():
     current_app.config["SIGNATURE_FEATURE"] = not current_app.config["SIGNATURE_FEATURE"]
 
     return str(current_app.config["SIGNATURE_FEATURE"])
+
+@bp.route("/update-instances")
+def update_instances():
+    instance_manager.discover_instances()
+
+    return redirect(url_for("protocol.discover"))
