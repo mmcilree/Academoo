@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for app/supergroup_protocol/routes.py: 89%</title>
+    <title>Coverage for app/supergroup_protocol/routes.py: 94%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
@@ -18,13 +18,13 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>app/supergroup_protocol/routes.py</b> :
-            <span class="pc_cov">89%</span>
+            <span class="pc_cov">94%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
             168 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">150 run</button>
-            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">18 missing</button>
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">158 run</button>
+            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">10 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
         </h2>
     </div>
@@ -99,7 +99,7 @@
     <p id="t45" class="run"><span class="n"><a href="#t45">45</a></span><span class="t">        <span class="nam">message</span><span class="op">,</span> <span class="nam">status_code</span> <span class="op">=</span> <span class="nam">actions</span><span class="op">.</span><span class="nam">getLocalUser</span><span class="op">(</span><span class="nam">id</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t46" class="run"><span class="n"><a href="#t46">46</a></span><span class="t">        <span class="key">return</span> <span class="nam">jsonify</span><span class="op">(</span><span class="nam">message</span><span class="op">)</span><span class="op">,</span> <span class="nam">status_code</span>&nbsp;</span><span class="r"></span></p>
     <p id="t47" class="pln"><span class="n"><a href="#t47">47</a></span><span class="t">    <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t48" class="mis show_mis"><span class="n"><a href="#t48">48</a></span><span class="t">        <span class="key">return</span> <span class="nam">instance_manager</span><span class="op">.</span><span class="nam">get_users</span><span class="op">(</span><span class="nam">external</span><span class="op">,</span> <span class="nam">id</span><span class="op">=</span><span class="nam">id</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t48" class="run"><span class="n"><a href="#t48">48</a></span><span class="t">        <span class="key">return</span> <span class="nam">instance_manager</span><span class="op">.</span><span class="nam">get_users</span><span class="op">(</span><span class="nam">external</span><span class="op">,</span> <span class="nam">id</span><span class="op">=</span><span class="nam">id</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t49" class="pln"><span class="n"><a href="#t49">49</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t50" class="pln"><span class="n"><a href="#t50">50</a></span><span class="t"><span class="com"># Community</span>&nbsp;</span><span class="r"></span></p>
     <p id="t51" class="run"><span class="n"><a href="#t51">51</a></span><span class="t"><span class="op">@</span><span class="nam">bp</span><span class="op">.</span><span class="nam">route</span><span class="op">(</span><span class="str">"/communities"</span><span class="op">,</span> <span class="nam">methods</span><span class="op">=</span><span class="op">[</span><span class="str">"GET"</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -194,14 +194,14 @@
     <p id="t140" class="pln"><span class="n"><a href="#t140">140</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t141" class="run"><span class="n"><a href="#t141">141</a></span><span class="t">        <span class="key">return</span> <span class="nam">respond_with_action</span><span class="op">(</span><span class="nam">actions</span><span class="op">.</span><span class="nam">getPost</span><span class="op">(</span><span class="nam">id</span><span class="op">,</span> <span class="nam">requester_str</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t142" class="pln"><span class="n"><a href="#t142">142</a></span><span class="t">    <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t143" class="mis show_mis"><span class="n"><a href="#t143">143</a></span><span class="t">        <span class="nam">headers</span> <span class="op">=</span> <span class="op">{</span><span class="str">"Client-Host"</span><span class="op">:</span> <span class="nam">host</span><span class="op">,</span> <span class="str">"User-ID"</span><span class="op">:</span> <span class="nam">requester_str</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t144" class="mis show_mis"><span class="n"><a href="#t144">144</a></span><span class="t">        <span class="nam">response</span> <span class="op">=</span> <span class="nam">instance_manager</span><span class="op">.</span><span class="nam">get_post_by_id</span><span class="op">(</span><span class="nam">external</span><span class="op">,</span> <span class="nam">id</span><span class="op">,</span> <span class="nam">headers</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t145" class="mis show_mis"><span class="n"><a href="#t145">145</a></span><span class="t">        <span class="key">if</span> <span class="nam">response</span><span class="op">[</span><span class="num">1</span><span class="op">]</span> <span class="op">!=</span> <span class="num">200</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t146" class="mis show_mis"><span class="n"><a href="#t146">146</a></span><span class="t">            <span class="key">return</span> <span class="nam">response</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t147" class="mis show_mis"><span class="n"><a href="#t147">147</a></span><span class="t">        <span class="nam">post</span> <span class="op">=</span> <span class="nam">response</span><span class="op">[</span><span class="num">0</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t148" class="mis show_mis"><span class="n"><a href="#t148">148</a></span><span class="t">        <span class="nam">post</span><span class="op">[</span><span class="str">'host'</span><span class="op">]</span> <span class="op">=</span> <span class="nam">external</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t143" class="run"><span class="n"><a href="#t143">143</a></span><span class="t">        <span class="nam">headers</span> <span class="op">=</span> <span class="op">{</span><span class="str">"Client-Host"</span><span class="op">:</span> <span class="nam">host</span><span class="op">,</span> <span class="str">"User-ID"</span><span class="op">:</span> <span class="nam">requester_str</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t144" class="run"><span class="n"><a href="#t144">144</a></span><span class="t">        <span class="nam">response</span> <span class="op">=</span> <span class="nam">instance_manager</span><span class="op">.</span><span class="nam">get_post_by_id</span><span class="op">(</span><span class="nam">external</span><span class="op">,</span> <span class="nam">id</span><span class="op">,</span> <span class="nam">headers</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t145" class="run"><span class="n"><a href="#t145">145</a></span><span class="t">        <span class="key">if</span> <span class="nam">response</span><span class="op">[</span><span class="num">1</span><span class="op">]</span> <span class="op">!=</span> <span class="num">200</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t146" class="run"><span class="n"><a href="#t146">146</a></span><span class="t">            <span class="key">return</span> <span class="nam">response</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t147" class="run"><span class="n"><a href="#t147">147</a></span><span class="t">        <span class="nam">post</span> <span class="op">=</span> <span class="nam">response</span><span class="op">[</span><span class="num">0</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t148" class="run"><span class="n"><a href="#t148">148</a></span><span class="t">        <span class="nam">post</span><span class="op">[</span><span class="str">'host'</span><span class="op">]</span> <span class="op">=</span> <span class="nam">external</span>&nbsp;</span><span class="r"></span></p>
     <p id="t149" class="pln"><span class="n"><a href="#t149">149</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p id="t150" class="mis show_mis"><span class="n"><a href="#t150">150</a></span><span class="t">        <span class="key">return</span> <span class="nam">jsonify</span><span class="op">(</span><span class="nam">post</span><span class="op">)</span><span class="op">,</span> <span class="nam">response</span><span class="op">[</span><span class="num">1</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t150" class="run"><span class="n"><a href="#t150">150</a></span><span class="t">        <span class="key">return</span> <span class="nam">jsonify</span><span class="op">(</span><span class="nam">post</span><span class="op">)</span><span class="op">,</span> <span class="nam">response</span><span class="op">[</span><span class="num">1</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p id="t151" class="pln"><span class="n"><a href="#t151">151</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t152" class="run"><span class="n"><a href="#t152">152</a></span><span class="t"><span class="op">@</span><span class="nam">bp</span><span class="op">.</span><span class="nam">route</span><span class="op">(</span><span class="str">"/posts"</span><span class="op">,</span> <span class="nam">methods</span><span class="op">=</span><span class="op">[</span><span class="str">"POST"</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t153" class="run"><span class="n"><a href="#t153">153</a></span><span class="t"><span class="key">def</span> <span class="nam">create_post</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -300,7 +300,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.5</a>,
-            created at 2021-03-29 18:51 +0100
+            created at 2021-03-29 19:10 +0100
         </p>
     </div>
 </div>

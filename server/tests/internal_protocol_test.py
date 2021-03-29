@@ -1,45 +1,47 @@
 import pytest
 from conftest import Constants, get_auth_tokens
 
+
 def test_assign_role(client):
-    response = client.post("api/assign-role", 
-        headers={
-            "User-ID": "existent"
-        },
-        json={
-            "host": "local",
-            "user": "existent",
-            "community": "TestCommunity",
-            "role": "admin"
-        }
-    )
+    response = client.post("api/assign-role",
+                           headers={
+                               "User-ID": "existent"
+                           },
+                           json={
+                               "host": "local",
+                               "user": "existent",
+                               "community": "TestCommunity",
+                               "role": "admin"
+                           }
+                           )
     assert response.status_code == 403
 
-    response = client.post("api/assign-role", 
-        headers={
-            "User-ID": "admin"
-        },
-        json={
-            "host": "local",
-            "user": "existent",
-            "community": "TestCommunity",
-            "role": "admin"
-        }
-    )
+    response = client.post("api/assign-role",
+                           headers={
+                               "User-ID": "admin"
+                           },
+                           json={
+                               "host": "local",
+                               "user": "existent",
+                               "community": "TestCommunity",
+                               "role": "admin"
+                           }
+                           )
     assert response.status_code == 200
 
-    response = client.post("api/assign-role", 
-        headers={
-            "User-ID": "admin"
-        },
-        json={
-            "host": "local",
-            "user": "nonexistent",
-            "community": "TestCommunity",
-            "role": "admin"
-        }
-    )
+    response = client.post("api/assign-role",
+                           headers={
+                               "User-ID": "admin"
+                           },
+                           json={
+                               "host": "local",
+                               "user": "nonexistent",
+                               "community": "TestCommunity",
+                               "role": "admin"
+                           }
+                           )
     assert response.status_code == 400
+
 
 def test_default_role(client):
     # Set and Get for default role
@@ -47,7 +49,7 @@ def test_default_role(client):
     response = client.get("api/get-default-role/TestCommunity")
     assert response.json["default_role"] == "contributor"
 
-    response = client.post("api/set-default-role", json = {
+    response = client.post("api/set-default-role", json={
         "role": "admin",
         "community": "TestCommunity"
     })
@@ -61,25 +63,30 @@ def test_default_role(client):
     assert response.status_code == 200
     assert response.json["default_role"] == "contributor"
 
+
 def test_get_community_roles(client):
     response = client.get("api/get-community-roles/TestCommunity")
     assert response.status_code == 200
     assert len(response.json) == 5
 
+
 def test_sitewide_roles(client):
     headers = get_auth_tokens(client)
-    headers_for_admin = get_auth_tokens(client, username="admin", password="admin")
+    headers_for_admin = get_auth_tokens(
+        client, username="admin", password="admin")
 
     response = client.post("api/add-site-role", headers=headers_for_admin)
     assert response.status_code == 400
 
-    response = client.post("api/add-site-role", headers=headers_for_admin, json={})
+    response = client.post("api/add-site-role",
+                           headers=headers_for_admin, json={})
     assert response.status_code == 400
 
     response = client.put("api/remove-site-roles", headers=headers_for_admin)
     assert response.status_code == 400
 
-    response = client.put("api/remove-site-roles", headers=headers_for_admin, json={})
+    response = client.put("api/remove-site-roles",
+                          headers=headers_for_admin, json={})
     assert response.status_code == 400
 
     response = client.post("api/add-site-role", headers=headers, json={
@@ -153,58 +160,61 @@ def test_sitewide_roles(client):
         "username": "nonexistent"
     })
     assert response.status_code == 404
-    
+
 
 def test_account_activation(client):
-    headers_for_admin = get_auth_tokens(client, username="admin", password="admin")
+    headers_for_admin = get_auth_tokens(
+        client, username="admin", password="admin")
 
     response = client.put("api/account-activation", headers=headers_for_admin)
     assert response.status_code == 400
 
-    response = client.put("api/account-activation", headers=headers_for_admin, json={})
+    response = client.put("api/account-activation",
+                          headers=headers_for_admin, json={})
     assert response.status_code == 400
 
     response = client.put("api/account-activation", headers=headers_for_admin, json={
-        "host": "local", 
-        "username": "existent", 
+        "host": "local",
+        "username": "existent",
         "activation": "disable"
     })
     assert response.status_code == 200
 
     response = client.put("api/account-activation", headers=headers_for_admin, json={
-        "host": "local", 
-        "username": "existent", 
+        "host": "local",
+        "username": "existent",
         "activation": "disable"
     })
     assert response.status_code == 400
 
     response = client.put("api/account-activation", headers=headers_for_admin, json={
-        "host": "local", 
-        "username": "existent", 
+        "host": "local",
+        "username": "existent",
         "activation": "active"
     })
     assert response.status_code == 200
 
     response = client.put("api/account-activation", headers=headers_for_admin, json={
-        "host": "local", 
-        "username": "existent", 
+        "host": "local",
+        "username": "existent",
         "activation": "active"
     })
     assert response.status_code == 400
 
     response = client.put("api/account-activation", headers=headers_for_admin, json={
-        "host": "local", 
-        "username": "existent", 
+        "host": "local",
+        "username": "existent",
         "activation": "??"
     })
     assert response.status_code == 400
 
     response = client.put("api/account-activation", headers=headers_for_admin, json={
-        "host": "local", 
-        "username": "nonexistent", 
+        "host": "local",
+        "username": "nonexistent",
         "activation": "disable"
     })
     assert response.status_code == 404
+
 
 def test_create_community(client):
     response = client.post("api/create-community")
@@ -225,9 +235,11 @@ def test_create_community(client):
     response = client.post("api/create-community", json=data)
     assert response.status_code == 400
 
-    data["id"] = "TestCommunity4"; data["admin"] = "nonexistent"
+    data["id"] = "TestCommunity4"
+    data["admin"] = "nonexistent"
     response = client.post("api/create-community", json=data)
     assert response.status_code == 404
+
 
 def test_update_bio(client):
     headers = get_auth_tokens(client)
@@ -243,6 +255,7 @@ def test_update_bio(client):
     response = client.post("api/update-bio", headers=headers, json={})
     assert response.status_code == 400
 
+
 def test_update_privacy(client):
     headers = get_auth_tokens(client)
 
@@ -257,6 +270,7 @@ def test_update_privacy(client):
     response = client.post("api/update-privacy", headers=headers, json={})
     assert response.status_code == 400
 
+
 def test_change_password(client):
     headers = get_auth_tokens(client)
 
@@ -265,7 +279,7 @@ def test_change_password(client):
         "new_password": "abdc"
     })
     assert response.status_code == 200
-    
+
     response = client.post("api/change-password", headers=headers, json={
         "old_password": "incorrect password",
         "new_password": "abdc"
@@ -278,6 +292,7 @@ def test_change_password(client):
     response = client.post("api/change-password", headers=headers, json={})
     assert response.status_code == 400
 
+
 def test_get_user(client):
     headers = get_auth_tokens(client)
 
@@ -285,16 +300,17 @@ def test_get_user(client):
     assert response.status_code == 200
 
     excepted_output = {
-        'adminOf': [], 
-        'bio': None, 
-        'email': None, 
-        'host': 'test.com', 
-        'id': 'existent', 
-        'private': False, 
-        'site_roles': 'basic', 
+        'adminOf': [],
+        'bio': None,
+        'email': None,
+        'host': 'test.com',
+        'id': 'existent',
+        'private': False,
+        'site_roles': 'basic',
         'subscriptions': []
     }
     assert response.json == excepted_output
+
 
 def test_subscription(client):
     headers = get_auth_tokens(client)
@@ -330,6 +346,7 @@ def test_subscription(client):
     })
     assert response.status_code == 200
 
+
 def test_instance_management(client):
     response = client.get("api/get-instances")
     assert response.status_code == 200
@@ -349,6 +366,7 @@ def test_instance_management(client):
     response = client.get("api/get-instances")
     assert len(response.json) == n + 1
 
+
 def test_delete_account(client):
     headers = get_auth_tokens(client)
 
@@ -365,31 +383,40 @@ def test_delete_account(client):
     response = client.get("api/get-user", headers=headers)
     assert response.status_code == 401
 
+
 def test_voting(client):
     headers = get_auth_tokens(client)
 
-    response = client.get(f"api/post-vote/{Constants.POST1_ID}?vote=upvote", headers=headers)
+    response = client.get(
+        f"api/post-vote/{Constants.POST1_ID}?vote=upvote", headers=headers)
     assert response.status_code == 200
 
-    response = client.get(f"api/get-vote/{Constants.POST1_ID}", headers=headers)
+    response = client.get(
+        f"api/get-vote/{Constants.POST1_ID}", headers=headers)
     assert response.json["vote"] == "upvote"
 
-    response = client.get(f"api/post-vote/{Constants.POST1_ID}?vote=upvote", headers=headers)
+    response = client.get(
+        f"api/post-vote/{Constants.POST1_ID}?vote=upvote", headers=headers)
     assert response.status_code == 200
 
-    response = client.get(f"api/get-vote/{Constants.POST1_ID}", headers=headers)
+    response = client.get(
+        f"api/get-vote/{Constants.POST1_ID}", headers=headers)
     assert response.json["vote"] == "none"
 
-    response = client.get(f"api/post-vote/{Constants.POST1_ID}?vote=downvote", headers=headers)
+    response = client.get(
+        f"api/post-vote/{Constants.POST1_ID}?vote=downvote", headers=headers)
     assert response.status_code == 200
 
-    response = client.get(f"api/get-vote/{Constants.POST1_ID}", headers=headers)
+    response = client.get(
+        f"api/get-vote/{Constants.POST1_ID}", headers=headers)
     assert response.json["vote"] == "downvote"
 
-    response = client.get(f"api/post-vote/{Constants.POST1_ID}?vote=downvote", headers=headers)
+    response = client.get(
+        f"api/post-vote/{Constants.POST1_ID}?vote=downvote", headers=headers)
     assert response.status_code == 200
 
-    response = client.get(f"api/get-vote/{Constants.POST1_ID}", headers=headers)
+    response = client.get(
+        f"api/get-vote/{Constants.POST1_ID}", headers=headers)
     assert response.json["vote"] == "none"
 
 # def test_post_tags(client):
@@ -397,6 +424,7 @@ def test_voting(client):
     # response = client.get(f"api/get-post-tags/{Constants.POST1_ID}", headers=headers)
 
     # Deprecated?
+
 
 def test_security(client):
     response = client.get("api/users")

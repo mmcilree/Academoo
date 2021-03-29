@@ -1,33 +1,36 @@
 import pytest
 from conftest import get_auth_tokens
 
+
 def test_registration(client):
-    response = client.post("api/register", json = {
+    response = client.post("api/register", json={
         "username": "TestUser",
         "password": "1234",
         "email": "test@test.com"
     })
     assert response.status_code == 200
 
-    response = client.post("api/register", json = {
+    response = client.post("api/register", json={
         "username": "TestUser",
         "password": "1234",
         "email": "test@test.com"
     })
     assert response.status_code == 400
 
+
 def test_login(client):
-    response = client.post("api/login", json = {
+    response = client.post("api/login", json={
         "username": "existent",
         "password": "incorrect"
     })
     assert response.status_code == 401
 
-    response = client.post("api/login", json = {
+    response = client.post("api/login", json={
         "username": "existent",
         "password": "1234"
     })
     assert response.status_code == 200
+
 
 def test_protected_route(client):
     headers = get_auth_tokens(client)
@@ -38,8 +41,10 @@ def test_protected_route(client):
     response = client.get("api/protected")
     assert response.status_code == 401
 
+
 def test_admin_route(client):
-    headers_for_admin = get_auth_tokens(client, username="admin", password="admin")
+    headers_for_admin = get_auth_tokens(
+        client, username="admin", password="admin")
     headers = get_auth_tokens(client)
 
     response = client.get("api/admin-protected", headers=headers_for_admin)
@@ -50,6 +55,7 @@ def test_admin_route(client):
 
     response = client.get("api/admin-protected")
     assert response.status_code == 401
+
 
 def test_refresh(client):
     # Token is expired!
