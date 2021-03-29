@@ -75,10 +75,14 @@ def account_activation():
 @bp.route("/create-community", methods=["POST"])
 def create_community():
     req = request.json
-    community_id = req["id"]
-    title = req["title"]
-    description = req["description"]
-    admin = req["admin"]
+    if not req: return {"message": "Bad Request"}, 400
+
+    try:
+        community_id = req["id"]
+        title = req["title"]
+        description = req["description"]
+        admin = req["admin"]
+    except KeyError: return {"message": "Bad Request"}, 400
     
     return respond_with_action(actions.createCommunity(community_id, title, description, admin))
     

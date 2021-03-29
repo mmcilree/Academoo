@@ -11,13 +11,13 @@ from sqlalchemy.sql.elements import Null
 def createCommunity(community_id, title, description, admin):
     if validate_community_id(community_id): return validate_community_id(community_id)
     
-    if Community.query.filter_by(id=community_id).first() is not None:
+    if Community.query.filter_by(id=community_id).first():
         return ({"title": "Community already exists", "message": "Please pick another community id that is not taken by an existing community"}, 400)
 
     community = Community(id=community_id, title=title, description=description)
     db.session.add(community)
     
-    if User.query.filter_by(user_id=admin) is None:
+    if not User.query.filter_by(user_id=admin).first():
         return ({"title": "Could not find user" + admin, "message": "User does not exist on database, specify a different user"}, 404)
         
 
