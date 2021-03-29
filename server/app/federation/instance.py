@@ -194,7 +194,7 @@ class Instance(object):
             return Response(status=ret.status_code)
     
     def delete_post(self, data, id, headers):
-        data.pop("external")
+        # data.pop("external")
 
         body, digest = self.get_request_data(f"delete /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
         headers["Signature"] = get_signature(body)

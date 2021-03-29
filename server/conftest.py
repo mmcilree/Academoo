@@ -18,6 +18,7 @@ class TestConfig(object):
 
     JWT_ACCESS_LIFESPAN = {'hours': 24}
     JWT_REFRESH_LIFESPAN = {'days': 30}
+    HOST = "cs3099user-a1.host.cs.st-andrews.ac.uk"
 
 def get_auth_tokens(client, username="existent", password="1234"):
     response = client.post("api/login", json = {
