@@ -2,6 +2,7 @@ import React from "../../../node_modules/react";
 import Post from "../posts/Post";
 import Card from "../../../node_modules/react-bootstrap/Card";
 import Button from "../../../node_modules/react-bootstrap/Button";
+import ArrowRight from "react-bootstrap-icons";
 import { ArrowReturnLeft, ChatRight } from "../../../node_modules/react-bootstrap-icons";
 import { Link } from "../../../node_modules/react-router-dom";
 import Modal from "../../../node_modules/react-bootstrap/Modal";
@@ -9,6 +10,20 @@ import CommentCreator from "./CommentCreator";
 import VoteDisplay from "../posts/VoteDisplay";
 import { authFetch } from '../../auth';
 import { Alert } from "react-bootstrap";
+
+import {
+  PlusCircle,
+  ArrowRightCircleFill,
+  ReplyFill,
+  ChatSquare,
+  PersonCircle,
+  Gear,
+  Tools,
+  BoxArrowRight,
+  QuestionCircle,
+  Pencil
+} from "react-bootstrap-icons";
+
 
 class CommentsViewer extends React.Component {
   constructor(props) {
@@ -25,6 +40,7 @@ class CommentsViewer extends React.Component {
       userID: null,
       error: null,
       showCommentEditor: false,
+      child: null,
 
     }
   }
@@ -45,6 +61,14 @@ class CommentsViewer extends React.Component {
 
   handleCloseCommentEditor() {
     this.setState({ showCommentEditor: false, needsUpdate: true });
+  }
+
+  handleOpenReplyEditor() {
+    this.setState({showReplyEditor: true });
+  }
+
+  handleCloseReplyEditor() {
+    this.setState({ showReplyEditor: false, needsUpdate: true });
   }
 
 
@@ -150,23 +174,45 @@ class CommentsViewer extends React.Component {
                     </Modal.Body>
                   </Modal>
 
+                  
+
 
                 </Card.Body>
               </Card>
               {this.state.children.sort(comment => comment.created).reverse().map((child) =>
                 child ? (
+                  
                   <Card key={child.id} className="mt-4 ml-4 comment">
+                    <Modal show={this.state.showReplyEditor} onHide={() => this.setState({ showReplyEditor: false })}>
+                    <Modal.Header closeButton>
+                      <Modal.Title>Add a Reply to a Comment!</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <CommentCreator parentPost={child} host={this.state.host} onSubmit={this.handleCloseReplyEditor.bind(this)} />
+                    </Modal.Body>
+                  </Modal>
                     <Card.Body>
                       <Post postData={child} />
+                      <Link
+                  to={this.state.host ? '/comments/' + this.state.host + `/${this.state.id}` : `/comments/${this.state.id}`}
+                  
+                >
+                  <small><ChatSquare /> Replies ({child.children.length})
+                  </small> </Link>    |
+                      <Link onClick={this.handleOpenReplyEditor.bind(this)}> <small><ReplyFill/>Reply to comment</small></Link>
                       <div className="d-flex justify-content-between">
+                      
                         <span></span>
+
                         <VoteDisplay upvotes={child.upvotes} downvotes={child.downvotes} postId={child.id} />
                       </div>
 
                     </Card.Body>
+                    
                   </Card>
                 ) : null
               )}
+              
               {this.state.children.length === 0 ?
                 <p className="mt-4 ml-4 comment">No comments to show.</p> : null}
             </Card.Body>) :
