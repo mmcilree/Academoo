@@ -19,6 +19,7 @@ class TestConfig(object):
 
 def setup_db():
     test_user = User(user_id="existent", host="test.com")
+    test_user2 = User(user_id="TestUser2", host="test.com")
 
     community1 = Community(
         id="TestCommunity", 
@@ -45,6 +46,7 @@ def setup_db():
     )
     
     db.session.add(test_user)
+    db.session.add(test_user2)
 
     db.session.add(community1)
     db.session.add(community2)

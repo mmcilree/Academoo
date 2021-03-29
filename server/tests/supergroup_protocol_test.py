@@ -7,6 +7,7 @@ headers = {
 }
 
 headers_with_user = dict(headers, **{"User-ID": "existent"})
+headers_with_another_user = dict(headers, **{"User-ID": "TestUser2"})
 
 def test_config():
     assert not create_app().testing
@@ -69,8 +70,6 @@ def test_get_posts(client):
     response = client.get("api/posts")
     assert response.status_code == 400
 
-    # TODO: Test filtering features
-
 def test_create_posts(client):
     data = {
         "community": "TestCommunity",
@@ -126,7 +125,8 @@ def test_edit_post(client):
     response = client.put(f"api/posts/{Constants.POST1_ID}", headers=headers_with_user)
     assert response.status_code == 400
 
-    # TODO: Test Error 403 forbidden
+    response = client.put(f"api/posts/{Constants.POST1_ID}", json=data, headers=headers_with_another_user)
+    assert response.status_code == 403
 
 
 def test_delete_post(client):
@@ -139,17 +139,15 @@ def test_delete_post(client):
     response = client.delete(f"api/posts/{Constants.POST1_ID}", headers=headers_with_user)
     assert response.status_code == 404
 
-    # TODO: Test Error 403 forbidden
+    response = client.delete(f"api/posts/{Constants.POST2_ID}", headers=headers_with_another_user)
+    assert response.status_code == 403
 
 
 # Users
 def test_get_users(client):
     response = client.get("api/users")
     assert response.status_code == 200
-
-    # TODO: prefix query is not implemented
-    # response = client.get('api.user?prefix=aa')
-    # assert response.status_code == 200
+    assert len(response.json) == 2
 
 def test_get_users_by_id(client):
     response = client.get("api/users/existent")
@@ -157,9 +155,6 @@ def test_get_users_by_id(client):
 
     response = client.get("api/users/nonexistent")
     assert response.status_code == 404
-
-# def test_send_message(client):
-#     pass # TODO
 
 def test_get_server_public_key(client):
     response = client.get("api/key")
