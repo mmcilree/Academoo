@@ -96,7 +96,7 @@ class Instance(object):
     def get_users(self, id=None):
         request_target = f"/fed/users/{id}" if id else f"/fed/users"
         (body, digest) = self.get_request_data(request_target)
-        headers = {"Signature": get_signature(body), "Digest": "sha-512=" + digest}
+        headers = {"Signature": get_signature(body), "Digest": "sha-512=" + digest, "Date": get_date()}
         if id:
             ret = requests.get(urljoin(self.url, f"/fed/users/{id}"), headers=headers)
         else:
@@ -113,6 +113,7 @@ class Instance(object):
         body, digest = self.get_request_data(f"get /fed/communities/{community}/timestamps", headers.get("User-ID"))
         headers["Signature"] = get_signature(body)
         headers["Digest"] = "sha-512=" + digest
+        headers["Date"] = get_date()
 
         ret = requests.get(urljoin(self.url, f"/fed/communities/{community}/timestamps"), headers=headers)
         if(ret.status_code != 200):
@@ -124,6 +125,7 @@ class Instance(object):
         body, digest = self.get_request_data(f"get /fed/posts", headers.get("User-ID"))
         headers["Signature"] = get_signature(body)
         headers["Digest"] = "sha-512=" + digest
+        headers["Date"] = get_date()
 
         ret = requests.get(urljoin(self.url, f"/fed/posts?community={community}"), headers=headers)
         if check_get_filtered_post(ret.content): return check_get_filtered_post(ret.content)
@@ -133,6 +135,7 @@ class Instance(object):
         body, digest = self.get_request_data(f"get /fed/posts/{id}", headers.get("User-ID"))
         headers["Signature"] = get_signature(body)
         headers["Digest"] = "sha-512=" + digest
+        headers["Date"] = get_date()
 
         ret = requests.get(urljoin(self.url, f"/fed/posts/{id}"), headers=headers)
         if check_get_post(ret.content): return check_get_post(ret.content)
@@ -143,6 +146,7 @@ class Instance(object):
         body, digest = self.get_request_data(request_target, headers.get("User-ID"))
         headers["Signature"] = get_signature(body)
         headers["Digest"] = "sha-512=" + digest
+        headers["Date"] = get_date()
 
         if id:
             ret = requests.get(urljoin(self.url, f"/fed/communities/{id}"), headers=headers)
@@ -160,6 +164,7 @@ class Instance(object):
         body, digest = self.get_request_data(f"post /fed/posts", headers.get("User-ID"), bytes(str(data), "utf-8"))
         headers["Signature"] = get_signature(body)
         headers["Digest"] = "sha-512=" + digest
+        headers["Date"] = get_date()
 
         ret = requests.post(urljoin(self.url, f"/fed/posts"), json=data, headers=headers)
         try:
@@ -175,6 +180,7 @@ class Instance(object):
         body, digest = self.get_request_data(f"put /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
         headers["Signature"] = get_signature(body)
         headers["Digest"] = "sha-512=" + digest
+        headers["Date"] = get_date()
 
         ret = requests.put(urljoin(self.url, f"/fed/posts/{id}"), json=data, headers=headers)
         try:
@@ -190,6 +196,7 @@ class Instance(object):
         body, digest = self.get_request_data(f"delete /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
         headers["Signature"] = get_signature(body)
         headers["Digest"] = "sha-512=" + digest
+        headers["Date"] = get_date()
 
         ret = requests.delete(urljoin(self.url, f"/fed/posts/{id}"), headers=headers) 
         try:
