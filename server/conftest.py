@@ -1,5 +1,5 @@
 import pytest
-from app import create_app, db
+from app import create_app, db, guard
 from app.models import User, Community, Post
 
 class Constants(object):
@@ -16,10 +16,25 @@ class TestConfig(object):
     PUBLIC_KEY = "PKEY"
     SIGNATURE_FEATURE = False
 
+    JWT_ACCESS_LIFESPAN = {'hours': 24}
+    JWT_REFRESH_LIFESPAN = {'days': 30}
+
+def get_auth_tokens(client, username="existent", password="1234"):
+    response = client.post("api/login", json = {
+        "username": username,
+        "password": password
+    })
+
+    headers = {
+        "Authorization": f"Bearer {response.json.get('access_token')}"
+    }
+
+    return headers
 
 def setup_db():
-    test_user = User(user_id="existent", host="test.com")
-    test_user2 = User(user_id="TestUser2", host="test.com")
+    admin_user = User(user_id="admin", host="test.com", password_hash=guard.hash_password("admin"), site_roles="admin")
+    test_user = User(user_id="existent", host="test.com", password_hash=guard.hash_password("1234"))
+    test_user2 = User(user_id="TestUser2", host="test.com", password_hash=guard.hash_password("1234"))
 
     community1 = Community(
         id="TestCommunity", 
@@ -45,6 +60,7 @@ def setup_db():
         community=community1,
     )
     
+    db.session.add(admin_user)
     db.session.add(test_user)
     db.session.add(test_user2)
 

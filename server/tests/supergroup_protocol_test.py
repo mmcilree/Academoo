@@ -147,7 +147,7 @@ def test_delete_post(client):
 def test_get_users(client):
     response = client.get("api/users")
     assert response.status_code == 200
-    assert len(response.json) == 2
+    assert len(response.json) == 3
 
 def test_get_users_by_id(client):
     response = client.get("api/users/existent")
@@ -160,6 +160,6 @@ def test_get_server_public_key(client):
     response = client.get("api/key")
     assert response.status_code == 200
 
-def test_discover(client):
-    response = client.get("api/discover")
-    assert response.status_code == 200
+# def test_discover(client):
+#     response = client.get("api/discover")
+#     assert response.status_code == 200
