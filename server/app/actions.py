@@ -241,6 +241,7 @@ def updatePrivacy(user_id, private_account):
     else:
         return False
     db.session.commit()
+    
     user_dict = {"id": user.user_id, "private": private_account}
     return user_dict
 

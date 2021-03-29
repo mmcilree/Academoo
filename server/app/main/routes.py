@@ -103,8 +103,10 @@ def update_bio():
 @auth_required
 def update_privacy():
     req = request.json
+    if not (req and "private" in req): return BAD_REQUEST
+
     private = req["private"]
-    u=current_user()
+    u = current_user()
 
     return Response(status=200) if actions.updatePrivacy(u.user_id, private) else BAD_REQUEST
 
@@ -112,6 +114,8 @@ def update_privacy():
 @auth_required
 def change_password():
     req = request.json
+    if not (req and "old_password" in req and "new_password" in req): return BAD_REQUEST
+    
     username = current_user().user_id
     old_password = req["old_password"]
     new_password = req["new_password"]
