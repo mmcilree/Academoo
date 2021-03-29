@@ -6,6 +6,9 @@ import jsonschema
 from jsonschema import validate
 from flask import jsonify
 
+def format_url(url):
+    return "http://" + url if "://" not in url else url
+
 def adminMatchesKey(key):
     secret_key = "lh87GFL3DHkkMsw098An"
     if key == secret_key:
