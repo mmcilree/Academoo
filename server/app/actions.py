@@ -227,6 +227,8 @@ def updateBio(user_id, bio):
     user.about = bio
     db.session.commit()
 
+    return True
+
 # Make a user account public or private
 def updatePrivacy(user_id, private_account):
     if validate_username(user_id): return validate_username(user_id)

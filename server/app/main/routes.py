@@ -6,6 +6,8 @@ from flask import request, Response, jsonify, current_app, redirect, url_for
 from flask_praetorian import current_user
 from utils import *
 
+BAD_REQUEST = ({"message": "Bad Request"}, 400)
+
 def respond_with_action(actionResponse):
     data, status = actionResponse
     return jsonify(data), status
@@ -75,14 +77,14 @@ def account_activation():
 @bp.route("/create-community", methods=["POST"])
 def create_community():
     req = request.json
-    if not req: return {"message": "Bad Request"}, 400
+    if not req: return BAD_REQUEST
 
     try:
         community_id = req["id"]
         title = req["title"]
         description = req["description"]
         admin = req["admin"]
-    except KeyError: return {"message": "Bad Request"}, 400
+    except KeyError: return BAD_REQUEST
     
     return respond_with_action(actions.createCommunity(community_id, title, description, admin))
     
@@ -90,10 +92,12 @@ def create_community():
 @auth_required
 def update_bio():
     req = request.json
-    bio = req["bio"]
-    u=current_user()
+    if not (req and "bio" in req): return BAD_REQUEST
 
-    return Response(status=200) if actions.updateBio(u.user_id, bio) else Response(status=400)
+    bio = req["bio"]
+    u = current_user()
+
+    return Response(status=200) if actions.updateBio(u.user_id, bio) else BAD_REQUEST
 
 @bp.route("/update-privacy", methods=["POST"])
 @auth_required
@@ -102,7 +106,7 @@ def update_privacy():
     private = req["private"]
     u=current_user()
 
-    return Response(status=200) if actions.updatePrivacy(u.user_id, private) else Response(status=400)
+    return Response(status=200) if actions.updatePrivacy(u.user_id, private) else BAD_REQUEST
 
 @bp.route("/change-password", methods=["POST"])
 @auth_required
@@ -112,7 +116,7 @@ def change_password():
     old_password = req["old_password"]
     new_password = req["new_password"]
 
-    return Response(status=200) if actions.changePassword(username, old_password, new_password) else Response(status=400)
+    return Response(status=200) if actions.changePassword(username, old_password, new_password) else BAD_REQUEST
 
 @bp.route("/get-user")
 @auth_required
@@ -168,7 +172,7 @@ def delete_user():
     req = request.json
     username = current_user().user_id
     password = req["password"]
-    return Response(status=200) if actions.deleteUser(username, password) else Response(status=400)
+    return Response(status=200) if actions.deleteUser(username, password) else BAD_REQUEST
 
 @bp.route("/post-vote/<post_id>")
 @auth_required

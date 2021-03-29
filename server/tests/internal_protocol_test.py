@@ -58,4 +58,18 @@ def test_create_community(client):
     response = client.post("api/create-community", json=data)
     assert response.status_code == 404
 
+def test_update_bio(client):
+    headers = get_auth_tokens(client)
+
+    response = client.post("api/update-bio", headers=headers, json={
+        "bio": "Newly updated bio!"
+    })
+    assert response.status_code == 200
+
+    response = client.post("api/update-bio", headers=headers)
+    assert response.status_code == 400
+
+    response = client.post("api/update-bio", headers=headers, json={})
+    assert response.status_code == 400
+
     
