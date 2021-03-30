@@ -222,5 +222,11 @@ def on_leave(data):
     username = data['user']
     room = data['room']
     leave_room(room)
-    send(username + ' has left the room.', room=room)
+    send(username + ' has left the room.', room=room, include_self=False)
 
+@socketio.on('message')
+def on_message(data):
+    message = data['message']
+    room = data['room']
+    print(message)
+    send(message, room=room)
