@@ -7,6 +7,7 @@ import { ArrowReturnLeft, ChatRight } from "../../../node_modules/react-bootstra
 import { Link } from "../../../node_modules/react-router-dom";
 import Modal from "../../../node_modules/react-bootstrap/Modal";
 import CommentCreator from "./CommentCreator";
+import Accordion from 'react-bootstrap/Accordion';
 import VoteDisplay from "../posts/VoteDisplay";
 import { authFetch } from '../../auth';
 import { Alert } from "react-bootstrap";
@@ -40,7 +41,7 @@ class CommentsViewer extends React.Component {
       userID: null,
       error: null,
       showCommentEditor: false,
-      child: null,
+      currentChild: null,
 
     }
   }
@@ -63,8 +64,8 @@ class CommentsViewer extends React.Component {
     this.setState({ showCommentEditor: false, needsUpdate: true });
   }
 
-  handleOpenReplyEditor() {
-    this.setState({showReplyEditor: true });
+  handleOpenReplyEditor(child) {
+    this.setState({ showReplyEditor: true, currentChild: child });
   }
 
   handleCloseReplyEditor() {
@@ -174,49 +175,63 @@ class CommentsViewer extends React.Component {
                     </Modal.Body>
                   </Modal>
 
-                  
+                  <Modal show={this.state.showReplyEditor} onHide={() => this.setState({ showReplyEditor: false })}>
+                    <Modal.Header closeButton>
+                      <Modal.Title>Add a Reply to a Comment!</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                      <CommentCreator parentPost={this.state.currentChild} host={this.state.host} onSubmit={this.handleCloseReplyEditor.bind(this)} />
+                    </Modal.Body>
+                  </Modal>
 
 
                 </Card.Body>
               </Card>
               {this.state.children.sort(comment => comment.created).reverse().map((child) =>
                 child ? (
-                  
                   <Card key={child.id} className="mt-4 ml-4 comment">
-                    <Modal show={this.state.showReplyEditor} onHide={() => this.setState({ showReplyEditor: false })}>
-                    <Modal.Header closeButton>
-                      <Modal.Title>Add a Reply to a Comment!</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                      <CommentCreator parentPost={child} host={this.state.host} onSubmit={this.handleCloseReplyEditor.bind(this)} />
-                    </Modal.Body>
-                  </Modal>
+
                     <Card.Body>
                       <Post postData={child} />
-                      <Link
-                  to={this.state.host ? '/comments/' + this.state.host + `/${this.state.id}` : `/comments/${this.state.id}`}
-                  
-                >
-                  <small><ChatSquare /> Replies ({child.children.length})
-                  </small> </Link>    |
-                      <Link onClick={this.handleOpenReplyEditor.bind(this)}> <small><ReplyFill/>Reply to comment</small></Link>
+
                       <div className="d-flex justify-content-between">
-                      
+
                         <span></span>
 
                         <VoteDisplay upvotes={child.upvotes} downvotes={child.downvotes} postId={child.id} />
                       </div>
+                      <Accordion>
+                        <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                          <small><ChatSquare /> Replies ({child.children.length})</small>
+                        </Accordion.Toggle>|<Link onClick={this.handleOpenReplyEditor.bind(this, child)}> <small><ReplyFill />Reply to comment</small></Link>
+
+                        <Accordion.Collapse eventKey="0">
+                          <Card.Body>
+                            {child.children.map((newchild) =>
+                              newchild ? (
+                                <Card key={newchild.id} className="mt-4 ml-4 comment">
+                                  <Card.Body>
+                                  Replies...
+                                  </Card.Body>
+                                </Card>
+                              ):null
+                            )}
+                            {child.children.length === 0 ?
+                      <p className="mt-4 ml-4 comment">No replies to show.</p> : null}
+                            </Card.Body>
+                        </Accordion.Collapse>
+                      </Accordion>
 
                     </Card.Body>
-                    
+
                   </Card>
+
                 ) : null
               )}
-              
-              {this.state.children.length === 0 ?
-                <p className="mt-4 ml-4 comment">No comments to show.</p> : null}
+                    {this.state.children.length === 0 ?
+                      <p className="mt-4 ml-4 comment">No comments to show.</p> : null}
             </Card.Body>) :
-            <Card.Body>{error ? <Alert variant="warning">Error fetching posts: {error}</Alert> : <h3>Loading Post...</h3>}</Card.Body>}
+                  <Card.Body>{error ? <Alert variant="warning">Error fetching posts: {error}</Alert> : <h3>Loading Post...</h3>}</Card.Body>}
         </Card>
       </div>
     );
