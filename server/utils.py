@@ -128,7 +128,6 @@ def check_is_error_message(file):
     except:
         return ({"title": "Invalid JSON file passed", "message": "Make sure the JSON file conforms to protocol schema"}, 400)
 
-<<<<<<< HEAD
 def check_get_timestamps(file):
     schema = {
         "type": "array",
@@ -150,28 +149,6 @@ def check_get_timestamps(file):
         if check_error is not None:
             return check_error
         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
-=======
-# def check_get_timestamps(file):
-#     schema = {
-#         "type": "array",
-#         "items": {
-#             "type": "object",
-#             "properties": {
-#                 "id": {"type": "string"},
-#                 "modified": {"type": "integer"}
-#             },
-#             "required": ["id", "modified"]
-#         }
-#     }
-#     try:
-#         to_json = json.loads(file)
-#         validate(instance=to_json, schema=schema)
-#     except:
-#         check_error = check_is_error_message(file)
-#         if check_error is not None:
-#             return check_error
-#         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
->>>>>>> e46893ab... fix: some schema stuff sorted out + little other things
 
 def check_get_filtered_post(file):
     schema = {
