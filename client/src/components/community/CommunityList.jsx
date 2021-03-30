@@ -31,7 +31,7 @@ class CommunityList extends React.Component {
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error();
+                    throw new Error("The instance could not be reached");
                 }
                 return response.json()
             }

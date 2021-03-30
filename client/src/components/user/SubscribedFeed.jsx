@@ -55,7 +55,7 @@ class SubscribedFeed extends Component {
             .then(response => response.json())
             .then(data =>
                 i === this.state.subscribedCommunities.length - 1 ? 
-                this.setState((prevState) => {return {posts: [...prevState.posts, ...data]}}, () => console.log("done?"))
+                this.setState((prevState) => {return {posts: [...prevState.posts, ...data]}}, () => this.setState({isLoading: false}))
                 : this.setState({posts: [...this.state.posts, ...data]})
             )
             .catch(error => this.setState({ error, isLoading: false }));
