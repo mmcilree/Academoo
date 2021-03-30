@@ -23,7 +23,6 @@ class Manager(object):
             }
         else:
             self.instances = {
-<<<<<<< HEAD
                 "academoo": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
                 "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
                 "nebula": Instance("https://nebula0.herokuapp.com"),
@@ -31,12 +30,6 @@ class Manager(object):
                 "feddit": Instance("http://86.176.106.252:8000/"),
                 "wabberjocky": Instance("https://cs3099user-a4.host.cs.st-andrews.ac.uk/"),
                 "jha10": Instance("https://cs3099user-a10.host.cs.st-andrews.ac.uk")  
-=======
-                # "Freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
-                # "Academoo": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
-                "WabberJocky": Instance("https://cs3099user-a4.host.cs.st-andrews.ac.uk/"),
-                # "Feddit": Instance("http://86.176.106.252:8000/"),
->>>>>>> master
             }
 
         # URL to Instance, used for public key retrieval
