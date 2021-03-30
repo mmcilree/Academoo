@@ -1,4 +1,3 @@
-#from app.models import User, Community, Post, UserRole, getTime ////circular import error
 import json
 from uuid import UUID
 import re
@@ -36,21 +35,21 @@ def validate_community_id(community_id):
     if not re.match("^[a-zA-Z0-9-_]{1,24}$", community_id):
         return ({"title": "Invalid community id", "message": "community id does not match expected pattern <^[a-zA-Z0-9-_]{1,24}$>"}, 400)
 
-
+# Check string is one of valid roles
 def validate_role(role):
     available_roles = ["admin", "contributor", "member", "guest", "prohibited"]
     if role not in available_roles:
         return ({"title": "Invalid role name", "message": "available  roles are admin, contributor, member, guest, prohibited"}, 400)
 
-
 def validate_post_id(post_id):
     if not isUUID(post_id):
         return ({"title": "post id is not in the correct format", "message": "Format of post id should be uuid4 string"}, 400)
 
-def validate_json(file): # IS REDUNDANT, REMOVE EVENTUALLY
+def validate_json(file):
     if file is None:
         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file is properly formatted"}, 400)
 
+# Json schema for the content field in a post
 content_schema = {
     "type": "array",
     "items": {
@@ -66,6 +65,7 @@ content_schema = {
     }
 }
 
+# Check json is an array of strings
 def check_array_json(file):
     schema = {
         "type": "array",
@@ -75,6 +75,7 @@ def check_array_json(file):
         to_json = json.loads(file)
         validate(instance=to_json, schema=schema)
     except:
+        # If check failed, check if json is an error message
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error
@@ -105,11 +106,13 @@ def check_get_community(file):
         to_json = json.loads(file)
         validate(instance=to_json, schema=schema)
     except:
+        # If check failed, check if json is an error message
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error
         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
 
+# Check json is an error message
 def check_is_error_message(file):
     schema = {
         "type": "object",
@@ -120,7 +123,6 @@ def check_is_error_message(file):
         "required": ["title", "message"]
     }
     try:
-        print(str(file))
         to_json = json.loads(file)
         validate(instance=to_json, schema=schema)
     except:
@@ -142,6 +144,7 @@ def check_get_timestamps(file):
         to_json = json.loads(file)
         validate(instance=to_json, schema=schema)
     except:
+        # If check failed, check if json is an error message
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error
@@ -180,7 +183,7 @@ def check_get_filtered_post(file):
         to_json = json.loads(file)
         validate(instance=to_json, schema=schema)
     except:
-        print("Failed filtered post validation")
+        # If check failed, check if json is an error message
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error
@@ -216,7 +219,7 @@ def check_get_post(file):
         to_json = json.loads(file)
         validate(instance=to_json, schema=schema)
     except:
-        print(str(file))
+        # If check failed, check if json is an error message
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error
@@ -247,6 +250,7 @@ def check_get_user(file):
         to_json = json.loads(file)
         validate(instance=to_json, schema=schema)
     except:
+        # If check failed, check if json is an error message
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error
@@ -261,13 +265,13 @@ def check_create_post(file):
             "title": {"type": "string"},
             "content": content_schema
         },
-        #"additionalProperties": False,
         "required": ["community", "title", "content"]
     }
 
     try:
         validate(instance=file, schema=create_schema)
     except:
+        # If check failed, check if json is an error message
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error
@@ -281,13 +285,13 @@ def check_edit_post(file):
             "title": {"type": "string"},
             "content": content_schema
         },
-        #"additionalProperties": False,
         "required": ["title", "content"]
     }
     
     try:
         validate(instance=file, schema=edit_schema)
     except:
+        # If check failed, check if json is an error message
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error

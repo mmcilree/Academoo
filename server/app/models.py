@@ -14,25 +14,29 @@ def getUUID():
 def getTime():
     return int(datetime.utcnow().timestamp())
 
+# Table to hold roles given out by communities
 class UserRole(db.Model): 
     user_id = db.Column(db.String(50), db.ForeignKey('user.user_id'), primary_key=True)
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'), primary_key=True)
-    role = db.Column(db.String(50)) # admin, contributor, member, guest, prohibited
+    role = db.Column(db.String(50))
 
+# Table to hold site subscriptions
 class UserSubscription(db.Model):
     user_id = db.Column(db.String(50), db.ForeignKey('user.user_id'), primary_key=True)
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'), primary_key=True)
-    external = db.Column(db.String(50)) # None if local community
+    external = db.Column(db.String(50))
 
 subscriptions = db.Table('subscriptions', 
     db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
     db.Column('community_id', db.String(1000), db.ForeignKey('community.id')))
 
+# Table to hold a post vote instance
 class UserVote(db.Model): 
     user_id = db.Column(db.String(50), db.ForeignKey('user.user_id'), primary_key=True)
     post_id = db.Column(db.String(1000), db.ForeignKey('post.id'), primary_key=True)
     value = db.Column(db.String(50)) # upvote / downvote
 
+# Table to hold a user account
 class User(db.Model):
     user_id = db.Column(db.String(50), primary_key=True)
     posts_created = db.relationship('Post', backref='author')
@@ -42,35 +46,19 @@ class User(db.Model):
     private_account = db.Column(db.Boolean, default=False, nullable=False)
     password_hash = db.Column(db.String(128))
     site_roles = db.Column(db.String, default="basic")
-    #admin_of = db.relationship('Community', secondary=administrating, backref='admins')
     subscriptions = db.relationship('UserSubscription', backref='subscribed_users',  cascade="all, delete")
     roles = db.relationship('UserRole', backref='user', cascade="all, delete")
 
-    # We need this for auth to work apparently - maybe Robert can clarify?
+    # Lists all roles given to user
     @property
     def rolenames(self):
         try:
             roles = self.site_roles.split(",")
             return roles
         except Exception:
-            return []   
+            return []
 
-    '''
-    def has_no_role(self, community_id):
-        role_communities = []
-        role_communities.append(self.admin_communities)
-        role_communities.append(self.contributor_communities)
-        role_communities.append(self.member_communities)
-        role_communities.append(self.guest_communities)
-        role_communities.append(self.prohibited_communities)
-
-        for list in role_communities:
-            for community in list:
-                if community.id == community_id:
-                    return False
-        return True
-    '''
-
+    # Convenience method to query user
     @classmethod
     def lookup(cls, username):
         return cls.query.filter_by(user_id=username).one_or_none()
@@ -79,15 +67,19 @@ class User(db.Model):
     def identify(cls, id):
         return cls.query.get(id)
 
+    # Get user id
     @property
     def identity(self):
         return self.user_id
     
+    # Return password hash of user
     @property
     def password(self):
         return self.password_hash
     
+    # Check user has a specific role, True if yes, False if no
     def has_role(self, community_id, role):
+        # Lower tier means higher access privilege
         role_tiers = {"admin": 1, "contributor": 2, "member": 3, "guest": 4}
         entry = UserRole.query.filter_by(user_id=self.identity, community_id=community_id).first()
         if entry is None:
@@ -112,6 +104,7 @@ class User(db.Model):
             return False
         return True
 
+# Table to hold communities
 class Community(db.Model):
     id = db.Column(db.String(1000), primary_key=True)
     title = db.Column(db.String(1000), nullable=False)
@@ -122,6 +115,7 @@ class Community(db.Model):
     roles_granted = db.relationship('UserRole', backref='community')
     default_role = db.Column(db.String(50), default="contributor", nullable=False)
 
+    # Retrieves users that match a specific role in community
     def admins(self):
         pairs = User.query.join(UserRole, UserRole.user_id == User.user_id).filter_by(community_id=self.id, role="admin")
         admins = [pair for pair in pairs]
@@ -147,10 +141,12 @@ class Community(db.Model):
         prohibited = [pair for pair in pairs]
         return prohibited
         
+    # Convenience method for retreiving community
     @classmethod
     def lookup(cls, community_id):
         return cls.query.filter_by(id=community_id).one_or_none()
 
+# Table to hold posts
 class Post(db.Model):
     id = db.Column(db.String(1000), primary_key=True, default=getUUID)
     title = db.Column(db.String(1000))
@@ -165,10 +161,12 @@ class Post(db.Model):
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'))
     tags = db.relationship('PostTag', backref='post', cascade="all, delete")
 
+# Table to hold tags associated with posts
 class PostTag(db.Model):
     post_id = db.Column(db.String(1000), db.ForeignKey('post.id'), primary_key=True)
     tag = db.Column(db.String(50), primary_key=True)
 
+# Table to hold json that describes the content of a post
 class PostContentField(db.Model):
     post_id = db.Column(db.String(1000), db.ForeignKey('post.id'), primary_key=True)
     content_type = db.Column(db.String(50), primary_key=True)
