@@ -301,7 +301,7 @@ def test_get_user(client):
 
     excepted_output = {
         'adminOf': [],
-        'bio': None,
+        'about': None,
         'email': None,
         'host': 'test.com',
         'id': 'existent',
@@ -316,7 +316,8 @@ def test_subscription(client):
     headers = get_auth_tokens(client)
 
     response = client.post("api/subscribe", headers=headers, json={
-        "id": "TestCommunity"
+        "id": "TestCommunity",
+        "external": None
     })
     assert response.status_code == 200
 
@@ -324,25 +325,17 @@ def test_subscription(client):
     assert len(user_details["subscriptions"]) == 1
 
     response = client.post("api/unsubscribe", headers=headers, json={
-        "id": "TestCommunity"
+        "id": "TestCommunity",
+        "external": None
     })
     assert response.status_code == 200
 
     user_details = client.get("api/get-user", headers=headers).json
     assert len(user_details["subscriptions"]) == 0
 
-    response = client.post("api/subscribe", headers=headers, json={
-        "id": "nonexistent"
-    })
-    assert response.status_code == 400
-
     response = client.post("api/unsubscribe", headers=headers, json={
-        "id": "nonexistent"
-    })
-    assert response.status_code == 400
-
-    response = client.post("api/unsubscribe", headers=headers, json={
-        "id": "TestCommunity"
+        "id": "TestCommunity",
+        "external": None
     })
     assert response.status_code == 200
 
@@ -419,11 +412,43 @@ def test_voting(client):
         f"api/get-vote/{Constants.POST1_ID}", headers=headers)
     assert response.json["vote"] == "none"
 
-# def test_post_tags(client):
-    # headers = get_auth_tokens(client)
-    # response = client.get(f"api/get-post-tags/{Constants.POST1_ID}", headers=headers)
 
-    # Deprecated?
+def test_post_tags(client):
+    headers = get_auth_tokens(client)
+    response = client.get(
+        f"api/get-post-tags/{Constants.POST1_ID}", headers=headers)
+    assert response.status_code == 200
+    assert len(response.json) == 0
+
+    response = client.post(
+        f"api/add-post-tag/{Constants.POST1_ID}?tag=cool", headers=headers)
+    assert response.status_code == 200
+
+    response = client.get(
+        f"api/get-post-tags/{Constants.POST1_ID}", headers=headers)
+    assert response.status_code == 200
+    assert len(response.json) == 1
+
+    response = client.delete(
+        f"api/delete-post-tag/{Constants.POST1_ID}?tag=cool", headers=headers)
+    assert response.status_code == 200
+
+    response = client.get(
+        f"api/get-post-tags/{Constants.POST1_ID}", headers=headers)
+    assert response.status_code == 200
+    assert len(response.json) == 0
+
+    response = client.get(
+        f"api/get-post-tags/{Constants.FAKE_POST_ID}", headers=headers)
+    assert response.status_code == 404
+
+    response = client.post(
+        f"api/add-post-tag/{Constants.FAKE_POST_ID}?tag=cool", headers=headers)
+    assert response.status_code == 404
+
+    response = client.delete(
+        f"api/delete-post-tag/{Constants.FAKE_POST_ID}?tag=cool", headers=headers)
+    assert response.status_code == 404
 
 
 def test_security(client):

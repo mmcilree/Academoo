@@ -281,7 +281,7 @@ def getLocalUser(id):
             return user_dict, 200
         else:
             user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.about, "private": user.private_account,  "site_roles" : user.site_roles}
-            return user_dict
+            return user_dict, 200
 
 # Add a subscriber entry to Subscriber table
 def addSubscriber(user_id, community_id, external):
@@ -297,8 +297,9 @@ def addSubscriber(user_id, community_id, external):
 # Remove subscriber entry from Subcriber table
 def removeSubscriber(user_id, community_id, external):
     subscription = UserSubscription.query.filter_by(user_id=user_id, community_id=community_id, external=external).first()
-    db.session.delete(subscription)
-    db.session.commit() 
+    if subscription:
+        db.session.delete(subscription)
+        db.session.commit() 
     return (None, 200)
 
 # Get all community ids from server
@@ -679,7 +680,7 @@ def addTag(post_id, tag_name):
 
 # Delete a post tag
 def deleteTag(post_id, tag_name):
-    post_tag = PostTag.query.filter_by(post_id=post_id, tag=tag_name)
+    post_tag = PostTag.query.filter_by(post_id=post_id, tag=tag_name).first()
     if post_tag is None:
         return ({"title": "could not find post tag", "message": "either post does not exist or post does not have tag"}, 404)
     db.session.delete(post_tag)
@@ -691,4 +692,4 @@ def getPostTags(post_id):
     post = Post.query.filter_by(id = post_id).first()
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
-    return [post_tag.tag for post_tag in post.tags]
+    return [post_tag.tag for post_tag in post.tags], 200
