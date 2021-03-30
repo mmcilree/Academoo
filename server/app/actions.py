@@ -319,7 +319,7 @@ def getAllCommunityPostsTimeModified(community_id):
     if validate_community_id(community_id): return validate_community_id(community_id)
 
     if Community.query.filter_by(id = community_id).first() is None:
-        return ({"title": "Could not find community" + community_id, "message": "Community does not exist on database, use a different community id"}, 404)
+        return ({"title": "Could not find community" + community_id, "message": "Community does not exist on database, use a different community id"}, 404) 
 
     post_dicts = [{"id":post.id, "modified":post.modified} for post in Post.query.filter_by(community_id = community_id)]
     return (post_dicts, 200)
@@ -327,7 +327,7 @@ def getAllCommunityPostsTimeModified(community_id):
 # Get a list of post objects filtered by various parameters
 def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, include_children, content_type, requester_str):
     # Parameters are optional so if they are none then filtering is missed
-    if community_id is not None: 
+    if community_id is not None:  
         if validate_community_id(community_id): return validate_community_id(community_id)
     if author is not None: 
         if validate_username(author): return validate_username(author)
@@ -335,14 +335,14 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
         if validate_post_id(parent_post): return validate_post_id(parent_post)
     
     query = db.session.query(Post)
-    if community_id is not None:
+    if community_id is not None: 
         requester = User.lookup(requester_str)
         # Check user making request has permission to perform action
-        if requester is None:
-            community = Community.lookup(community_id)
-            role = community.default_role
-            if ((role == "prohibited")):
-                message = {"title": "Permission error", "message": "Do not have permission to perform action"}
+        if requester is None: 
+            community = Community.lookup(community_id) 
+            role = community.default_role 
+            if ((role == "prohibited")): 
+                message = {"title": "Permission error", "message": "Do not have permission to perform action"} 
                 return (message, 403)
         elif requester.has_role(community_id, "prohibited"):
             site_wide_roles = requester.site_roles.split(",")
@@ -350,7 +350,7 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
             if (("site-admin" not in site_wide_roles) and ("site-moderator" not in site_wide_roles)):
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
                 return (message, 403)
-        query = query.filter(Post.community_id == community_id)
+        query = query.filter(Post.community_id == community_id) 
     if min_date is not None:
         query = query.filter(Post.created >= min_date)
     if author is not None:
