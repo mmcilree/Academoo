@@ -16,6 +16,7 @@ class SketchRoom extends React.Component {
             code: this.props.match.params.id,
             user: "",
             messages: [],
+            whiteboardJSON: {},
         }   
     }
 
@@ -30,22 +31,34 @@ class SketchRoom extends React.Component {
             ).catch(() => {})   
     }
 
-    getUpdates() {
-        
+    
+    sendUpdate(jsonValue) {
+        socket.emit("message", {message: jsonValue, room: this.state.code});
     }
 
     componentDidMount() {
         this.fetchUserDetails();
-        socket.on("message", msg => console.log(msg));
+        socket.on("message", msg => {
+            this.handleMessage(msg);
+        });
     }
 
+    handleMessage(msg) {
+        if(typeof msg === 'object') {
+            this.setState( {
+                whiteboardJSON: msg
+            })
+        } else {
+            console.log(msg);
+        }
+    }
     componentWillUnmount() {
         socket.emit("leave", {user: this.state.user, room: this.state.code});
     }
 
 
     render() {
-        return <Whiteboard />
+        return <Whiteboard sendUpdate={this.sendUpdate.bind(this)} jsonValue={this.state.whiteboardJSON}/>
     }
 }
 

@@ -29,7 +29,8 @@ class Whiteboard extends React.Component {
             canUndo: false,
             canRedo: false,
             text: "",
-            enableRemoveSelected: false
+            enableRemoveSelected: false,
+            receivedUpdate: false,
         }
     }
 
@@ -39,6 +40,7 @@ class Whiteboard extends React.Component {
         if (prev !== now) {
             this.setState({ canUndo: now });
         }
+
     };
 
     setTool(event) {
@@ -121,6 +123,10 @@ class Whiteboard extends React.Component {
                 markdown: true,
             }
         })
+    }
+
+    componentDidUpdate(prevProps) {
+        console.log("This whiteboard has been updated");
     }
 
     render() {
