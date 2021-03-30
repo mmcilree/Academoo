@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import Table from 'react-bootstrap/Table';
 
+/*
+Method which renders the table of the different user roles 
+*/
 class UserRolesTable extends Component {
     constructor(props) {
         super(props);

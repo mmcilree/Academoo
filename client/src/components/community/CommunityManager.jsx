@@ -12,6 +12,9 @@ import { Typeahead, Menu, MenuItem } from 'react-bootstrap-typeahead';
 import { InputGroup, Col } from 'react-bootstrap';
 import { PlusCircle } from 'react-bootstrap-icons';
 
+/**
+ * Component which renders the community manager
+ */
 class CommunityManager extends React.Component {
     constructor(props) {
         super(props);
@@ -51,12 +54,17 @@ class CommunityManager extends React.Component {
         this.fetchUserRoles();
     }
 
+    /**
+     * methdod to validate the form
+     */
     validateUserRolesForm() {
         const errors = [];
+        //if blank
         if (this.state.selected[0].user.length === 0 || this.state.role.length === 0) {
             errors.push("Required fields have been left blank.");
         }
 
+        //if trying to change own role
         if (this.state.selected[0].user === this.state.currentUser) {
             errors.push("You cannot change your own role");
         }
@@ -64,8 +72,12 @@ class CommunityManager extends React.Component {
         return errors;
     }
 
+    /**
+     * method to validate the default role form
+     */
     validateDefaultRoleForm() {
         const errors = [];
+        //if blank
         if (this.state.defaultRole.length === 0) {
             errors.push("Required fields have been left blank.");
             return errors;
@@ -73,6 +85,9 @@ class CommunityManager extends React.Component {
         return errors;
     }
 
+    /**
+     * method to fetch the current user and their details
+     */
     fetchUserDetails() {
         authFetch("/api/get-user").then(response => response.json())
             .then(data =>
@@ -85,6 +100,9 @@ class CommunityManager extends React.Component {
             .catch(() => { })
     }
 
+    /**
+     * method to fetch the deault role for a user
+     */
     fetchDefaultRole() {
         authFetch("/api/get-default-role/" + this.state.currentCommunity).then(response => response.json())
             .then(data =>
@@ -94,6 +112,9 @@ class CommunityManager extends React.Component {
             .catch(() => { })
     }
 
+    /**
+     * method to get all the community roles within a given community
+     */
     async fetchUserRoles() {
         await authFetch("/api/get-community-roles/" + this.state.currentCommunity)
             .then(response => response.json())
@@ -118,6 +139,9 @@ class CommunityManager extends React.Component {
             ).catch(() => { })
     }
 
+    /**
+     * method to get all the instances of supergroup A
+     */
     async fetchInstances() {
         await fetch("/api/get-instances")
             .then(response => response.json())
@@ -147,6 +171,9 @@ class CommunityManager extends React.Component {
         this.fetchUsers(name);
     }
 
+    /**
+     * connect with the backend to update the DB
+     */
     handleSubmit(event) {
         event.preventDefault();
         const errors = this.validateUserRolesForm();
@@ -195,6 +222,9 @@ class CommunityManager extends React.Component {
 
     }
 
+    /**
+     * connect with the backend for the default roles
+     */
     handleDefRoleSubmit(event) {
         event.preventDefault();
         const errors = this.validateDefaultRoleForm();
@@ -226,6 +256,9 @@ class CommunityManager extends React.Component {
             .catch(() => { })
     }
 
+    /**
+     * method which renders all of the manager information to the page
+     */
     render() {
         return (
             this.state.isAdmin == null ? <h3> Loading... </h3> :

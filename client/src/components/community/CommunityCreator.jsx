@@ -3,9 +3,12 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
-import { Route, withRouter } from 'react-router-dom';
+import { Route} from 'react-router-dom';
 import { authFetch } from '../../auth';
 
+/**
+ * Component which lets the user create a community
+ */
 class CommunityCreator extends React.Component {
     constructor(props) {
         super(props);
@@ -23,6 +26,9 @@ class CommunityCreator extends React.Component {
         this.fetchCommunities();
         this.fetchUserDetails();
     }
+    /**
+     * check that none of the fields are empty, that the community ID is unique
+     */
     validateForm() {
         const errors = [];
         if (this.state.title.length === 0 ||
@@ -42,6 +48,9 @@ class CommunityCreator extends React.Component {
         return errors;
     }
 
+    /**
+     * fetch all of the different communities that exist
+     */
     fetchCommunities(host) {
         authFetch('/api/communities').then(response => response.json(),
             {
@@ -55,6 +64,9 @@ class CommunityCreator extends React.Component {
                 })).catch(() => {})
     }
 
+    /**
+     * fetch the data about the current user
+     */
     fetchUserDetails() {
         authFetch("/api/get-user").then(response => response.json())
             .then(data =>
@@ -88,10 +100,14 @@ class CommunityCreator extends React.Component {
         });
     }
 
+    /**
+     * Method which will send the information about the community to the backend to be stored in the DB
+     */
     handleSubmit(event) {
         event.preventDefault();
 
         const errors = this.validateForm();
+        //if there is errors in the input
         if (errors.length > 0) {
             this.setState({ errors });
             return;
@@ -111,6 +127,7 @@ class CommunityCreator extends React.Component {
             )
         };
 
+        //add community
         fetch('/api/create-community', requestOptions)
             .then(response => {
                 this.setState(
@@ -122,6 +139,9 @@ class CommunityCreator extends React.Component {
 
     }
 
+    /**
+     * method which renders the community creation form and allows the user to create a new community
+     */
     render() {
         const { errors } = this.state;
         return (

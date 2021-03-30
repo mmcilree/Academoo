@@ -3,11 +3,13 @@ import { Card, Media, Alert } from "react-bootstrap";
 import { Link } from 'react-router-dom';
 import defaultProfile from "../../images/default_profile.png";
 import { authFetch } from '../../auth';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 import PostsViewer from '../posts/PostsViewer';
 var md5 = require("md5");
 
+/*
+    Component which renders the users' profile
+    icludes fetch methods to get username, information
+    */
 class UserProfile extends Component {
   constructor(props) {
     super(props);
@@ -27,6 +29,9 @@ class UserProfile extends Component {
   }
 
 
+    /*
+    method which retrieves the user so we can then render the profile
+    */
   fetchCurrentUser() {
     authFetch("/api/get-user").then(response => response.json())
       .then(data => {
@@ -49,6 +54,9 @@ class UserProfile extends Component {
       .catch(error => this.setState({ userError: error, isLoading: false }));
   }
 
+  /*
+  Method to fetch the posts of the given user
+  */
   async fetchPosts() {
     await authFetch('/api/posts?author=' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""),
       {
@@ -90,6 +98,9 @@ class UserProfile extends Component {
   }
 
 
+  /*
+  Method to update the user if it has not already occured
+  */
   componentDidUpdate(prevProps) {
     if (this.props.match.params.id !== prevProps.match.params.id) {
       this.state.username = this.props.match.params.id;
@@ -99,6 +110,9 @@ class UserProfile extends Component {
     }
   }
 
+  /*
+  Method to fetch the other details about the user, like email, bio, if they have a private account
+  */
   fetchUserDetails() {
     authFetch('/api/users/' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
       .then(response => response.json())
@@ -115,6 +129,9 @@ class UserProfile extends Component {
       .catch(error => this.setState({ userError: error, isLoading: false }));
   }
 
+  /*
+  Method which renders all of the information to the profile page
+  */
   render() {
     let emailHash = ""
     if (this.state.email) {

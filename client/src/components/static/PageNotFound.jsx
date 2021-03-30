@@ -3,6 +3,9 @@ import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
 
 class PageNotFound extends React.Component {
+  /* 
+  Component which is used to display a page not found error if the user requests a page which does not exist
+  */
   render() {
     return (
       <Card className="mt-4">

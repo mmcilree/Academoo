@@ -3,13 +3,15 @@ import Post from "../posts/Post";
 import Card from "../../../node_modules/react-bootstrap/Card";
 import Button from "../../../node_modules/react-bootstrap/Button";
 import { ArrowReturnLeft, ChatRight } from "../../../node_modules/react-bootstrap-icons";
-import { Link } from "../../../node_modules/react-router-dom";
 import Modal from "../../../node_modules/react-bootstrap/Modal";
 import CommentCreator from "./CommentCreator";
 import VoteDisplay from "../posts/VoteDisplay";
 import { authFetch } from '../../auth';
 import { Alert } from "react-bootstrap";
 
+/**
+ * Component which renders a post and all of its comments
+ */
 class CommentsViewer extends React.Component {
   constructor(props) {
     super(props);
@@ -29,6 +31,9 @@ class CommentsViewer extends React.Component {
     }
   }
 
+  /**
+   * Get the details of the user who posted
+   */
   fetchUserDetails() {
     authFetch("/api/get-user").then(response => response.json())
       .then(data => {
@@ -48,6 +53,9 @@ class CommentsViewer extends React.Component {
   }
 
 
+  /**
+   * Fetch the parent post of a comment, as the post is displayed too
+   */
   async fetchParentPost() {
     await authFetch('/api/posts/' + this.state.parentPostId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
       {
@@ -79,6 +87,10 @@ class CommentsViewer extends React.Component {
 
   }
 
+  /**
+   * fetch the children of a post
+   * this means the comments of the post
+   */
   async fetchChildren() {
     const { parentPost, fetchedChildren, children } = this.state;
 
@@ -119,6 +131,10 @@ class CommentsViewer extends React.Component {
     }
   }
 
+  /**
+   * Method which renders the post and its comments to  the page
+   * All comments will be shown
+   */
   render() {
     const { isLoading, error } = this.state;
 

@@ -1,14 +1,16 @@
-import React, { Component, useContext } from "react";
-import Post from "../posts/Post";
+import React, { Component} from "react";
 import Sidebar from "../layout/Sidebar";
-import { Nav, Card, Container, Row, Col, Form, FormControl, Button, Alert } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { CodeSlash, PlusCircle } from "react-bootstrap-icons";
+import { Nav, Card, Container, Row, Col, Alert } from "react-bootstrap";
 import MiniPostCreator from "../posts/MiniPostCreator";
 import PostsViewer from "../posts/PostsViewer";
 import { authFetch } from '../../auth';
 
 class SubscribedFeed extends Component {
+    /* 
+  Component which is used to display the list of subscribed communities to the user
+  A user subscribes to a community, and then a list of the posts from those communities is displayed to the user
+  This fetches the subscribed communities and the posts from these to display
+  */
     state = {
         isLoading: true,
         posts: [],
@@ -20,6 +22,9 @@ class SubscribedFeed extends Component {
         this.fetchSubscribedCommunities();
     }
 
+    /*
+    fetch the communities the user is subscribed to
+    */
     async fetchSubscribedCommunities() {
         await authFetch("/api/get-user").then(response => response.json())
             .then(data => {
@@ -34,6 +39,9 @@ class SubscribedFeed extends Component {
         this.fetchPosts();
     }
 
+    /*
+    fetch the posts from the communities the user is subscribed to
+    */
     async fetchPosts() {
         await Promise.all(this.state.subscribedCommunities.map((subscription, i) => {
             this.appendPostsFromSubscription(subscription, i);
@@ -63,16 +71,25 @@ class SubscribedFeed extends Component {
            
     }
 
+    /*
+    sort the posts by most recent
+    */
     sortRecent() {
         console.log("recent")
         this.setState({ posts: this.state.posts.slice().sort((a, b) => b.created - a.created) });
     }
 
+    /*
+    sort the posts by most commented
+    */
     sortCommented() {
         console.log("commented")
         this.setState({ posts: this.state.posts.slice().sort((a, b) => b.children.length - a.children.length) });
     }
 
+    /*
+    sort the posts by most voted
+    */
     sortVoted() {
         console.log("voted")
         this.setState({ posts: this.state.posts.slice().sort((a, b) => (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes)) });
@@ -97,9 +114,12 @@ class SubscribedFeed extends Component {
         };
     }
 
+    /*
+    Puts everything on the subscribed feed page with tabs for the user to select how they would like to see the posts
+    */
     render() {
         console.log(this.state)
-        const { isLoading, posts, error, currentCommunity, newPostText } = this.state;
+        const { isLoading, posts, error, currentCommunity} = this.state;
         return (
             <Container fluid>
                 <Row>

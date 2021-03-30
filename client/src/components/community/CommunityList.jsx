@@ -8,6 +8,9 @@ import CommunitySubscribeButton from "./CommunitySubscribeButton";
 import { PlusCircle } from "react-bootstrap-icons"
 import { authFetch } from '../../auth';
 
+/**
+ * Component which displays each instance name and the list of communities it holds
+ */
 class CommunityList extends React.Component {
     constructor(props) {
         super(props);
@@ -22,6 +25,9 @@ class CommunityList extends React.Component {
         this.fetchCommunities();
     }
 
+    /**
+     * fetch all communities, on the local and external servers
+     */
     fetchCommunities() {
         authFetch('/api/communities' + (this.props.instance !== "local" ? "?external=" + this.props.instance : ""),
             {
@@ -50,6 +56,9 @@ class CommunityList extends React.Component {
 
     }
 
+    /**
+     * Method which renders the instances avaliable and the communities it holds
+     */
     render() {
         const { communities, isLoading, errors } = this.state;
 

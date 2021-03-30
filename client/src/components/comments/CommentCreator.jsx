@@ -5,6 +5,9 @@ import Modal from '../../../node_modules/react-bootstrap/Modal';
 import Alert from '../../../node_modules/react-bootstrap/Alert';
 import { authFetch } from '../../auth';
 
+/**
+ * Component which holds the stucture for when a comment has been made
+ */
 class CommentCreator extends React.Component {
     constructor(props) {
         super(props);
@@ -19,6 +22,9 @@ class CommentCreator extends React.Component {
     }
 
 
+    /**
+     * method to fetch the user details of who has created the comment
+     */
     fetchUserDetails() {
         authFetch("/api/get-user").then(response => response.json())
             .then(data =>
@@ -30,6 +36,9 @@ class CommentCreator extends React.Component {
             ).catch(() => {})
     }
 
+    /**
+     * Method to fetch the number of votes that a post has had
+     */
     fetchVotes(postId) {
         authFetch('/api/get-vote/' + postId)
           .then(response => {
@@ -44,6 +53,9 @@ class CommentCreator extends React.Component {
           });
       }
 
+      /**
+       * set values
+       */
     handleChange(event) {
         const target = event.target;
         const value = target.value;
@@ -53,8 +65,13 @@ class CommentCreator extends React.Component {
         });
     }
 
+    /**
+     * Method to handle the submission of a comment
+     * 
+     */
     async handleSubmit(event) {
         event.preventDefault();
+        //send the information to the backend
         const requestOptions = {
             method: 'POST',
             headers: {
@@ -85,6 +102,7 @@ class CommentCreator extends React.Component {
             requestOptions.body.external = this.props.host
         }
 
+        //stringify the body to JSON
         requestOptions.body = JSON.stringify(requestOptions.body);
 
         await authFetch('/api/posts', requestOptions)
@@ -111,6 +129,9 @@ class CommentCreator extends React.Component {
         this.fetchUserDetails();
     }
 
+    /**
+     * method to create the comment create box which a modal which pops up
+     */
     render() {
         return (
             <React.Fragment >

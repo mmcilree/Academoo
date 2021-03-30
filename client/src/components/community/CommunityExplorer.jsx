@@ -1,9 +1,11 @@
 import React from "react";
 import {Card, Alert, Spinner} from "react-bootstrap";
 import CommunityList from "./CommunityList";
-import { Link } from "react-router-dom";
 import logo from "../../images/logo.svg";
 
+/**
+ * Component which shows all of the communities avaliable
+ */
 class CommunityExplorer extends React.Component {
   state = {
     isLoading: true,
@@ -16,6 +18,7 @@ class CommunityExplorer extends React.Component {
     this.fetchInstances();
   }
 
+  //fetch all instances from other groups
   fetchInstances() {
     fetch("/api/get-instances")
       .then(response => response.json())
@@ -28,7 +31,9 @@ class CommunityExplorer extends React.Component {
       .catch(error => this.setState({ error, isLoading: false }));
   }
 
-  
+  /**
+   * render all of the instances and their communities to the community explorer page
+   */
   render() {
     const { isLoading, instances, error } = this.state;
     return (

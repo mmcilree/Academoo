@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 import { login } from "../../auth";
 import { Route } from 'react-router-dom';
 
+/*
+component which allows the user to log in
+*/
 class Login extends React.Component {
 
   constructor(props) {
@@ -25,6 +28,9 @@ class Login extends React.Component {
     });
   }
 
+  /*
+  Method which checks the username and password with the backend to make sure the users credentials are correct
+  */
   handleSubmit(event) {
     event.preventDefault();
     fetch('/api/login', {
@@ -69,6 +75,10 @@ class Login extends React.Component {
       })
   }
 
+  /**
+   * Method which will render all of the information to the log-in page
+   * the user enters their username and password
+   */
   render() {
     return (
       <Card className="mt-4">
