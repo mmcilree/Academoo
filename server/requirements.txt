@@ -41,6 +41,7 @@ pytest==6.1.2
 python-dateutil==2.8.1
 python-dotenv==0.15.0
 python-editor==1.0.4
+python-socketio==5.1.0
 pytzdata==2020.1
 requests==2.25.0
 requests-mock==1.8.0

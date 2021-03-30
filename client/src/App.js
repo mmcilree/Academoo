@@ -8,7 +8,7 @@ import PostsViewer from "./components/posts/PostsViewer";
 import CommentsViewer from "./components/comments/CommentsViewer";
 import CommunityExplorer from "./components/community/CommunityExplorer";
 import CommunityManager from "./components/community/CommunityManager";
-import Whiteboard from "./components/sketch/Whiteboard";
+import SketchRoom from "./components/sketch/SketchRoom";
 import UserSettings from "./components/user/UserSettings";
 import UserProfile from "./components/user/UserProfile";
 import PageNotFound from "./components/static/PageNotFound";
@@ -22,6 +22,7 @@ import CommunityCreator from "./components/community/CommunityCreator";
 import SubscribedFeed from "./components/user/SubscribedFeed";
 import AdminKeyAuth from "./components/authentication/AdminKeyAuth";
 import ControlPanel from "./components/authentication/ControlPanel";
+import SketchMenu from "./components/sketch/SketchMenu";
 
 class App extends React.Component {
   constructor(props) {
@@ -48,7 +49,8 @@ class App extends React.Component {
                 <PrivateRoute exact path="/communities/:id/manage" component={CommunityManager} />
                 <PrivateRoute path="/communities/:instance/:id" component={CommunityFeed} />
                 <PrivateRoute path="/create-post" component={PostCreator} />
-                <PrivateRoute exact path="/sketchamoo" component={Whiteboard} />
+                <PrivateRoute exact path="/sketchamoo" component={SketchMenu} />
+                <PrivateRoute exact path="/sketchamoo/:id" component={SketchRoom} />
                 <PrivateRoute exact path="/comments/:id" component={CommentsViewer} />
                 <PrivateRoute path="/comments/:instance/:id" component={CommentsViewer} />
                 <PrivateRoute path="/user-settings" component={UserSettings} />
