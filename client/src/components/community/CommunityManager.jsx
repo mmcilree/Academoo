@@ -159,7 +159,7 @@ class CommunityManager extends React.Component {
             headers: {
                 'Content-Type': 'application/json',
                 'User-ID': this.state.currentUser,
-                'Client-Host': window.location.protocol + "//" + window.location.hostname
+                'Client-Host': window.location.hostname
             },
             body: JSON.stringify(
                 {
@@ -207,7 +207,7 @@ class CommunityManager extends React.Component {
             headers: {
                 'Content-Type': 'application/json',
                 'User-ID': this.state.currentUser,
-                'Client-Host': window.location.protocol + "//" + window.location.hostname
+                'Client-Host': window.location.hostname
             },
             body: JSON.stringify(
                 {

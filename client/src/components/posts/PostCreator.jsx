@@ -80,7 +80,7 @@ class PostCreator extends React.Component {
         await authFetch('/api/communities' + (host !== "local" ? "?external=" + host : ""),
             {
                 headers: {
-                    'Client-Host': window.location.protocol + "//" + window.location.hostname
+                    'Client-Host': window.location.hostname
                 }
             }).then(response => response.json())
             .then(data =>
@@ -121,7 +121,7 @@ class PostCreator extends React.Component {
             headers: {
                 'Content-Type': 'application/json',
                 'User-ID': this.state.user_id,
-                'Client-Host': window.location.protocol + "//" + window.location.hostname
+                'Client-Host': window.location.hostname
             },
             body: {
                 community: this.state.selected[0].community,

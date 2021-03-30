@@ -53,7 +53,7 @@ class CommentsViewer extends React.Component {
       {
         headers: {
           'User-ID': this.state.userID,
-          'Client-Host': window.location.protocol + "//" + window.location.hostname
+          'Client-Host': window.location.hostname
         }
       })
       .then(response => {
@@ -89,7 +89,7 @@ class CommentsViewer extends React.Component {
           {
             headers: {
               'User-ID': this.state.userID,
-              'Client-Host': window.location.protocol + "//" + window.location.hostname
+              'Client-Host': window.location.hostname
             }
           })
           .then(response => {

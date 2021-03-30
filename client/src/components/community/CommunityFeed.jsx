@@ -51,7 +51,7 @@ class CommunityFeed extends Component {
       {
         headers: {
           'User-ID': this.state.userID,
-          'Client-Host': window.location.protocol + "//" + window.location.hostname
+          'Client-Host': window.location.hostname
         }
       })
       .then((response) => {
@@ -90,7 +90,7 @@ class CommunityFeed extends Component {
     authFetch('/api/communities/' + this.state.currentCommunity + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
       {
         headers: {
-          'Client-Host': window.location.protocol + "//" + window.location.hostname
+          'Client-Host': window.location.hostname
         }
       })
       .then(response => {

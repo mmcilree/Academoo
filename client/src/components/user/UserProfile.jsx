@@ -54,7 +54,7 @@ class UserProfile extends Component {
       {
         headers: {
           'User-ID': this.state.currentUser,
-          'Client-Host': window.location.protocol + "//" + window.location.hostname
+          'Client-Host': window.location.hostname
         }
       })
       .then(response => {
