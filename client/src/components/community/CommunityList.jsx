@@ -26,7 +26,7 @@ class CommunityList extends React.Component {
         authFetch('/api/communities' + (this.props.instance !== "local" ? "?external=" + this.props.instance : ""),
             {
                 headers: {
-                    'Client-Host': window.location.protocol + "//" + window.location.hostname
+                    'Client-Host': window.location.hostname
                 }
             })
             .then(response => {

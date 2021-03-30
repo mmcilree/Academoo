@@ -49,7 +49,7 @@ class SubscribedFeed extends Component {
             {
                 headers: {
                     'User-ID': this.state.user_id,
-                    'Client-Host': window.location.protocol + "//" + window.location.hostname
+                    'Client-Host': window.location.hostname
                 }
             })
             .then(response => response.json())
@@ -83,7 +83,7 @@ class SubscribedFeed extends Component {
             {
                 headers: {
                     'User-ID': this.state.user_id,
-                    'Client-Host': window.location.protocol + "//" + window.location.hostname
+                    'Client-Host': window.location.hostname
                 }
             })
             .then(response => response.json())

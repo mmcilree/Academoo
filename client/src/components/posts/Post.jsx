@@ -79,7 +79,7 @@ class Post extends Component {
       headers: {
         'Content-Type': 'application/json',
         'User-ID': this.state.currentUser,
-        'Client-Host': window.location.protocol + "//" + window.location.hostname
+        'Client-Host': window.location.hostname
       },
       body: {}
 
@@ -166,7 +166,7 @@ class Post extends Component {
       headers: {
         'Content-Type': 'application/json',
         'User-ID': this.state.currentUser,
-        'Client-Host': window.location.protocol + "//" + window.location.hostname
+        'Client-Host': window.location.hostname
       },
       body: {
         title: this.state.title,
