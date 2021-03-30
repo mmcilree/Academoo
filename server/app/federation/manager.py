@@ -1,11 +1,16 @@
 import os
 import functools
 from app.federation.instance import Instance
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
+from utils import format_url
+import requests
+from requests.exceptions import ConnectionError, ConnectTimeout
 import time
 
 class Manager(object):
-    def __init__(self):
+    def __init__(self, host):
+        self.host = host
+
         # host name : <Instance Objects>
         if os.environ.get("FLASK_ENV") == "production":
             self.instances = {
@@ -18,6 +23,7 @@ class Manager(object):
             }
         else:
             self.instances = {
+<<<<<<< HEAD
                 "academoo": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
                 "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
                 "nebula": Instance("https://nebula0.herokuapp.com"),
@@ -25,13 +31,40 @@ class Manager(object):
                 "feddit": Instance("http://86.176.106.252:8000/"),
                 "wabberjocky": Instance("https://cs3099user-a4.host.cs.st-andrews.ac.uk/"),
                 "jha10": Instance("https://cs3099user-a10.host.cs.st-andrews.ac.uk")  
+=======
+                # "Freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
+                # "Academoo": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
+                "WabberJocky": Instance("https://cs3099user-a4.host.cs.st-andrews.ac.uk/"),
+                # "Feddit": Instance("http://86.176.106.252:8000/"),
+>>>>>>> master
             }
 
-        # Two-way dictionary 
+        # URL to Instance, used for public key retrieval
         self.url_to_instance = {}
-        for inst in self.instances:
-            self.url_to_instance[urlparse(self.instances[inst].url).netloc] = self.instances[inst]
+        for inst in self.instances.values():
+            self.url_to_instance[urlparse(inst.url).netloc] = inst
+        
+        self.discover_instances()
+    
+    def discover_instances(self):
+        # Depth-First Search with memoization in production?!? omg! Incredible. 
+        memo = set()
+        stack = [inst.url for inst in self.instances.values()]
 
+        while stack:
+            url = stack.pop(); memo.add(url)
+
+            try:
+                ret = requests.get(urljoin(url, "/fed/discover"), timeout=3)
+            except (ConnectTimeout, ConnectionError): continue
+            
+            if ret.status_code == 200:
+                for child_url in ret.json():
+                    child_url = format_url(child_url)
+                    if child_url in memo: continue
+                    if self.add_instance(host=urlparse(child_url).netloc, url=child_url):
+                        stack.append(child_url)
+                                
     def create_post(self, host, data, headers):
         return self.instances[host].create_post(data, headers)
     
@@ -69,11 +102,12 @@ class Manager(object):
         return list(self.instances.keys())
 
     def add_instance(self, host, url):
-        if host in self.instances:
+        netloc = urlparse(url).netloc
+        if host in self.instances or netloc in self.url_to_instance or netloc == self.host:
             return False
 
-        url = "http://" + url if "://" not in url else url
+        url = format_url(url)
         self.instances[host] = Instance(url)
-        self.url_to_instance[urlparse(url).netloc] = self.instances[host]
+        self.url_to_instance[netloc] = self.instances[host]
         
         return True

@@ -15,7 +15,16 @@ def respond_with_action(actionResponse):
         return Response(status=status)
     else:
         return jsonify(data), status
-        
+
+
+@bp.route("/discover", methods=["GET"])
+def discover():
+    instances = []
+    for inst in instance_manager.instances.values():
+        instances.append(inst.url)
+    
+    return jsonify(instances)
+
 @bp.route("/key", methods=["GET"])
 def get_key():
     response = Response(current_app.config["PUBLIC_KEY"], mimetype="application/x-pem-file")

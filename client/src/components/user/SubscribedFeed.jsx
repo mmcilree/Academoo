@@ -13,7 +13,7 @@ class SubscribedFeed extends Component {
         isLoading: true,
         posts: [],
         error: null,
-        subscribedCommunities: []
+        subscribedCommunities: [],
     }
 
     componentDidMount() {
@@ -21,7 +21,6 @@ class SubscribedFeed extends Component {
     }
 
     async fetchSubscribedCommunities() {
-        this.setState({ isLoading: true });
         await authFetch("/api/get-user").then(response => response.json())
             .then(data => {
                 // console.log("data = "  + data.subcriptions);
@@ -35,15 +34,18 @@ class SubscribedFeed extends Component {
         this.fetchPosts();
     }
 
-    fetchPosts() {
-        this.state.subscribedCommunities.map((community, i) => {
-            this.appendPostsFromCommunity(community, i);
-        });
-        this.state.subscribedCommunities.length == 0 && this.setState({ isLoading: false });
+    async fetchPosts() {
+        await Promise.all(this.state.subscribedCommunities.map((subscription, i) => {
+            this.appendPostsFromSubscription(subscription, i);
+        }));
+        this.state.subscribedCommunities.length === 0 && this.setState({ isLoading: false });
     }
 
-    async appendPostsFromCommunity(community, i) {
-        await authFetch('/api/posts?community=' + community + '&includeSubChildrenPosts=false',
+    async appendPostsFromSubscription(subscription, i) {
+        console.log(i)
+        await authFetch('/api/posts?community=' + subscription.communityId
+        + '&includeSubChildrenPosts=false'
+        + (subscription.external !== null ? '&external=' + subscription.external : ''),
             {
                 headers: {
                     'User-ID': this.state.user_id,
@@ -52,14 +54,13 @@ class SubscribedFeed extends Component {
             })
             .then(response => response.json())
             .then(data =>
-                this.setState({
-                    posts: [...this.state.posts, ...data],
-                })
+                i === this.state.subscribedCommunities.length - 1 ? 
+                this.setState((prevState) => {return {posts: [...prevState.posts, ...data]}}, () => console.log("done?"))
+                : this.setState({posts: [...this.state.posts, ...data]})
             )
             .catch(error => this.setState({ error, isLoading: false }));
         this.setState({ posts: this.state.posts.slice().sort((a, b) => b.created - a.created) });
-
-        (i == this.state.subscribedCommunities.length - 1) && this.setState({ isLoading: false });
+           
     }
 
     sortRecent() {
@@ -123,12 +124,14 @@ class SubscribedFeed extends Component {
                                 <MiniPostCreator currentCommunity={null} />
 
                                 {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
-                                {!isLoading && posts.length !== 0 ? (
+                                {!isLoading ? (
+                                    posts.length !== 0 ? 
                                     <PostsViewer posts={posts} refreshPost={this.refreshPost.bind(this)} displayCommunityName />
+                                    : <h3>There's no posts here :-(</h3>
                                 ) : (
                                     <h3>Loading Posts...</h3>
                                 )}
-                                {!isLoading && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
+                                
                             </Card.Body>
                         </Card>
                     </Col>

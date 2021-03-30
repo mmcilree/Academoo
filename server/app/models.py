@@ -14,16 +14,21 @@ def getUUID():
 def getTime():
     return int(datetime.utcnow().timestamp())
 
-class UserRole(db.Model):
+class UserRole(db.Model): 
     user_id = db.Column(db.String(50), db.ForeignKey('user.user_id'), primary_key=True)
     community_id = db.Column(db.String(1000), db.ForeignKey('community.id'), primary_key=True)
     role = db.Column(db.String(50)) # admin, contributor, member, guest, prohibited
 
-subscriptions = db.Table('subscriptions',
+class UserSubscription(db.Model):
+    user_id = db.Column(db.String(50), db.ForeignKey('user.user_id'), primary_key=True)
+    community_id = db.Column(db.String(1000), db.ForeignKey('community.id'), primary_key=True)
+    external = db.Column(db.String(50)) # None if local community
+
+subscriptions = db.Table('subscriptions', 
     db.Column('user_id', db.String(50), db.ForeignKey('user.user_id')),
     db.Column('community_id', db.String(1000), db.ForeignKey('community.id')))
 
-class UserVote(db.Model):
+class UserVote(db.Model): 
     user_id = db.Column(db.String(50), db.ForeignKey('user.user_id'), primary_key=True)
     post_id = db.Column(db.String(1000), db.ForeignKey('post.id'), primary_key=True)
     value = db.Column(db.String(50)) # upvote / downvote
@@ -33,12 +38,12 @@ class User(db.Model):
     posts_created = db.relationship('Post', backref='author')
     host = db.Column(db.String(1000), nullable=False)
     email = db.Column(db.String(1000))
-    bio = db.Column(db.String(140))
+    about = db.Column(db.String(140))
     private_account = db.Column(db.Boolean, default=False, nullable=False)
     password_hash = db.Column(db.String(128))
     site_roles = db.Column(db.String, default="basic")
     #admin_of = db.relationship('Community', secondary=administrating, backref='admins')
-    subscriptions = db.relationship('Community', secondary=subscriptions, backref='subscribed_users')
+    subscriptions = db.relationship('UserSubscription', backref='subscribed_users',  cascade="all, delete")
     roles = db.relationship('UserRole', backref='user', cascade="all, delete")
 
     # We need this for auth to work apparently - maybe Robert can clarify?

@@ -1,0 +1,1152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1617054145168" clover="3.2.0">
+  <project timestamp="1617054145168" name="All files">
+    <metrics statements="990" coveredstatements="380" conditionals="577" coveredconditionals="230" methods="483" coveredmethods="203" elements="2050" coveredelements="813" complexity="0" loc="990" ncloc="990" packages="12" files="40" classes="40"/>
+    <package name="src">
+      <metrics statements="45" coveredstatements="3" conditionals="32" coveredconditionals="0" methods="19" coveredmethods="2"/>
+      <file name="App.js" path="/Users/matthewmcilree/CS3099/project-code/client/src/App.js">
+        <metrics statements="4" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="2"/>
+        <line num="28" count="20" type="stmt"/>
+        <line num="30" count="20" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="37" count="20" type="stmt"/>
+      </file>
+      <file name="index.js" path="/Users/matthewmcilree/CS3099/project-code/client/src/index.js">
+        <metrics statements="2" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+      </file>
+      <file name="serviceWorker.js" path="/Users/matthewmcilree/CS3099/project-code/client/src/serviceWorker.js">
+        <metrics statements="39" coveredstatements="0" conditionals="32" coveredconditionals="0" methods="16" coveredmethods="0"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="27" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="37" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="63" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="67" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="68" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="78" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="88" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="108" count="0" type="stmt"/>
+        <line num="109" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="114" count="0" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="116" count="0" type="stmt"/>
+        <line num="121" count="0" type="stmt"/>
+        <line num="125" count="0" type="stmt"/>
+        <line num="132" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="133" count="0" type="stmt"/>
+        <line num="135" count="0" type="stmt"/>
+        <line num="138" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.auth">
+      <metrics statements="6" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="3" coveredmethods="0"/>
+      <file name="index.js" path="/Users/matthewmcilree/CS3099/project-code/client/src/auth/index.js">
+        <metrics statements="6" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="4" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.components.authentication">
+      <metrics statements="201" coveredstatements="64" conditionals="102" coveredconditionals="36" methods="97" coveredmethods="34"/>
+      <file name="AdminKeyAuth.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/authentication/AdminKeyAuth.jsx">
+        <metrics statements="37" coveredstatements="0" conditionals="16" coveredconditionals="0" methods="14" coveredmethods="0"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="51" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="61" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="83" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="87" count="0" type="stmt"/>
+        <line num="91" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
+      </file>
+      <file name="ControlPanel.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/authentication/ControlPanel.jsx">
+        <metrics statements="57" coveredstatements="18" conditionals="36" coveredconditionals="12" methods="36" coveredmethods="16"/>
+        <line num="22" count="7" type="stmt"/>
+        <line num="23" count="7" type="stmt"/>
+        <line num="46" count="7" type="stmt"/>
+        <line num="47" count="7" type="stmt"/>
+        <line num="48" count="7" type="stmt"/>
+        <line num="52" count="7" type="stmt"/>
+        <line num="54" count="7" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="65" count="7" type="stmt"/>
+        <line num="66" count="7" type="stmt"/>
+        <line num="68" count="7" type="stmt"/>
+        <line num="77" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="79" count="7" type="stmt"/>
+        <line num="80" count="21" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="91" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="95" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="105" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="106" count="0" type="stmt"/>
+        <line num="107" count="0" type="stmt"/>
+        <line num="110" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="111" count="0" type="stmt"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="125" count="0" type="stmt"/>
+        <line num="127" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="129" count="0" type="stmt"/>
+        <line num="130" count="0" type="stmt"/>
+        <line num="132" count="0" type="stmt"/>
+        <line num="137" count="0" type="stmt"/>
+        <line num="154" count="0" type="stmt"/>
+        <line num="156" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="157" count="0" type="stmt"/>
+        <line num="158" count="0" type="stmt"/>
+        <line num="160" count="0" type="stmt"/>
+        <line num="164" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="165" count="0" type="stmt"/>
+        <line num="166" count="0" type="stmt"/>
+        <line num="167" count="0" type="stmt"/>
+        <line num="175" count="28" type="stmt"/>
+        <line num="176" count="28" type="stmt"/>
+        <line num="196" count="56" type="stmt"/>
+        <line num="201" count="28" type="stmt"/>
+        <line num="204" count="0" type="stmt"/>
+        <line num="206" count="0" type="stmt"/>
+        <line num="216" count="0" type="stmt"/>
+        <line num="229" count="42" type="stmt"/>
+        <line num="232" count="0" type="stmt"/>
+        <line num="242" count="0" type="stmt"/>
+        <line num="245" count="0" type="stmt"/>
+      </file>
+      <file name="LoggedOutRoute.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/authentication/LoggedOutRoute.jsx">
+        <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+        <line num="5" count="6" type="stmt"/>
+        <line num="6" count="11" type="stmt"/>
+        <line num="8" count="11" type="stmt"/>
+        <line num="9" count="11" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="Login.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/authentication/Login.jsx">
+        <metrics statements="25" coveredstatements="4" conditionals="6" coveredconditionals="1" methods="10" coveredmethods="3"/>
+        <line num="10" count="9" type="stmt"/>
+        <line num="11" count="9" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="40" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="50" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="73" count="9" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="102" count="8" type="stmt"/>
+      </file>
+      <file name="ModeratorControls.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/authentication/ModeratorControls.jsx">
+        <metrics statements="39" coveredstatements="0" conditionals="20" coveredconditionals="0" methods="22" coveredmethods="0"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="44" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="58" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="62" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="72" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="95" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="103" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="106" count="0" type="stmt"/>
+        <line num="113" count="0" type="stmt"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="133" count="0" type="stmt"/>
+        <line num="136" count="0" type="stmt"/>
+        <line num="138" count="0" type="stmt"/>
+        <line num="148" count="0" type="stmt"/>
+        <line num="160" count="0" type="stmt"/>
+        <line num="161" count="0" type="stmt"/>
+        <line num="171" count="0" type="stmt"/>
+        <line num="174" count="0" type="stmt"/>
+      </file>
+      <file name="PrivateRoute.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/authentication/PrivateRoute.jsx">
+        <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+        <line num="5" count="6" type="stmt"/>
+        <line num="6" count="16" type="stmt"/>
+        <line num="8" count="16" type="stmt"/>
+        <line num="9" count="16" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="SignUp.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/authentication/SignUp.jsx">
+        <metrics statements="35" coveredstatements="34" conditionals="20" coveredconditionals="19" methods="11" coveredmethods="11"/>
+        <line num="9" count="27" type="stmt"/>
+        <line num="10" count="27" type="stmt"/>
+        <line num="19" count="25" type="stmt"/>
+        <line num="21" count="25" type="cond" truecount="6" falsecount="0"/>
+        <line num="25" count="4" type="stmt"/>
+        <line num="26" count="4" type="stmt"/>
+        <line num="28" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="29" count="4" type="stmt"/>
+        <line num="32" count="295" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="4" type="stmt"/>
+        <line num="36" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="4" type="stmt"/>
+        <line num="39" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="40" count="5" type="stmt"/>
+        <line num="51" count="21" type="stmt"/>
+        <line num="54" count="25" type="stmt"/>
+        <line num="57" count="100" type="stmt"/>
+        <line num="58" count="100" type="stmt"/>
+        <line num="59" count="100" type="stmt"/>
+        <line num="60" count="100" type="stmt"/>
+        <line num="66" count="25" type="stmt"/>
+        <line num="68" count="25" type="stmt"/>
+        <line num="69" count="25" type="cond" truecount="2" falsecount="0"/>
+        <line num="70" count="21" type="stmt"/>
+        <line num="71" count="21" type="stmt"/>
+        <line num="73" count="4" type="stmt"/>
+        <line num="85" count="4" type="stmt"/>
+        <line num="86" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="87" count="0" type="stmt"/>
+        <line num="89" count="4" type="stmt"/>
+        <line num="92" count="4" type="stmt"/>
+        <line num="95" count="4" type="stmt"/>
+        <line num="100" count="152" type="stmt"/>
+        <line num="101" count="152" type="stmt"/>
+        <line num="153" count="21" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.components.comments">
+      <metrics statements="68" coveredstatements="17" conditionals="38" coveredconditionals="10" methods="42" coveredmethods="11"/>
+      <file name="CommentCreator.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/comments/CommentCreator.jsx">
+        <metrics statements="30" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="17" coveredmethods="0"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="36" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="84" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="92" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="98" count="0" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="105" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="106" count="0" type="stmt"/>
+        <line num="111" count="0" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+      </file>
+      <file name="CommentsViewer.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/comments/CommentsViewer.jsx">
+        <metrics statements="38" coveredstatements="17" conditionals="24" coveredconditionals="10" methods="25" coveredmethods="11"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="52" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="60" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="61" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="83" count="1" type="stmt"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="87" count="0" type="stmt"/>
+        <line num="88" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="96" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="98" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="102" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="106" count="0" type="stmt"/>
+        <line num="109" count="1" type="stmt"/>
+        <line num="113" count="1" type="stmt"/>
+        <line num="117" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="118" count="0" type="stmt"/>
+        <line num="123" count="4" type="stmt"/>
+        <line num="125" count="4" type="stmt"/>
+        <line num="131" count="0" type="stmt"/>
+        <line num="144" count="0" type="stmt"/>
+        <line num="156" count="0" type="stmt"/>
+        <line num="157" count="0" type="cond" truecount="0" falsecount="2"/>
+      </file>
+    </package>
+    <package name="src.components.community">
+      <metrics statements="175" coveredstatements="81" conditionals="97" coveredconditionals="41" methods="108" coveredmethods="59"/>
+      <file name="CommunityCreator.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/community/CommunityCreator.jsx">
+        <metrics statements="38" coveredstatements="11" conditionals="10" coveredconditionals="0" methods="19" coveredmethods="10"/>
+        <line num="11" count="9" type="stmt"/>
+        <line num="12" count="9" type="stmt"/>
+        <line num="23" count="9" type="stmt"/>
+        <line num="24" count="9" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="37" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="46" count="9" type="stmt"/>
+        <line num="53" count="9" type="stmt"/>
+        <line num="59" count="9" type="stmt"/>
+        <line num="61" count="9" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="75" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="95" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
+        <line num="116" count="0" type="stmt"/>
+        <line num="119" count="0" type="stmt"/>
+        <line num="126" count="27" type="stmt"/>
+        <line num="127" count="27" type="stmt"/>
+        <line num="175" count="0" type="stmt"/>
+        <line num="179" count="63" type="stmt"/>
+      </file>
+      <file name="CommunityExplorer.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/community/CommunityExplorer.jsx">
+        <metrics statements="9" coveredstatements="8" conditionals="4" coveredconditionals="3" methods="7" coveredmethods="6"/>
+        <line num="8" count="3" type="stmt"/>
+        <line num="16" count="3" type="stmt"/>
+        <line num="20" count="3" type="stmt"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="33" count="5" type="stmt"/>
+        <line num="34" count="5" type="stmt"/>
+        <line num="43" count="6" type="stmt"/>
+      </file>
+      <file name="CommunityFeed.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/community/CommunityFeed.jsx">
+        <metrics statements="30" coveredstatements="0" conditionals="31" coveredconditionals="0" methods="17" coveredmethods="0"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="50" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="58" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="90" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="97" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="98" count="0" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="107" count="0" type="stmt"/>
+        <line num="111" count="0" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="116" count="0" type="stmt"/>
+        <line num="118" count="0" type="stmt"/>
+        <line num="125" count="0" type="cond" truecount="0" falsecount="2"/>
+      </file>
+      <file name="CommunityList.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/community/CommunityList.jsx">
+        <metrics statements="13" coveredstatements="10" conditionals="16" coveredconditionals="14" methods="9" coveredmethods="7"/>
+        <line num="13" count="8" type="stmt"/>
+        <line num="14" count="8" type="stmt"/>
+        <line num="22" count="8" type="stmt"/>
+        <line num="26" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="36" count="8" type="stmt"/>
+        <line num="41" count="8" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="54" count="18" type="stmt"/>
+        <line num="56" count="18" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="89" count="30" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="CommunityManager.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/community/CommunityManager.jsx">
+        <metrics statements="68" coveredstatements="45" conditionals="28" coveredconditionals="20" methods="46" coveredmethods="29"/>
+        <line num="17" count="15" type="stmt"/>
+        <line num="18" count="15" type="stmt"/>
+        <line num="47" count="15" type="stmt"/>
+        <line num="48" count="15" type="stmt"/>
+        <line num="49" count="15" type="stmt"/>
+        <line num="50" count="15" type="stmt"/>
+        <line num="51" count="15" type="stmt"/>
+        <line num="55" count="8" type="stmt"/>
+        <line num="56" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="57" count="3" type="stmt"/>
+        <line num="60" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="61" count="1" type="stmt"/>
+        <line num="64" count="8" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="69" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="77" count="15" type="stmt"/>
+        <line num="79" count="15" type="stmt"/>
+        <line num="89" count="15" type="stmt"/>
+        <line num="91" count="15" type="stmt"/>
+        <line num="98" count="19" type="stmt"/>
+        <line num="99" count="19" type="stmt"/>
+        <line num="101" count="19" type="stmt"/>
+        <line num="122" count="15" type="stmt"/>
+        <line num="123" count="15" type="stmt"/>
+        <line num="125" count="15" type="stmt"/>
+        <line num="136" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="138" count="23" type="stmt"/>
+        <line num="139" count="69" type="stmt"/>
+        <line num="145" count="8" type="stmt"/>
+        <line num="146" count="8" type="stmt"/>
+        <line num="147" count="8" type="stmt"/>
+        <line num="151" count="8" type="stmt"/>
+        <line num="152" count="8" type="stmt"/>
+        <line num="153" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="154" count="4" type="stmt"/>
+        <line num="155" count="4" type="stmt"/>
+        <line num="157" count="4" type="stmt"/>
+        <line num="174" count="4" type="stmt"/>
+        <line num="176" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="177" count="0" type="stmt"/>
+        <line num="178" count="0" type="stmt"/>
+        <line num="179" count="0" type="stmt"/>
+        <line num="182" count="4" type="stmt"/>
+        <line num="186" count="0" type="stmt"/>
+        <line num="187" count="0" type="stmt"/>
+        <line num="188" count="0" type="stmt"/>
+        <line num="192" count="4" type="stmt"/>
+        <line num="199" count="0" type="stmt"/>
+        <line num="200" count="0" type="stmt"/>
+        <line num="201" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="202" count="0" type="stmt"/>
+        <line num="203" count="0" type="stmt"/>
+        <line num="205" count="0" type="stmt"/>
+        <line num="219" count="0" type="stmt"/>
+        <line num="221" count="0" type="stmt"/>
+        <line num="224" count="0" type="stmt"/>
+        <line num="230" count="142" type="stmt"/>
+        <line num="244" count="8" type="stmt"/>
+        <line num="262" count="448" type="stmt"/>
+        <line num="267" count="182" type="stmt"/>
+        <line num="270" count="0" type="stmt"/>
+        <line num="272" count="0" type="stmt"/>
+        <line num="282" count="0" type="stmt"/>
+        <line num="296" count="635" type="stmt"/>
+        <line num="320" count="635" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="CommunitySubscribeButton.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/community/CommunitySubscribeButton.jsx">
+        <metrics statements="17" coveredstatements="7" conditionals="8" coveredconditionals="4" methods="10" coveredmethods="7"/>
+        <line num="8" count="27" type="stmt"/>
+        <line num="14" count="27" type="stmt"/>
+        <line num="17" count="27" type="stmt"/>
+        <line num="21" count="27" type="stmt"/>
+        <line num="23" count="27" type="stmt"/>
+        <line num="24" count="75" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="60" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="65" count="81" type="cond" truecount="4" falsecount="0"/>
+      </file>
+    </package>
+    <package name="src.components.layout">
+      <metrics statements="58" coveredstatements="24" conditionals="31" coveredconditionals="12" methods="24" coveredmethods="10"/>
+      <file name="HeaderBar.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/layout/HeaderBar.jsx">
+        <metrics statements="20" coveredstatements="11" conditionals="15" coveredconditionals="4" methods="7" coveredmethods="3"/>
+        <line num="26" count="6" type="stmt"/>
+        <line num="30" count="28" type="stmt"/>
+        <line num="31" count="28" type="stmt"/>
+        <line num="32" count="28" type="stmt"/>
+        <line num="33" count="28" type="stmt"/>
+        <line num="34" count="28" type="stmt"/>
+        <line num="35" count="28" type="stmt"/>
+        <line num="38" count="28" type="stmt"/>
+        <line num="40" count="18" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="45" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="58" count="18" type="stmt"/>
+        <line num="62" count="28" type="stmt"/>
+      </file>
+      <file name="MarkdownPreviewer.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/layout/MarkdownPreviewer.jsx">
+        <metrics statements="23" coveredstatements="3" conditionals="6" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="6" count="7" type="stmt"/>
+        <line num="7" count="7" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="138" count="7" type="stmt"/>
+        <line num="139" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="140" count="0" type="stmt"/>
+        <line num="142" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="143" count="0" type="stmt"/>
+        <line num="145" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="146" count="0" type="stmt"/>
+        <line num="148" count="0" type="stmt"/>
+      </file>
+      <file name="MarkdownRender.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/layout/MarkdownRender.jsx">
+        <metrics statements="5" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="1"/>
+        <line num="5" count="7" type="stmt"/>
+        <line num="7" count="7" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="21" count="7" type="stmt"/>
+      </file>
+      <file name="Sidebar.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/layout/Sidebar.jsx">
+        <metrics statements="10" coveredstatements="7" conditionals="10" coveredconditionals="8" methods="8" coveredmethods="6"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="36" count="9" type="stmt"/>
+        <line num="38" count="9" type="stmt"/>
+        <line num="53" count="24" type="cond" truecount="2" falsecount="0"/>
+      </file>
+    </package>
+    <package name="src.components.posts">
+      <metrics statements="204" coveredstatements="103" conditionals="150" coveredconditionals="67" methods="79" coveredmethods="46"/>
+      <file name="MiniPostCreator.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/posts/MiniPostCreator.jsx">
+        <metrics statements="4" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="1"/>
+        <line num="6" count="8" type="stmt"/>
+        <line num="8" count="8" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+      </file>
+      <file name="Post.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/posts/Post.jsx">
+        <metrics statements="92" coveredstatements="35" conditionals="67" coveredconditionals="27" methods="26" coveredmethods="12"/>
+        <line num="13" count="8" type="stmt"/>
+        <line num="14" count="8" type="stmt"/>
+        <line num="31" count="8" type="stmt"/>
+        <line num="32" count="8" type="stmt"/>
+        <line num="33" count="8" type="stmt"/>
+        <line num="37" count="8" type="stmt"/>
+        <line num="41" count="8" type="stmt"/>
+        <line num="43" count="8" type="stmt"/>
+        <line num="51" count="1" type="stmt"/>
+        <line num="52" count="8" type="stmt"/>
+        <line num="56" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="62" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="63" count="5" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="87" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="106" count="8" type="stmt"/>
+        <line num="107" count="0" type="stmt"/>
+        <line num="113" count="0" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
+        <line num="120" count="8" type="stmt"/>
+        <line num="121" count="0" type="stmt"/>
+        <line num="127" count="0" type="stmt"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="129" count="0" type="stmt"/>
+        <line num="130" count="0" type="stmt"/>
+        <line num="137" count="0" type="stmt"/>
+        <line num="138" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="140" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="141" count="0" type="stmt"/>
+        <line num="144" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="145" count="0" type="stmt"/>
+        <line num="148" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="152" count="0" type="stmt"/>
+        <line num="156" count="0" type="stmt"/>
+        <line num="158" count="0" type="stmt"/>
+        <line num="159" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="160" count="0" type="stmt"/>
+        <line num="161" count="0" type="stmt"/>
+        <line num="164" count="0" type="stmt"/>
+        <line num="177" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="178" count="0" type="stmt"/>
+        <line num="181" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="182" count="0" type="stmt"/>
+        <line num="187" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="188" count="0" type="stmt"/>
+        <line num="195" count="0" type="stmt"/>
+        <line num="197" count="0" type="stmt"/>
+        <line num="198" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="199" count="0" type="stmt"/>
+        <line num="201" count="0" type="stmt"/>
+        <line num="206" count="0" type="stmt"/>
+        <line num="213" count="27" type="stmt"/>
+        <line num="214" count="27" type="cond" truecount="1" falsecount="1"/>
+        <line num="215" count="27" type="stmt"/>
+        <line num="292" count="7" type="stmt"/>
+        <line num="293" count="27" type="stmt"/>
+        <line num="294" count="27" type="stmt"/>
+        <line num="295" count="27" type="stmt"/>
+        <line num="296" count="67" type="cond" truecount="1" falsecount="1"/>
+        <line num="298" count="27" type="stmt"/>
+        <line num="299" count="67" type="cond" truecount="1" falsecount="1"/>
+        <line num="305" count="27" type="stmt"/>
+        <line num="306" count="27" type="cond" truecount="2" falsecount="1"/>
+        <line num="308" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="326" count="7" type="stmt"/>
+        <line num="337" count="0" type="stmt"/>
+        <line num="341" count="7" type="stmt"/>
+        <line num="342" count="35" type="stmt"/>
+        <line num="346" count="0" type="stmt"/>
+        <line num="347" count="0" type="stmt"/>
+        <line num="358" count="7" type="stmt"/>
+        <line num="359" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="360" count="0" type="stmt"/>
+        <line num="362" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="363" count="0" type="stmt"/>
+        <line num="365" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="366" count="0" type="stmt"/>
+        <line num="368" count="0" type="stmt"/>
+        <line num="372" count="7" type="stmt"/>
+        <line num="373" count="0" type="stmt"/>
+      </file>
+      <file name="PostCreator.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/posts/PostCreator.jsx">
+        <metrics statements="66" coveredstatements="55" conditionals="55" coveredconditionals="35" methods="32" coveredmethods="25"/>
+        <line num="13" count="15" type="stmt"/>
+        <line num="14" count="15" type="stmt"/>
+        <line num="31" count="15" type="stmt"/>
+        <line num="32" count="15" type="stmt"/>
+        <line num="33" count="15" type="stmt"/>
+        <line num="37" count="13" type="stmt"/>
+        <line num="38" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="39" count="4" type="stmt"/>
+        <line num="42" count="13" type="cond" truecount="4" falsecount="0"/>
+        <line num="44" count="104" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="4" type="stmt"/>
+        <line num="47" count="13" type="cond" truecount="2" falsecount="2"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="51" count="13" type="stmt"/>
+        <line num="54" count="15" type="stmt"/>
+        <line num="55" count="15" type="stmt"/>
+        <line num="59" count="15" type="stmt"/>
+        <line num="61" count="15" type="stmt"/>
+        <line num="69" count="15" type="stmt"/>
+        <line num="70" count="15" type="stmt"/>
+        <line num="72" count="15" type="stmt"/>
+        <line num="76" count="56" type="stmt"/>
+        <line num="80" count="56" type="cond" truecount="2" falsecount="0"/>
+        <line num="85" count="56" type="stmt"/>
+        <line num="87" count="56" type="stmt"/>
+        <line num="88" count="168" type="stmt"/>
+        <line num="93" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="101" count="26" type="stmt"/>
+        <line num="102" count="26" type="stmt"/>
+        <line num="103" count="26" type="stmt"/>
+        <line num="104" count="26" type="stmt"/>
+        <line num="111" count="13" type="stmt"/>
+        <line num="113" count="13" type="stmt"/>
+        <line num="114" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="115" count="8" type="stmt"/>
+        <line num="116" count="8" type="stmt"/>
+        <line num="119" count="5" type="stmt"/>
+        <line num="137" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="138" count="5" type="stmt"/>
+        <line num="141" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="142" count="0" type="stmt"/>
+        <line num="148" count="5" type="stmt"/>
+        <line num="155" count="5" type="stmt"/>
+        <line num="157" count="5" type="stmt"/>
+        <line num="159" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="160" count="0" type="stmt"/>
+        <line num="161" count="0" type="stmt"/>
+        <line num="162" count="0" type="stmt"/>
+        <line num="165" count="5" type="stmt"/>
+        <line num="169" count="5" type="stmt"/>
+        <line num="170" count="5" type="stmt"/>
+        <line num="172" count="5" type="stmt"/>
+        <line num="175" count="5" type="cond" truecount="0" falsecount="2"/>
+        <line num="178" count="5" type="stmt"/>
+        <line num="179" count="5" type="stmt"/>
+        <line num="180" count="5" type="stmt"/>
+        <line num="185" count="157" type="stmt"/>
+        <line num="186" count="157" type="cond" truecount="2" falsecount="0"/>
+        <line num="223" count="241" type="stmt"/>
+        <line num="228" count="0" type="stmt"/>
+        <line num="230" count="0" type="stmt"/>
+        <line num="242" count="0" type="stmt"/>
+        <line num="252" count="13" type="stmt"/>
+        <line num="255" count="233" type="stmt"/>
+      </file>
+      <file name="PostEditor.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/posts/PostEditor.jsx">
+        <metrics statements="15" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+      </file>
+      <file name="PostsViewer.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/posts/PostsViewer.jsx">
+        <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="1" methods="2" coveredmethods="2"/>
+        <line num="12" count="4" type="stmt"/>
+        <line num="14" count="6" type="stmt"/>
+        <line num="15" count="6" type="stmt"/>
+        <line num="16" count="6" type="stmt"/>
+      </file>
+      <file name="VoteDisplay.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/posts/VoteDisplay.jsx">
+        <metrics statements="23" coveredstatements="7" conditionals="20" coveredconditionals="4" methods="10" coveredmethods="6"/>
+        <line num="8" count="7" type="stmt"/>
+        <line num="9" count="7" type="stmt"/>
+        <line num="19" count="7" type="stmt"/>
+        <line num="24" count="7" type="stmt"/>
+        <line num="26" count="7" type="cond" truecount="3" falsecount="1"/>
+        <line num="27" count="7" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="38" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="39" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="44" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="45" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="51" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="62" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.components.sketch">
+      <metrics statements="50" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="22" coveredmethods="0"/>
+      <file name="Whiteboard.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/sketch/Whiteboard.jsx">
+        <metrics statements="50" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="22" coveredmethods="0"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="87" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="106" count="0" type="stmt"/>
+        <line num="107" count="0" type="stmt"/>
+        <line num="108" count="0" type="stmt"/>
+        <line num="109" count="0" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="116" count="0" type="stmt"/>
+        <line num="117" count="0" type="stmt"/>
+        <line num="127" count="0" type="stmt"/>
+        <line num="129" count="0" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="140" count="0" type="stmt"/>
+        <line num="157" count="0" type="stmt"/>
+        <line num="158" count="0" type="stmt"/>
+        <line num="219" count="0" type="stmt"/>
+        <line num="220" count="0" type="stmt"/>
+        <line num="221" count="0" type="stmt"/>
+        <line num="252" count="0" type="stmt"/>
+        <line num="261" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.components.static">
+      <metrics statements="6" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="2"/>
+      <file name="AccessForbidden.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/static/AccessForbidden.jsx">
+        <metrics statements="1" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="7" count="0" type="stmt"/>
+      </file>
+      <file name="Help.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/static/Help.jsx">
+        <metrics statements="1" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="7" count="0" type="stmt"/>
+      </file>
+      <file name="PageNotFound.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/static/PageNotFound.jsx">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="7" count="1" type="stmt"/>
+      </file>
+      <file name="Welcome.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/static/Welcome.jsx">
+        <metrics statements="3" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="1"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="21" count="5" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.components.user">
+      <metrics statements="126" coveredstatements="48" conditionals="77" coveredconditionals="39" methods="76" coveredmethods="34"/>
+      <file name="SubscribedFeed.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/user/SubscribedFeed.jsx">
+        <metrics statements="29" coveredstatements="17" conditionals="14" coveredconditionals="9" methods="27" coveredmethods="12"/>
+        <line num="12" count="2" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="27" count="2" type="stmt"/>
+        <line num="34" count="2" type="stmt"/>
+        <line num="38" count="2" type="stmt"/>
+        <line num="39" count="3" type="stmt"/>
+        <line num="41" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="3" type="stmt"/>
+        <line num="46" count="3" type="stmt"/>
+        <line num="55" count="3" type="stmt"/>
+        <line num="57" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="58" count="1" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="62" count="3" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="90" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="101" count="11" type="stmt"/>
+        <line num="102" count="11" type="stmt"/>
+        <line num="103" count="11" type="stmt"/>
+      </file>
+      <file name="UserProfile.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/user/UserProfile.jsx">
+        <metrics statements="35" coveredstatements="18" conditionals="39" coveredconditionals="26" methods="19" coveredmethods="10"/>
+        <line num="9" count="6" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="33" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="53" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="61" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="67" count="1" type="stmt"/>
+        <line num="71" count="1" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="81" count="1" type="stmt"/>
+        <line num="87" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="94" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="96" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="98" count="0" type="stmt"/>
+        <line num="103" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="106" count="0" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="119" count="3" type="stmt"/>
+        <line num="120" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="121" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="124" count="3" type="stmt"/>
+        <line num="125" count="3" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="UserRolesTable.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/user/UserRolesTable.jsx">
+        <metrics statements="7" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="7" coveredmethods="6"/>
+        <line num="6" count="15" type="stmt"/>
+        <line num="10" count="127" type="stmt"/>
+        <line num="20" count="67" type="stmt"/>
+        <line num="28" count="67" type="stmt"/>
+        <line num="36" count="67" type="stmt"/>
+        <line num="44" count="67" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+      </file>
+      <file name="UserSettings.jsx" path="/Users/matthewmcilree/CS3099/project-code/client/src/components/user/UserSettings.jsx">
+        <metrics statements="55" coveredstatements="7" conditionals="24" coveredconditionals="4" methods="23" coveredmethods="6"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="63" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="67" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="84" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="100" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="106" count="0" type="stmt"/>
+        <line num="109" count="0" type="stmt"/>
+        <line num="113" count="0" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="122" count="0" type="stmt"/>
+        <line num="125" count="0" type="stmt"/>
+        <line num="126" count="0" type="stmt"/>
+        <line num="127" count="0" type="stmt"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="132" count="0" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="141" count="0" type="stmt"/>
+        <line num="144" count="0" type="stmt"/>
+        <line num="146" count="0" type="stmt"/>
+        <line num="147" count="0" type="stmt"/>
+        <line num="154" count="0" type="stmt"/>
+        <line num="155" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="156" count="0" type="stmt"/>
+        <line num="158" count="0" type="stmt"/>
+        <line num="165" count="0" type="stmt"/>
+        <line num="167" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="168" count="0" type="stmt"/>
+        <line num="169" count="0" type="stmt"/>
+        <line num="170" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="171" count="0" type="stmt"/>
+        <line num="180" count="2" type="stmt"/>
+        <line num="181" count="2" type="stmt"/>
+        <line num="189" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.tests">
+      <metrics statements="28" coveredstatements="25" conditionals="22" coveredconditionals="19" methods="4" coveredmethods="4"/>
+      <file name="fetchMocks.js" path="/Users/matthewmcilree/CS3099/project-code/client/src/tests/fetchMocks.js">
+        <metrics statements="28" coveredstatements="25" conditionals="22" coveredconditionals="19" methods="4" coveredmethods="4"/>
+        <line num="2" count="280" type="stmt"/>
+        <line num="3" count="264" type="stmt"/>
+        <line num="10" count="11" type="stmt"/>
+        <line num="11" count="28" type="cond" truecount="2" falsecount="0"/>
+        <line num="12" count="24" type="stmt"/>
+        <line num="13" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="26" count="4" type="stmt"/>
+        <line num="32" count="11" type="stmt"/>
+        <line num="33" count="252" type="cond" truecount="2" falsecount="0"/>
+        <line num="34" count="14" type="stmt"/>
+        <line num="35" count="238" type="cond" truecount="2" falsecount="0"/>
+        <line num="36" count="73" type="stmt"/>
+        <line num="37" count="165" type="cond" truecount="2" falsecount="0"/>
+        <line num="38" count="30" type="stmt"/>
+        <line num="39" count="135" type="cond" truecount="2" falsecount="0"/>
+        <line num="40" count="19" type="stmt"/>
+        <line num="47" count="116" type="cond" truecount="2" falsecount="0"/>
+        <line num="48" count="84" type="stmt"/>
+        <line num="56" count="32" type="cond" truecount="2" falsecount="0"/>
+        <line num="57" count="15" type="stmt"/>
+        <line num="58" count="17" type="cond" truecount="2" falsecount="0"/>
+        <line num="59" count="1" type="stmt"/>
+        <line num="74" count="16" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.util">
+      <metrics statements="23" coveredstatements="13" conditionals="24" coveredconditionals="6" methods="1" coveredmethods="1"/>
+      <file name="timeSince.js" path="/Users/matthewmcilree/CS3099/project-code/client/src/util/timeSince.js">
+        <metrics statements="23" coveredstatements="13" conditionals="24" coveredconditionals="6" methods="1" coveredmethods="1"/>
+        <line num="2" count="27" type="stmt"/>
+        <line num="4" count="27" type="stmt"/>
+        <line num="6" count="27" type="stmt"/>
+        <line num="7" count="27" type="stmt"/>
+        <line num="9" count="27" type="cond" truecount="1" falsecount="1"/>
+        <line num="10" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="13" count="27" type="stmt"/>
+        <line num="14" count="27" type="stmt"/>
+        <line num="16" count="27" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="20" count="17" type="stmt"/>
+        <line num="21" count="17" type="stmt"/>
+        <line num="23" count="17" type="cond" truecount="1" falsecount="1"/>
+        <line num="24" count="17" type="cond" truecount="1" falsecount="1"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="30" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="31" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="37" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="38" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="41" count="0" type="cond" truecount="0" falsecount="4"/>
+      </file>
+    </package>
+  </project>
+</coverage>

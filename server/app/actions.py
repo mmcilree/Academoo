@@ -1,5 +1,5 @@
 from app import db, guard
-from app.models import User, Community, Post, UserRole, PostContentField, UserVote, getTime, PostTag
+from app.models import User, Community, Post, UserRole, PostContentField, UserVote, getTime, PostTag, UserSubscription
 from sqlalchemy import desc
 import json
 from uuid import UUID
@@ -195,7 +195,11 @@ def getUser(user_id):
     user = User.query.filter_by(user_id = user_id).first()
     if user is None:
         return ({"title": "User does not exist", "message": "User does not exist, use another username associated with an existing user"}, 404)
-    user_dict = {"id": user.user_id, "about": "not implemented", "avatarUrl": "not implemented", "posts": [{"id": post.id, "host": "post.host doesn't exist for now oops"} for post in Post.query.filter_by(author_id=user.id)]}#########################
+    user_dict = {"id": user.user_id, 
+                "about": user.about, 
+                "avatarUrl": "not implemented", 
+                "posts": [{"id": post.id, "host": "post.host doesn't exist for now oops"} for post in Post.query.filter_by(author_id=user.id)]
+                }#########################
     return (user_dict, 200)
 
 def searchUsers(prefix):
@@ -210,7 +214,7 @@ def updateBio(user_id, bio):
     if validate_username(user_id): return validate_username(user_id)
 
     user = User.query.filter_by(user_id = user_id).first()
-    user.bio = bio
+    user.about = bio
     db.session.commit()
 
 def updatePrivacy(user_id, private_account):
@@ -259,24 +263,24 @@ def getLocalUser(id):
             user_dict = {"id":user.user_id, "email": "", "host":user.host, "bio":"", "private": user.private_account, "site_roles" : user.site_roles}
             return user_dict
         else:
-            user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.bio, "private": user.private_account,  "site_roles" : user.site_roles}
+            user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.about, "private": user.private_account,  "site_roles" : user.site_roles}
             return user_dict
 
 
-def addSubscriber(user_id, community_id):
-    user = User.query.filter_by(user_id = user_id).first()
-    community = Community.query.filter_by(id = community_id).first()
-    user.subscribed_communities.append(community)
+def addSubscriber(user_id, community_id, external):
+    if validate_community_id(community_id): return validate_community_id(community_id)
+    if validate_username(user_id): return validate_username(user_id)
 
+    subscription = UserSubscription(user_id=user_id, community_id=community_id, external=external)
+    db.session.add(subscription)
+    
     db.session.commit()
     return (None, 200)
 
-def removeSubscriber(user_id, community_id):
-    user = User.query.filter_by(user_id = user_id).first()
-    community = Community.query.filter_by(id = community_id).first()
-    user.subscribed_communities.remove(community)
-
-    db.session.commit()
+def removeSubscriber(user_id, community_id, external):
+    subscription = UserSubscription.query.filter_by(user_id=user_id, community_id=community_id, external=external).first()
+    db.session.delete(subscription)
+    db.session.commit() 
     return (None, 200)
 
 def getCommunityIDs():
