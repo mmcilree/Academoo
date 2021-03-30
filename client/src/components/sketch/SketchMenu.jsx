@@ -22,7 +22,7 @@ class SketchMenu extends React.Component {
     }
 
     handleJoin() {
-        
+        this.props.history.push("/sketchamoo/" + this.state.code);
     }
 
     render() {

@@ -1,9 +1,10 @@
 import re
 from flask_praetorian.decorators import auth_required, roles_required, roles_accepted
-from app import actions, instance_manager
+from app import actions, instance_manager, socketio
 from app.main import bp
 from flask import request, Response, jsonify, current_app, redirect, url_for
 from flask_praetorian import current_user
+from flask_socketio import join_room, leave_room, send
 from utils import *
 
 BAD_REQUEST = ({"message": "Bad Request"}, 400)
@@ -232,3 +233,19 @@ def update_instances():
     instance_manager.discover_instances()
 
     return redirect(url_for("protocol.discover"))
+
+@socketio.on('join')
+def on_join(data):
+    username = data['user']
+    room = data['room']
+    join_room(room)
+    print(username + ' has entered the room.')
+    send(username + ' has entered the room.', room=room)
+
+@socketio.on('leave')
+def on_leave(data):
+    username = data['user']
+    room = data['room']
+    leave_room(room)
+    send(username + ' has left the room.', room=room)
+
