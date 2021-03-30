@@ -42,6 +42,46 @@ def test_assign_role(client):
                            )
     assert response.status_code == 400
 
+    response = client.post("api/assign-role",
+                           headers={
+                               "User-ID": "admin"
+                           },
+                           json={
+                               "host": None,
+                               "user": "external_user",
+                               "community": "TestCommunity",
+                               "role": "admin"
+                           }
+                           )
+    assert response.status_code == 400
+
+
+    response = client.post("api/assign-role",
+                           headers={
+                               "User-ID": "admin"
+                           },
+                           json={
+                               "host": "external",
+                               "user": "external_user",
+                               "community": "TestCommunity",
+                               "role": "admin"
+                           }
+                           )
+    assert response.status_code == 200
+
+    response = client.post("api/assign-role",
+                        headers={
+                            "User-ID": "existent"
+                        },
+                        json={
+                            "host": "local",
+                            "user": "existent",
+                            "community": "TestCommunity",
+                            "role": "admin"
+                        }
+                        )
+    assert response.status_code == 400
+
 
 def test_default_role(client):
     # Set and Get for default role
@@ -90,7 +130,7 @@ def test_sitewide_roles(client):
     assert response.status_code == 400
 
     response = client.post("api/add-site-role", headers=headers, json={
-        "admin": "admin",
+        "admin": "nonexistent",
         "username": "existent",
         "key": "lh87GFL3DHkkMsw098An",
         "role": "site-moderator",
@@ -103,6 +143,24 @@ def test_sitewide_roles(client):
         "username": "existent",
         "key": "lh87GFL3DHkkMsw098An",
         "role": "site-moderator",
+        "host": "local"
+    })
+    assert response.status_code == 400
+
+    response = client.post("api/add-site-role", headers=headers, json={
+        "admin": "admin",
+        "username": "existent",
+        "key": "lh87GFL3DHkkMsw098An",
+        "role": "site-admin",
+        "host": "local"
+    })
+    assert response.status_code == 200
+
+    response = client.post("api/add-site-role", headers=headers, json={
+        "admin": "admin",
+        "username": "existent",
+        "key": "lh87GFL3DHkkMsw098An",
+        "role": "site-admin",
         "host": "local"
     })
     assert response.status_code == 400
@@ -124,15 +182,6 @@ def test_sitewide_roles(client):
         "host": "local"
     })
     assert response.status_code == 401
-
-    response = client.post("api/add-site-role", headers=headers, json={
-        "admin": "TestUser2",
-        "username": "existent",
-        "key": "lh87GFL3DHkkMsw098An",
-        "role": "site-admin",
-        "host": "local"
-    })
-    assert response.status_code == 200
 
     response = client.post("api/add-site-role", headers=headers, json={
         "admin": "admin",
@@ -411,6 +460,34 @@ def test_voting(client):
     response = client.get(
         f"api/get-vote/{Constants.POST1_ID}", headers=headers)
     assert response.json["vote"] == "none"
+
+    response = client.get(
+        f"api/post-vote/{Constants.POST1_ID}?vote=downvote", headers=headers)
+    assert response.status_code == 200
+
+    response = client.get(
+        f"api/get-vote/{Constants.POST1_ID}", headers=headers)
+    assert response.json["vote"] == "downvote"
+
+    response = client.get(
+        f"api/post-vote/{Constants.POST1_ID}?vote=upvote", headers=headers)
+    assert response.status_code == 200
+
+    response = client.get(
+        f"api/get-vote/{Constants.POST1_ID}", headers=headers)
+    assert response.json["vote"] == "upvote"
+
+    response = client.get(
+        f"api/post-vote/{Constants.POST2_ID}?vote=downvote", headers=headers)
+    assert response.status_code == 200
+
+    response = client.get(
+        f"api/post-vote/{Constants.POST2_ID}?vote=upvote", headers=headers)
+    assert response.status_code == 200
+
+    response = client.get(
+        f"api/post-vote/{Constants.POST2_ID}?vote=downvote", headers=headers)
+    assert response.status_code == 200
 
 
 def test_post_tags(client):

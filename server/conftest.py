@@ -33,7 +33,7 @@ def get_auth_tokens(client, username="existent", password="1234"):
     return headers
 
 def setup_db():
-    admin_user = User(user_id="admin", host="test.com", password_hash=guard.hash_password("admin"), site_roles="site-admin")
+    admin_user = User(user_id="admin", host="test.com", password_hash=guard.hash_password("admin"), site_roles="site-admin", private_account=True)
     test_user = User(user_id="existent", host="test.com", password_hash=guard.hash_password("1234"))
     test_user2 = User(user_id="TestUser2", host="test.com", password_hash=guard.hash_password("1234"))
 

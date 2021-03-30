@@ -135,25 +135,27 @@ def test_get_post_by_id(client, requests_mock):
 
 
 def test_edit_post(client, requests_mock):
-    requests_mock.put(f"https://cs3099user-a1.host.cs.st-andrews.ac.uk/fed/posts/{Constants.POST1_ID}", json={
-        "title": "Bezos's Wealth Overflows 64-bit Signed Integer, Now Massively In Debt",
-        "content": [
-            {
-                "text": {
-                    "text": "Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, explicabo. Nemo enim ipsam voluptatem, quia voluptas sit, aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos, qui ratione voluptatem sequi nesciunt, neque porro quisquam est, qui dolorem ipsum, quia dolor sit amet consectetur adipisci[ng]velit, sed quia non-numquam [do] eius modi tempora inci[di]dunt, ut labore et dolore magnam aliquam quaerat voluptatem."
+    requests_mock.put(f"https://cs3099user-a1.host.cs.st-andrews.ac.uk/fed/posts/{Constants.POST1_ID}", json=
+        {
+            "title": "Post Title",
+            "content": [
+                {
+                    "text": {
+                        "text": "Cool"
+                    }
                 }
-            }
-        ]
-    })
+            ]
+        }
+    )
 
     data = {
         "title": "Update Title",
         "external": "academoo",
         "content": [
             {
-                    "text": {
-                        "text": "Hello There!"
-                    }
+                "text": {
+                    "text": "Hello There!"
+                }
             }
         ]
     }

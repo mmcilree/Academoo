@@ -8,6 +8,7 @@ headers = {
 
 headers_with_user = dict(headers, **{"User-ID": "existent"})
 headers_with_another_user = dict(headers, **{"User-ID": "TestUser2"})
+headers_with_fake_user = dict(headers, **{"User-ID": "nonexistent"})
 
 
 def test_config():
@@ -68,12 +69,23 @@ def test_get_posts(client):
     assert response.status_code == 200
     assert len(response.json) == 2
 
+    response = client.get("api/posts?author=existent", headers=headers_with_user)
+    assert response.status_code == 200
+
+    response = client.get("api/posts?author=admin", headers=headers_with_user)
+    assert response.status_code == 403
+
     response = client.get("api/posts?limit=1", headers=headers_with_user)
     assert response.status_code == 200
     assert len(response.json) == 1
 
     response = client.get(
         "api/posts?community=TestCommunity2", headers=headers_with_user)
+    assert response.status_code == 200
+    assert len(response.json) == 0
+
+    response = client.get(
+        "api/posts?community=TestCommunity2", headers=headers_with_fake_user)
     assert response.status_code == 200
     assert len(response.json) == 0
 
@@ -95,6 +107,9 @@ def test_create_posts(client):
         ]
     }
     response = client.post("api/posts", json=data, headers=headers_with_user)
+    assert response.status_code == 201
+
+    response = client.post("api/posts", json=data, headers=headers_with_fake_user)
     assert response.status_code == 201
 
     response = client.post("api/posts", json=data)
@@ -184,6 +199,6 @@ def test_get_server_public_key(client):
     response = client.get("api/key")
     assert response.status_code == 200
 
-# def test_discover(client):
-#     response = client.get("api/discover")
-#     assert response.status_code == 200
+def test_discover(client):
+    response = client.get("api/discover")
+    assert response.status_code == 200
