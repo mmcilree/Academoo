@@ -64,7 +64,7 @@ class UserSettings extends Component {
       errors.push("Required fields have been left blank.")
     }
 
-    if (!this.state.newPassword.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
+    if (!this.state.newPassword.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\-£])(?=.{8,})/)) {
       errors.push(
         <p>Password should have:
           <ul>
