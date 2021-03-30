@@ -459,7 +459,9 @@ def createPost(post_data, author_id, author_host):
         db.session.add(content_field)
 
     db.session.commit()
-    return getPost(new_post.id, author_id)
+    message, _ = getPost(new_post.id, author_id)
+
+    return message, 201
 
 # Retrieve post object
 def getPost(post_id, requester_str):
