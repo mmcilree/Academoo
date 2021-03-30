@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: b1746a76ddaf
+Revision ID: c83d6da4ec87
 Revises: 
-Create Date: 2021-03-29 09:53:50.041985
+Create Date: 2021-03-30 13:08:27.698980
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b1746a76ddaf'
+revision = 'c83d6da4ec87'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,7 +29,7 @@ def upgrade():
     sa.Column('user_id', sa.String(length=50), nullable=False),
     sa.Column('host', sa.String(length=1000), nullable=False),
     sa.Column('email', sa.String(length=1000), nullable=True),
-    sa.Column('bio', sa.String(length=140), nullable=True),
+    sa.Column('about', sa.String(length=140), nullable=True),
     sa.Column('private_account', sa.Boolean(), nullable=False),
     sa.Column('password_hash', sa.String(length=128), nullable=True),
     sa.Column('site_roles', sa.String(), nullable=True),
@@ -64,6 +64,14 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['user.user_id'], ),
     sa.PrimaryKeyConstraint('user_id', 'community_id')
     )
+    op.create_table('user_subscription',
+    sa.Column('user_id', sa.String(length=50), nullable=False),
+    sa.Column('community_id', sa.String(length=1000), nullable=False),
+    sa.Column('external', sa.String(length=50), nullable=True),
+    sa.ForeignKeyConstraint(['community_id'], ['community.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['user.user_id'], ),
+    sa.PrimaryKeyConstraint('user_id', 'community_id')
+    )
     op.create_table('post_content_field',
     sa.Column('post_id', sa.String(length=1000), nullable=False),
     sa.Column('content_type', sa.String(length=50), nullable=False),
@@ -93,6 +101,7 @@ def downgrade():
     op.drop_table('user_vote')
     op.drop_table('post_tag')
     op.drop_table('post_content_field')
+    op.drop_table('user_subscription')
     op.drop_table('user_role')
     op.drop_table('subscriptions')
     op.drop_table('post')
