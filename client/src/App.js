@@ -61,6 +61,7 @@ class App extends React.Component {
                 <PrivateRoute path="/forbidden" component={AccessForbidden} />
                 <LoggedOutRoute path="/login" component={Login} />
                 <LoggedOutRoute path="/sign-up" component={SignUp} />
+                <Route path="/404" component={PageNotFound} />
                 <Route component={PageNotFound} />
               </Switch>
             </div>

@@ -93,7 +93,7 @@ class CommunityList extends React.Component {
                                                 "communities/" + community : "communities/" + this.props.instance + "/" + community} >
                                                 {community}
                                             </Link>
-                                            <CommunitySubscribeButton community={community} />
+                                            <CommunitySubscribeButton community={community} external={this.props.instance === "local" ? null : this.props.instance}/>
                                         </ListGroup.Item>)
                                     : <ListGroup.Item key={this.props.instance}>Loading Communities...</ListGroup.Item>
                                 }

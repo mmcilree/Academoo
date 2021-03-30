@@ -1,7 +1,8 @@
 import React from "react";
-import {Card, Alert} from "react-bootstrap";
+import {Card, Alert, Spinner} from "react-bootstrap";
 import CommunityList from "./CommunityList";
 import { Link } from "react-router-dom";
+import logo from "../../images/logo.svg";
 
 class CommunityExplorer extends React.Component {
   state = {
@@ -41,7 +42,8 @@ class CommunityExplorer extends React.Component {
             instances.map(name => {
               return <CommunityList key={name} instance={name}> </CommunityList>
             })
-        : <h3>Loading External Instances...</h3>}
+        : <h3 className="mt-4">Loading External Instances... <Spinner animation="border" role="status" variant="light"><img src={logo} width="40"
+        height="40"></img></Spinner> </h3>}
         </Card.Body>
       </Card>
     );

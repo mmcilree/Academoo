@@ -21,7 +21,7 @@ class CommunitySubscribeButton extends React.Component {
         await authFetch("/api/get-user").then(response => response.json())
             .then(data =>
                 this.setState({
-                    isSubscribed: data.subscriptions.includes(this.props.community),
+                    isSubscribed: data.subscriptions.some(o => o.communityId === this.props.community),
                     isLoading: false
                 })
             ).catch(() => { })
@@ -32,7 +32,8 @@ class CommunitySubscribeButton extends React.Component {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: {
-                id: this.props.community
+                id: this.props.community,
+                external: this.props.external
             }
         };
 
@@ -48,7 +49,8 @@ class CommunitySubscribeButton extends React.Component {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: {
-                id: this.props.community
+                id: this.props.community,
+                external: this.props.external
             }
         };
 
@@ -60,13 +62,14 @@ class CommunitySubscribeButton extends React.Component {
     }
 
     render() {
-        return !this.state.isLoading && (this.state.isSubscribed ?
+        return !this.state.isLoading ? (this.state.isSubscribed ?
             <Button onClick={this.handleUnsubscribe.bind(this)} className="h-50" variant="outline-primary">
                 <BookmarkCheck className="mr-2" />Unfolloow
             </Button> :
             <Button onClick={this.handleSubscribe.bind(this)} className="h-50" variant="outline-secondary">
                 <BookmarkPlus className="mr-2" />&nbsp; Folloow &nbsp;
-            </Button>)
+            </Button>) 
+            : <Button variant="outline-secondary">&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp; ... &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Button>
     }
 }
 

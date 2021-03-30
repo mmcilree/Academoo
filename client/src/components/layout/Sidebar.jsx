@@ -49,15 +49,15 @@ class Sidebar extends Component {
                                     You haven't subscribed to any communities!
                                 </ListGroupItem>
                                 :
-                                subscribedCommunities.map((community) =>
-                                    community !== "" &&
+                                subscribedCommunities.map((subscription) =>
+                                    subscription.communityId !== "" &&
 
-                                    <ListGroup.Item key={community} className="d-flex flex-column align-items-left flex-wrap">
+                                    <ListGroup.Item key={subscription.communityId} className="d-flex flex-column align-items-left flex-wrap">
                                         <Link to={
-                                            "communities/" + community}>
-                                            {community}
+                                            "communities/" + (subscription.external !== null ? subscription.external + "/" : "") + subscription.communityId}>
+                                            {subscription.communityId}
                                         </Link>
-                                        <CommunitySubscribeButton community={community} updateParent={this.updateSubscriptions.bind(this)} />
+                                        <CommunitySubscribeButton community={subscription.communityId} external={subscription.external} updateParent={this.updateSubscriptions.bind(this)} />
                                     </ListGroup.Item>)
 
                             : <p>Loading...</p>}
