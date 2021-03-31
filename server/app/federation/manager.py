@@ -37,7 +37,7 @@ class Manager(object):
         for inst in self.instances.values():
             self.url_to_instance[urlparse(inst.url).netloc] = inst
         
-        self.discover_instances()
+        # self.discover_instances()
     
     def discover_instances(self):
         # Depth-First Search with memoization in production?!? omg! Incredible. 
