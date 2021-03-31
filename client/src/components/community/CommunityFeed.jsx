@@ -1,15 +1,15 @@
 import React, { Component } from "react";
 import PostViewer from "../posts/PostsViewer";
-import { Card, Button, Alert, OverlayTrigger, Popover, Row, Col, Spinner } from "react-bootstrap";
+import { Card,  Alert, OverlayTrigger, Popover, Spinner } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
-import { BookmarkPlus } from "react-bootstrap-icons";
 import { authFetch } from '../../auth';
 import MiniPostCreator from "../posts/MiniPostCreator";
-import Post from "../posts/Post";
-import Sidebar from "../layout/Sidebar";
 import logo from "../../images/logo.svg";
 import CommunitySubscribeButton from "./CommunitySubscribeButton";
 
+/**
+ * component which shows all of the communities in a given instance
+ */
 class CommunityFeed extends Component {
   state = {
     isLoadingCommunity: true,
@@ -31,6 +31,9 @@ class CommunityFeed extends Component {
     this.fetchUserDetails();
   }
 
+  /**
+   * fetch the details of the current user
+   */
   fetchUserDetails() {
     authFetch("/api/get-user").then(response => response.json())
       .then(data => {
@@ -46,6 +49,9 @@ class CommunityFeed extends Component {
 
   }
 
+  /**
+   * fetch the posts from a given community
+   */
   async fetchPosts() {
     await authFetch('/api/posts?community=' + this.state.currentCommunity + '&includeSubChildrenPosts=false' + (this.state.host !== "local" ? "&external=" + this.state.host : ""),
       {
@@ -86,6 +92,9 @@ class CommunityFeed extends Component {
     });
   }
 
+  /**
+   * fetch the details of a given community
+   */
   fetchCommunityDetails() {
     authFetch('/api/communities/' + this.state.currentCommunity + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
       {
@@ -111,9 +120,12 @@ class CommunityFeed extends Component {
     event.preventDefault();
   }
 
+  /**
+   * method which renders a community, its relevant info and the posts on this community
+   */
   render() {
     console.log(this.state)
-    const { isLoadingPosts, isLoadingCommunity, posts, error, currentCommunity, newPostText, host, communityData, isAdmin, isSiteAdmin } = this.state;
+    const { isLoadingPosts, isLoadingCommunity, posts, error, currentCommunity,  host, communityData, isAdmin, isSiteAdmin } = this.state;
     const popover = (
       <Popover id="popover-basic">
         <Popover.Title as="h3">Community description</Popover.Title>

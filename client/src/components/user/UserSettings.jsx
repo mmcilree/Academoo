@@ -3,6 +3,9 @@ import { Card, Form, Button, Alert } from "react-bootstrap";
 import { authFetch, logout } from '../../auth';
 import { withRouter } from 'react-router-dom';
 
+/*
+Component which renders and contains method for the user settings page
+*/
 class UserSettings extends Component {
   constructor(props) {
     super(props);
@@ -29,6 +32,9 @@ class UserSettings extends Component {
     this.fetchUserDetails();
   }
 
+  /*
+  Method to get all of the information for the given user
+  */
   fetchUserDetails() {
     authFetch("/api/get-user").then(response => response.json())
       .then(data =>
@@ -58,6 +64,9 @@ class UserSettings extends Component {
     this.setState({ checked: event.target.checked, privUpdated: false });
   }
 
+  /*
+  Method to check that the passwords entered into the password change are correct and conform
+  */
   validateForm() {
     const errors = [];
     if (this.state.oldPassword.length === 0 || this.state.newPassword.length === 0) {
@@ -77,6 +86,9 @@ class UserSettings extends Component {
     return errors;
   }
 
+  /*
+  Method to handle the submit of the password change
+  */
   handleSubmitPass(event) {
     event.preventDefault();
 
@@ -86,6 +98,7 @@ class UserSettings extends Component {
       return;
     }
 
+    //store the values
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -96,6 +109,7 @@ class UserSettings extends Component {
     };
     requestOptions.body = JSON.stringify(requestOptions.body);
 
+    //fetch from the backend to call the backend function 
     authFetch('/api/change-password', requestOptions).then(r => r.status).then(statusCode => {
       if (statusCode !== 200) {
         this.setState({ changed: false, errors: ["Incorrect Password!"] })
@@ -109,6 +123,9 @@ class UserSettings extends Component {
     this.props.history.push('/user-settings/');
   }
 
+  /*
+  Method to handle the change of bio when the user submits the change of their bio
+  */
   async handleSubmitBio(event) {
     event.preventDefault();
 
@@ -128,6 +145,9 @@ class UserSettings extends Component {
     this.props.history.push("/user-profile/" + this.state.username);
   }
 
+  /*
+  Method to handle the change to the privacy settings someone chooses
+  */
   async handleSubmitPrivacy(event) {
     event.preventDefault();
 
@@ -140,7 +160,7 @@ class UserSettings extends Component {
     }
     requestOptions.body = JSON.stringify(requestOptions.body);
 
-
+    //call the backend to update the DB with the new information
     await authFetch('/api/update-privacy', requestOptions)
       .then(response => {
         this.setState({ privUpdated: true });
@@ -149,8 +169,11 @@ class UserSettings extends Component {
 
   }
 
-
+/*
+  Method to handle the delete of account
+  */
   async handleDeleteAccount(event) {
+    //check the user wants to delete their account
     var deleteConfirm = window.confirm("Are you sure you want to delete your Academoo account?");
     if(deleteConfirm){
       event.preventDefault();
@@ -165,6 +188,7 @@ class UserSettings extends Component {
       requestOptions.body = JSON.stringify(requestOptions.body);
 
       if((this.state.username === this.state.confirmUsername)) {
+        //connect to the backend
         await authFetch('/api/delete-account', requestOptions)
          .then(r => r.status).then(statusCode => {
            if(statusCode === 200) {
@@ -176,6 +200,9 @@ class UserSettings extends Component {
     
   }
 
+  /*
+  Method to render all of this information to the settings page
+  */
   render() {
     const { errors, changed } = this.state;
     return (

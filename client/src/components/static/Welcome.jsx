@@ -1,14 +1,12 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import { authFetch } from "../../auth";
 
-import {
-  BadgeTm,
-} from "react-bootstrap-icons";
-
 class Welcome extends React.Component {
+  /* 
+  Component which is used to display the welcome page to users when they use Academoo
+  */
   fetchCurrentUser() {
     authFetch("/api/admin-protected").then(response => response.json())
       .then(data => {

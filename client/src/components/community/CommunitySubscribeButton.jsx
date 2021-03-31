@@ -4,6 +4,9 @@ import { BookmarkPlus, BookmarkCheck } from "react-bootstrap-icons";
 
 import { authFetch } from '../../auth';
 
+/**
+ * component which renders the community subscribe button
+ */
 class CommunitySubscribeButton extends React.Component {
     state = {
         isSubscribed: false,
@@ -17,6 +20,9 @@ class CommunitySubscribeButton extends React.Component {
         this.fetchUserDetails();
     }
 
+    /**
+     * fetch the details of the current user
+     */
     async fetchUserDetails() {
         await authFetch("/api/get-user").then(response => response.json())
             .then(data =>
@@ -27,6 +33,9 @@ class CommunitySubscribeButton extends React.Component {
             ).catch(() => { })
     }
 
+    /**
+     * method to connect with the backend to store what a user has subscribed to in the DB
+     */
     async handleSubscribe() {
         const requestOptions = {
             method: 'POST',
@@ -44,6 +53,9 @@ class CommunitySubscribeButton extends React.Component {
         this.fetchUserDetails();
     }
 
+    /**
+     * method to connect with the backend to store what a user has unsubscribed to in the DB
+     */
     async handleUnsubscribe() {
         const requestOptions = {
             method: 'POST',
@@ -61,6 +73,9 @@ class CommunitySubscribeButton extends React.Component {
         this.fetchUserDetails();
     }
 
+    /**
+     * render the button to the page
+     */
     render() {
         return !this.state.isLoading ? (this.state.isSubscribed ?
             <Button onClick={this.handleUnsubscribe.bind(this)} className="h-50" variant="outline-primary">

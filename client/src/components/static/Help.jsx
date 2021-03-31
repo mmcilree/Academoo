@@ -1,8 +1,10 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
-import { Form, Button, Alert } from "react-bootstrap";
 
 class Help extends React.Component {
+  /* 
+  Component which is used to display help information to the user about how to use Academoo
+  */
   render() {
     return (
       <Card className="mt-4">

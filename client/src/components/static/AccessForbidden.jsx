@@ -3,6 +3,8 @@ import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
 
 class AccessForbidden extends React.Component {
+  /* Component which is used when a user tries to access a page they do not have the permisson to access
+  */
   render() {
     return (
       <Card className="mt-4">

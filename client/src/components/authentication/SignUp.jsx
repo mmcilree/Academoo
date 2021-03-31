@@ -1,8 +1,10 @@
 import React from "react";
 import { Button, FormGroup, FormControl, Form, Card, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { Route } from 'react-router-dom';
 
+/**
+ * Component which allows the user to sign up to Academoo
+ */
 class SignUp extends React.Component {
 
   constructor(props) {
@@ -15,9 +17,14 @@ class SignUp extends React.Component {
       errors: [],
     };
   }
+
+  /**
+   * method which makes sure all of the input data has been validated
+   */
   validateForm() {
     const errors = [];
 
+    //length errors
     if(this.state.username.length === 0 || 
       this.state.email.length === 0 || 
       this.state.password.length === 0 ||
@@ -25,17 +32,21 @@ class SignUp extends React.Component {
         errors.push("Required fields have been left blank.");
         return errors;
       }
+      //username length errors
     if (this.state.username.length < 3) {
       errors.push("Username must be at least 3 characters.");
     }
 
+    //email validation
     if (this.state.email.split("").filter(x => x === "@").length !== 1) {
       errors.push("Email should contain the @ symbol.");
     }
 
+    //password match validation
     if (this.state.password !== this.state.passwordConfirm) {
       errors.push("Passwords do not match.");
     }
+    //validation to make sure the password conforms to the RegEx we have specified
     if (!this.state.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\-£])(?=.{8,})/)) {
       errors.push(
         <div>
@@ -62,14 +73,19 @@ class SignUp extends React.Component {
     });
   }
 
+  /**
+   * method to handle when the user presses submit to sign up to academoo
+   */
   handleSubmit(event) {
     event.preventDefault();
 
     const errors = this.validateForm();
+    //if there is errors in the data
     if(errors.length > 0) {
       this.setState({errors});
       return;
     }
+    //to add the data to the backend
     const opt = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -96,6 +112,9 @@ class SignUp extends React.Component {
       })
   }
 
+  /**
+   * method which renders the signup
+   */
   render() {
     const {errors} = this.state;
     return (
