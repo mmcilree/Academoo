@@ -43,7 +43,7 @@ class Instance(object):
                 "client-host: {client_host}", 
                 "user-id: {user_id}", 
                 "date: {date}", 
-                "digest: {digest}"
+                "digest: SHA-512={digest}"
             )
         )
 
@@ -53,7 +53,7 @@ class Instance(object):
                 "host: {url}", # this needs changing probs
                 "client-host: {client_host}", 
                 "date: {date}", 
-                "digest: {digest}"
+                "digest: SHA-512={digest}"
             )
         )
     
