@@ -46,6 +46,17 @@ class Instance(object):
                 "digest: {digest}"
             )
         )
+
+        self.request_data_without_user = "\n".join(
+            (
+                "(request-target): {req}", 
+                "host: {url}", # this needs changing probs
+                "client-host: {url}", 
+                "user-id: {user_id}", 
+                "date: {date}", 
+                "digest: {digest}"
+            )
+        )
     
     def __repr__(self):
         return f"(URL: {self.url}, PUB-KEY: {self.public_key})"
@@ -60,24 +71,42 @@ class Instance(object):
         return False
     
     def get_request_data(self, request_target, user_id=None, body=b""):
-        return (self.request_data.format(
-            req=request_target,
-            user_id=user_id,
-            date=get_date(),
-            digest=generate_digest(body),
-            url=current_app.config["HOST"]
-        ), generate_digest(body))
+        if user_id:
+            ret = self.request_data.format(
+                req=request_target,
+                user_id=user_id,
+                date=get_date(),
+                digest=generate_digest(body),
+                url=current_app.config["HOST"]
+            )
+        else:
+            ret = self.request_data_without_user.format(
+                req=request_target,
+                date=get_date(),
+                digest=generate_digest(body),
+                url=current_app.config["HOST"]
+            )
+
+        return (ret, generate_digest(body))
 
     def verify_signature(self, encoded_signature, request_target, headers, body):
         if not self.public_key and not self.get_public_key(): return False
 
-        message = self.request_data.format(
-            req=request_target,
-            user_id=headers.get("User-ID"),
-            date=get_date(), # what to do about latency?
-            digest=generate_digest(body),
-            url=urlparse(self.url).netloc
-        )
+        if headers.get("User-ID"):
+            message = self.request_data.format(
+                req=request_target,
+                user_id=headers.get("User-ID"),
+                date=get_date(), # what to do about latency?
+                digest=generate_digest(body),
+                url=urlparse(self.url).netloc
+            )
+        else:
+            message = self.request_data_without_user.format(
+                req=request_target,
+                date=get_date(),
+                digest=generate_digest(body),
+                url=urlparse(self.url).netloc
+            )
 
         print("Expected Message:"); print(message)
 
