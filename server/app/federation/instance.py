@@ -13,6 +13,13 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.exceptions import InvalidSignature
 from requests.exceptions import ConnectTimeout, ConnectionError, ReadTimeout
 
+# https://stackoverflow.com/questions/41295142/is-there-a-way-to-globally-override-requests-timeout-setting
+class TimeoutRequestsSession(requests.Session):
+    def request(self, *args, **kwargs):
+        kwargs.setdefault('timeout', 2)
+        return super(TimeoutRequestsSession, self).request(*args, **kwargs)
+
+requests = TimeoutRequestsSession()
 
 def get_date(): # just why this instead of timestamp like a normal person??
     return datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
@@ -88,8 +95,8 @@ class Instance(object):
                 client_host=current_app.config["HOST"]
             )
 
-        print("Request Data to be Signed and Sent")
-        print(ret)
+        # print("Request Data to be Signed and Sent")
+        # print(ret)
 
         return (ret, generate_digest(body))
 
@@ -114,7 +121,7 @@ class Instance(object):
                 client_host=urlparse(self.url).netloc
             )
 
-        print("Expected Message:"); print(message)
+        # print("Expected Message:"); print(message)
 
         public_key = serialization.load_pem_public_key(self.public_key)
         decoded_signature = base64.b64decode(encoded_signature)
