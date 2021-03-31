@@ -52,7 +52,6 @@ class Instance(object):
                 "(request-target): {req}", 
                 "host: {url}", # this needs changing probs
                 "client-host: {url}", 
-                "user-id: {user_id}", 
                 "date: {date}", 
                 "digest: {digest}"
             )
