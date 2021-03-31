@@ -40,7 +40,7 @@ class Instance(object):
             (
                 "(request-target): {req}", 
                 "host: {url}", # this needs changing probs
-                "client-host: {url}", 
+                "client-host: {client_host}", 
                 "user-id: {user_id}", 
                 "date: {date}", 
                 "digest: {digest}"
@@ -51,7 +51,7 @@ class Instance(object):
             (
                 "(request-target): {req}", 
                 "host: {url}", # this needs changing probs
-                "client-host: {url}", 
+                "client-host: {client_host}", 
                 "date: {date}", 
                 "digest: {digest}"
             )
@@ -76,15 +76,20 @@ class Instance(object):
                 user_id=user_id,
                 date=get_date(),
                 digest=generate_digest(body),
-                url=current_app.config["HOST"]
+                url=urlparse(self.url).netloc,
+                client_host=current_app.config["HOST"]
             )
         else:
             ret = self.request_data_without_user.format(
                 req=request_target,
                 date=get_date(),
                 digest=generate_digest(body),
-                url=current_app.config["HOST"]
+                url=urlparse(self.url).netloc,
+                client_host=current_app.config["HOST"]
             )
+
+        print("Request Data to be Signed and Sent")
+        print(ret)
 
         return (ret, generate_digest(body))
 
@@ -97,14 +102,16 @@ class Instance(object):
                 user_id=headers.get("User-ID"),
                 date=get_date(), # what to do about latency?
                 digest=generate_digest(body),
-                url=urlparse(self.url).netloc
+                url=current_app.config["HOST"],
+                client_host=urlparse(self.url).netloc
             )
         else:
             message = self.request_data_without_user.format(
                 req=request_target,
                 date=get_date(),
                 digest=generate_digest(body),
-                url=urlparse(self.url).netloc
+                url=current_app.config["HOST"],
+                client_host=urlparse(self.url).netloc
             )
 
         print("Expected Message:"); print(message)
