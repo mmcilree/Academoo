@@ -16,8 +16,7 @@ class SketchRoom extends React.Component {
             code: this.props.match.params.id,
             user: "",
             messages: [],
-            // receivedJson: false,
-            whiteboardJSON: { hello: "world" },
+            whiteboardJSON: {},
         }
     }
 
