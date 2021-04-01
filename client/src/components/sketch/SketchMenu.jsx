@@ -13,7 +13,7 @@ class SketchMenu extends React.Component {
         }
     }
     handleChange(event) {
-        this.setState({code: event.target.value})
+        this.setState({ code: event.target.value })
     }
 
     handleCreate() {
@@ -26,26 +26,29 @@ class SketchMenu extends React.Component {
     }
 
     render() {
-        const {code} = this.state;
+        const { code } = this.state;
 
-        return (<Card className="mt-3">
+        return (<Card className="mt-4">
             <Card.Body>
-                <h3>Create your own whiteboard</h3>
-                
-                <Button onClick={this.handleCreate.bind(this)}>Create</Button>
-            </Card.Body>
+                <h1>Sketch A Moo!</h1>
 
-            <Card.Body>
-                <h3>Or join an existing room</h3>
-                <Form inline>
-                    <Form.Control onChange={this.handleChange.bind(this)} className="mr-4" value={code} placeholder="Code e.g. XC32" />
-                    <Button onClick={this.handleJoin.bind(this)}>
-                        Join
+                <div className="m-4 d-flex flex-column align-items-center">
+                    <h4 className="m-2" >Create your own whiteboard: </h4>
+                    <Button variant="secondary" onClick={this.handleCreate.bind(this)} >Create</Button>
+                </div>
+
+                <div className="m-4 d-flex flex-column align-items-center">
+                    <h4 className="m-2">Or join an existing room</h4>
+                    <Form inline>
+                        <Form.Control onChange={this.handleChange.bind(this)} className="m-2" value={code} placeholder="Code e.g. XC32" />
+                        <Button variant="secondary" onClick={this.handleJoin.bind(this)}>
+                            Join
                     </Button>
-                </Form>
+                    </Form>
+                </div>
             </Card.Body>
 
-        </Card>)
+        </Card >)
     }
 }
 

@@ -3,7 +3,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 import Card from 'react-bootstrap/Card';
-import { Route} from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { authFetch } from '../../auth';
 
 /**
@@ -40,10 +40,13 @@ class CommunityCreator extends React.Component {
         //     errors.push("Administrators input is not a comma separated list.");
         //     return errors;
         // }
-        if (this.state.communities.includes(this.state.id)) {
-            errors.push("A community already exists with that ID. Please modify it.");
-            return errors;
+        if (this.state.communities.length !== 0) {
+            if (this.state.communities.includes(this.state.id)) {
+                errors.push("A community already exists with that ID. Please modify it.");
+                return errors;
+            }
         }
+
 
         return errors;
     }
@@ -52,16 +55,16 @@ class CommunityCreator extends React.Component {
      * fetch all of the different communities that exist
      */
     fetchCommunities(host) {
-        authFetch('/api/communities').then(response => response.json(),
+        authFetch('/api/communities',
             {
                 headers: {
                     'Client-Host': window.location.hostname
                 }
-            })
+            }).then(response => response.json())
             .then(data =>
                 this.setState({
                     communities: data,
-                })).catch(() => {})
+                })).catch((error) => { })
     }
 
     /**
@@ -73,7 +76,7 @@ class CommunityCreator extends React.Component {
                 this.setState({
                     currentUser: data.id,
                 })
-            ).catch(() => {})
+            ).catch(() => { })
     }
 
     handleChange(event) {

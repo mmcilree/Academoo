@@ -76,7 +76,7 @@ class SketchRoom extends React.Component {
 
 
     render() {
-        return <Whiteboard history={this.props.history} onSketchChange={this.onSketchChange.bind(this)} receivedJson={this.state.receivedJson} setReceivedJson={this.setReceivedJson.bind(this)} jsonValue={this.state.whiteboardJSON} />
+        return <Whiteboard history={this.props.history} code={this.state.code} onSketchChange={this.onSketchChange.bind(this)} receivedJson={this.state.receivedJson} setReceivedJson={this.setReceivedJson.bind(this)} jsonValue={this.state.whiteboardJSON} />
     }
 }
 

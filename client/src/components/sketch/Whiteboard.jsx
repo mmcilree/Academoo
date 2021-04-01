@@ -1,6 +1,6 @@
 import React from 'react';
 import { SketchField, Tools } from 'react-sketch-whiteboard';
-import { Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth, CursorText, PlusCircle, Share, ArrowCounterclockwise, ArrowClockwise, Eraser } from 'react-bootstrap-icons';
+import { Clipboard, Link45deg, Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth, CursorText, PlusCircle, Share, ArrowCounterclockwise, ArrowClockwise, Eraser } from 'react-bootstrap-icons';
 import { CompactPicker } from 'react-color';
 import {
     Card,
@@ -13,9 +13,9 @@ import {
     Dropdown,
     InputGroup,
     Tooltip,
-    Container
+
 } from 'react-bootstrap';
-import { Route } from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
 import { authFetch } from '../../auth';
 
 class Whiteboard extends React.Component {
@@ -29,6 +29,7 @@ class Whiteboard extends React.Component {
             canUndo: false,
             canRedo: false,
             text: "",
+            codeCopied: false,
             enableRemoveSelected: false,
             receivedUpdate: false,
         }
@@ -43,9 +44,9 @@ class Whiteboard extends React.Component {
 
         // console.log(this.props.receivedJson);
         if (!this.props.receivedJson) {
-           this.sendUpdate()
+            this.sendUpdate()
         } else {
-           this.props.setReceivedJson();
+            this.props.setReceivedJson();
         }
 
     };
@@ -138,7 +139,6 @@ class Whiteboard extends React.Component {
         })
     }
 
-
     render() {
         const { currentTool, lineColour, backgroundColour, lineWidth, text, selected } = this.state;
         const colourPopover = (
@@ -175,7 +175,28 @@ class Whiteboard extends React.Component {
                 <h1>Whiteboard</h1>
                 <p>Share your moosings on the sketch-a-moo!</p>
                 <Card>
-                    <Card.Header className="d-flex justifycontent-between">
+                    <Card.Header className="d-flex justify-content-left">
+                        <h4 className="m-2">Code: {this.props.code}</h4>
+                        <Button className="m-1" variant="outline-secondary" onClick={() => { navigator.clipboard.writeText(this.props.code); this.setState({ codeCopied: true }) }}>
+                            {this.state.codeCopied ? <span>Code Copied! </span> : <span><Clipboard className="m-1" /> Copy Code</span>}
+                        </Button>
+                        <Link to={
+                            {
+                                pathname: "/create-post",
+                                state: {
+                                    body: "Join our shared whiteboard here: " + window.location,
+                                    community: "",
+                                    host: ""
+                                }
+
+                            }}
+                        >
+                            <Button variant="outline-secondary" className="m-1">
+                                <Link45deg /> Send Invite Link
+                                        </Button>
+                        </Link>
+                    </Card.Header>
+                    <Card.Header className="d-flex justify-content-between">
                         <ToggleButtonGroup name="tools" >
                             <ToggleButton type="radio" value={Tools.Select}
                                 onClick={this.setTool.bind(this)}
@@ -290,7 +311,7 @@ class Whiteboard extends React.Component {
                 </Card>
 
 
-            </Card>
+            </Card >
         );
     }
 }
