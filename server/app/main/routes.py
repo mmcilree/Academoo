@@ -295,5 +295,5 @@ def on_leave(data):
 def on_message(data):
     message = data['message']
     room = data['room']
-    print(message)
+    print("message received")
     send(message, room=room, include_self=False)

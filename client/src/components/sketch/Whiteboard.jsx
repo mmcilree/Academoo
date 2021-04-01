@@ -42,11 +42,11 @@ class Whiteboard extends React.Component {
         }
 
         // console.log(this.props.receivedJson);
-        // if (!this.props.receivedJson) {
-
-        // } else {
-        //     this.props.setReceivedJson();
-        // }
+        if (!this.props.receivedJson) {
+           this.sendUpdate()
+        } else {
+           this.props.setReceivedJson();
+        }
 
     };
 
@@ -269,8 +269,6 @@ class Whiteboard extends React.Component {
                             </Button>
                         )} />
 
-                        <Button onClick={this.getUpdate.bind(this)}>Get Updates</Button>
-                        <Button onClick={this.sendUpdate.bind(this)}>Send Updates</Button>
                     </Card.Header>
                     <Card.Body>
                         <SketchField width='1024px'
@@ -281,10 +279,10 @@ class Whiteboard extends React.Component {
                             lineColor={lineColour}
                             lineWidth={lineWidth}
                             backgroundColor={backgroundColour}
-                            // value={this.props.jsonValue}
+                            value={this.props.jsonValue}
                             // canUndo={this.state.canUndo}
                             // canRedo={this.state.canRedo}
-                            // defaultValue={dataJson}
+                            defaultValue={this.props.jsonValue}
                             // forceValue
                             onChange={this.onSketchChange.bind(this)}
                         />

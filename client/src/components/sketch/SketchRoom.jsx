@@ -17,6 +17,7 @@ class SketchRoom extends React.Component {
             user: "",
             messages: [],
             whiteboardJSON: {},
+            receivedJson: false
         }
     }
 
@@ -40,7 +41,7 @@ class SketchRoom extends React.Component {
     onSketchChange(jsonValue) {
         this.setState({
             whiteboardJSON: jsonValue,
-            // receivedJson: true,
+            receivedJson: true
         })
         this.sendUpdate(jsonValue);
     }
@@ -75,7 +76,7 @@ class SketchRoom extends React.Component {
 
 
     render() {
-        return <Whiteboard onSketchChange={this.onSketchChange.bind(this)} receivedJson={this.state.receivedJson} setReceivedJson={this.setReceivedJson.bind(this)} jsonValue={this.state.whiteboardJSON} />
+        return <Whiteboard history={this.props.history} onSketchChange={this.onSketchChange.bind(this)} receivedJson={this.state.receivedJson} setReceivedJson={this.setReceivedJson.bind(this)} jsonValue={this.state.whiteboardJSON} />
     }
 }
 
