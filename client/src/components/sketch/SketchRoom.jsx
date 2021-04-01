@@ -16,8 +16,9 @@ class SketchRoom extends React.Component {
             code: this.props.match.params.id,
             user: "",
             messages: [],
-            whiteboardJSON: {},
-        }   
+            // receivedJson: false,
+            whiteboardJSON: { hello: "world" },
+        }
     }
 
     async fetchUserDetails() {
@@ -26,14 +27,29 @@ class SketchRoom extends React.Component {
                 this.setState({
                     user: data.id,
                 })
-                socket.emit("join", {user: this.state.user, room: this.state.code});
+                socket.emit("join", { user: this.state.user, room: this.state.code });
             }
-            ).catch(() => {})   
+            ).catch(() => { })
     }
 
-    
+
     sendUpdate(jsonValue) {
-        socket.emit("message", {message: jsonValue, room: this.state.code});
+        console.log("new json whiteboard sent")
+        socket.emit("message", { message: jsonValue, room: this.state.code });
+    }
+
+    onSketchChange(jsonValue) {
+        this.setState({
+            whiteboardJSON: jsonValue,
+            // receivedJson: true,
+        })
+        this.sendUpdate(jsonValue);
+    }
+
+    setReceivedJson() {
+        this.setState({
+            receivedJson: false,
+        })
     }
 
     componentDidMount() {
@@ -44,21 +60,23 @@ class SketchRoom extends React.Component {
     }
 
     handleMessage(msg) {
-        if(typeof msg === 'object') {
-            this.setState( {
-                whiteboardJSON: msg
+        if (typeof msg === 'object') {
+            console.log("Whiteboard object received")
+            this.setState({
+                whiteboardJSON: msg,
+                receivedJson: true,
             })
         } else {
             console.log(msg);
         }
     }
     componentWillUnmount() {
-        socket.emit("leave", {user: this.state.user, room: this.state.code});
+        socket.emit("leave", { user: this.state.user, room: this.state.code });
     }
 
 
     render() {
-        return <Whiteboard sendUpdate={this.sendUpdate.bind(this)} jsonValue={this.state.whiteboardJSON}/>
+        return <Whiteboard onSketchChange={this.onSketchChange.bind(this)} receivedJson={this.state.receivedJson} setReceivedJson={this.setReceivedJson.bind(this)} jsonValue={this.state.whiteboardJSON} />
     }
 }
 

@@ -34,17 +34,32 @@ class Whiteboard extends React.Component {
         }
     }
 
-    onSketchChange = () => {
+    onSketchChange() {
         let prev = this.state.canUndo;
         let now = this.sketch.canUndo();
         if (prev !== now) {
             this.setState({ canUndo: now });
         }
 
+        // console.log(this.props.receivedJson);
+        // if (!this.props.receivedJson) {
+
+        // } else {
+        //     this.props.setReceivedJson();
+        // }
+
     };
 
+    sendUpdate() {
+        this.props.onSketchChange(this.sketch.toJSON());
+    }
+
+    getUpdate() {
+        console.log(this.props.jsonValue);
+        this.sketch.fromJSON(this.props.jsonValue);
+    }
+
     setTool(event) {
-        console.log(event.target.value);
         this.setState({
             currentTool: event.target.value,
             enableRemoveSelected: event.target.value === Tools.Select
@@ -52,7 +67,6 @@ class Whiteboard extends React.Component {
     }
 
     clear = () => {
-        console.log("here")
         this.sketch.clear();
         this.sketch.setBackgroundFromDataUrl('');
         this.setState({
@@ -72,7 +86,6 @@ class Whiteboard extends React.Component {
     }
 
     addText = (event) => {
-        console.log(this.state)
         event.preventDefault();
         this.sketch.addText(this.state.text);
         this.setState({ text: "" });
@@ -111,7 +124,7 @@ class Whiteboard extends React.Component {
                 a.click();
             }
             );
-        }).catch(() => {});
+        }).catch(() => { });
     }
 
     share = () => {
@@ -125,9 +138,6 @@ class Whiteboard extends React.Component {
         })
     }
 
-    componentDidUpdate(prevProps) {
-        console.log("This whiteboard has been updated");
-    }
 
     render() {
         const { currentTool, lineColour, backgroundColour, lineWidth, text, selected } = this.state;
@@ -160,7 +170,6 @@ class Whiteboard extends React.Component {
             </Popover>
         );
 
-        console.log(lineWidth)
         return (
             <Card className="mt-4 p-4" style={{ width: '1200px' }}>
                 <h1>Whiteboard</h1>
@@ -260,6 +269,8 @@ class Whiteboard extends React.Component {
                             </Button>
                         )} />
 
+                        <Button onClick={this.getUpdate.bind(this)}>Get Updates</Button>
+                        <Button onClick={this.sendUpdate.bind(this)}>Send Updates</Button>
                     </Card.Header>
                     <Card.Body>
                         <SketchField width='1024px'
@@ -270,10 +281,11 @@ class Whiteboard extends React.Component {
                             lineColor={lineColour}
                             lineWidth={lineWidth}
                             backgroundColor={backgroundColour}
+                            // value={this.props.jsonValue}
                             // canUndo={this.state.canUndo}
                             // canRedo={this.state.canRedo}
                             // defaultValue={dataJson}
-                            forceValue
+                            // forceValue
                             onChange={this.onSketchChange.bind(this)}
                         />
                     </Card.Body>
