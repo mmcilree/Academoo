@@ -4,7 +4,6 @@ from app.federation.instance import Instance
 from urllib.parse import urlparse, urljoin
 from utils import format_url
 import requests
-from requests.exceptions import ConnectionError, ConnectTimeout
 import time
 
 class Manager(object):
@@ -37,7 +36,7 @@ class Manager(object):
         for inst in self.instances.values():
             self.url_to_instance[urlparse(inst.url).netloc] = inst
         
-        # self.discover_instances()
+        self.discover_instances()
     
     def discover_instances(self):
         # Depth-First Search with memoization in production?!? omg! Incredible. 
@@ -49,7 +48,7 @@ class Manager(object):
 
             try:
                 ret = requests.get(urljoin(url, "/fed/discover"), timeout=3)
-            except (ConnectTimeout, ConnectionError): continue
+            except: continue
             
             if ret.status_code == 200:
                 for child_url in ret.json():
@@ -92,7 +91,7 @@ class Manager(object):
         return self.instances[host].get_users(id=id)
 
     def get_instances(self):
-        return list(self.instances.keys())
+        return [key for key in self.instances if not self.instances[key].disabled]
 
     def add_instance(self, host, url):
         netloc = urlparse(url).netloc

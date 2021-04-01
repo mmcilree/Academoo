@@ -11,7 +11,6 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 from cryptography.exceptions import InvalidSignature
-from requests.exceptions import ConnectTimeout, ConnectionError, ReadTimeout
 
 # https://stackoverflow.com/questions/41295142/is-there-a-way-to-globally-override-requests-timeout-setting
 class TimeoutRequestsSession(requests.Session):
@@ -39,6 +38,8 @@ def get_signature(body):
 class Instance(object):
     def __init__(self, url):
         self.url = url
+        self.disabled = False
+
         self.public_key = None
         self.get_public_key()
 
@@ -72,8 +73,10 @@ class Instance(object):
         try:
             req = requests.get(urljoin(self.url, "/fed/key"), timeout=3)
             if req.status_code == 200: 
+                self.disabled = False
                 self.public_key = req.content; return True
-        except (ConnectTimeout, ConnectionError, ReadTimeout): pass
+        except: self.disabled = True
+
         return False
     
     def get_request_data(self, request_target, user_id=None, body=b""):
