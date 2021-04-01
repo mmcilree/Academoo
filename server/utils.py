@@ -73,6 +73,7 @@ def check_array_json(file):
     }
     try:
         to_json = json.loads(file)
+        print(to_json)
         validate(instance=to_json, schema=schema)
     except:
         # If check failed, check if json is an error message
@@ -181,6 +182,7 @@ def check_get_filtered_post(file):
     }
     try:
         to_json = json.loads(file)
+        print(to_json)
         validate(instance=to_json, schema=schema)
     except:
         # If check failed, check if json is an error message
