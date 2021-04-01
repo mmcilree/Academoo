@@ -11,7 +11,6 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 from cryptography.exceptions import InvalidSignature
-from requests.exceptions import ConnectTimeout, ConnectionError, ReadTimeout
 
 # https://stackoverflow.com/questions/41295142/is-there-a-way-to-globally-override-requests-timeout-setting
 class TimeoutRequestsSession(requests.Session):
@@ -39,6 +38,8 @@ def get_signature(body):
 class Instance(object):
     def __init__(self, url):
         self.url = url
+        self.disabled = False
+
         self.public_key = None
         self.get_public_key()
 
@@ -72,8 +73,10 @@ class Instance(object):
         try:
             req = requests.get(urljoin(self.url, "/fed/key"), timeout=3)
             if req.status_code == 200: 
+                self.disabled = False
                 self.public_key = req.content; return True
-        except (ConnectTimeout, ConnectionError, ReadTimeout): pass
+        except: self.disabled = True
+
         return False
     
     def get_request_data(self, request_target, user_id=None, body=b""):
@@ -95,8 +98,7 @@ class Instance(object):
                 client_host=current_app.config["HOST"]
             )
 
-        # print("Request Data to be Signed and Sent")
-        # print(ret)
+        print(f"Sending {request_target}"); print(ret)
 
         return (ret, generate_digest(body))
 
@@ -107,7 +109,7 @@ class Instance(object):
             message = self.request_data.format(
                 req=request_target,
                 user_id=headers.get("User-ID"),
-                date=get_date(), # what to do about latency?
+                date=headers.get("Date", get_date()),
                 digest=generate_digest(body),
                 url=current_app.config["HOST"],
                 client_host=urlparse(self.url).netloc
@@ -115,13 +117,13 @@ class Instance(object):
         else:
             message = self.request_data_without_user.format(
                 req=request_target,
-                date=get_date(),
+                date=headers.get("Date", get_date()),
                 digest=generate_digest(body),
                 url=current_app.config["HOST"],
                 client_host=urlparse(self.url).netloc
             )
 
-        # print("Expected Message:"); print(message)
+        print("Expected Message:"); print(message)
 
         public_key = serialization.load_pem_public_key(self.public_key)
         decoded_signature = base64.b64decode(encoded_signature)
@@ -201,7 +203,7 @@ class Instance(object):
         else:
             ret = requests.get(urljoin(self.url, "/fed/communities"), headers=headers)
             if check_array_json(ret.content): return check_array_json(ret.content)
-            
+
         return jsonify(ret.json()), ret.status_code
 
 
