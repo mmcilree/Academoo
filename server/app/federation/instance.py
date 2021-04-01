@@ -95,8 +95,7 @@ class Instance(object):
                 client_host=current_app.config["HOST"]
             )
 
-        # print("Request Data to be Signed and Sent")
-        # print(ret)
+        print(f"Sending {request_target}"); print(ret)
 
         return (ret, generate_digest(body))
 
@@ -121,7 +120,7 @@ class Instance(object):
                 client_host=urlparse(self.url).netloc
             )
 
-        # print("Expected Message:"); print(message)
+        print("Expected Message:"); print(message)
 
         public_key = serialization.load_pem_public_key(self.public_key)
         decoded_signature = base64.b64decode(encoded_signature)
