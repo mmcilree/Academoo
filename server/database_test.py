@@ -87,7 +87,7 @@ class DBCase(unittest.TestCase):
         p = Post(title='test post', author=u)
         db.session.add(p)
         db.session.commit()
-        self.assertEquals(p.author, u)
+        self.assertEqual(p.author, u)
 
     def test_post_created(self):
         p = Post(title='test post')
@@ -115,7 +115,7 @@ class DBCase(unittest.TestCase):
         p = Post(title='test post', community=c)
         db.session.add(p)
         db.session.commit()
-        self.assertEquals(p.community, c)
+        self.assertEqual(p.community, c)
 
     def test_comment_parent(self):
         p1 = Post(title='test post')
@@ -124,8 +124,8 @@ class DBCase(unittest.TestCase):
         p2 = Post(title='test post', parent=p1)
         db.session.add(p2)
         db.session.commit()
-        self.assertEquals(p1.comments, [p2])
-        self.assertEquals(p2.parent, p1)
+        self.assertEqual(p1.comments, [p2])
+        self.assertEqual(p2.parent, p1)
 
 
 if __name__ == '__main__':

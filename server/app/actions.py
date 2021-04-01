@@ -11,13 +11,13 @@ from sqlalchemy.sql.elements import Null
 def createCommunity(community_id, title, description, admin):
     if validate_community_id(community_id): return validate_community_id(community_id)
     
-    if Community.query.filter_by(id=community_id).first() is not None:
+    if Community.query.filter_by(id=community_id).first():
         return ({"title": "Community already exists", "message": "Please pick another community id that is not taken by an existing community"}, 400)
 
     community = Community(id=community_id, title=title, description=description)
     db.session.add(community)
     
-    if User.query.filter_by(user_id=admin) is None:
+    if not User.query.filter_by(user_id=admin).first():
         return ({"title": "Could not find user" + admin, "message": "User does not exist on database, specify a different user"}, 404)
         
 
@@ -92,7 +92,7 @@ def userAccountActivation(username, host, activation):
             return({"title":"Could not find user " + username, "message": "User does not exist in database, use a different username"}, 404)
         if(activation == "disable"):
             if(user.site_roles != None):
-                user.site_roles = ""
+                user.site_roles = None
                 db.session.commit()
                 return(None, 200)
             else:
@@ -138,7 +138,7 @@ def addSiteWideRole(admin, username, role, key, host):
             if not adminMatchesKey(key):
                 return({"title":"Unauthorized request from " + username, "message": "User is unauthorized to request admin priviliges, invalid key"}, 401)
         elif(admin == username):
-            return({"title: User cannot set their own permissions, message: Contact another admin user to allow permission change"}, 401)
+            return({"title": "User cannot set their own permissions", "message": "Contact another admin user to allow permission change"}, 401)
         # Check user is admin or moderator
         if((not role == "site-admin") & (not role == "site-moderator")):
             return({"title":"Invalid role" + role, "message": "Cannot assign this role, make sure role is <site-admin> or <site-moderator>"}, 400)
@@ -227,6 +227,8 @@ def updateBio(user_id, bio):
     user.about = bio
     db.session.commit()
 
+    return True
+
 # Make a user account public or private
 def updatePrivacy(user_id, private_account):
     if validate_username(user_id): return validate_username(user_id)
@@ -239,6 +241,7 @@ def updatePrivacy(user_id, private_account):
     else:
         return False
     db.session.commit()
+    
     user_dict = {"id": user.user_id, "private": private_account}
     return user_dict
 
@@ -270,15 +273,15 @@ def getLocalUser(id):
     if validate_username(id): return validate_username(id)
 
     user = User.query.filter_by(user_id=id).first()
-    if(user == None):
-        return False
+    if not user:
+        return {"title": "Could not find user", "message": "User does not exist!"}, 404
     else:
         if user.private_account:
             user_dict = {"id":user.user_id, "email": "", "host":user.host, "bio":"", "private": user.private_account, "site_roles" : user.site_roles}
-            return user_dict
+            return user_dict, 200
         else:
             user_dict = {"id": user.user_id, "email": user.email, "host": user.host, "bio": user.about, "private": user.private_account,  "site_roles" : user.site_roles}
-            return user_dict
+            return user_dict, 200
 
 # Add a subscriber entry to Subscriber table
 def addSubscriber(user_id, community_id, external):
@@ -294,8 +297,9 @@ def addSubscriber(user_id, community_id, external):
 # Remove subscriber entry from Subcriber table
 def removeSubscriber(user_id, community_id, external):
     subscription = UserSubscription.query.filter_by(user_id=user_id, community_id=community_id, external=external).first()
-    db.session.delete(subscription)
-    db.session.commit() 
+    if subscription:
+        db.session.delete(subscription)
+        db.session.commit() 
     return (None, 200)
 
 # Get all community ids from server
@@ -455,7 +459,9 @@ def createPost(post_data, author_id, author_host):
         db.session.add(content_field)
 
     db.session.commit()
-    return getPost(new_post.id, author_id)
+    message, _ = getPost(new_post.id, author_id)
+
+    return message, 201
 
 # Retrieve post object
 def getPost(post_id, requester_str):
@@ -676,7 +682,7 @@ def addTag(post_id, tag_name):
 
 # Delete a post tag
 def deleteTag(post_id, tag_name):
-    post_tag = PostTag.query.filter_by(post_id=post_id, tag=tag_name)
+    post_tag = PostTag.query.filter_by(post_id=post_id, tag=tag_name).first()
     if post_tag is None:
         return ({"title": "could not find post tag", "message": "either post does not exist or post does not have tag"}, 404)
     db.session.delete(post_tag)
@@ -688,4 +694,4 @@ def getPostTags(post_id):
     post = Post.query.filter_by(id = post_id).first()
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
-    return [post_tag.tag for post_tag in post.tags]
+    return [post_tag.tag for post_tag in post.tags], 200

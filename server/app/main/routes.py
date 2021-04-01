@@ -6,6 +6,8 @@ from flask import request, Response, jsonify, current_app, redirect, url_for
 from flask_praetorian import current_user
 from utils import *
 
+BAD_REQUEST = ({"message": "Bad Request"}, 400)
+
 def respond_with_action(actionResponse):
     data, status = actionResponse
     return jsonify(data), status
@@ -22,7 +24,7 @@ def assign_role():
     user_id = req["user"]
     community_id = req["community"]
     role = req["role"]
-    current_user = request.headers.get("User-ID")
+    current_user = request.headers.get("User-ID") # NOTE: shouldn't we use auth required and get user from there instead?
     if user_host in ["local", "nnv2host"]:
         return respond_with_action(actions.grantRole(user_id, community_id, current_user, role))
     else:
@@ -43,42 +45,58 @@ def get_default_role(id):
 def get_community_roles(id):
     return respond_with_action(actions.getRoles(id))
 
-@bp.route("/add-site-role/", methods=["POST"])
+@bp.route("/add-site-role", methods=["POST"])
 @auth_required
 def add_sitewide_role():
     req = request.json
-    admin = req["admin"]
-    username = req["username"]
-    key = req["key"]
-    role = req["role"]
-    host = req["host"]
+    if not req: return BAD_REQUEST
+
+    try:
+        admin = req["admin"]
+        username = req["username"]
+        key = req["key"]
+        role = req["role"]
+        host = req["host"]
+    except KeyError: return BAD_REQUEST
 
     return respond_with_action(actions.addSiteWideRole(admin, username, role, key, host))
 
-@bp.route("/remove-site-roles/", methods=["PUT"])
+@bp.route("/remove-site-roles", methods=["PUT"])
 @roles_required("site-admin")
 def remove_site_roles():
     req = request.json
-    username = req["username"]
-    host = req["host"]
+    if not req: return BAD_REQUEST
+    
+    try:
+        username = req["username"]
+        host = req["host"]
+    except KeyError: return BAD_REQUEST
     return respond_with_action(actions.removeSiteWideRoles(username, host))
 
-@bp.route("/account-activation/", methods=["PUT"])
-@roles_required("site-moderator")
+@bp.route("/account-activation", methods=["PUT"])
+@roles_accepted("site-moderator", "site-admin")
 def account_activation():
     req = request.json
-    username = req["username"]
-    host = req["host"]
-    activation = req["activation"]
+    if not req: return BAD_REQUEST
+
+    try:
+        username = req["username"]
+        host = req["host"]
+        activation = req["activation"]
+    except KeyError: return BAD_REQUEST
     return respond_with_action(actions.userAccountActivation(username, host, activation))
 
 @bp.route("/create-community", methods=["POST"])
 def create_community():
     req = request.json
-    community_id = req["id"]
-    title = req["title"]
-    description = req["description"]
-    admin = req["admin"]
+    if not req: return BAD_REQUEST
+
+    try:
+        community_id = req["id"]
+        title = req["title"]
+        description = req["description"]
+        admin = req["admin"]
+    except KeyError: return BAD_REQUEST
     
     return respond_with_action(actions.createCommunity(community_id, title, description, admin))
     
@@ -86,29 +104,35 @@ def create_community():
 @auth_required
 def update_bio():
     req = request.json
-    bio = req["bio"]
-    u=current_user()
+    if not (req and "bio" in req): return BAD_REQUEST
 
-    return Response(status=200) if actions.updateBio(u.user_id, bio) else Response(status=400)
+    bio = req["bio"]
+    u = current_user()
+
+    return Response(status=200) if actions.updateBio(u.user_id, bio) else BAD_REQUEST
 
 @bp.route("/update-privacy", methods=["POST"])
 @auth_required
 def update_privacy():
     req = request.json
-    private = req["private"]
-    u=current_user()
+    if not (req and "private" in req): return BAD_REQUEST
 
-    return Response(status=200) if actions.updatePrivacy(u.user_id, private) else Response(status=400)
+    private = req["private"]
+    u = current_user()
+
+    return Response(status=200) if actions.updatePrivacy(u.user_id, private) else BAD_REQUEST
 
 @bp.route("/change-password", methods=["POST"])
 @auth_required
 def change_password():
     req = request.json
+    if not (req and "old_password" in req and "new_password" in req): return BAD_REQUEST
+
     username = current_user().user_id
     old_password = req["old_password"]
     new_password = req["new_password"]
 
-    return Response(status=200) if actions.changePassword(username, old_password, new_password) else Response(status=400)
+    return Response(status=200) if actions.changePassword(username, old_password, new_password) else BAD_REQUEST
 
 @bp.route("/get-user")
 @auth_required
@@ -150,9 +174,7 @@ def add_instance():
     host = req["host"]
     url = req["url"]
 
-    instance_manager.add_instance(host, url)
-
-    return Response(status=200)
+    return Response(status=200) if instance_manager.add_instance(host, url) else BAD_REQUEST
 
 @bp.route("/get-instances", methods=["GET"])
 def get_all_instances():
@@ -164,7 +186,7 @@ def delete_user():
     req = request.json
     username = current_user().user_id
     password = req["password"]
-    return Response(status=200) if actions.deleteUser(username, password) else Response(status=400)
+    return Response(status=200) if actions.deleteUser(username, password) else BAD_REQUEST
 
 @bp.route("/post-vote/<post_id>")
 @auth_required
@@ -183,16 +205,19 @@ def get_vote(post_id):
     return respond_with_action(actions.getVote(username, post_id))  
 
 @bp.route("/add-post-tag/<post_id>", methods=['POST'])
+@auth_required
 def add_post_tag(post_id):
     tag_name = request.args['tag']
     return respond_with_action(actions.addTag(post_id, tag_name))
 
 @bp.route("/delete-post-tag/<post_id>", methods=['DELETE'])
+@auth_required
 def delete_post_tag(post_id):
     tag_name = request.args['tag']
     return respond_with_action(actions.deleteTag(post_id, tag_name))
 
-@bp.route("/get-post-tags", methods=["GET"])
+@bp.route("/get-post-tags/<post_id>", methods=["GET"])
+@auth_required
 def get_post_tags(post_id):
     return respond_with_action(actions.getPostTags(post_id))
 

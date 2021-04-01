@@ -149,7 +149,9 @@ class Instance(object):
 
         try:
             json.loads(ret.content)
-            if check_array_json(ret.content): return check_array_json(ret.content)
+            if id and check_get_user(ret.content): return check_get_user(ret.content)
+            if not id and check_array_json(ret.content): return check_array_json(ret.content)
+            
             return jsonify(ret.json()), ret.status_code
         except:
             return Response(status=ret.status_code)
@@ -214,7 +216,9 @@ class Instance(object):
         ret = requests.post(urljoin(self.url, f"/fed/posts"), json=data, headers=headers)
         try:
             json.loads(ret.content)
-            if check_get_post(ret.content): return check_get_post(ret.content)
+
+            # Create and Edit posts take in json instead of bytes...
+            if check_create_post(ret.json()): return check_create_post(ret.json())
             return jsonify(ret.json()), ret.status_code
         except:
             return Response(status=ret.status_code)
@@ -230,13 +234,13 @@ class Instance(object):
         ret = requests.put(urljoin(self.url, f"/fed/posts/{id}"), json=data, headers=headers)
         try:
             json.loads(ret.content)
-            if check_get_post(ret.content): return check_get_post(ret.content)
+            if check_edit_post(ret.json()): return check_edit_post(ret.json())
             return jsonify(ret.json()), ret.status_code
         except:
             return Response(status=ret.status_code)
     
     def delete_post(self, data, id, headers):
-        data.pop("external")
+        # data.pop("external")
 
         body, digest = self.get_request_data(f"delete /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
         headers["Signature"] = get_signature(body)

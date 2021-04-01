@@ -7,7 +7,7 @@ from app.models import User, Community
 from utils import *
 import json
 
-# TODO: Get client-host and host from data
+client_host_error = {"title": "Incorrect Headers", "message": "The given headers do not comply with the specification"}
 
 def respond_with_action(actionResponse):
     data, status = actionResponse
@@ -51,7 +51,8 @@ def get_user_by_id(id):
         message, status_code = verify_request(headers=request.headers, request_target=f"get /fed/users/{id}")
         if status_code != 200: return jsonify(message), status_code
 
-        return jsonify(actions.getLocalUser(id))
+        message, status_code = actions.getLocalUser(id)
+        return jsonify(message), status_code
     else:
         return instance_manager.get_users(external, id=id)
 
@@ -59,8 +60,8 @@ def get_user_by_id(id):
 @bp.route("/communities", methods=["GET"])
 def get_all_communities():
     host = request.headers.get("Client-Host")
-    #if host is None:
-    #    return Response(status = 400) #### remember to include json error message with it
+    if not host: return jsonify(client_host_error), 400
+
     external = request.args.get("external")
 
     if not external:
@@ -76,8 +77,8 @@ def get_all_communities():
 @bp.route("/communities/<id>", methods=["GET"])
 def get_community_by_id(id):
     host = request.headers.get("Client-Host")
-    #if host is None:
-    #    return Response(status = 400)
+    if not host: return jsonify(client_host_error), 400
+
     external = request.args.get("external")
 
     if not external:
@@ -91,7 +92,9 @@ def get_community_by_id(id):
 
 @bp.route("/communities/<id>/timestamps")
 def get_community_timestamps(id): # no option for federation?
-    ##headers = request.headers['Client-Host']
+    host = request.headers.get("Client-Host")
+    if not host: return jsonify(client_host_error), 400
+
     message, status_code = verify_request(headers=request.headers, request_target=f"get /fed/communities/{id}/timestamps")
     if status_code != 200: return jsonify(message), status_code
 
@@ -102,8 +105,8 @@ def get_community_timestamps(id): # no option for federation?
 def get_all_posts():
     host = request.headers.get("Client-Host")
     requester_str = request.headers.get("User-ID")
-    #if host is None or requester_str is None:
-    #    return Response(status = 400)
+    if not host or not requester_str: return jsonify(client_host_error), 400
+
     # limit, community, min_date
     limit = int(request.args.get("limit", 20))
     community_id = request.args.get("community")
@@ -138,10 +141,7 @@ def get_post_by_id(id):
     external = request.args.get("external")
     host = request.headers.get("Client-Host")
     requester_str = request.headers.get("User-ID")
-    print(requester_str)
-    #if host is None or requester_str is None:
-    #    return Response(status = 400)
-
+    if not host or not requester_str: return jsonify(client_host_error), 400
 
     if not external:
         message, status_code = verify_request(headers=request.headers, request_target=f"get /fed/posts/{id}")
@@ -166,9 +166,7 @@ def create_post():
 
     host = request.headers.get("Client-Host")
     requester_str = request.headers.get("User-ID")
-
-    #if host is None or requester_str is None:
-    #    return Response(status = 400)
+    if not host or not requester_str: return jsonify(client_host_error), 400
 
     if check_create_post(request.get_json(silent=True, force=True)): return check_create_post(request.get_json(silent=True, force=True))
 
@@ -205,8 +203,8 @@ def create_post():
 def edit_post(id):
     host = request.headers.get("Client-Host")
     requester_str = request.headers.get("User-ID")
-    #if host is None or requester_str is None:
-    #    return Response(status = 400)
+    if not host or not requester_str: return jsonify(client_host_error), 400
+
     if request.json is not None:
         external = request.json.get("external", None)
     else: external = None # Changed from request.json.get("external") as external not field in create_post json
@@ -235,10 +233,9 @@ def edit_post(id):
 def delete_post(id):
     external = request.args.get("external")
 
-    host = request.headers.get("Client-Host") 
+    host = request.headers.get("Client-Host")
     requester_str = request.headers.get("User-ID")
-    #if host is None or requester_str is None:
-    #    return Response(status = 400)
+    if not host or not requester_str: return jsonify(client_host_error), 400
 
     requester = User.lookup(requester_str)
     if external is None:

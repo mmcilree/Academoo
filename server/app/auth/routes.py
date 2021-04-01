@@ -43,6 +43,6 @@ def protected():
     return f"Congrats, you've logged in to {current_user().user_id}"
 
 @bp.route("/admin-protected")
-@roles_required("admin")
+@roles_required("site-admin")
 def protected_admin():
     return f"Congrats, {current_user().user_id} you're an admin!"
