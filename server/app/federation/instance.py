@@ -107,7 +107,7 @@ class Instance(object):
             message = self.request_data.format(
                 req=request_target,
                 user_id=headers.get("User-ID"),
-                date=get_date(), # what to do about latency?
+                date=headers.get("Date", get_date()),
                 digest=generate_digest(body),
                 url=current_app.config["HOST"],
                 client_host=urlparse(self.url).netloc
@@ -115,7 +115,7 @@ class Instance(object):
         else:
             message = self.request_data_without_user.format(
                 req=request_target,
-                date=get_date(),
+                date=headers.get("Date", get_date()),
                 digest=generate_digest(body),
                 url=current_app.config["HOST"],
                 client_host=urlparse(self.url).netloc
