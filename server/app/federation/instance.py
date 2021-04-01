@@ -199,7 +199,8 @@ class Instance(object):
         else:
             ret = requests.get(urljoin(self.url, "/fed/communities"), headers=headers)
             if check_array_json(ret.content): return check_array_json(ret.content)
-            
+
+        print(self.url, ret.json())
         return jsonify(ret.json()), ret.status_code
 
 
