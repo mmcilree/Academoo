@@ -2,7 +2,6 @@ import React from "../../../node_modules/react";
 import Post from "../posts/Post";
 import Card from "../../../node_modules/react-bootstrap/Card";
 import Button from "../../../node_modules/react-bootstrap/Button";
-import ArrowRight from "react-bootstrap-icons";
 import { ArrowReturnLeft, ChatRight } from "../../../node_modules/react-bootstrap-icons";
 import { Link } from "../../../node_modules/react-router-dom";
 import Modal from "../../../node_modules/react-bootstrap/Modal";
@@ -13,16 +12,8 @@ import { authFetch } from '../../auth';
 import { Alert } from "react-bootstrap";
 
 import {
-  PlusCircle,
-  ArrowRightCircleFill,
   ReplyFill,
   ChatSquare,
-  PersonCircle,
-  Gear,
-  Tools,
-  BoxArrowRight,
-  QuestionCircle,
-  Pencil
 } from "react-bootstrap-icons";
 
 
@@ -211,7 +202,7 @@ class CommentsViewer extends React.Component {
                               newchild ? (
                                 <Card key={newchild.id} className="mt-4 ml-4 comment">
                                   <Card.Body>
-                                  Replies...
+                                    {newchild}
                                   </Card.Body>
                                 </Card>
                               ):null
