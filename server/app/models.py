@@ -110,7 +110,6 @@ class Community(db.Model):
     title = db.Column(db.String(1000), nullable=False)
     description = db.Column(db.String(1000))
     posts = db.relationship('Post', backref='community')
-    #administrators = db.relationship("User", secondary=administrating, backref='communities')
     subscribers = db.relationship("User", secondary=subscriptions, backref='subscribed_communities')
     roles_granted = db.relationship('UserRole', backref='community')
     default_role = db.Column(db.String(50), default="contributor", nullable=False)
