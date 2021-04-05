@@ -25,6 +25,7 @@ class CommentsViewer extends React.Component {
       parentPostId: this.props.match.params.id,
       host: this.props.match.params.instance ? this.props.match.params.instance : "local",
       children: [],
+      grandchildren: {},
       fetchedChildren: new Set(),
       voteStatus: {},
       isLoading: true,
@@ -88,17 +89,19 @@ class CommentsViewer extends React.Component {
         this.setState({
           parentPost: data,
           needsUpdate: false
-        })
-        this.fetchChildren();
+        });
+        this.fetchChildren(data.children, false, data.id)
+        // Promise.resolve(this.fetchChildren(data.children, false, data.id)).then(children => {console.log("here");children.map(child => this.fetchChildren(child.children, true, child.id))});
+        //console.log((await Promise.all( this.fetchChildren(data.children, false, data.id))))/*.map(child => this.fetchChildren(child.children, true, child.id))*/;
       })
       .catch(error => this.setState({ error: error.message, isLoading: false }));
 
   }
 
-  async fetchChildren() {
-    const { parentPost, fetchedChildren, children } = this.state;
+  async fetchChildren(childIds, isChild, parentId) {
+    const {fetchedChildren, children, grandchildren } = this.state;
 
-    const new_children = await Promise.all(parentPost.children.filter(childId => !fetchedChildren.has(childId)).map(
+    const new_children = await Promise.all(childIds.filter(childId => !fetchedChildren.has(childId)).map(
       async (childId) => {
         fetchedChildren.add(childId);
         return authFetch('/api/posts/' + childId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
@@ -122,7 +125,12 @@ class CommentsViewer extends React.Component {
           .catch(error => this.setState({ error: error.message, isLoading: false }));
       }));
 
-    this.setState({ isLoading: false, children: [...children, ...new_children] })
+
+    !isChild ? this.setState({ children: [...children, ...new_children] }) :
+     this.setState({ isLoading: false, grandchildren: {...grandchildren, [parentId]: new_children} }) 
+    !isChild && new_children.map(child => this.fetchChildren(child.children, true, child.id));
+
+    return new_children
   }
 
   componentDidMount() {
@@ -136,6 +144,7 @@ class CommentsViewer extends React.Component {
   }
 
   render() {
+    console.log(this.state.grandchildren)
     const { isLoading, error } = this.state;
 
     return (
@@ -198,7 +207,7 @@ class CommentsViewer extends React.Component {
 
                         <Accordion.Collapse eventKey="0">
                           <Card.Body>
-                            {child.children.map((newchild) =>
+                            {!console.log(child.id) && this.state.grandchildren[child.id].map((newchild) =>
                               newchild ? (
                                 <Card key={newchild.id} className="mt-4 ml-4 comment">
                                   <Card.Body>
