@@ -84,9 +84,10 @@ class Post extends Component {
       body: {}
 
     }
+
+    if (this.props.postData.host === undefined) {this.props.postData.host = "local"} 
     if (this.props.postData.host !== "local") {
       requestOptions.body.external = this.props.postData.host;
-      console.log(requestOptions);
     }
     requestOptions.body = JSON.stringify(requestOptions.body);
 
