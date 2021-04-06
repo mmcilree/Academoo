@@ -159,7 +159,7 @@ class CommunityFeed extends Component {
                   height="40"></img></Spinner>
                 <span>Loading... </span></h2>}
 
-            <CommunitySubscribeButton community={this.state.currentCommunity} external={this.state.instance === "local" ? null : this.state.instance}/>
+            <CommunitySubscribeButton community={this.state.currentCommunity} external={this.state.host === "local" ? null : this.state.host}/>
           </div>
 
           <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>

@@ -11,7 +11,7 @@ class PostsViewer extends Component {
     return (
       this.props.posts.map(data => {
         const { id } = data;
-        console.log(this.state);
+        // console.log(this.state);
         return (
           <Card key={id} className="mt-4">
             <Card.Body className="pb-2">
