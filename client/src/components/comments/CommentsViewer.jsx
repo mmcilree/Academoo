@@ -5,7 +5,6 @@ import Button from "../../../node_modules/react-bootstrap/Button";
 import { ArrowReturnLeft, ChatRight } from "../../../node_modules/react-bootstrap-icons";
 import Modal from "../../../node_modules/react-bootstrap/Modal";
 import CommentCreator from "./CommentCreator";
-import Accordion from 'react-bootstrap/Accordion';
 import VoteDisplay from "../posts/VoteDisplay";
 import { authFetch } from '../../auth';
 import { Alert } from "react-bootstrap";
@@ -13,12 +12,6 @@ import { Alert } from "react-bootstrap";
 /**
  * Component which renders a post and all of its comments
  */
-import {
-  ReplyFill,
-  ChatSquare,
-} from "react-bootstrap-icons";
-
-
 class CommentsViewer extends React.Component {
   constructor(props) {
     super(props);
@@ -27,7 +20,6 @@ class CommentsViewer extends React.Component {
       parentPostId: this.props.match.params.id,
       host: this.props.match.params.instance ? this.props.match.params.instance : "local",
       children: [],
-      grandchildren: {},
       fetchedChildren: new Set(),
       voteStatus: {},
       isLoading: true,
@@ -35,7 +27,6 @@ class CommentsViewer extends React.Component {
       userID: null,
       error: null,
       showCommentEditor: false,
-      currentChild: null,
 
     }
   }
@@ -59,14 +50,6 @@ class CommentsViewer extends React.Component {
 
   handleCloseCommentEditor() {
     this.setState({ showCommentEditor: false, needsUpdate: true });
-  }
-
-  handleOpenReplyEditor(child) {
-    this.setState({ showReplyEditor: true, currentChild: child });
-  }
-
-  handleCloseReplyEditor() {
-    this.setState({ showReplyEditor: false, needsUpdate: true });
   }
 
 
@@ -97,22 +80,21 @@ class CommentsViewer extends React.Component {
         this.setState({
           parentPost: data,
           needsUpdate: false
-        });
-        this.fetchChildren(data.children, false, data.id)
-        // Promise.resolve(this.fetchChildren(data.children, false, data.id)).then(children => {console.log("here");children.map(child => this.fetchChildren(child.children, true, child.id))});
-        //console.log((await Promise.all( this.fetchChildren(data.children, false, data.id))))/*.map(child => this.fetchChildren(child.children, true, child.id))*/;
+        })
+        this.fetchChildren();
       })
       .catch(error => this.setState({ error: error.message, isLoading: false }));
 
   }
 
-  async fetchChildren(childIds, isChild, parentId) {
+  /**
+   * fetch the children of a post
+   * this means the comments of the post
+   */
+  async fetchChildren() {
+    const { parentPost, fetchedChildren, children } = this.state;
 
-    if (this.state.grandchildren[parentId]) return
-
-    const { fetchedChildren, children, grandchildren } = this.state;
-
-    const new_children = await Promise.all(childIds.filter(childId => !fetchedChildren.has(childId)).map(
+    const new_children = await Promise.all(parentPost.children.filter(childId => !fetchedChildren.has(childId)).map(
       async (childId) => {
         fetchedChildren.add(childId);
         return authFetch('/api/posts/' + childId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
@@ -136,10 +118,7 @@ class CommentsViewer extends React.Component {
           .catch(error => this.setState({ error: error.message, isLoading: false }));
       }));
 
-
-    !isChild ? this.setState({ isLoading: false, children: [...children, ...new_children] })
-      : this.setState({ grandchildren: { ...grandchildren, [parentId]: new_children } })
-
+    this.setState({ isLoading: false, children: [...children, ...new_children] })
   }
 
   componentDidMount() {
@@ -157,7 +136,6 @@ class CommentsViewer extends React.Component {
    * All comments will be shown
    */
   render() {
-    console.log(this.state.grandchildren)
     const { isLoading, error } = this.state;
 
     return (
@@ -188,70 +166,21 @@ class CommentsViewer extends React.Component {
                     </Modal.Body>
                   </Modal>
 
-                  <Modal show={this.state.showReplyEditor} onHide={() => this.setState({ showReplyEditor: false })}>
-                    <Modal.Header closeButton>
-                      <Modal.Title>Add a Reply to a Comment!</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                      <CommentCreator parentPost={this.state.currentChild} host={this.state.host} onSubmit={this.handleCloseReplyEditor.bind(this)} />
-                    </Modal.Body>
-                  </Modal>
-
 
                 </Card.Body>
               </Card>
               {this.state.children.sort(comment => comment.created).reverse().map((child) =>
                 child ? (
                   <Card key={child.id} className="mt-4 ml-4 comment">
-
-                    <Card.Body className="pb-1">
+                    <Card.Body>
                       <Post postData={child} />
-
-                      <Accordion>
-
-
-                        <div className="d-flex justify-content-between">
-                          <div>
-                            <Accordion.Toggle as={Button} variant="link" eventKey="0" onClick={() => this.fetchChildren(child.children, true, child.id)}>
-                              <small><ChatSquare className="mb-1 mr-1" /> Replies ({child.children.length})</small>
-                            </Accordion.Toggle>
-                            <Link onClick={this.handleOpenReplyEditor.bind(this, child)}> <small><ReplyFill className="mb-1 mr-1" />Reply to comment</small></Link>
-
-                          </div>
-
-                          <VoteDisplay upvotes={child.upvotes} downvotes={child.downvotes} postId={child.id} />
-                        </div>
-
-
-
-                        <Accordion.Collapse eventKey="0" className="p-0">
-                          <Card.Body className="pt-0 pl-0">
-                            {child.children.length === 0 ?
-                              <p>No replies to show.</p> :
-                              this.state.grandchildren[child.id] ? this.state.grandchildren[child.id].map((newchild) =>
-                                newchild ? (
-                                  <Card key={newchild.id} className="mt-4 ml-4 comment">
-                                    <Card.Body>
-                                      <Post postData={newchild} />
-                                      <div className="d-flex justify-content-between">
-                                        <div>
-                                        </div>
-
-                                        <VoteDisplay upvotes={newchild.upvotes} downvotes={newchild.downvotes} postId={newchild.id} />
-                                      </div>
-                                    </Card.Body>
-                                  </Card>
-                                ) : null
-                              ) : <p>Loading Replies...</p>
-                            }
-                          </Card.Body>
-                        </Accordion.Collapse>
-                      </Accordion>
+                      <div className="d-flex justify-content-between">
+                        <span></span>
+                        <VoteDisplay upvotes={child.upvotes} downvotes={child.downvotes} postId={child.id} />
+                      </div>
 
                     </Card.Body>
-
                   </Card>
-
                 ) : null
               )}
               {this.state.children.length === 0 ?
@@ -263,5 +192,4 @@ class CommentsViewer extends React.Component {
     );
   }
 }
-
 export default CommentsViewer;
