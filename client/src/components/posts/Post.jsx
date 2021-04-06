@@ -86,12 +86,13 @@ class Post extends Component {
     }
     if (this.props.postData.host !== "local") {
       requestOptions.body.external = this.props.postData.host;
+      console.log(requestOptions);
     }
     requestOptions.body = JSON.stringify(requestOptions.body);
 
     authFetch('/api/posts/' + this.props.postData.id, requestOptions);
     this.handleCloseDelete();
-    this.props.history.push("/communities/" + this.props.postData.community)
+    this.props.history.push("/communities/" + (this.props.postData.host !== "local" ? this.props.postData.host + "/" : "") + this.props.postData.community);
     window.location.reload(false);
   }
 
