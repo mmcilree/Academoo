@@ -125,8 +125,8 @@ def check_is_error_message(file):
     try:
         to_json = json.loads(file)
         validate(instance=to_json, schema=schema)
-    except:
-        return ({"title": "Invalid JSON file passed", "message": "Make sure the JSON file conforms to protocol schema"}, 400)
+    except Exception as e:
+        return ({"title": "Invalid JSON file passed", "message": "Make sure the JSON file conforms to protocol schema", "error": str(e)}, 400)
 
 def check_get_timestamps(file):
     schema = {
