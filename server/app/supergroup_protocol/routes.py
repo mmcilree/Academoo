@@ -249,4 +249,4 @@ def delete_post(id):
         return respond_with_action(actions.deletePost(id, requester))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        return instance_manager.delete_post(external, request.json, id, headers) # NOTE: wait why does delete post have json?
+        return instance_manager.delete_post(external, request.json, id, headers) # NOTE: wait why does delete post have json? # NOTE: because it could be error message
