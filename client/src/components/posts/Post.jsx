@@ -94,12 +94,11 @@ class Post extends Component {
     authFetch('/api/posts/' + this.props.postData.id, requestOptions).then(r => r.status).then(statusCode => {
       if (statusCode != 200) {
         this.setState({ errors: ["Could not delete post"] })
-      } else {
-        this.handleCloseDelete();
-        this.props.parentCallback();
       }
     }).catch(() => {});
 
+    this.handleCloseDelete();
+    this.props.parentCallback();
     this.props.history.push("/communities/" + (this.props.postData.host !== "local" ? this.props.postData.host + "/" : "") + this.props.postData.community);
     // window.location.reload(false);
   }
