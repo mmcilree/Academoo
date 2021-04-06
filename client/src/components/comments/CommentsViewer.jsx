@@ -154,7 +154,7 @@ class CommentsViewer extends React.Component {
           {!isLoading && !error ? (
             <Card.Body>
               <Button variant="secondary" onClick={() => {
-                this.props.history.push("/communities/" + this.state.parentPost.community);
+                this.props.history.push("/communities/" + (this.state.host !== "local" ? this.state.host + "/" : "") + this.state.parentPost.community);
               }}>All Community Posts <ArrowReturnLeft /></Button>
               <Card className="mt-4">
                 <Card.Body>
