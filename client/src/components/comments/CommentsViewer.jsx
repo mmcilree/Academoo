@@ -34,7 +34,6 @@ class CommentsViewer extends React.Component {
       error: null,
       showCommentEditor: false,
       currentChild: null,
-
     }
   }
 

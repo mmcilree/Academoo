@@ -11,6 +11,15 @@ import CommunitySubscribeButton from "./CommunitySubscribeButton";
  * component which shows all of the communities in a given instance
  */
 class CommunityFeed extends Component {
+  constructor(props) {
+    super(props);
+    this.parentCallback = this.parentCallback.bind(this);
+  }
+
+  parentCallback() {
+    this.fetchUserDetails();
+  }
+
   state = {
     isLoadingCommunity: true,
     isLoadingPosts: true,
@@ -167,7 +176,7 @@ class CommunityFeed extends Component {
           <MiniPostCreator currentCommunity={currentCommunity} host={host} />
           {error ? <Alert variant="warning">Error fetching posts: {error}</Alert> : null}
           {!isLoadingPosts ? (
-            <PostViewer posts={posts} />
+            <PostViewer posts={posts} parentCallback={this.parentCallback} />
           ) : (
               <h3>Loading Posts...</h3>
             )}
