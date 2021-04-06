@@ -99,7 +99,10 @@ class CommentsViewer extends React.Component {
   }
 
   async fetchChildren(childIds, isChild, parentId) {
-    const {fetchedChildren, children, grandchildren } = this.state;
+
+    if (this.state.grandchildren[parentId]) return
+
+    const { fetchedChildren, children, grandchildren } = this.state;
 
     const new_children = await Promise.all(childIds.filter(childId => !fetchedChildren.has(childId)).map(
       async (childId) => {
@@ -126,11 +129,9 @@ class CommentsViewer extends React.Component {
       }));
 
 
-    !isChild ? this.setState({ children: [...children, ...new_children] }) :
-     this.setState({ isLoading: false, grandchildren: {...grandchildren, [parentId]: new_children} }) 
-    !isChild && new_children.map(child => this.fetchChildren(child.children, true, child.id));
+    !isChild ? this.setState({ isLoading: false, children: [...children, ...new_children] })
+      : this.setState({ grandchildren: { ...grandchildren, [parentId]: new_children } })
 
-    return new_children
   }
 
   componentDidMount() {
@@ -191,34 +192,47 @@ class CommentsViewer extends React.Component {
                 child ? (
                   <Card key={child.id} className="mt-4 ml-4 comment">
 
-                    <Card.Body>
+                    <Card.Body className="pb-1">
                       <Post postData={child} />
 
-                      <div className="d-flex justify-content-between">
-
-                        <span></span>
-
-                        <VoteDisplay upvotes={child.upvotes} downvotes={child.downvotes} postId={child.id} />
-                      </div>
                       <Accordion>
-                        <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                          <small><ChatSquare /> Replies ({child.children.length})</small>
-                        </Accordion.Toggle>|<Link onClick={this.handleOpenReplyEditor.bind(this, child)}> <small><ReplyFill />Reply to comment</small></Link>
 
-                        <Accordion.Collapse eventKey="0">
-                          <Card.Body>
-                            {!console.log(child.id) && this.state.grandchildren[child.id].map((newchild) =>
-                              newchild ? (
-                                <Card key={newchild.id} className="mt-4 ml-4 comment">
-                                  <Card.Body>
-                                    {newchild}
-                                  </Card.Body>
-                                </Card>
-                              ):null
-                            )}
+
+                        <div className="d-flex justify-content-between">
+                          <div>
+                            <Accordion.Toggle as={Button} variant="link" eventKey="0" onClick={() => this.fetchChildren(child.children, true, child.id)}>
+                              <small><ChatSquare className="mb-1 mr-1" /> Replies ({child.children.length})</small>
+                            </Accordion.Toggle>
+                            <Link onClick={this.handleOpenReplyEditor.bind(this, child)}> <small><ReplyFill className="mb-1 mr-1" />Reply to comment</small></Link>
+
+                          </div>
+
+                          <VoteDisplay upvotes={child.upvotes} downvotes={child.downvotes} postId={child.id} />
+                        </div>
+
+
+
+                        <Accordion.Collapse eventKey="0" className="p-0">
+                          <Card.Body className="pt-0 pl-0">
                             {child.children.length === 0 ?
-                      <p className="mt-4 ml-4 comment">No replies to show.</p> : null}
-                            </Card.Body>
+                              <p>No replies to show.</p> :
+                              this.state.grandchildren[child.id] ? this.state.grandchildren[child.id].map((newchild) =>
+                                newchild ? (
+                                  <Card key={newchild.id} className="mt-4 ml-4 comment">
+                                    <Card.Body>
+                                      <Post postData={newchild} />
+                                      <div className="d-flex justify-content-between">
+                                        <div>
+                                        </div>
+
+                                        <VoteDisplay upvotes={newchild.upvotes} downvotes={newchild.downvotes} postId={newchild.id} />
+                                      </div>
+                                    </Card.Body>
+                                  </Card>
+                                ) : null
+                              ) : <p>Loading Replies...</p>
+                            }
+                          </Card.Body>
                         </Accordion.Collapse>
                       </Accordion>
 
@@ -228,10 +242,10 @@ class CommentsViewer extends React.Component {
 
                 ) : null
               )}
-                    {this.state.children.length === 0 ?
-                      <p className="mt-4 ml-4 comment">No comments to show.</p> : null}
+              {this.state.children.length === 0 ?
+                <p className="mt-4 ml-4 comment">No comments to show.</p> : null}
             </Card.Body>) :
-                  <Card.Body>{error ? <Alert variant="warning">Error fetching posts: {error}</Alert> : <h3>Loading Post...</h3>}</Card.Body>}
+            <Card.Body>{error ? <Alert variant="warning">Error fetching posts: {error}</Alert> : <h3>Loading Post...</h3>}</Card.Body>}
         </Card>
       </div>
     );
