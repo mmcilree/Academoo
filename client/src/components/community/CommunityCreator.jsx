@@ -40,6 +40,7 @@ class CommunityCreator extends React.Component {
         //     errors.push("Administrators input is not a comma separated list.");
         //     return errors;
         // }
+        console.log(this.state.communities)
         if (this.state.communities.includes(this.state.id)) {
             errors.push("A community already exists with that ID. Please modify it.");
             return errors;
@@ -52,12 +53,11 @@ class CommunityCreator extends React.Component {
      * fetch all of the different communities that exist
      */
     fetchCommunities(host) {
-        authFetch('/api/communities').then(response => response.json(),
-            {
-                headers: {
-                    'Client-Host': window.location.hostname
-                }
-            })
+        authFetch('/api/communities', {
+            headers: {
+                'Client-Host': window.location.hostname
+            }
+        }).then(response => response.json())
             .then(data =>
                 this.setState({
                     communities: data,
