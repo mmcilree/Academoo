@@ -6,6 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 import MarkdownPreviewer from '../layout/MarkdownPreviewer';
 import { withRouter } from 'react-router-dom';
 
+/* Post Editor component appears in editor modal triggered in the Post component */
 class PostEditor extends React.Component {
     constructor(props) {
         super(props);
@@ -29,7 +30,7 @@ class PostEditor extends React.Component {
         event.preventDefault();
     }
 
-
+    /* Renders the post editor component - displayed in a modal with the post's current data displayed and editable */
     render() {
         const title = this.props.title;
         const body = this.props.body;

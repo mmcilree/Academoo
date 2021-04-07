@@ -2,16 +2,16 @@ import React, { Component } from "react";
 import Post from "./Post";
 import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { ChatSquare, ArrowUpSquare, ArrowUpSquareFill, ArrowDownSquare, ArrowDownSquareFill } from "react-bootstrap-icons";
-import { authFetch } from '../../auth';
+import { ChatSquare } from "react-bootstrap-icons";
 import VoteDisplay from "./VoteDisplay";
 
+/* Posts Viewer Component displays all the posts passed to it via props
+ - each post is rendered using the Post component */
 class PostsViewer extends Component {
   render() {
     return (
       this.props.posts.map(data => {
         const { id } = data;
-        // console.log(this.state);
         return (
           <Card key={id} className="mt-4">
             <Card.Body className="pb-2">

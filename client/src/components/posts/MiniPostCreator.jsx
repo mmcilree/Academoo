@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Col, Form, FormControl, Button} from "react-bootstrap";
+import { Col, Form, FormControl, Button } from "react-bootstrap";
 import { PlusCircle } from "react-bootstrap-icons";
+
+/* MiniPostCreator component is a text input field for the Community Feed page that redirects to create post */
 function MiniPostCreator(props) {
     const [newPostText, setNewPostText] = useState("");
 
+    //return JSX for the mini post creator - has a text field for user to enter the body of a post
+    //redirects to create post for the current community
     return (
         <Form onSubmit={e => e.preventDefault()}>
             <Form.Row>

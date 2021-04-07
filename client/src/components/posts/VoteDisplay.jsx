@@ -3,6 +3,7 @@ import { ArrowUpSquare, ArrowUpSquareFill, ArrowDownSquare, ArrowDownSquareFill 
 import { Link } from 'react-router-dom';
 import { authFetch } from '../../auth';
 
+/* Vote Display Component shows the upvote and downvote buttons on a post */
 class VoteDisplay extends React.Component {
     constructor(props) {
         super(props);
@@ -19,47 +20,50 @@ class VoteDisplay extends React.Component {
         this.fetchVoteStatus();
     }
 
-
+    /* Gets the logged-in user's vote on this post - up, down or nothing */
     fetchVoteStatus() {
         authFetch('/api/get-vote/' + this.state.postId)
-          .then(response => {
-            if (!response.ok || response.status != 200) {
-              throw new Error();
+            .then(response => {
+                if (!response.ok || response.status != 200) {
+                    throw new Error();
+                }
+                return response.json()
             }
-            return response.json()
-          }
-          ).then(data =>
-            this.setState({ voteStatus: data.vote })
-          ).catch((err) => {
-          });
+            ).then(data =>
+                this.setState({ voteStatus: data.vote })
+            ).catch((err) => {
+            });
     }
 
+    /* Submit a vote on a post to change the vote status a user has already */
     async voteOnPost(value) {
-        if(this.state.voteStatus === "upvote") {
-            if(value === "upvote") {
-                this.setState({upvotes: this.state.upvotes - 1, voteStatus: "none"})
+        if (this.state.voteStatus === "upvote") {
+            if (value === "upvote") {
+                this.setState({ upvotes: this.state.upvotes - 1, voteStatus: "none" })
             } else {
-                this.setState({upvotes: this.state.upvotes - 1, downvotes: this.state.downvotes + 1, voteStatus: "downvote"})
+                this.setState({ upvotes: this.state.upvotes - 1, downvotes: this.state.downvotes + 1, voteStatus: "downvote" })
             }
-        } else if(this.state.voteStatus === "downvote") {
-            if(value === "upvote") {
-                this.setState({upvotes: this.state.upvotes + 1, downvotes: this.state.downvotes - 1, voteStatus: "upvote"})
+        } else if (this.state.voteStatus === "downvote") {
+            if (value === "upvote") {
+                this.setState({ upvotes: this.state.upvotes + 1, downvotes: this.state.downvotes - 1, voteStatus: "upvote" })
             } else {
-                this.setState({downvotes: this.state.downvotes - 1, voteStatus: "none"})
+                this.setState({ downvotes: this.state.downvotes - 1, voteStatus: "none" })
             }
         } else {
-            if(value === "upvote") {
-                this.setState({upvotes: this.state.upvotes + 1, voteStatus: "upvote"})
+            if (value === "upvote") {
+                this.setState({ upvotes: this.state.upvotes + 1, voteStatus: "upvote" })
             } else {
-                this.setState({downvotes: this.state.downvotes + 1, voteStatus: "downvote"})
+                this.setState({ downvotes: this.state.downvotes + 1, voteStatus: "downvote" })
             }
         }
 
         await authFetch('/api/post-vote/' + this.state.postId + "?vote=" + value);
     }
 
+    /* Renders the upvotes and downvotes buttons to let the user select a vote preference
+        and see how many votes the post has already (up/down) */
     render() {
-        return ( this.state.voteStatus &&
+        return (this.state.voteStatus &&
             <div>
                 <Link className="text-muted ml-4"
                     to="#"
