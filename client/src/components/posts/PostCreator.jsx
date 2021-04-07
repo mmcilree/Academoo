@@ -7,7 +7,9 @@ import Alert from 'react-bootstrap/Alert';
 import { authFetch } from '../../auth';
 import { Route } from 'react-router-dom';
 import { Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
+import Poll from 'react-polls';
 
+const contentTypeArr = ["Text", "Markdown", "Poll"];
 class PostCreator extends React.Component {
     constructor(props) {
         super(props);
@@ -26,7 +28,9 @@ class PostCreator extends React.Component {
                 community: this.props.location && this.props.location.state && this.props.location.state.community ?
                     this.props.location.state.community : "",
             }],
-            markdown: this.props.location && this.props.location.state && this.props.location.state.markdown ? true : false,
+            // markdown: this.props.location && this.props.location.state && this.props.location.state.markdown ? true : false,
+            contentIdx: 0,
+            contentType: "Text",
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleContentSwitch = this.handleContentSwitch.bind(this);
@@ -90,11 +94,12 @@ class PostCreator extends React.Component {
     }
 
     handleContentSwitch(event) {
-        if (this.state.markdown) {
-            this.setState({ markdown: false });
-        } else {
-            this.setState({ markdown: true });
-        }
+        const idx = (this.state.contentIdx + 1) % contentTypeArr.length;
+
+        this.setState({
+            contentType: contentTypeArr[idx],
+            contentIdx: idx,
+        })
     }
 
     handleChange(event) {
@@ -205,7 +210,7 @@ class PostCreator extends React.Component {
     }
 
     render() {
-        const { markdown, errors } = this.state;
+        const { contentType, contentIdx, errors } = this.state;
         return this.state.communities && (
             <Card className="mt-4">
                 <Card.Header className="pt-4">
@@ -225,18 +230,21 @@ class PostCreator extends React.Component {
 
                         <Form.Group controlId="createPostText">
                             <Form.Label className="d-flex justify-content-between">
-                                Post Content:
-                                {markdown ? " Markdown" : " Text"}
-                                <Button variant="outline-secondary" onClick={this.handleContentSwitch}>Switch To {markdown ? "Text" : "Markdown"} Editor</Button>
+                                Post Content: {contentType}
+                                <Button size="sm" variant="outline-secondary" onClick={this.handleContentSwitch}>Switch To {contentTypeArr[(contentIdx + 1) % 3]} Editor</Button>
                             </Form.Label>
                             <Form.Control as="textarea"
                                 rows={4}
-                                placeholder="Moooo"
+                                placeholder={contentType === "Poll" ? "Moooo 1\nMoooo 2\nMoooo 3" : "Moooo"}
                                 name="body"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.body} />
 
-                            {markdown && <MarkdownPreviewer body={this.state.body} handleChange={this.handleChange} />}
+                            {contentType === "Markdown" && <MarkdownPreviewer body={this.state.body} handleChange={this.handleChange} />}
+                            {contentType === "Poll" && <Poll noStorage onVote={() => {}} answers={this.state.body.split("\n").map(item => ({
+                                "option": item,
+                                "votes": 0,
+                            }))} />}
 
                         </Form.Group>
 
