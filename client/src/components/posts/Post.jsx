@@ -66,10 +66,10 @@ class Post extends Component {
       await authFetch('/api/users/' + this.props.postData.author.id)
         .then(response => response.json())
         .then(data => {
-          console.log(data);
           this.setState({
             postEmail: data.email,
             postAvatar: data.avatarUrl,
+            avatarLoaded: true,
           });
       })
       .catch(error => this.setState({ userError: error, isLoading: false }));
@@ -259,7 +259,7 @@ class Post extends Component {
             <Card.Subtitle className="text-muted mb-2" style={{ fontSize: 12 }}>
             <Image
                 className="mr-3"
-                src={id ? "https://en.gravatar.com/avatar/" + md5(id) + "?d=wavatar" : defaultProfile}
+                src={id && this.state.avatarLoaded ? "https://en.gravatar.com/avatar/" + md5(id) + "?d=wavatar" : defaultProfile}
                 roundedCircle
                 width="35"
                 height="35"
