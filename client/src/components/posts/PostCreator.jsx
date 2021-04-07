@@ -30,7 +30,7 @@ class PostCreator extends React.Component {
             }],
             // markdown: this.props.location && this.props.location.state && this.props.location.state.markdown ? true : false,
             contentIdx: 0,
-            contentType: "Text",
+            contentType: contentTypeArr[0],
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleContentSwitch = this.handleContentSwitch.bind(this);
@@ -143,45 +143,46 @@ class PostCreator extends React.Component {
             requestOptions.body.external = this.state.selected[0].host;
         }
 
-        // if (this.state.markdown) {
-        //     requestOptions.body.content.push({
-        //         markdown: {
-        //             text: this.state.body
-        //         }
-        //     });
-        // } else {
-        //     requestOptions.body.content.push({
-        //         text: {
-        //             text: this.state.body
-        //         }
-        //     });
-        // }
-
-        if(1) {
-            var test = {
-                poll: {
-                    question: this.state.title,
-                    possibleAnswers: [
-                        this.state.body.split("\n").map((item, idx) => ({
-                            "number": idx,
-                            "answer": item,
-                        }))
-                    ],
-                    results: [
-                        this.state.body.split("\n").map((item, idx) => ({
-                            "answerNumber": idx,
-                            "answers": [],
-                        }))
-                    ]
-                }
-            };
+        switch(this.state.contentIdx) {
+            case 0: {
+                requestOptions.body.content.push({
+                    text: {
+                        text: this.state.body
+                    }
+                });
+                break;
+            }
+            case 1: {
+                requestOptions.body.content.push({
+                    markdown: {
+                        text: this.state.body
+                    }
+                });
+                break;
+            }
+            case 2: {
+                requestOptions.body.content.push({
+                    poll: {
+                        question: this.state.title,
+                        possibleAnswers: [
+                            this.state.body.split("\n").map((item, idx) => ({
+                                "number": idx,
+                                "answer": item,
+                            }))
+                        ],
+                        results: [
+                            this.state.body.split("\n").map((item, idx) => ({
+                                "answerNumber": idx,
+                                "answers": [],
+                            }))
+                        ]
+                    }
+                });
+                break;
+            }
         }
 
-        requestOptions.body.content.push(test);
-        console.log(test);
-
         requestOptions.body = JSON.stringify(requestOptions.body);
-
         authFetch('/api/posts', requestOptions)
             .then(response => {
                 if (!response.ok) {
@@ -235,13 +236,13 @@ class PostCreator extends React.Component {
                             </Form.Label>
                             <Form.Control as="textarea"
                                 rows={4}
-                                placeholder={contentType === "Poll" ? "Moooo 1\nMoooo 2\nMoooo 3" : "Moooo"}
+                                placeholder={contentIdx === 2 ? "Moooo 1\nMoooo 2\nMoooo 3" : "Moooo"}
                                 name="body"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.body} />
 
-                            {contentType === "Markdown" && <MarkdownPreviewer body={this.state.body} handleChange={this.handleChange} />}
-                            {contentType === "Poll" && <Poll noStorage onVote={() => {}} answers={this.state.body.split("\n").map(item => ({
+                            {contentIdx === 1 && <MarkdownPreviewer body={this.state.body} handleChange={this.handleChange} />}
+                            {contentIdx === 2 && <Poll noStorage onVote={() => {}} answers={this.state.body.split("\n").map(item => ({
                                 "option": item,
                                 "votes": 0,
                             }))} />}
