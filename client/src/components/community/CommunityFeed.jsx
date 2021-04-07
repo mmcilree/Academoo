@@ -168,7 +168,7 @@ class CommunityFeed extends Component {
 
         </Card.Header>
         <Card.Body>
-          {(isAdmin || isSiteAdmin) &&
+          {(isAdmin || (isSiteAdmin && host == "local")) &&
             <Alert className="d-flex justify-content-between align-itemsp-center" variant="primary">You are an admin!
             <Link to={"/communities/" + currentCommunity + "/manage"}>
                 Manage Community

@@ -78,7 +78,7 @@ class AdminKeyAuth extends Component {
         }
         requestOptions.body = JSON.stringify(requestOptions.body);
 
-        authFetch('/api/add-site-role/', requestOptions)
+        authFetch('/api/add-site-role', requestOptions)
             .then((response) => {
                 if (response.ok) {
                     this.setState({ changed: true, errors: [], key: "" });
