@@ -138,19 +138,42 @@ class PostCreator extends React.Component {
             requestOptions.body.external = this.state.selected[0].host;
         }
 
-        if (this.state.markdown) {
-            requestOptions.body.content.push({
-                markdown: {
-                    text: this.state.body
+        // if (this.state.markdown) {
+        //     requestOptions.body.content.push({
+        //         markdown: {
+        //             text: this.state.body
+        //         }
+        //     });
+        // } else {
+        //     requestOptions.body.content.push({
+        //         text: {
+        //             text: this.state.body
+        //         }
+        //     });
+        // }
+
+        if(1) {
+            var test = {
+                poll: {
+                    question: this.state.title,
+                    possibleAnswers: [
+                        this.state.body.split("\n").map((item, idx) => ({
+                            "number": idx,
+                            "answer": item,
+                        }))
+                    ],
+                    results: [
+                        this.state.body.split("\n").map((item, idx) => ({
+                            "answerNumber": idx,
+                            "answers": [],
+                        }))
+                    ]
                 }
-            });
-        } else {
-            requestOptions.body.content.push({
-                text: {
-                    text: this.state.body
-                }
-            });
+            };
         }
+
+        requestOptions.body.content.push(test);
+        console.log(test);
 
         requestOptions.body = JSON.stringify(requestOptions.body);
 

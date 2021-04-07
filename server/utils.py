@@ -58,7 +58,7 @@ content_schema = {
             "^.*$": {
                 "type": "object",
                 "patternProperties": {
-                    "^.*$": {"type": "string"}
+                    "^.*$": {"type": ["string", "array", "object"]}
                 }
             }
         }
@@ -272,6 +272,7 @@ def check_create_post(file):
         validate(instance=file, schema=create_schema)
     except Exception as e:
         # If check failed, check if json is an error message
+        print(e)
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error
