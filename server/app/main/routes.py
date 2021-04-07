@@ -202,7 +202,13 @@ def post_vote(post_id):
 @auth_required
 def get_vote(post_id):
     username = current_user().user_id
-    return respond_with_action(actions.getVote(username, post_id))  
+    return respond_with_action(actions.getVote(username, post_id))
+
+@bp.route("/poll-vote/<post_id>")
+@auth_required
+def poll_vote(post_id):
+    option = request.args.get("vote")
+    return respond_with_action(actions.votePoll(post_id, option, current_user().user_id))
 
 @bp.route("/add-post-tag/<post_id>", methods=['POST'])
 @auth_required

@@ -696,3 +696,37 @@ def getPostTags(post_id):
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
     return [post_tag.tag for post_tag in post.tags], 200
+
+def votePoll(post_id, option, user_id):
+    if validate_post_id(post_id): return validate_post_id(post_id)
+
+    post = Post.query.filter_by(id = post_id).first()
+    if post is None: return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
+    
+    content = {post.content_objects[0].content_type: post.content_objects[0].json_object}
+    if any(user_id in ans["answers"] for ans in content["poll"]["results"]):
+        return ({"title": "Duplicate Votes", "message": "User has already voted!"}, 403)
+
+    print(content["poll"]["possibleAnswers"])
+    for opt in content["poll"]["possibleAnswers"]:
+        print(opt["answer"])
+        if opt["answer"] == option:
+            idx = opt["number"]
+            break
+    else:
+        idx = None
+
+    if idx is None: # Don't change to pythonic way since 0 will result in true as well
+        return ({"title": "Invalid option", "message": "The selected option does not exist!"}, 400)
+    
+    content["poll"]["results"][idx]["answers"].append(user_id)
+
+    for content_field in post.content_objects:
+        db.session.delete(content_field)
+    
+    content_field = PostContentField(post_id=post.id, content_type="poll", json_object=content["poll"])
+    db.session.add(content_field)
+
+    db.session.commit()
+
+    return None, 200
