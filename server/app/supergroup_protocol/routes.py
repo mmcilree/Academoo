@@ -60,6 +60,7 @@ def get_user_by_id(id):
 @bp.route("/communities", methods=["GET"])
 def get_all_communities():
     host = request.headers.get("Client-Host")
+    print("host is " + host)
     if not host: return jsonify(client_host_error), 400
 
     external = request.args.get("external")
@@ -77,6 +78,7 @@ def get_all_communities():
 @bp.route("/communities/<id>", methods=["GET"])
 def get_community_by_id(id):
     host = request.headers.get("Client-Host")
+    print("host is " + host)
     if not host: return jsonify(client_host_error), 400
 
     external = request.args.get("external")

@@ -52,16 +52,16 @@ class CommunityCreator extends React.Component {
      * fetch all of the different communities that exist
      */
     fetchCommunities(host) {
-        authFetch('/api/communities').then(response => response.json(),
-            {
-                headers: {
-                    'Client-Host': window.location.hostname
-                }
-            })
+        authFetch('/api/communities',
+        {
+            headers: {
+                'Client-Host': window.location.hostname
+            }
+        }).then(response => response.json())
             .then(data =>
                 this.setState({
                     communities: data,
-                })).catch(() => {})
+                })).catch((err) => {this.state.errors.push(err)})
     }
 
     /**
@@ -143,6 +143,7 @@ class CommunityCreator extends React.Component {
      * method which renders the community creation form and allows the user to create a new community
      */
     render() {
+        console.log(this.state);
         const { errors } = this.state;
         return (
             <Card className="mt-4">
