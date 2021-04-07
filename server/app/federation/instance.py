@@ -150,7 +150,7 @@ class Instance(object):
     def get_users(self, id=None):
         request_target = f"/fed/users/{id}" if id else f"/fed/users"
         (body, digest, date) = self.get_request_data(request_target)
-        headers = {"Signature": get_signature(body, headers.get("User-ID")), "Digest": "sha-512=" + digest, "Date": date}
+        headers = {"Signature": get_signature(body, None), "Digest": "sha-512=" + digest, "Date": date}
         if id:
             ret = requests.get(urljoin(self.url, f"/fed/users/{id}"), headers=headers)
         else:
