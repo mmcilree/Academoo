@@ -14,26 +14,27 @@ class CommunityFeed extends Component {
   constructor(props) {
     super(props);
     this.parentCallback = this.parentCallback.bind(this);
+    this.state = {
+      isLoadingCommunity: true,
+      isLoadingPosts: true,
+      posts: [],
+      currentCommunity: this.props.match.params.id,
+      error: null,
+      host: this.props.match.params.instance ? this.props.match.params.instance : "local",
+      newPostText: "",
+      isAdmin: false,
+      isSiteAdmin: false,
+      communityData: null,
+      isSubscribed: false,
+      userID: null,
+      notFound: false
+    }
   }
 
-  parentCallback() {
-    this.fetchUserDetails();
-  }
-
-  state = {
-    isLoadingCommunity: true,
-    isLoadingPosts: true,
-    posts: [],
-    currentCommunity: this.props.match.params.id,
-    error: null,
-    host: this.props.match.params.instance ? this.props.match.params.instance : "local",
-    newPostText: "",
-    isAdmin: false,
-    isSiteAdmin: false,
-    communityData: null,
-    isSubscribed: false,
-    userID: null,
-    notFound: false
+  parentCallback(post) {
+    this.setState({
+      posts: this.state.posts.filter(p => p.id !== post.id),
+    });
   }
 
   componentDidMount() {
@@ -52,7 +53,7 @@ class CommunityFeed extends Component {
           isSubscribed: data.subscriptions.includes(this.state.currentCommunity),
           isSiteAdmin: data.site_roles.split(",").includes("site-admin")
         })
-        console.log(this.state.userID)
+        // console.log(this.state.userID)
         this.fetchPosts()
       }).catch(() => {})
 
@@ -133,7 +134,7 @@ class CommunityFeed extends Component {
    * method which renders a community, its relevant info and the posts on this community
    */
   render() {
-    console.log(this.state)
+    // console.log(this.state)
     const { isLoadingPosts, isLoadingCommunity, posts, error, currentCommunity,  host, communityData, isAdmin, isSiteAdmin } = this.state;
     const popover = (
       <Popover id="popover-basic">

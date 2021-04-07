@@ -35,6 +35,17 @@ class CommentsViewer extends React.Component {
       showCommentEditor: false,
       currentChild: null,
     }
+
+    this.parentCallback = this.parentCallback.bind(this);
+  }
+
+  parentCallback(post) {
+    console.log(this.state.fetchedChildren);
+    this.setState({
+      children: this.state.children.filter(child => child.id !== post.id && child.id !== post.parentPost),
+      fetchedChildren: new Set([...this.state.fetchedChildren].filter(childId => childId !== post.id && childId !== post.parentPost)),
+      needsUpdate: true,
+    });
   }
 
   fetchUserDetails() {
@@ -144,7 +155,6 @@ class CommentsViewer extends React.Component {
   }
 
   render() {
-    console.log(this.state.grandchildren)
     const { isLoading, error } = this.state;
 
     return (
@@ -157,7 +167,7 @@ class CommentsViewer extends React.Component {
               }}>All Community Posts <ArrowReturnLeft /></Button>
               <Card className="mt-4">
                 <Card.Body>
-                  <Post postData={this.state.parentPost} displayCommunityName />
+                  <Post postData={this.state.parentPost} displayCommunityName parentCallback={this.parentCallback}/>
                   <div className="d-flex justify-content-between">
                     <Button variant="primary" onClick={this.handleOpenCommentEditor.bind(this)}>
                       Leave a comment
@@ -192,7 +202,7 @@ class CommentsViewer extends React.Component {
                   <Card key={child.id} className="mt-4 ml-4 comment">
 
                     <Card.Body className="pb-1">
-                      <Post postData={child} />
+                      <Post postData={child} parentCallback={this.parentCallback} parentId={this.state.parentPostId}/>
 
                       <Accordion>
 
@@ -219,7 +229,7 @@ class CommentsViewer extends React.Component {
                                 newchild ? (
                                   <Card key={newchild.id} className="mt-4 ml-4 comment">
                                     <Card.Body>
-                                      <Post postData={newchild} />
+                                      <Post postData={newchild} parentCallback={this.parentCallback} parentId={this.state.parentPostId}/>
                                       <div className="d-flex justify-content-between">
                                         <div>
                                         </div>
