@@ -148,7 +148,7 @@ class UserProfile extends Component {
               width={150}
               height={150}
               className="mr-5 rounded-circle border border-primary"
-              src={email ? "https://en.gravatar.com/avatar/" + emailHash : defaultProfile}
+              src={email ? "https://en.gravatar.com/avatar/" + emailHash + "?d=wavatar" : defaultProfile}
               alt="Profile image placeholder"
             />
             {!this.state.isLoading ? (
