@@ -183,7 +183,7 @@ class Instance(object):
         headers["Digest"] = "sha-512=" + digest
         headers["Date"] = date
 
-        ret = requests.get(urljoin(self.url, f"/fed/posts?community={community}"), headers=headers)
+        ret = requests.get(urljoin(self.url, f"/fed/posts?community={community}&includeSubChildrenPosts=false"), headers=headers)
         if check_get_filtered_post(ret.content): return check_get_filtered_post(ret.content)
         return ret.json(), ret.status_code
 
