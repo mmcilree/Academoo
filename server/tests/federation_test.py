@@ -174,19 +174,13 @@ def test_edit_post(client, requests_mock):
 
 def test_delete_post(client, requests_mock):
     requests_mock.delete(
-        f"https://cs3099user-a1.host.cs.st-andrews.ac.uk/fed/posts/{Constants.POST1_ID}", json={})
-    response = client.delete(
-        f"api/posts/{Constants.POST1_ID}?external=academoo", headers=headers_with_user)
-    assert response.status_code == 400
-
-    requests_mock.delete(
         f"https://cs3099user-a1.host.cs.st-andrews.ac.uk/fed/posts/{Constants.POST1_ID}", status_code=200)
     response = client.delete(
-        f"api/posts/{Constants.POST1_ID}?external=academoo", headers=headers_with_user)
+        f"api/posts/{Constants.POST1_ID}", headers=headers_with_user, json={"external": "academoo"})
     assert response.status_code == 200
 
     response = client.delete(
-        f"api/posts/{Constants.POST1_ID}?external=academoo")
+        f"api/posts/{Constants.POST1_ID}", json={"external": "academoo"})
     assert response.status_code == 400
 
 
