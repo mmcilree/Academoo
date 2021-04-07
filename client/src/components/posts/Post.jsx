@@ -62,7 +62,7 @@ class Post extends Component {
       .catch(error => this.setState({ error, isLoading: false }));
     this.checkPermissions();
     
-    if (["http://localhost", "Academoo", "localhost", "https://cs3099user-a1.host.cs.st-andrews.ac.uk", "cs3099user-a1.host.cs.st-andrews.ac.uk"]
+    if (["https://cs3099user-a1.host.cs.st-andrews.ac.uk", "cs3099user-a1.host.cs.st-andrews.ac.uk"]
     .includes(this.props.postData.author.host)) {
       await authFetch('/api/users/' + this.props.postData.author.id)
         .then(response => response.json())
