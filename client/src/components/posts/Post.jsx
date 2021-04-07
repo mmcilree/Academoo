@@ -261,8 +261,8 @@ class Post extends Component {
                 className="mr-3"
                 src={id && this.state.avatarLoaded ? "https://en.gravatar.com/avatar/" + md5(id) + "?d=wavatar" : defaultProfile}
                 roundedCircle
-                width="35"
-                height="35"
+                width="50"
+                height="50"
               >
               </Image>
               
