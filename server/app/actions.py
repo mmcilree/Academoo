@@ -613,6 +613,7 @@ def downvotePost(user_id, post_id):
 
     if current_vote is None:
         new_vote = UserVote(user_id=user_id, post_id=post_id, value="downvote")
+        post.downvotes -= 1
         db.session.add(new_vote)
         db.session.commit()
     # Need to ensure user cannot vote twice, so must be replaced
