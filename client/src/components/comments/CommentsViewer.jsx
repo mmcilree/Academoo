@@ -75,9 +75,6 @@ class CommentsViewer extends React.Component {
 
   handleCloseReplyEditor(child) {
     this.parentCallback(child);
-    this.fetchChildren(child.children, true, child.id);
-
-    console.log(this.state.currentChild);
     this.setState({ showReplyEditor: false, needsUpdate: true });
   }
 
@@ -112,7 +109,6 @@ class CommentsViewer extends React.Component {
         //console.log((await Promise.all( this.fetchChildren(data.children, false, data.id))))/*.map(child => this.fetchChildren(child.children, true, child.id))*/;
       })
       .catch(error => this.setState({ error: error.message, isLoading: false }));
-
   }
 
   async fetchChildren(childIds, isChild, parentId) {
@@ -145,13 +141,15 @@ class CommentsViewer extends React.Component {
           .catch(error => this.setState({ error: error.message, isLoading: false }));
       }));
 
-      if(this.state.grandchildren[parentId]) {
+      if(this.state.grandchildren[parentId] && isChild) {
         new_children = [...this.state.grandchildren[parentId], ...new_children];
       }
 
-      !isChild ? this.setState({ isLoading: false, children: [...children, ...new_children] })
-        : this.setState({ grandchildren: { ...grandchildren, [parentId]: new_children } })
-
+      if(!isChild) {
+        this.setState({ isLoading: false, children: [...children, ...new_children] });
+      } else {
+        this.setState({ isLoading: false, grandchildren: { ...grandchildren, [parentId]: new_children } });
+      }
   }
 
   componentDidMount() {
@@ -166,7 +164,6 @@ class CommentsViewer extends React.Component {
 
   render() {
     const { isLoading, error } = this.state;
-    console.log(this.state.currentChild);
     return (
       <div className="container-md comments_view">
         <Card className="mt-4">
@@ -213,7 +210,8 @@ class CommentsViewer extends React.Component {
 
                     <Card.Body className="pb-1">
                       <Post postData={child} parentCallback={this.parentCallback} parentId={this.state.parentPostId}/>
-                      <Accordion defaultActiveKey={this.state.currentChild && (this.state.currentChild.id === child.id) && !this.state.showReplyEditor ? "0" : "1"}>
+                      {/* <Accordion defaultActiveKey={this.state.currentChild && (this.state.currentChild.id === child.id) && !this.state.showReplyEditor ? "0" : "1"}> */}
+                      <Accordion>
                         <div className="d-flex justify-content-between">
                           <div>                            
                             <Accordion.Toggle as={Button} variant="link" eventKey="0" onClick={() => this.fetchChildren(child.children, true, child.id)}>
