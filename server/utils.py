@@ -257,6 +257,7 @@ def check_get_user(file):
         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
 
 def check_create_post(file):
+    print(file)
     create_schema = {
         "type": "object",
         "properties": {
