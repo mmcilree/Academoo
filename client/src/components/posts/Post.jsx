@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Card, Row, Col, Modal, Button } from "react-bootstrap";
+import { Card, Row, Col, Modal, Button, Image } from "react-bootstrap";
 import timeSince from "../../util/timeSince";
 import { Link, withRouter } from "react-router-dom";
 import { ThreeDots, PencilSquare, Trash } from "react-bootstrap-icons";
@@ -8,6 +8,8 @@ import PostEditor from "./PostEditor"
 import { authFetch } from '../../auth';
 import MarkdownRender from '../layout/MarkdownRender';
 import PollPost from '../polls/PollPost';
+import md5 from "md5";
+import defaultProfile from "../../images/default_profile.png";
 
 class Post extends Component {
   constructor(props) {
@@ -59,6 +61,19 @@ class Post extends Component {
       )
       .catch(error => this.setState({ error, isLoading: false }));
     this.checkPermissions();
+    
+    await authFetch('/api/users/' + this.props.postData.author.id + (
+      !["http://localhost", "Academoo", "localhost", "https://cs3099user-a1.host.cs.st-andrews.ac.uk"]
+      .includes(this.props.postData.author.host) ? "?external=" + this.props.postData.author.host : ""))
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        this.setState({
+          postEmail: data.email,
+          postAvatar: data.avatarUrl,
+        });
+    })
+    .catch(error => this.setState({ userError: error, isLoading: false }));
   }
 
   checkPermissions() {
@@ -241,13 +256,22 @@ class Post extends Component {
         <Row>
           <Col>
             <Card.Subtitle className="text-muted mb-2" style={{ fontSize: 12 }}>
+            <Image
+                className="mr-3"
+                src={"https://en.gravatar.com/avatar/" + md5((this.state.postEmail === undefined ? this.props.postData.author.id : this.state.postEmail)) + "?d=wavatar"}
+                roundedCircle
+                width="25"
+                height="25"
+              >
+              </Image>
+
               {displayCommunityName &&
 
                 <b style={{ zIndex: 2, position: "relative" }}>
                   <Link style={{ color: "inherit" }} to={"/communities/" + (postData.host ? postData.host + "/" : "") + postData.community}>
                     {(postData.host ? postData.host + + "/" : "") + postData.community}
                   </Link>{" · "}</b>}
-
+              
               <b style={{ zIndex: 2, position: "relative" }}>
 
                 {postData.author.id ?
