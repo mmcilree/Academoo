@@ -251,9 +251,6 @@ class Post extends Component {
   render() {
     const { postData, displayCommunityName } = this.props;
     const id = (this.state.postEmail === undefined ? this.props.postData.author.id : this.state.postEmail);
-    console.log(id);
-    console.log(this.props.postData);
-    console.log(this.state.postEmail);
     if (!postData.id) return <div />;
     return (
       <React.Fragment>
