@@ -251,6 +251,8 @@ class Post extends Component {
 
   render() {
     const { postData, displayCommunityName } = this.props;
+    const id = (this.state.postEmail === undefined ? this.props.postData.author.id : this.state.postEmail);
+    console.log(id);
     if (!postData.id) return <div />;
     return (
       <React.Fragment>
@@ -259,7 +261,7 @@ class Post extends Component {
             <Card.Subtitle className="text-muted mb-2" style={{ fontSize: 12 }}>
             <Image
                 className="mr-3"
-                src={"https://en.gravatar.com/avatar/" + md5((this.state.postEmail === undefined ? this.props.postData.author.id : this.state.postEmail)) + "?d=wavatar"}
+                src={id ? "https://en.gravatar.com/avatar/" + md5(id) + "?d=wavatar" : defaultProfile}
                 roundedCircle
                 width="25"
                 height="25"
