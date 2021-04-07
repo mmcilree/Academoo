@@ -75,6 +75,9 @@ class CommentsViewer extends React.Component {
 
   handleCloseReplyEditor(child) {
     this.parentCallback(child);
+    this.fetchChildren(child.children, true, child.id);
+
+    console.log(this.state.currentChild);
     this.setState({ showReplyEditor: false, needsUpdate: true });
   }
 
@@ -163,7 +166,7 @@ class CommentsViewer extends React.Component {
 
   render() {
     const { isLoading, error } = this.state;
-
+    console.log(this.state.currentChild);
     return (
       <div className="container-md comments_view">
         <Card className="mt-4">
@@ -210,12 +213,9 @@ class CommentsViewer extends React.Component {
 
                     <Card.Body className="pb-1">
                       <Post postData={child} parentCallback={this.parentCallback} parentId={this.state.parentPostId}/>
-
-                      <Accordion>
-
-
+                      <Accordion defaultActiveKey={this.state.currentChild && (this.state.currentChild.id === child.id) && !this.state.showReplyEditor ? "0" : "1"}>
                         <div className="d-flex justify-content-between">
-                          <div>
+                          <div>                            
                             <Accordion.Toggle as={Button} variant="link" eventKey="0" onClick={() => this.fetchChildren(child.children, true, child.id)}>
                               <small><ChatSquare className="mb-1 mr-1" /> Replies ({child.children.length})</small>
                             </Accordion.Toggle>
@@ -225,9 +225,7 @@ class CommentsViewer extends React.Component {
 
                           <VoteDisplay upvotes={child.upvotes} downvotes={child.downvotes} postId={child.id} />
                         </div>
-
-
-
+                        
                         <Accordion.Collapse eventKey="0" className="p-0">
                           <Card.Body className="pt-0 pl-0">
                             {child.children.length === 0 ?
