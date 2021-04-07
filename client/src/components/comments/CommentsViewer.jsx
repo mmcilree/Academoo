@@ -40,12 +40,15 @@ class CommentsViewer extends React.Component {
   }
 
   parentCallback(post) {
-    console.log(this.state.fetchedChildren);
     this.setState({
       children: this.state.children.filter(child => child.id !== post.id && child.id !== post.parentPost),
       fetchedChildren: new Set([...this.state.fetchedChildren].filter(childId => childId !== post.id && childId !== post.parentPost)),
       needsUpdate: true,
     });
+
+    if(this.state.grandchildren[post.parentPost]) {
+      this.state.grandchildren[post.parentPost] = this.state.grandchildren[post.parentPost].filter(child => child.id !== post.id);
+    }
   }
 
   fetchUserDetails() {
@@ -70,7 +73,8 @@ class CommentsViewer extends React.Component {
     this.setState({ showReplyEditor: true, currentChild: child });
   }
 
-  handleCloseReplyEditor() {
+  handleCloseReplyEditor(child) {
+    this.parentCallback(child);
     this.setState({ showReplyEditor: false, needsUpdate: true });
   }
 
@@ -110,11 +114,11 @@ class CommentsViewer extends React.Component {
 
   async fetchChildren(childIds, isChild, parentId) {
 
-    if (this.state.grandchildren[parentId]) return
+    // if (this.state.grandchildren[parentId]) return
 
     const { fetchedChildren, children, grandchildren } = this.state;
 
-    const new_children = await Promise.all(childIds.filter(childId => !fetchedChildren.has(childId)).map(
+    var new_children = await Promise.all(childIds.filter(childId => !fetchedChildren.has(childId)).map(
       async (childId) => {
         fetchedChildren.add(childId);
         return authFetch('/api/posts/' + childId + (this.state.host !== "local" ? "?external=" + this.state.host : ""),
@@ -125,7 +129,7 @@ class CommentsViewer extends React.Component {
             }
           })
           .then(response => {
-            if (!response.ok) {
+            if (!response.ok && response.status !== 404) {
               return response.json().then((error) => {
                 let err = error.title + ": " + error.message
                 throw new Error(err);
@@ -138,9 +142,12 @@ class CommentsViewer extends React.Component {
           .catch(error => this.setState({ error: error.message, isLoading: false }));
       }));
 
+      if(this.state.grandchildren[parentId]) {
+        new_children = [...this.state.grandchildren[parentId], ...new_children];
+      }
 
-    !isChild ? this.setState({ isLoading: false, children: [...children, ...new_children] })
-      : this.setState({ grandchildren: { ...grandchildren, [parentId]: new_children } })
+      !isChild ? this.setState({ isLoading: false, children: [...children, ...new_children] })
+        : this.setState({ grandchildren: { ...grandchildren, [parentId]: new_children } })
 
   }
 
@@ -190,7 +197,7 @@ class CommentsViewer extends React.Component {
                       <Modal.Title>Add a Reply to a Comment!</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                      <CommentCreator parentPost={this.state.currentChild} host={this.state.host} onSubmit={this.handleCloseReplyEditor.bind(this)} />
+                      <CommentCreator parentPost={this.state.currentChild} host={this.state.host} onSubmit={this.handleCloseReplyEditor.bind(this, this.state.currentChild)} />
                     </Modal.Body>
                   </Modal>
 
@@ -198,7 +205,7 @@ class CommentsViewer extends React.Component {
                 </Card.Body>
               </Card>
               {this.state.children.sort(comment => comment.created).reverse().map((child) =>
-                child ? (
+                child && child.children ? (
                   <Card key={child.id} className="mt-4 ml-4 comment">
 
                     <Card.Body className="pb-1">
