@@ -11,7 +11,6 @@ class PostsViewer extends Component {
     return (
       this.props.posts.map(data => {
         const { id } = data;
-        // console.log(this.state);
         return (
           <Card key={id} className="mt-4">
             <Card.Body className="pb-2">
@@ -20,7 +19,7 @@ class PostsViewer extends Component {
               <div className="d-flex justify-content-between">
                 <Link
                   to={data.host ? '/comments/' + data.host + `/${id}` : `/comments/${id}`}
-                  className="text-muted"
+                  className={"poll" in data.content[0] ? "text-muted" : "text-muted stretched-link"}
                   size="xs"
                 >
                   <small><ChatSquare /> Comments ({data.children.length})
