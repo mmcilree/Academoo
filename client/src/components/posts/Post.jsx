@@ -248,7 +248,7 @@ class Post extends Component {
 
               </b>
               {postData.author.host ? " from " + postData.author.host : ""}
-              {" · "} {timeSince(postData.created - (new Date()).getTimezoneOffset() * 60)} ago
+              {" · "} {timeSince(postData.created)} ago
         </Card.Subtitle>
           </Col>
           <Col xs={2} sm={1} className="mb-2">

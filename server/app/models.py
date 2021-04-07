@@ -2,6 +2,7 @@ from sqlalchemy.ext.declarative.api import instrument_declarative
 from sqlalchemy.orm import backref
 from app import db
 from datetime import datetime
+from datetime import timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 import time
 import uuid
@@ -12,7 +13,7 @@ def getUUID():
     return str(uuid.uuid4())
 
 def getTime():
-    return int(datetime.utcnow().timestamp())
+    return int(datetime.now(tz=timezone.utc).timestamp())
 
 # Table to hold roles given out by communities
 class UserRole(db.Model): 
