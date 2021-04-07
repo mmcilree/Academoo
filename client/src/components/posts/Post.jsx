@@ -62,8 +62,7 @@ class Post extends Component {
       .catch(error => this.setState({ error, isLoading: false }));
     this.checkPermissions();
     
-    if (["https://cs3099user-a1.host.cs.st-andrews.ac.uk", "cs3099user-a1.host.cs.st-andrews.ac.uk"]
-    .includes(this.props.postData.author.host)) {
+    if (this.props.postData.host === "local" || this.props.postData.host ===  undefined) {
       await authFetch('/api/users/' + this.props.postData.author.id)
         .then(response => response.json())
         .then(data => {
@@ -253,7 +252,7 @@ class Post extends Component {
     const { postData, displayCommunityName } = this.props;
     const id = (this.state.postEmail === undefined ? this.props.postData.author.id : this.state.postEmail);
     console.log(id);
-    console.log(this.props.postData.host);
+    console.log(this.props.postData);
     console.log(this.state.postEmail);
     if (!postData.id) return <div />;
     return (
@@ -265,8 +264,8 @@ class Post extends Component {
                 className="mr-3"
                 src={id ? "https://en.gravatar.com/avatar/" + md5(id) + "?d=wavatar" : defaultProfile}
                 roundedCircle
-                width="25"
-                height="25"
+                width="30"
+                height="30"
               >
               </Image>
 
