@@ -84,15 +84,30 @@ class Post extends Component {
       body: {}
 
     }
+
+    if (this.props.postData.host === undefined) {this.props.postData.host = "local"} 
     if (this.props.postData.host !== "local") {
       requestOptions.body.external = this.props.postData.host;
     }
     requestOptions.body = JSON.stringify(requestOptions.body);
 
-    authFetch('/api/posts/' + this.props.postData.id, requestOptions);
+    authFetch('/api/posts/' + this.props.postData.id, requestOptions).then(r => r.status).then(statusCode => {
+      if (statusCode != 200) {
+        this.setState({ errors: ["Could not delete post"] })
+      }
+    }).catch(() => {});
+
     this.handleCloseDelete();
-    this.props.history.push("/communities/" + this.props.postData.community)
-    window.location.reload(false);
+    
+    console.log(this.props.parentId);
+    if(this.props.postData.parentPost == null || this.props.postData.parentPost == "") {
+      this.props.history.push("/communities/" + (this.props.postData.host !== "local" ? this.props.postData.host + "/" : "") + this.props.postData.community);
+    } else {
+      this.props.history.push("/comments/" + (this.props.postData.host !== "local" ? this.props.postData.host + "/" : "") + this.props.parentId);
+    }
+
+    this.props.parentCallback(this.props.postData);
+    // window.location.reload(false);
   }
 
   handleShowDelete(event) {
@@ -233,8 +248,7 @@ class Post extends Component {
 
               </b>
               {postData.author.host ? " from " + postData.author.host : ""}
-
-              {" · "} {timeSince(postData.created)} ago
+              {" · "} {timeSince(postData.created - (new Date()).getTimezoneOffset() * 60)} ago
         </Card.Subtitle>
           </Col>
           <Col xs={2} sm={1} className="mb-2">

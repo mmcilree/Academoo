@@ -38,5 +38,5 @@ export default function timeSince(timestamp) {
       return count + " minute" + ((count > 1) ? "s" : "");
     }
     
-    return seconds + " second" + ((seconds > 1 || seconds == 0 ) ? "s" : "");
+    return seconds + " second" + ((seconds > 1 || seconds === 0 ) ? "s" : "");
 }

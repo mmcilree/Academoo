@@ -40,6 +40,7 @@ class CommunityCreator extends React.Component {
         //     errors.push("Administrators input is not a comma separated list.");
         //     return errors;
         // }
+        console.log(this.state.communities)
         if (this.state.communities.includes(this.state.id)) {
             errors.push("A community already exists with that ID. Please modify it.");
             return errors;
