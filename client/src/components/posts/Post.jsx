@@ -62,18 +62,19 @@ class Post extends Component {
       .catch(error => this.setState({ error, isLoading: false }));
     this.checkPermissions();
     
-    await authFetch('/api/users/' + this.props.postData.author.id + (
-      !["http://localhost", "Academoo", "localhost", "https://cs3099user-a1.host.cs.st-andrews.ac.uk"]
-      .includes(this.props.postData.author.host) ? "?external=" + this.props.postData.author.host : ""))
-      .then(response => response.json())
-      .then(data => {
-        console.log(data);
-        this.setState({
-          postEmail: data.email,
-          postAvatar: data.avatarUrl,
-        });
-    })
-    .catch(error => this.setState({ userError: error, isLoading: false }));
+    if (["http://localhost", "Academoo", "localhost", "https://cs3099user-a1.host.cs.st-andrews.ac.uk", "cs3099user-a1.host.cs.st-andrews.ac.uk"]
+    .includes(this.props.postData.author.host)) {
+      await authFetch('/api/users/' + this.props.postData.author.id)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          this.setState({
+            postEmail: data.email,
+            postAvatar: data.avatarUrl,
+          });
+      })
+      .catch(error => this.setState({ userError: error, isLoading: false }));
+    }
   }
 
   checkPermissions() {
