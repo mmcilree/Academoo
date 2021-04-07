@@ -3,6 +3,7 @@ from urllib.parse import urljoin, urlparse
 from flask import jsonify, Response, current_app
 from app.digital_signatures import generate_digest, generate_signature
 from datetime import datetime
+from datetime import timezone
 from utils import *
 import json
 
@@ -21,7 +22,7 @@ class TimeoutRequestsSession(requests.Session):
 requests = TimeoutRequestsSession()
 
 def get_date(): # just why this instead of timestamp like a normal person??
-    return datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
+    return datetime.now(tz=timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
 
 # NOTE: Some comments about the security protocol
 # What's the difference between host and client-host?
