@@ -63,9 +63,9 @@ class Post extends Component {
   }
 
   checkPermissions() {
-    if (this.props.postData.author.id === this.state.currentUser || this.state.isSiteMod) {
+    if ((this.props.postData.author.id === this.state.currentUser || this.state.isSiteMod)) {
       this.setState({
-        cannotEdit: false,
+        cannotEdit: this.state.contentType === "poll",
         cannotDelete: false
       })
     }
