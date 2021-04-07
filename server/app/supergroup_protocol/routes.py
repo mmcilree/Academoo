@@ -184,7 +184,7 @@ def create_post():
         if requester is None:
             community = Community.lookup(community_id)
             role = community.default_role
-            if ((role != "member") or (role != "contributor") or (role != "admin")):
+            if ((role != "member") & (role != "contributor") & (role != "admin")):
                 message = {"title": "Permission error", "message": "Do not have permission to perform action"}
                 return jsonify(message), 403
         else :
