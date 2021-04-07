@@ -164,18 +164,16 @@ class PostCreator extends React.Component {
                 requestOptions.body.content.push({
                     poll: {
                         question: this.state.title,
-                        possibleAnswers: [
+                        possibleAnswers: 
                             this.state.body.split("\n").map((item, idx) => ({
                                 "number": idx,
                                 "answer": item,
-                            }))
-                        ],
-                        results: [
+                            })),
+                        results: 
                             this.state.body.split("\n").map((item, idx) => ({
                                 "answerNumber": idx,
                                 "answers": [],
                             }))
-                        ]
                     }
                 });
                 break;
@@ -242,7 +240,7 @@ class PostCreator extends React.Component {
                                 value={this.state.body} />
 
                             {contentIdx === 1 && <MarkdownPreviewer body={this.state.body} handleChange={this.handleChange} />}
-                            {contentIdx === 2 && <Poll noStorage onVote={() => {}} answers={this.state.body.split("\n").map(item => ({
+                            {contentIdx === 2 && <Poll customStyles={{theme: "cyan"}} noStorage onVote={() => {}} answers={this.state.body.split("\n").map(item => ({
                                 "option": item,
                                 "votes": 0,
                             }))} />}

@@ -1,33 +1,40 @@
 import React, { Component } from 'react';
 import Poll from 'react-polls';
 import Card from 'react-bootstrap/Card';
+import { authFetch } from '../../auth';
 
-// Get poll should return poll question and poll answers
-
-// const pollQuestion = 'Is react-polls useful?'
-// const pollAnswers = [
-//   { option: 'Yes', votes: 8 },
-//   { option: 'No', votes: 2 }
-// ]
-
+const pollStyle = {
+  theme: 'cyan'
+}
 class PollPost extends Component {
     // Setting answers to state to reload the component with each vote
     constructor(props) {
       super(props);
-      const pollAnswers = this.props.pollData.possibleAnswers[0].map((item, idx) => ({
+      const pollAnswers = this.props.pollData.possibleAnswers.map((item, idx) => ({
         "option": item.answer,
-        "votes": this.props.pollData.results[0][idx].answers.length,
+        "votes": this.props.pollData.results[idx].answers.length,
       }));
-
-      console.log(pollAnswers);
-      console.log(this.props.pollData.results[0]);
-
-      // const userVote = this.props.pollData.results.find(item => item.answer.includes(this.props.currentUser)).number;
 
       this.state = {
         pollAnswers: [...pollAnswers],
-        // vote: this.props.pollData.pollAnswers[userVote],
+        vote: null,
       };
+    }
+
+    fetchVote() {
+      authFetch("/api/get-user").then(response => response.json())
+          .then(data =>
+              {
+                const userVote = this.props.pollData.results.find(item => item.answers.includes(data.id));
+                this.setState({
+                  vote: userVote === undefined ? null : this.props.pollData.possibleAnswers[userVote["answerNumber"]]["answer"]
+                })
+              }
+          ).catch(() => {})
+    }
+
+    componentDidMount() {
+      this.fetchVote();
     }
 
     handleVote = voteAnswer => {
@@ -40,7 +47,11 @@ class PollPost extends Component {
           pollAnswers: newPollAnswers
         })
 
-        // Should send POST request to vote
+        authFetch('/api/poll-vote/' + this.props.postID + "?vote=" + voteAnswer).then(r => r.status).then(statusCode => {
+          if (statusCode != 200) {
+            this.setState({ errors: ["Could not vote!"] })
+          }
+        }).catch(() => {});
     }
 
     render () {
@@ -50,7 +61,7 @@ class PollPost extends Component {
             whiteSpace: "nowrap",
             maxHeight: "50vh", overflow: "hidden", textOverflow: "ellipsis"
           }}>
-            <Poll question="" answers={pollAnswers} onVote={this.handleVote} />
+            <Poll customStyles={pollStyle} question="" vote={this.state.vote} noStorage answers={pollAnswers} onVote={this.handleVote} />
           </Card.Text>
         );
     }

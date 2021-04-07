@@ -13,7 +13,7 @@ class Post extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: "",
+      currentUser: null,
       showEdit: false,
       showDelete: false,
       updatedTitle: this.props.postData.title,
@@ -37,7 +37,6 @@ class Post extends Component {
     }
 
     this.state.updatedBody = this.state.body;
-
     this.validateForm = this.validateForm.bind(this);
     this.handleSubmitEdit = this.handleSubmitEdit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -305,6 +304,7 @@ class Post extends Component {
           contentType={this.state.contentType}
           body={this.state.updatedBody}
           postType={this.props.postType}
+          postID={postData.id}
         />
       </React.Fragment >
     );
@@ -313,7 +313,7 @@ class Post extends Component {
 
 export default withRouter(Post);
 
-const ContentTypeComponent = ({ contentType, body, postType }) => {
+const ContentTypeComponent = ({ contentType, body, postType, postID }) => {
   var content = "";
   if(contentType === "poll") {
     content = body; 
@@ -370,7 +370,7 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
             whiteSpace: "nowrap",
             maxHeight: "50vh", overflow: "hidden", textOverflow: "ellipsis"
           }}>
-            <PollPost pollData={content} />
+            <PollPost pollData={content} postID={postID} />
           </Card.Text>
         </React.Fragment>
       )
