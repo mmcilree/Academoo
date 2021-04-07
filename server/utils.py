@@ -74,12 +74,12 @@ def check_array_json(file):
     try:
         to_json = json.loads(file)
         validate(instance=to_json, schema=schema)
-    except:
+    except Exception as e:
         # If check failed, check if json is an error message
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error
-        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
+        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema", "error": str(e)}, 400)
 
 def check_get_community(file):
     schema = {
@@ -105,12 +105,12 @@ def check_get_community(file):
     try:
         to_json = json.loads(file)
         validate(instance=to_json, schema=schema)
-    except:
+    except Exception as e:
         # If check failed, check if json is an error message
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error
-        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
+        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema", "error": str(e)}, 400)
 
 # Check json is an error message
 def check_is_error_message(file):
@@ -125,8 +125,8 @@ def check_is_error_message(file):
     try:
         to_json = json.loads(file)
         validate(instance=to_json, schema=schema)
-    except:
-        return ({"title": "Invalid JSON file passed", "message": "Make sure the JSON file conforms to protocol schema"}, 400)
+    except Exception as e:
+        return ({"title": "Invalid JSON file passed", "message": "Make sure the JSON file conforms to protocol schema", "error": str(e)}, 400)
 
 def check_get_timestamps(file):
     schema = {
@@ -182,12 +182,12 @@ def check_get_filtered_post(file):
     try:
         to_json = json.loads(file)
         validate(instance=to_json, schema=schema)
-    except:
+    except Exception as e:
         # If check failed, check if json is an error message
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error
-        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
+        return ({"title": "Invalid JSON file passed", "message": f"Make sure JSON file conforms to protocol schema", "error": str(e)}, 400)
 
 def check_get_post(file):
     schema = {
@@ -218,12 +218,12 @@ def check_get_post(file):
     try:
         to_json = json.loads(file)
         validate(instance=to_json, schema=schema)
-    except:
+    except Exception as e:
         # If check failed, check if json is an error message
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error
-        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
+        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema", "error": str(e)}, 400)
 
 def check_get_user(file):
     schema = {
@@ -270,12 +270,12 @@ def check_create_post(file):
 
     try:
         validate(instance=file, schema=create_schema)
-    except:
+    except Exception as e:
         # If check failed, check if json is an error message
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error
-        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
+        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema", "error": str(e)}, 400)
     
 
 def check_edit_post(file):
@@ -290,9 +290,9 @@ def check_edit_post(file):
     
     try:
         validate(instance=file, schema=edit_schema)
-    except:
+    except Exception as e:
         # If check failed, check if json is an error message
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error
-        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
+        return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema", "error": str(e)}, 400)
