@@ -30,6 +30,7 @@ class Post extends Component {
       isSiteMod: false,
       body: "",
       updatedBody: "",
+      avatarLoaded: this.props.postData.host !== "local" && this.props.postData.host !==  undefined
     }
 
     switch(this.state.contentType) {
@@ -61,7 +62,6 @@ class Post extends Component {
       )
       .catch(error => this.setState({ error, isLoading: false }));
     this.checkPermissions();
-    
     if (this.props.postData.author.id && (this.props.postData.host === "local" || this.props.postData.host ===  undefined)) {
       await authFetch('/api/users/' + this.props.postData.author.id)
         .then(response => response.json())
@@ -261,8 +261,8 @@ class Post extends Component {
                 className="mr-3"
                 src={id && this.state.avatarLoaded ? "https://en.gravatar.com/avatar/" + md5(id) + "?d=wavatar" : defaultProfile}
                 roundedCircle
-                width="50"
-                height="50"
+                width="42"
+                height="42"
               >
               </Image>
               
