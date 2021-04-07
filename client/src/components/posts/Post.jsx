@@ -62,7 +62,7 @@ class Post extends Component {
       .catch(error => this.setState({ error, isLoading: false }));
     this.checkPermissions();
     
-    if (this.props.postData.host === "local" || this.props.postData.host ===  undefined) {
+    if (this.props.postData.author.id && (this.props.postData.host === "local" || this.props.postData.host ===  undefined)) {
       await authFetch('/api/users/' + this.props.postData.author.id)
         .then(response => response.json())
         .then(data => {
@@ -264,17 +264,10 @@ class Post extends Component {
                 className="mr-3"
                 src={id ? "https://en.gravatar.com/avatar/" + md5(id) + "?d=wavatar" : defaultProfile}
                 roundedCircle
-                width="30"
-                height="30"
+                width="35"
+                height="35"
               >
               </Image>
-
-              {displayCommunityName &&
-
-                <b style={{ zIndex: 2, position: "relative" }}>
-                  <Link style={{ color: "inherit" }} to={"/communities/" + (postData.host ? postData.host + "/" : "") + postData.community}>
-                    {(postData.host ? postData.host + + "/" : "") + postData.community}
-                  </Link>{" · "}</b>}
               
               <b style={{ zIndex: 2, position: "relative" }}>
 
@@ -285,6 +278,15 @@ class Post extends Component {
 
               </b>
               {postData.author.host ? " from " + postData.author.host : ""}
+
+              {displayCommunityName &&
+                <b style={{ zIndex: 2, position: "relative" }}>
+                  {" · "}
+                  <Link style={{ color: "inherit" }} to={"/communities/" + (postData.host ? postData.host + "/" : "") + postData.community}>
+                    {(postData.host ? postData.host + + "/" : "") + postData.community}
+                  </Link>
+                </b>
+              }
               {" · "} {timeSince(postData.created)} ago
         </Card.Subtitle>
           </Col>
