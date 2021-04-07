@@ -280,7 +280,7 @@ class Post extends Component {
                 <b style={{ zIndex: 2, position: "relative" }}>
                   {" · "}
                   <Link style={{ color: "inherit" }} to={"/communities/" + (postData.host ? postData.host + "/" : "") + postData.community}>
-                    {(postData.host ? postData.host + + "/" : "") + postData.community}
+                    {(postData.host ? postData.host + "/" : "") + postData.community}
                   </Link>
                 </b>
               }
