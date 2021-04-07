@@ -149,7 +149,7 @@ class Instance(object):
     def get_users(self, id=None):
         request_target = f"/fed/users/{id}" if id else f"/fed/users"
         (body, digest, date) = self.get_request_data(request_target)
-        headers = {"Signature": get_signature(body, headers.get("User-ID"), "Digest": "sha-512=" + digest, "Date": date}
+        headers = {"Signature": get_signature(body, headers.get("User-ID")), "Digest": "sha-512=" + digest, "Date": date}
         if id:
             ret = requests.get(urljoin(self.url, f"/fed/users/{id}"), headers=headers)
         else:
@@ -166,7 +166,7 @@ class Instance(object):
 
     def get_timestamps(self, community, headers):
         body, digest, date = self.get_request_data(f"get /fed/communities/{community}/timestamps", headers.get("User-ID"))
-        headers["Signature"] = get_signature(body, headers.get("User-ID")
+        headers["Signature"] = get_signature(body, headers.get("User-ID"))
         headers["Digest"] = "sha-512=" + digest
         headers["Date"] = date
 
@@ -178,7 +178,7 @@ class Instance(object):
     # If the timestamp is different, then the cache is invalidated
     def get_posts(self, community, headers):
         body, digest, date = self.get_request_data(f"get /fed/posts", headers.get("User-ID"))
-        headers["Signature"] = get_signature(body, headers.get("User-ID")
+        headers["Signature"] = get_signature(body, headers.get("User-ID"))
         headers["Digest"] = "sha-512=" + digest
         headers["Date"] = date
 
@@ -188,7 +188,7 @@ class Instance(object):
 
     def get_post_by_id(self, id, headers):
         body, digest, date = self.get_request_data(f"get /fed/posts/{id}", headers.get("User-ID"))
-        headers["Signature"] = get_signature(body, headers.get("User-ID")
+        headers["Signature"] = get_signature(body, headers.get("User-ID"))
         headers["Digest"] = "sha-512=" + digest
         headers["Date"] = date
 
@@ -199,7 +199,7 @@ class Instance(object):
     def get_communities(self, headers, id=None):
         request_target = f"get /fed/communities/{id}" if id else f"get /fed/communities"
         body, digest, date = self.get_request_data(request_target, headers.get("User-ID"))
-        headers["Signature"] = get_signature(body, headers.get("User-ID")
+        headers["Signature"] = get_signature(body, headers.get("User-ID"))
         headers["Digest"] = "sha-512=" + digest
         headers["Date"] = date
 
@@ -217,7 +217,7 @@ class Instance(object):
         data.pop("external")
 
         body, digest, date = self.get_request_data(f"post /fed/posts", headers.get("User-ID"), bytes(str(data), "utf-8"))
-        headers["Signature"] = get_signature(body, headers.get("User-ID")
+        headers["Signature"] = get_signature(body, headers.get("User-ID"))
         headers["Digest"] = "sha-512=" + digest
         headers["Date"] = date
 
@@ -235,7 +235,7 @@ class Instance(object):
         data.pop("external")
 
         body, digest, date = self.get_request_data(f"put /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
-        headers["Signature"] = get_signature(body, headers.get("User-ID")
+        headers["Signature"] = get_signature(body, headers.get("User-ID"))
         headers["Digest"] = "sha-512=" + digest
         headers["Date"] = date
 
@@ -251,7 +251,7 @@ class Instance(object):
         # data.pop("external")
 
         body, digest, date = self.get_request_data(f"delete /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
-        headers["Signature"] = get_signature(body, headers.get("User-ID")
+        headers["Signature"] = get_signature(body, headers.get("User-ID"))
         headers["Digest"] = "sha-512=" + digest
         headers["Date"] = date
 
