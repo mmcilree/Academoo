@@ -161,7 +161,7 @@ class SubscribedFeed extends Component {
                                 {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
                                 {!isLoading ? (
                                     posts.length !== 0 ? 
-                                    <PostsViewer posts={posts} refreshPost={this.refreshPost.bind(this)} displayCommunityName subscribeFeed parentCallback={this.parentCallback} />
+                                    <PostsViewer posts={posts} refreshPost={this.refreshPost.bind(this)} displayCommunityName parentCallback={this.parentCallback} />
                                     : <h3>There's no posts here :-(</h3>
                                 ) : (
                                     <h3>Loading Posts...</h3>

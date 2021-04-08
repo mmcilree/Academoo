@@ -107,17 +107,7 @@ class Post extends Component {
     }).catch(() => {});
 
     this.handleCloseDelete();
-    
-    if(this.props.subscribeFeed) {
-      this.props.history.push("/moosfeed");
-    } else if(this.props.postData.parentPost == null || this.props.postData.parentPost == "") {
-      this.props.history.push("/communities/" + (this.props.postData.host !== "local" ? this.props.postData.host + "/" : "") + this.props.postData.community);
-    } else {
-      this.props.history.push("/comments/" + (this.props.postData.host !== "local" ? this.props.postData.host + "/" : "") + this.props.parentId);
-    }
-
     this.props.parentCallback(this.props.postData);
-    // window.location.reload(false);
   }
 
   handleShowDelete(event) {

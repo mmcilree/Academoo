@@ -14,7 +14,7 @@ class PostsViewer extends Component {
         return (
           <Card key={id} className="mt-4">
             <Card.Body className="pb-2">
-              <Post postData={data} postType="preview" displayCommunityName={this.props.displayCommunityName} subscribeFeed={this.props.subscribeFeed} parentCallback={this.props.parentCallback} />
+              <Post postData={data} postType="preview" displayCommunityName={this.props.displayCommunityName} parentCallback={this.props.parentCallback} />
               
               <div className="d-flex justify-content-between">
                 <Link
