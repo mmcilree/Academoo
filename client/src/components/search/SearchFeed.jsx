@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import PostViewer from "../posts/PostsViewer";
+import SearchViewer from "../search/SearchViewer";
 import { Card,  Alert } from "react-bootstrap";
 import { authFetch } from '../../auth';
 
@@ -21,7 +21,7 @@ class SearchFeed extends Component {
   }
 
   /**
-   * fetch the posts from a given community
+   * fetch the posts from a given query
    */
   async fetchPosts() {
     await authFetch('/api/search?query=' + this.props.match.params.query)
@@ -37,9 +37,6 @@ class SearchFeed extends Component {
       });
   }
 
-  /**
-   * method which renders a community, its relevant info and the posts on this community
-   */
   render() {
     const { isLoadingPosts, posts, error } = this.state;
 
@@ -56,11 +53,11 @@ class SearchFeed extends Component {
         <Card.Body>
           {error ? <Alert variant="warning">Error fetching posts: {error}</Alert> : null}
           {!isLoadingPosts ? (
-            <PostViewer posts={posts} parentCallback={this.parentCallback} />
+            <SearchViewer posts={posts} />
           ) : (
               <h3>Loading Posts...</h3>
             )}
-          {!isLoadingPosts && posts.length === 0 ? <h4>There's no posts yet :-(</h4> : null}
+          {!isLoadingPosts && posts.length === 0 ? <h4>No results :-(</h4> : null}
         </Card.Body>
       </Card >
     );
