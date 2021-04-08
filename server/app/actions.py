@@ -1,5 +1,6 @@
 from app import db, guard
 from app.models import User, Community, Post, UserRole, PostContentField, UserVote, getTime, PostTag, UserSubscription
+from flask import current_app
 from sqlalchemy import desc
 import json
 from uuid import UUID
@@ -189,7 +190,7 @@ def createUser(username, email, password):
             user_id=username,
             email=email,
             password_hash=guard.hash_password(password),
-            host="Academoo",
+            host=current_app.config["HOST"],
         ))
         db.session.commit()
         return (None, 200)
