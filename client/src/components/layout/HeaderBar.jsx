@@ -99,7 +99,7 @@ function HeaderBar() {
             <Nav>
 
             <Form inline onSubmit={(e) => {
-              e.preventDefault();
+              // e.preventDefault();
               history.push('/search/' + query);
             }}>
               <FormControl type="text" placeholder="Search" className="mr-sm-2" value={query} onChange={e => setQuery(e.target.value)} />

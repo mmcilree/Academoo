@@ -44,13 +44,13 @@ class SearchFeed extends Component {
       <Card className="mt-4 mb-10">
         <Card.Body>
           <h3>Search Results 🐮</h3>
+          {!isLoadingPosts && posts.length === 0 ? <h4>No results for '{this.props.match.params.query}' :-(</h4> : "Showing results for " + "'" + this.props.match.params.query + "'"}
           {error ? <Alert variant="warning">Error fetching posts: {error}</Alert> : null}
           {!isLoadingPosts ? (
             <SearchViewer posts={posts} />
           ) : (
               <h3>Loading Posts...</h3>
             )}
-          {!isLoadingPosts && posts.length === 0 ? <h4>No results for "{this.props.match.params.query}" :-(</h4> : null}
         </Card.Body>
       </Card >
     );

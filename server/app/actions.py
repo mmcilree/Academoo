@@ -411,9 +411,10 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
 
 def searchPosts(query):
     posts = {p.post_id: str(p) for p in PostContentField.query.all()}
-    ratios = process.extract(query, posts, scorer=fuzz.token_set_ratio, limit=10)
+    ratios = process.extract(query, posts, scorer=fuzz.partial_ratio, limit=10)
+    print(ratios)
     
-    post_ids = {res[2]: idx for idx, res in enumerate(ratios) if res[1] > 25}
+    post_ids = {res[2]: idx for idx, res in enumerate(ratios) if res[1] > 10}
     ret = sorted(Post.query.filter(Post.id.in_(post_ids)).all(), key=lambda x: post_ids[x.id])
     post_dicts = [
     {
