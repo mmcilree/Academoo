@@ -176,4 +176,4 @@ class PostContentField(db.Model):
         if self.content_type == "poll":
             return f"{self.content_type} {self.json_object.get('question')}"
         else:
-            return f"{self.content_type} {self.json_object.get('text')}"
+            return f"{self.content_type} {self.post.title} {self.json_object.get('text')}"

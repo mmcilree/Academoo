@@ -42,22 +42,15 @@ class SearchFeed extends Component {
 
     return (
       <Card className="mt-4 mb-10">
-        <Card.Header className="pt-4 pr-4">
-          <div className="d-flex justify-content-between">
-            <Card.Title >
-                <h3>Search Results 🐮</h3>
-            </Card.Title>
-          </div>
-        </Card.Header>
-
         <Card.Body>
+          <h3>Search Results 🐮</h3>
           {error ? <Alert variant="warning">Error fetching posts: {error}</Alert> : null}
           {!isLoadingPosts ? (
             <SearchViewer posts={posts} />
           ) : (
               <h3>Loading Posts...</h3>
             )}
-          {!isLoadingPosts && posts.length === 0 ? <h4>No results :-(</h4> : null}
+          {!isLoadingPosts && posts.length === 0 ? <h4>No results for "{this.props.match.params.query}" :-(</h4> : null}
         </Card.Body>
       </Card >
     );
