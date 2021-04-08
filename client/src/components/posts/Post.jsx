@@ -30,7 +30,7 @@ class Post extends Component {
       isSiteMod: false,
       body: "",
       updatedBody: "",
-      avatarLoaded: "https://cs3099user-a1.host.cs.st-andrews.ac.uk".includes(this.props.postData.author.host),
+      avatarLoaded: !"https://cs3099user-a1.host.cs.st-andrews.ac.uk".includes(this.props.postData.author.host),
     }
 
     switch(this.state.contentType) {
