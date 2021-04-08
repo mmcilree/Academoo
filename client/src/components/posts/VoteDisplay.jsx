@@ -73,7 +73,7 @@ class VoteDisplay extends React.Component {
                     <small>
                         {this.state.voteStatus === "upvote" ?
                             <strong><ArrowUpSquareFill className="mb-1 mr-1" /> Upmooed! ({this.state.upvotes})</strong> :
-                            <span><ArrowUpSquare className="mb-1 mr-1" /> Upmoo ({this.state.upvotes}) &nbsp;&nbsp; &nbsp;&nbsp; </span>}
+                            <span><ArrowUpSquare className="mb-1 mr-1" /> Upmoo ({this.state.upvotes})</span>}
                     </small>
                 </Link>
 
@@ -85,7 +85,7 @@ class VoteDisplay extends React.Component {
                     <small>
                         {this.state.voteStatus === "downvote" ?
                             <strong><ArrowDownSquareFill className="mb-1 mr-1" /> Downmooed ({this.state.downvotes})</strong> :
-                            <span><ArrowDownSquare className="mb-1 mr-1" /> Downmoo ({this.state.downvotes}) &nbsp;&nbsp;&nbsp; </span>}
+                            <span><ArrowDownSquare className="mb-1 mr-1" /> Downmoo ({this.state.downvotes})</span>}
                     </small>
 
                 </Link>

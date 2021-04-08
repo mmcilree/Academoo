@@ -7,6 +7,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import PostEditor from "./PostEditor"
 import { authFetch } from '../../auth';
 import MarkdownRender from '../layout/MarkdownRender';
+import PollPost from '../polls/PollPost';
 
 /* Post component is used to display a single post with all its data and options
   The post data is passed in as props from the Post Viewer component */
@@ -14,14 +15,12 @@ class Post extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: "",
+      currentUser: null,
       showEdit: false,
       showDelete: false,
       updatedTitle: this.props.postData.title,
-      updatedBody: this.props.postData.content[0].text ? this.props.postData.content[0].text.text : this.props.postData.content[0].markdown.text,
       title: this.props.postData.title,
-      body: this.props.postData.content[0].text ? this.props.postData.content[0].text.text : this.props.postData.content[0].markdown.text,
-      contentType: this.props.postData.content[0].text ? "text" : "markdown",
+      contentType: Object.keys(this.props.postData.content[0])[0],
       cannotEdit: true,
       cannotDelete: true,
       errors: [],
@@ -29,7 +28,17 @@ class Post extends Component {
       isLoading: false,
       adminCommunities: [],
       isSiteMod: false,
+      body: "",
+      updatedBody: "",
     }
+
+    switch(this.state.contentType) {
+      case "text": this.state.body = this.props.postData.content[0].text.text; break;
+      case "markdown": this.state.body = this.props.postData.content[0].markdown.text; break;
+      case "poll": this.state.body = this.props.postData.content[0].poll; break;
+    }
+
+    this.state.updatedBody = this.state.body;
     this.validateForm = this.validateForm.bind(this);
     this.handleSubmitEdit = this.handleSubmitEdit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -58,9 +67,9 @@ class Post extends Component {
   //checks if a user has permission to edit or delete a post 
   // (i.e it's their own post or they have moderator permissions)
   checkPermissions() {
-    if (this.props.postData.author.id === this.state.currentUser || this.state.isSiteMod) {
+    if ((this.props.postData.author.id === this.state.currentUser || this.state.isSiteMod)) {
       this.setState({
-        cannotEdit: false,
+        cannotEdit: this.state.contentType === "poll",
         cannotDelete: false
       })
     }
@@ -307,6 +316,7 @@ class Post extends Component {
           contentType={this.state.contentType}
           body={this.state.updatedBody}
           postType={this.props.postType}
+          postID={postData.id}
         />
       </React.Fragment >
     );
@@ -316,7 +326,13 @@ class Post extends Component {
 export default withRouter(Post);
 
 /*Content Type Component specifies how to display different content types such as links, images and markdown*/
-const ContentTypeComponent = ({ contentType, body, postType }) => {
+const ContentTypeComponent = ({ contentType, body, postType, postID }) => {
+  var content = "";
+  if(contentType === "poll") {
+    content = body; 
+    body = "";
+  }
+
   const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
   const IMG_SUFFIX_REGEX = /\.(gif|jpe?g|tiff?|png|webp|bmp)$/i;
   const imageURLs = body.split(/\s+/).filter(part =>
@@ -357,6 +373,17 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
             maxHeight: "50vh", overflow: "hidden", textOverflow: "ellipsis"
           }}>
             <MarkdownRender renderers={renderers} children={body} />
+          </Card.Text>
+        </React.Fragment>
+      )
+    case "poll":
+      return (
+        <React.Fragment>
+          <Card.Text variant="top" style={{
+            whiteSpace: "nowrap",
+            maxHeight: "50vh", overflow: "hidden", textOverflow: "ellipsis"
+          }}>
+            <PollPost pollData={content} postID={postID} />
           </Card.Text>
         </React.Fragment>
       )

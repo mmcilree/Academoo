@@ -58,7 +58,7 @@ content_schema = {
             "^.*$": {
                 "type": "object",
                 "patternProperties": {
-                    "^.*$": {"type": "string"}
+                    "^.*$": {"type": ["string", "array", "object"]}
                 }
             }
         }
@@ -257,6 +257,7 @@ def check_get_user(file):
         return ({"title": "Invalid JSON file passed", "message": "Make sure JSON file conforms to protocol schema"}, 400)
 
 def check_create_post(file):
+    print(file)
     create_schema = {
         "type": "object",
         "properties": {
@@ -272,6 +273,7 @@ def check_create_post(file):
         validate(instance=file, schema=create_schema)
     except Exception as e:
         # If check failed, check if json is an error message
+        print(e)
         check_error = check_is_error_message(file)
         if check_error is not None:
             return check_error

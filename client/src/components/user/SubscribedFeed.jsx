@@ -30,6 +30,7 @@ class SubscribedFeed extends Component {
             .then(data => {
                 // console.log("data = "  + data.subcriptions);
                 this.setState({
+                    user_id: data.id,
                     subscribedCommunities: data.subscriptions,
                     posts: []
                 })
