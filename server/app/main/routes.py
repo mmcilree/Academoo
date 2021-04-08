@@ -227,10 +227,10 @@ def delete_post_tag(post_id):
 def get_post_tags(post_id):
     return respond_with_action(actions.getPostTags(post_id))
 
-# @bp.route("/toggle-security", methods=["GET"])
-# def toggle_security():
-#     current_app.config["SIGNATURE_FEATURE"] = not current_app.config["SIGNATURE_FEATURE"]
-#     return str(current_app.config["SIGNATURE_FEATURE"])
+@bp.route("/toggle-security", methods=["GET"])
+def toggle_security():
+    current_app.config["SIGNATURE_FEATURE"] = not current_app.config["SIGNATURE_FEATURE"]
+    return str(current_app.config["SIGNATURE_FEATURE"])
 
 @bp.route("/update-instances")
 def update_instances():
