@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Form, FormControl, Button } from "react-bootstrap";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
@@ -10,6 +11,7 @@ import defaultProfile from "../../images/default_profile.png";
 import logo from "../../images/logo.svg";
 // import logo from "../images/logo.png";
 import { useState, useEffect, useContext } from "react";
+import { useHistory } from "react-router-dom";
 
 
 import {
@@ -33,7 +35,8 @@ function HeaderBar() {
   const [username, setUsername] = useState(null);
   const [hasSiteRole, setHasSiteRole] = useState(null);
   const [isLoading, setIsLoading] = useState(true)
-
+  const [query, setQuery] = useState("");
+  let history = useHistory();
 
   useEffect(() => {
     async function fetchData() {
@@ -94,6 +97,13 @@ function HeaderBar() {
             </Nav>
 
             <Nav>
+
+            <Form inline onSubmit={(e) => {
+              e.preventDefault();
+              history.push('/search/' + query);
+            }}>
+              <FormControl type="text" placeholder="Search" className="mr-sm-2" value={query} onChange={e => setQuery(e.target.value)} />
+            </Form>
 
               <DropdownButton
                 // as={Link}
