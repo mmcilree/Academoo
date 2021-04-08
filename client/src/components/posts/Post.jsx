@@ -30,7 +30,7 @@ class Post extends Component {
       isSiteMod: false,
       body: "",
       updatedBody: "",
-      avatarLoaded: this.props.postData.author.host !== "cs3099user-a1.host.cs.st-andrews.ac.uk"
+      avatarLoaded: "https://cs3099user-a1.host.cs.st-andrews.ac.uk".includes(this.props.postData.author.host),
     }
 
     switch(this.state.contentType) {
@@ -62,8 +62,8 @@ class Post extends Component {
       )
       .catch(error => this.setState({ error, isLoading: false }));
     this.checkPermissions();
-    
-    if (this.props.postData.author.id && this.props.postData.author.host === "cs3099user-a1.host.cs.st-andrews.ac.uk") {
+
+    if (this.props.postData.author.id && "https://cs3099user-a1.host.cs.st-andrews.ac.uk".includes(this.props.postData.author.host)) {
       await authFetch('/api/users/' + this.props.postData.author.id)
         .then(response => response.json())
         .then(data => {
