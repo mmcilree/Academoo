@@ -6,6 +6,7 @@ from uuid import UUID
 import re
 from utils import *
 from sqlalchemy.sql.elements import Null
+from fuzzywuzzy import process, fuzz
 
 # Add new community to db
 def createCommunity(community_id, title, description, admin):
@@ -405,6 +406,29 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
             "upvotes": post.upvotes,
             "downvotes": post.downvotes
         } for post in query]
+    
+    return (post_dicts, 200)
+
+def searchPosts(query):
+    posts = {p.post_id: str(p) for p in PostContentField.query.all()}
+    ratios = process.extract(query, posts, scorer=fuzz.token_set_ratio, limit=10)
+    
+    post_ids = {res[2]: idx for idx, res in enumerate(ratios) if res[1] > 25}
+    ret = sorted(Post.query.filter(Post.id.in_(post_ids)).all(), key=lambda x: post_ids[x.id])
+    post_dicts = [
+    {
+        "id": post.id, 
+        "community": post.community_id, 
+        "parentPost": post.parent_id, 
+        "children": [comment.id for comment in post.comments], 
+        "title": post.title, 
+        "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], 
+        "author": {"id": post.author.user_id if post.author else None, "host": post.author.host if post.author else None}, 
+        "modified": post.modified, 
+        "created": post.created,
+        "upvotes": post.upvotes,
+        "downvotes": post.downvotes
+    } for post in ret]
     
     return (post_dicts, 200)
 
