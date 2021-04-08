@@ -161,16 +161,32 @@ class PostCreator extends React.Component {
                 break;
             }
             case 2: {
+                let options = this.state.body.split("\n");
+                if (options.length > 6) {
+                    let errors = this.state.errors;                
+                    errors.push("Poll max size exceeded. There can be at most 6 options.");
+                    this.setState({ errors });
+                    return;
+                }
+                
+                // Check for non-unique entries
+                if (options.length !== new Set(options).size) {
+                    let errors = this.state.errors;                
+                    errors.push("There are duplicate possible options.");
+                    this.setState({ errors });
+                    return;
+                }
+
                 requestOptions.body.content.push({
                     poll: {
                         question: this.state.title,
                         possibleAnswers: 
-                            this.state.body.split("\n").map((item, idx) => ({
+                            options.map((item, idx) => ({
                                 "number": idx,
                                 "answer": item,
                             })),
                         results: 
-                            this.state.body.split("\n").map((item, idx) => ({
+                            options.map((item, idx) => ({
                                 "answerNumber": idx,
                                 "answers": [],
                             }))
