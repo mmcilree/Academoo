@@ -65,6 +65,7 @@ class PostCreator extends React.Component {
                 this.setState({
                     user_id: data.id,
                     email: data.email,
+                    userHost: data.host,
                 })
             ).catch(() => { })
     }
@@ -135,7 +136,7 @@ class PostCreator extends React.Component {
                 content: [],
                 author: {
                     id: this.state.user_id,
-                    host: "Academoo"
+                    host: this.state.userHost,
                 }
             }
         };
