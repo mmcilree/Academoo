@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Card, Row, Col, Modal, Button } from "react-bootstrap";
+import { Card, Row, Col, Modal, Button, Image } from "react-bootstrap";
 import timeSince from "../../util/timeSince";
 import { Link, withRouter } from "react-router-dom";
 import { ThreeDots, PencilSquare, Trash } from "react-bootstrap-icons";
@@ -8,6 +8,8 @@ import PostEditor from "./PostEditor"
 import { authFetch } from '../../auth';
 import MarkdownRender from '../layout/MarkdownRender';
 import PollPost from '../polls/PollPost';
+import md5 from "md5";
+import defaultProfile from "../../images/default_profile.png";
 
 class Post extends Component {
   constructor(props) {
@@ -28,6 +30,7 @@ class Post extends Component {
       isSiteMod: false,
       body: "",
       updatedBody: "",
+      avatarLoaded: this.props.postData.host !== "local" && this.props.postData.host !==  undefined
     }
 
     switch(this.state.contentType) {
@@ -59,6 +62,18 @@ class Post extends Component {
       )
       .catch(error => this.setState({ error, isLoading: false }));
     this.checkPermissions();
+    if (this.props.postData.author.id && (this.props.postData.host === "local" || this.props.postData.host ===  undefined)) {
+      await authFetch('/api/users/' + this.props.postData.author.id)
+        .then(response => response.json())
+        .then(data => {
+          this.setState({
+            postEmail: data.email,
+            postAvatar: data.avatarUrl,
+            avatarLoaded: true,
+          });
+      })
+      .catch(error => this.setState({ userError: error, isLoading: false }));
+    }
   }
 
   checkPermissions() {
@@ -235,19 +250,22 @@ class Post extends Component {
 
   render() {
     const { postData, displayCommunityName } = this.props;
+    const id = (this.state.postEmail === undefined ? this.props.postData.author.id : this.state.postEmail);
     if (!postData.id) return <div />;
     return (
       <React.Fragment>
         <Row>
           <Col>
             <Card.Subtitle className="text-muted mb-2" style={{ fontSize: 12 }}>
-              {displayCommunityName &&
-
-                <b style={{ zIndex: 2, position: "relative" }}>
-                  <Link style={{ color: "inherit" }} to={"/communities/" + (postData.host ? postData.host + "/" : "") + postData.community}>
-                    {(postData.host ? postData.host + + "/" : "") + postData.community}
-                  </Link>{" · "}</b>}
-
+            <Image
+                className="mr-3"
+                src={id && this.state.avatarLoaded ? "https://en.gravatar.com/avatar/" + md5(id) + "?d=wavatar" : defaultProfile}
+                roundedCircle
+                width="42"
+                height="42"
+              >
+              </Image>
+              
               <b style={{ zIndex: 2, position: "relative" }}>
 
                 {postData.author.id ?
@@ -257,6 +275,15 @@ class Post extends Component {
 
               </b>
               {postData.author.host ? " from " + postData.author.host : ""}
+
+              {displayCommunityName &&
+                <b style={{ zIndex: 2, position: "relative" }}>
+                  {" · "}
+                  <Link style={{ color: "inherit" }} to={"/communities/" + (postData.host ? postData.host + "/" : "") + postData.community}>
+                    {(postData.host ? postData.host + "/" : "") + postData.community}
+                  </Link>
+                </b>
+              }
               {" · "} {timeSince(postData.created)} ago
         </Card.Subtitle>
           </Col>
