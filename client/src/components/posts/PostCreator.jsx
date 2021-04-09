@@ -9,6 +9,7 @@ import { Route } from 'react-router-dom';
 import { Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
 import Poll from 'react-polls';
 
+/* Post Creator component has a form for entering post information to create a new post */
 const contentTypeArr = ["Text", "Markdown", "Poll"];
 class PostCreator extends React.Component {
     constructor(props) {
@@ -37,6 +38,7 @@ class PostCreator extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    //input validation for the post creation form 
     validateForm() {
         const errors = [];
         if (this.state.title.length === 0) {
@@ -54,11 +56,13 @@ class PostCreator extends React.Component {
 
         return errors;
     }
+
     componentDidMount() {
         this.fetchInstances();
         this.fetchUserDetails();
     }
 
+    //fetch logged-in user's details
     fetchUserDetails() {
         authFetch("/api/get-user").then(response => response.json())
             .then(data =>
@@ -69,6 +73,7 @@ class PostCreator extends React.Component {
             ).catch(() => { })
     }
 
+    //fetch all instances and their communities
     async fetchInstances() {
         await authFetch("/api/get-instances")
             .then(response => response.json())
@@ -80,6 +85,7 @@ class PostCreator extends React.Component {
         this.state.instances.map(host => (this.fetchCommunities(host)));
     }
 
+    //fetch communities from a given instance
     async fetchCommunities(host) {
         await authFetch('/api/communities' + (host !== "local" ? "?external=" + host : ""),
             {
@@ -93,6 +99,7 @@ class PostCreator extends React.Component {
                 })).catch(() => { })
     }
 
+    //toggle markdown or regular text post
     handleContentSwitch(event) {
         const idx = (this.state.contentIdx + 1) % contentTypeArr.length;
 
@@ -112,6 +119,7 @@ class PostCreator extends React.Component {
         });
     }
 
+    //submit post data to create the post
     handleSubmit(event) {
         event.preventDefault();
 
@@ -208,6 +216,7 @@ class PostCreator extends React.Component {
             })
     }
 
+    /* Render the post creator with form for post data submission */
     render() {
         const { contentType, contentIdx, errors } = this.state;
         return this.state.communities && (

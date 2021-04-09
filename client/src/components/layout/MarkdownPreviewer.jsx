@@ -6,6 +6,8 @@ import MarkdownRender from './MarkdownRender';
 const ReactMarkdown = require('react-markdown');
 const gfm = require('remark-gfm');
 
+/* MarkdownPreviewer component used to display a preview of markdown to be used in a post creator or editor.
+    Also defines an information box with examples of markdown syntax that is supported */
 class MarkdownPreviewer extends React.Component {
     constructor(props) {
         super(props);
@@ -21,6 +23,7 @@ class MarkdownPreviewer extends React.Component {
         this.props.handleChange(event);
     }
 
+    //show info modal
     handleShow(event) {
         event.preventDefault();
         this.setState({
@@ -28,12 +31,14 @@ class MarkdownPreviewer extends React.Component {
         });
     }
 
+    //hide info modal
     handleClose() {
         this.setState({
             show: false,
         });
     }
 
+    /* Render the markdown previewer component and modal with information about markdown syntax */
     render() {
         const body = this.props.body;
         const renderers = { heading: HeadingRenderer }
@@ -135,6 +140,7 @@ class MarkdownPreviewer extends React.Component {
 
 export default MarkdownPreviewer;
 
+//HeadingRenderer is passed to the react markdown component to overwrite the default rendering of headings 
 const HeadingRenderer = (props) => {
     if (props.level === 1) {
         return <h3>{props.children}</h3>

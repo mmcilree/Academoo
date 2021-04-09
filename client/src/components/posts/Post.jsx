@@ -11,6 +11,8 @@ import PollPost from '../polls/PollPost';
 import md5 from "md5";
 import defaultProfile from "../../images/default_profile.png";
 
+/* Post component is used to display a single post with all its data and options
+  The post data is passed in as props from the Post Viewer component */
 class Post extends Component {
   constructor(props) {
     super(props);
@@ -49,6 +51,7 @@ class Post extends Component {
     this.fetchUserDetails();
   }
 
+  //Fetch the logged-in user's details
   async fetchUserDetails() {
     await authFetch("/api/get-user").then(response => response.json())
       .then(data => {
@@ -76,6 +79,8 @@ class Post extends Component {
     }
   }
 
+  //checks if a user has permission to edit or delete a post 
+  // (i.e it's their own post or they have moderator permissions)
   checkPermissions() {
     if ((this.props.postData.author.id === this.state.currentUser || this.state.isSiteMod)) {
       this.setState({
@@ -96,6 +101,7 @@ class Post extends Component {
     }
   }
 
+  //deletes a post
   handleDeletePost(event) {
     event.preventDefault();
     const requestOptions = {
@@ -109,7 +115,7 @@ class Post extends Component {
 
     }
 
-    if (this.props.postData.host === undefined) {this.props.postData.host = "local"} 
+    if (this.props.postData.host === undefined) { this.props.postData.host = "local" }
     if (this.props.postData.host !== "local") {
       requestOptions.body.external = this.props.postData.host;
     }
@@ -119,21 +125,21 @@ class Post extends Component {
       if (statusCode != 200) {
         this.setState({ errors: ["Could not delete post"] })
       }
-    }).catch(() => {});
+    }).catch(() => { });
 
     this.handleCloseDelete();
-    
+
     console.log(this.props.parentId);
-    if(this.props.postData.parentPost == null || this.props.postData.parentPost == "") {
+    if (this.props.postData.parentPost == null || this.props.postData.parentPost == "") {
       this.props.history.push("/communities/" + (this.props.postData.host !== "local" ? this.props.postData.host + "/" : "") + this.props.postData.community);
     } else {
       this.props.history.push("/comments/" + (this.props.postData.host !== "local" ? this.props.postData.host + "/" : "") + this.props.parentId);
     }
 
     this.props.parentCallback(this.props.postData);
-    // window.location.reload(false);
   }
 
+  //opens delete modal
   handleShowDelete(event) {
     event.preventDefault();
     this.setState({
@@ -142,12 +148,14 @@ class Post extends Component {
     });
   }
 
+  //closes delete modal
   handleCloseDelete = () => {
     this.setState({
       showDelete: false
     });
   }
 
+  //opens edit modal
   handleShowEdit(event) {
     event.preventDefault();
     this.setState({
@@ -156,6 +164,7 @@ class Post extends Component {
     });
   }
 
+  //closes edit modal
   handleCloseEdit = () => {
     this.setState({
       showEdit: false
@@ -172,9 +181,11 @@ class Post extends Component {
     });
   }
 
+  //validates the post editor form 
   validateForm() {
     const errors = [];
     if (this.state.updatedTitle.length === 0) {
+
       //post is a comment and has no title
       if (this.state.title.length !== 0) {
         errors.push("The title is invalid for a comment")
@@ -191,6 +202,7 @@ class Post extends Component {
     return errors;
   }
 
+  //logic to edit a post 
   handleSubmitEdit(event) {
     event.preventDefault();
 
@@ -247,7 +259,7 @@ class Post extends Component {
     }).catch(() => { });
   }
 
-
+  /* Renders a Post component using the Content Type Component to display the post's data correctly. */
   render() {
     const { postData, displayCommunityName } = this.props;
     const id = (this.state.postEmail === undefined ? this.props.postData.author.id : this.state.postEmail);
@@ -340,6 +352,7 @@ class Post extends Component {
 
 export default withRouter(Post);
 
+/*Content Type Component specifies how to display different content types such as links, images and markdown*/
 const ContentTypeComponent = ({ contentType, body, postType, postID }) => {
   var content = "";
   if(contentType === "poll") {
@@ -423,6 +436,7 @@ const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
   </a>
 ));
 
+//Heading renderer overrides default markdown rendering for headers
 const HeadingRenderer = (props) => {
   if (props.level === 1) {
     return <h3>{props.children}</h3>
@@ -437,6 +451,7 @@ const HeadingRenderer = (props) => {
   }
 }
 
+//Image renderer overrides default rendering for markdown renderer
 const ImageRenderer = (props) => {
   return <Card.Img src={props.src} style={{ width: "40vh" }} />
 }

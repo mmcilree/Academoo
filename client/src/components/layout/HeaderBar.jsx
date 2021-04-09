@@ -1,16 +1,12 @@
-import React, { Component } from "react";
+import React from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
 import Image from "react-bootstrap/Image";
 import { logout, useAuth, authFetch } from "../../auth";
-import defaultProfile from "../../images/default_profile.png";
 import logo from "../../images/logo.svg";
-// import logo from "../images/logo.png";
-import { useState, useEffect, useContext } from "react";
-
+import { useState, useEffect } from "react";
 
 import {
   PlusCircle,
@@ -23,8 +19,9 @@ import {
 } from "react-bootstrap-icons";
 
 import { Link } from "react-router-dom";
-var md5 = require("md5");
+var md5 = require("md5"); //hash used by gravatar for email associated with profile picture 
 
+/* HeaderBar component is the main navigation bar that appears on every page. */
 function HeaderBar() {
 
   const [logged] = useAuth();
@@ -34,7 +31,7 @@ function HeaderBar() {
   const [hasSiteRole, setHasSiteRole] = useState(null);
   const [isLoading, setIsLoading] = useState(true)
 
-
+  //Fetch initial information including logged-in user's details and the list of instances 
   useEffect(() => {
     async function fetchData() {
       const res = await fetch("/api/get-instances");
@@ -52,13 +49,13 @@ function HeaderBar() {
             logout();
           }
         }
-        ).catch(() => {})
+        ).catch(() => { })
     }
 
     fetchData();
   }, []);
 
-
+  //Returns JSX for a navbar component with links to pages in the site 
   return (
     <Navbar bg="primary" variant="dark" expand="lg" {...(!logged ? { className: 'justify-content-center' } : {})}>
       <Navbar.Brand as={Link} to="/">
@@ -96,8 +93,6 @@ function HeaderBar() {
             <Nav>
 
               <DropdownButton
-                // as={Link}
-                // to="/user-profile"
                 variant="outline-light"
                 title={
                   <span>
