@@ -76,7 +76,7 @@ class AdminKeyAuth extends Component {
                 username: this.state.user,
                 key: this.state.key,
                 role: "site-admin",
-                host: this.state.host == "Academoo" ? "local" : this.state.host
+                host: this.state.host === "cs3099user-a1.host.cs.st-andrews.ac.uk" ? "local" : this.state.host
             }
 
         }
