@@ -14,6 +14,7 @@ class CommunityFeed extends Component {
   constructor(props) {
     super(props);
     this.parentCallback = this.parentCallback.bind(this);
+
     this.state = {
       isLoadingCommunity: true,
       isLoadingPosts: true,

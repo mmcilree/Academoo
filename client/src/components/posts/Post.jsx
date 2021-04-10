@@ -302,14 +302,14 @@ class Post extends Component {
           </Col>
           <Col xs={2} sm={1} className="mb-2">
             <Card.Subtitle>
-              <Dropdown drop="left">
+              {!this.props.hideOptions && <Dropdown drop="left">
                 <Dropdown.Toggle as={CustomToggle} />
                 <Dropdown.Menu size="sm" title="">
                   <Dropdown.Header>Options</Dropdown.Header>
                   <Dropdown.Item disabled={this.state.cannotEdit} onClick={this.handleShowEdit.bind(this)}><PencilSquare /> Edit Post</Dropdown.Item>
                   <Dropdown.Item disabled={this.state.cannotDelete} onClick={this.handleShowDelete.bind(this)}><Trash /> Delete Post</Dropdown.Item>
                 </Dropdown.Menu>
-              </Dropdown>
+              </Dropdown>}
             </Card.Subtitle>
           </Col>
         </Row>

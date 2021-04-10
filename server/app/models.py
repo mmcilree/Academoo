@@ -171,3 +171,9 @@ class PostContentField(db.Model):
     post_id = db.Column(db.String(1000), db.ForeignKey('post.id'), primary_key=True)
     content_type = db.Column(db.String(50), primary_key=True)
     json_object = db.Column(types.JSON())
+
+    def __str__(self):
+        if self.content_type == "poll":
+            return f"{self.content_type} {self.json_object.get('question')}"
+        else:
+            return f"{self.content_type} {self.post.title} {self.json_object.get('text')}"

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { Component } from "react";
+import { Form, FormControl, Button } from "react-bootstrap";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
@@ -6,7 +7,10 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import Image from "react-bootstrap/Image";
 import { logout, useAuth, authFetch } from "../../auth";
 import logo from "../../images/logo.svg";
-import { useState, useEffect } from "react";
+// import logo from "../images/logo.png";
+import { useState, useEffect, useContext } from "react";
+import { useHistory } from "react-router-dom";
+
 
 import {
   PlusCircle,
@@ -30,8 +34,9 @@ function HeaderBar() {
   const [username, setUsername] = useState(null);
   const [hasSiteRole, setHasSiteRole] = useState(null);
   const [isLoading, setIsLoading] = useState(true)
+  const [query, setQuery] = useState("");
+  let history = useHistory();
 
-  //Fetch initial information including logged-in user's details and the list of instances 
   useEffect(() => {
     async function fetchData() {
       const res = await fetch("/api/get-instances");
@@ -91,6 +96,13 @@ function HeaderBar() {
             </Nav>
 
             <Nav>
+
+            <Form inline onSubmit={(e) => {
+              // e.preventDefault();
+              history.push('/search/' + query);
+            }}>
+              <FormControl type="text" placeholder="Search posts" className="mr-sm-2" value={query} onChange={e => setQuery(e.target.value)} />
+            </Form>
 
               <DropdownButton
                 variant="outline-light"
