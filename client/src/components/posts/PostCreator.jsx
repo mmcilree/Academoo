@@ -9,6 +9,7 @@ import { Route } from 'react-router-dom';
 import { Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
 import Poll from 'react-polls';
 
+/* Post Creator component has a form for entering post information to create a new post */
 const contentTypeArr = ["Text", "Markdown", "Poll"];
 class PostCreator extends React.Component {
     constructor(props) {
@@ -37,6 +38,7 @@ class PostCreator extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    //input validation for the post creation form 
     validateForm() {
         const errors = [];
         if (this.state.title.length === 0) {
@@ -54,21 +56,25 @@ class PostCreator extends React.Component {
 
         return errors;
     }
+
     componentDidMount() {
         this.fetchInstances();
         this.fetchUserDetails();
     }
 
+    //fetch logged-in user's details
     fetchUserDetails() {
         authFetch("/api/get-user").then(response => response.json())
             .then(data =>
                 this.setState({
                     user_id: data.id,
                     email: data.email,
+                    userHost: data.host,
                 })
             ).catch(() => { })
     }
 
+    //fetch all instances and their communities
     async fetchInstances() {
         await authFetch("/api/get-instances")
             .then(response => response.json())
@@ -80,6 +86,7 @@ class PostCreator extends React.Component {
         this.state.instances.map(host => (this.fetchCommunities(host)));
     }
 
+    //fetch communities from a given instance
     async fetchCommunities(host) {
         await authFetch('/api/communities' + (host !== "local" ? "?external=" + host : ""),
             {
@@ -93,6 +100,7 @@ class PostCreator extends React.Component {
                 })).catch(() => { })
     }
 
+    //toggle markdown or regular text post
     handleContentSwitch(event) {
         const idx = (this.state.contentIdx + 1) % contentTypeArr.length;
 
@@ -112,6 +120,7 @@ class PostCreator extends React.Component {
         });
     }
 
+    //submit post data to create the post
     handleSubmit(event) {
         event.preventDefault();
 
@@ -135,7 +144,7 @@ class PostCreator extends React.Component {
                 content: [],
                 author: {
                     id: this.state.user_id,
-                    host: "Academoo"
+                    host: this.state.userHost,
                 }
             }
         };
@@ -161,16 +170,32 @@ class PostCreator extends React.Component {
                 break;
             }
             case 2: {
+                let options = this.state.body.split("\n");
+                if (options.length > 6) {
+                    let errors = this.state.errors;                
+                    errors.push("Poll max size exceeded. There can be at most 6 options.");
+                    this.setState({ errors });
+                    return;
+                }
+                
+                // Check for non-unique entries
+                if (options.length !== new Set(options).size) {
+                    let errors = this.state.errors;                
+                    errors.push("There are duplicate possible options.");
+                    this.setState({ errors });
+                    return;
+                }
+
                 requestOptions.body.content.push({
                     poll: {
                         question: this.state.title,
                         possibleAnswers: 
-                            this.state.body.split("\n").map((item, idx) => ({
+                            options.map((item, idx) => ({
                                 "number": idx,
                                 "answer": item,
                             })),
                         results: 
-                            this.state.body.split("\n").map((item, idx) => ({
+                            options.map((item, idx) => ({
                                 "answerNumber": idx,
                                 "answers": [],
                             }))
@@ -208,6 +233,7 @@ class PostCreator extends React.Component {
             })
     }
 
+    /* Render the post creator with form for post data submission */
     render() {
         const { contentType, contentIdx, errors } = this.state;
         return this.state.communities && (

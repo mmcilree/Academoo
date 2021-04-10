@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import Post from "./Post";
 import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { ChatSquare, ArrowUpSquare, ArrowUpSquareFill, ArrowDownSquare, ArrowDownSquareFill } from "react-bootstrap-icons";
-import { authFetch } from '../../auth';
+import { ChatSquare } from "react-bootstrap-icons";
 import VoteDisplay from "./VoteDisplay";
 
+/* Posts Viewer Component displays all the posts passed to it via props
+ - each post is rendered using the Post component */
 class PostsViewer extends Component {
   render() {
     return (

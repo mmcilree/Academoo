@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import { ListGroup, Card, ListGroupItem } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import CommunityList from "../community/CommunityList";
 import { authFetch } from '../../auth';
 import CommunitySubscribeButton from "../community/CommunitySubscribeButton";
-import { PlusCircle } from "react-bootstrap-icons"
 
+/* Sidebar Component to display on the main page, alongside the newsfeed */
 class Sidebar extends Component {
     state = {
         subscribedCommunities: [],
@@ -16,6 +15,7 @@ class Sidebar extends Component {
         this.fetchUserDetails();
     }
 
+    //fetch the logged-in user's details 
     fetchUserDetails() {
         authFetch("/api/get-user").then(response => response.json())
             .then(data =>
@@ -32,6 +32,8 @@ class Sidebar extends Component {
         this.props.fetchSubscribedCommunities();
     }
 
+    /* Render the sidebar component  
+    allows users to see the communities they are subscribed to and follow new commmunities */
     render() {
         const { subscribedCommunities, isLoading } = this.state;
 

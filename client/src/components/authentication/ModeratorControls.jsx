@@ -15,8 +15,7 @@ import { Redirect } from "react-router-dom";
 import { authFetch } from "../../auth";
 import { Typeahead, Menu, MenuItem } from 'react-bootstrap-typeahead';
 
-
-
+/* Moderator Controls component includes a form to disable or enable a user account */
 class ModeratorControls extends Component {
     constructor(props) {
         super(props);
@@ -40,6 +39,7 @@ class ModeratorControls extends Component {
         this.fetchUsers(this.state.host)
     }
 
+    //fetch the users for a given instance
     async fetchUsers(host) {
         await fetch('/api/users' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
             .then(data =>
@@ -53,6 +53,7 @@ class ModeratorControls extends Component {
         this.fetchUsers(name);
     }
 
+    //input validation for the users form
     validateUserActiveForm() {
         const errors = [];
         if (this.state.selected[0].user.length === 0 || this.state.role.length === 0) {
@@ -66,6 +67,7 @@ class ModeratorControls extends Component {
         return errors;
     }
 
+    //submit update for disabling or enabling a user's account
     handleSubmit(event) {
         event.preventDefault();
         const errors = this.validateUserActiveForm();
@@ -73,7 +75,6 @@ class ModeratorControls extends Component {
             this.setState({ clientErrors: errors });
             return;
         }
-
 
         const requestOptions = {
             method: 'PUT',
@@ -89,7 +90,7 @@ class ModeratorControls extends Component {
             )
         };
 
-
+        // fetch the user's current account status
         authFetch('/api/account-activation/', requestOptions)
             .then((response) => {
                 if (response.ok) {
@@ -108,7 +109,7 @@ class ModeratorControls extends Component {
             });
     }
 
-
+    /* Render the control options for moderator permissions */
     render() {
         return (
             <React.Fragment>
