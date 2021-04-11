@@ -3,6 +3,7 @@ import functools
 from app.federation.instance import Instance
 from urllib.parse import urlparse, urljoin
 from utils import format_url
+from frozendict import frozendict
 import requests
 import time
 
@@ -73,16 +74,16 @@ class Manager(object):
 
         return max([x["modified"] for x in self.instances[host].get_timestamps(community, headers)] + [0])
 
-    #@functools.lru_cache() # timestamp purely for caching purposes      ######getting key error: unhashable type: dict
+    @functools.lru_cache() # timestamp purely for caching purposes
     def _get_posts(self, host, community, _timestamp, headers):
-        return self.instances[host].get_posts(community, headers)
+        return self.instances[host].get_posts(community, dict(headers))
 
     def get_post_by_id(self, host, id, headers):
         return self.instances[host].get_post_by_id(id=id, headers=headers)
 
     def get_posts(self, host, community, headers):
-        timestamp = self._get_latest_timestamp(host, community, headers)
-        return self._get_posts(host, community, timestamp, headers)
+        timestamp = self._get_latest_timestamp(host, community, headers.copy())
+        return self._get_posts(host, community, timestamp, frozendict(headers))
 
     def get_communities(self, host, headers, id=None):
         return self.instances[host].get_communities(headers, id=id)
