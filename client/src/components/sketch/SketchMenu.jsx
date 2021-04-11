@@ -9,7 +9,7 @@ class SketchMenu extends React.Component {
         super(props);
 
         this.state = {
-            code: ""
+            code: "",
         }
     }
     handleChange(event) {
@@ -18,7 +18,13 @@ class SketchMenu extends React.Component {
 
     handleCreate() {
         const code = randomize('Aa0', 4);
-        this.props.history.push("/sketchamoo/" + code);
+        let path = {
+            pathname: "/sketchamoo/" + code,
+            state: {
+                ready: true
+            }
+        }
+        this.props.history.push(path);
     }
 
     handleJoin(event) {

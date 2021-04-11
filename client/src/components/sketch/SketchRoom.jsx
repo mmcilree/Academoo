@@ -19,7 +19,10 @@ class SketchRoom extends React.Component {
             whiteboardJSON: {},
             receivedJson: false,
             joinMsg: "",
+            ready: this.props.location && this.props.location.state ?
+                this.props.location.state.ready : false,
         }
+        console.log("ready: " + this.state.ready);
     }
 
     async fetchUserDetails() {
@@ -35,8 +38,11 @@ class SketchRoom extends React.Component {
 
 
     sendUpdate(jsonValue) {
+
+        // if (this.state.ready) {
         console.log("new json whiteboard sent")
         socket.emit("message", { message: jsonValue, room: this.state.code });
+        // }
     }
 
     onSketchChange(jsonValue) {
@@ -66,6 +72,7 @@ class SketchRoom extends React.Component {
             this.setState({
                 whiteboardJSON: msg,
                 receivedJson: true,
+                ready: true,
             })
         } else {
             this.setState({
