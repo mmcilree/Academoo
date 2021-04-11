@@ -36,39 +36,39 @@ class App extends React.Component {
 
   render() {
     return (
-        <Router>
-          <div className="App">
-            <Route component={HeaderBar} />
-            <div className="container-md">
-              <Switch>
-                <PrivateRoute exact path="/" component={Welcome} />
-                <PrivateRoute path="/home" component={Welcome} />
-                <PrivateRoute exact path="/moosfeed" component={SubscribedFeed} />
-                <PrivateRoute exact path="/communities" component={CommunityExplorer} />
-                <PrivateRoute exact path="/communities/:id" component={CommunityFeed} />
-                <PrivateRoute exact path="/communities/:id/manage" component={CommunityManager} />
-                <PrivateRoute path="/communities/:instance/:id" component={CommunityFeed} />
-                <PrivateRoute path="/create-post" component={PostCreator} />
-                <PrivateRoute exact path="/sketchamoo" component={Whiteboard} />
-                <PrivateRoute exact path="/comments/:id" component={CommentsViewer} />
-                <PrivateRoute path="/comments/:instance/:id" component={CommentsViewer} />
-                <PrivateRoute path="/user-settings" component={UserSettings} />
-                <PrivateRoute path="/help" component={Help} />
-                <PrivateRoute exact path="/user-profile/:id" component={UserProfile} />
-                <PrivateRoute path="/user-profile/:instance/:id" component={UserProfile} />
-                <PrivateRoute path="/create-community" component={CommunityCreator} />
-                <PrivateRoute path="/control-panel" component={ControlPanel} />
-                <PrivateRoute path="/admin-key" component={AdminKeyAuth} />
-                <PrivateRoute path="/forbidden" component={AccessForbidden} />
-                <PrivateRoute path="/search/:query" component={SearchFeed} />
-                <LoggedOutRoute path="/login" component={Login} />
-                <LoggedOutRoute path="/sign-up" component={SignUp} />
-                <Route path="/404" component={PageNotFound} />
-                <Route component={PageNotFound} />
-              </Switch>
-            </div>
+      <Router>
+        <div className="App h-100" style={{ "background-color": "#e3e8e8" }}>
+          <Route component={HeaderBar} />
+          <div className="container-md">
+            <Switch>
+              <PrivateRoute exact path="/" component={Welcome} />
+              <PrivateRoute path="/home" component={Welcome} />
+              <PrivateRoute exact path="/moosfeed" component={SubscribedFeed} />
+              <PrivateRoute exact path="/communities" component={CommunityExplorer} />
+              <PrivateRoute exact path="/communities/:id" component={CommunityFeed} />
+              <PrivateRoute exact path="/communities/:id/manage" component={CommunityManager} />
+              <PrivateRoute path="/communities/:instance/:id" component={CommunityFeed} />
+              <PrivateRoute path="/create-post" component={PostCreator} />
+              <PrivateRoute exact path="/sketchamoo" component={Whiteboard} />
+              <PrivateRoute exact path="/comments/:id" component={CommentsViewer} />
+              <PrivateRoute path="/comments/:instance/:id" component={CommentsViewer} />
+              <PrivateRoute path="/user-settings" component={UserSettings} />
+              <PrivateRoute path="/help" component={Help} />
+              <PrivateRoute exact path="/user-profile/:id" component={UserProfile} />
+              <PrivateRoute path="/user-profile/:instance/:id" component={UserProfile} />
+              <PrivateRoute path="/create-community" component={CommunityCreator} />
+              <PrivateRoute path="/control-panel" component={ControlPanel} />
+              <PrivateRoute path="/admin-key" component={AdminKeyAuth} />
+              <PrivateRoute path="/forbidden" component={AccessForbidden} />
+              <PrivateRoute path="/search/:query" component={SearchFeed} />
+              <LoggedOutRoute path="/login" component={Login} />
+              <LoggedOutRoute path="/sign-up" component={SignUp} />
+              <Route path="/404" component={PageNotFound} />
+              <Route component={PageNotFound} />
+            </Switch>
           </div>
-        </Router>
+        </div>
+      </Router>
     );
   }
 }

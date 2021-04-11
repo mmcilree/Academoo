@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Form, FormControl, Button } from "react-bootstrap";
+import { Form, FormControl, Button, InputGroup } from "react-bootstrap";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
@@ -19,7 +19,8 @@ import {
   Tools,
   BoxArrowRight,
   QuestionCircle,
-  Pencil
+  Pencil,
+  Search
 } from "react-bootstrap-icons";
 
 import { Link } from "react-router-dom";
@@ -97,12 +98,18 @@ function HeaderBar() {
 
             <Nav>
 
-            <Form inline onSubmit={(e) => {
-              // e.preventDefault();
-              history.push('/search/' + query);
-            }}>
-              <FormControl type="text" placeholder="Search posts" className="mr-sm-2" value={query} onChange={e => setQuery(e.target.value)} />
-            </Form>
+              <Form inline onSubmit={(e) => {
+                // e.preventDefault();
+                history.push('/search/' + query);
+              }} className="mr-sm-2">
+                <InputGroup>
+                  <FormControl className="border-light" type="text" placeholder="Search posts" value={query} onChange={e => setQuery(e.target.value)} />
+                  <InputGroup.Append>
+                    <Button variant="outline-light" type="submit"><Search /></Button>
+                  </InputGroup.Append>
+                </InputGroup>
+
+              </Form>
 
               <DropdownButton
                 variant="outline-light"
