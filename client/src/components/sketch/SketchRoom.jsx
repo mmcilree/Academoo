@@ -39,10 +39,10 @@ class SketchRoom extends React.Component {
 
     sendUpdate(jsonValue) {
 
-        // if (this.state.ready) {
+        if (this.state.ready) {
         console.log("new json whiteboard sent")
         socket.emit("message", { message: jsonValue, room: this.state.code });
-        // }
+        }
     }
 
     onSketchChange(jsonValue) {
