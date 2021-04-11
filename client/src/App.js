@@ -22,11 +22,8 @@ import CommunityCreator from "./components/community/CommunityCreator";
 import SubscribedFeed from "./components/user/SubscribedFeed";
 import AdminKeyAuth from "./components/authentication/AdminKeyAuth";
 import ControlPanel from "./components/authentication/ControlPanel";
-<<<<<<< HEAD
 import SketchMenu from "./components/sketch/SketchMenu";
-=======
 import SearchFeed from "./components/search/SearchFeed";
->>>>>>> master
 
 class App extends React.Component {
   constructor(props) {

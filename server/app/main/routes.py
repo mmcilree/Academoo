@@ -239,14 +239,11 @@ def get_vote(post_id):
     username = current_user().user_id
     return respond_with_action(actions.getVote(username, post_id))
 
-<<<<<<< HEAD
-=======
 @bp.route("/poll-vote/<post_id>")
 @auth_required
 def poll_vote(post_id):
     option = request.args.get("vote")
     return respond_with_action(actions.votePoll(post_id, option, current_user().user_id))
->>>>>>> master
 
 @bp.route("/add-post-tag/<post_id>", methods=['POST'])
 @auth_required
@@ -280,7 +277,6 @@ def update_instances():
 
     return redirect(url_for("protocol.discover"))
 
-<<<<<<< HEAD
 
 @socketio.on('join')
 def on_join(data):
@@ -305,10 +301,8 @@ def on_message(data):
     room = data['room']
     print("message received")
     send(message, room=room, include_self=False)
-=======
 @bp.route("/search")
 @auth_required
 def search():
     query = request.args.get("query")
     return respond_with_action(actions.searchPosts(query))
->>>>>>> master
