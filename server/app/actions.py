@@ -415,7 +415,7 @@ def searchPosts(query):
     ratios = process.extract(query, posts, scorer=fuzz.partial_token_set_ratio, limit=25)
     print(ratios)
     
-    post_ids = {res[2]: idx for idx, res in enumerate(ratios) if res[1] > 10}
+    post_ids = {res[2]: idx for idx, res in enumerate(ratios) if res[1] >= 70}
     ret = sorted(Post.query.filter(Post.id.in_(post_ids)).all(), key=lambda x: post_ids[x.id])
     post_dicts = [
     {
