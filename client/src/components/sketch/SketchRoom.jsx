@@ -17,7 +17,8 @@ class SketchRoom extends React.Component {
             user: "",
             messages: [],
             whiteboardJSON: {},
-            receivedJson: false
+            receivedJson: false,
+            joinMsg: "",
         }
     }
 
@@ -67,7 +68,9 @@ class SketchRoom extends React.Component {
                 receivedJson: true,
             })
         } else {
-            console.log(msg);
+            this.setState({
+                joinMsg: msg,
+            })
         }
     }
     componentWillUnmount() {
@@ -76,7 +79,7 @@ class SketchRoom extends React.Component {
 
 
     render() {
-        return <Whiteboard history={this.props.history} code={this.state.code} onSketchChange={this.onSketchChange.bind(this)} receivedJson={this.state.receivedJson} setReceivedJson={this.setReceivedJson.bind(this)} jsonValue={this.state.whiteboardJSON} />
+        return <Whiteboard history={this.props.history} code={this.state.code} onSketchChange={this.onSketchChange.bind(this)} receivedJson={this.state.receivedJson} setReceivedJson={this.setReceivedJson.bind(this)} jsonValue={this.state.whiteboardJSON} joinMsg={this.state.joinMsg} />
     }
 }
 

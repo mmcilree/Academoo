@@ -13,6 +13,7 @@ import {
     Dropdown,
     InputGroup,
     Tooltip,
+    Toast,
 
 } from 'react-bootstrap';
 import { Route, Link } from 'react-router-dom';
@@ -32,6 +33,13 @@ class Whiteboard extends React.Component {
             codeCopied: false,
             enableRemoveSelected: false,
             receivedUpdate: false,
+            showNotif: true,
+        }
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.joinMsg !== prevProps.joinMsg) {
+            this.setState({ showNotif: true });
         }
     }
 
@@ -141,6 +149,7 @@ class Whiteboard extends React.Component {
 
     render() {
         const { currentTool, lineColour, backgroundColour, lineWidth, text, selected } = this.state;
+        const closeNotif = () => this.setState({ showNotif: false });
         const colourPopover = (
             <Popover id="popover-basic">
                 <Popover.Title as="h3">Pick a Colour!</Popover.Title>
@@ -172,9 +181,22 @@ class Whiteboard extends React.Component {
 
         return (
             <Card className="mt-4 p-4" style={{ width: '1200px' }}>
-                <h1>Whiteboard</h1>
-                <p>Share your moosings on the sketch-a-moo!</p>
-                <Card>
+                <div className="d-flex justify-content-between">
+                    <div>
+                        <h1>Whiteboard</h1>
+                        <p>Share your moosings on the sketch-a-moo!</p>
+                    </div>
+
+                    <Toast show={this.state.showNotif} onClose={closeNotif.bind(this)}>
+                        <Toast.Header>
+                            <img src="holder.js/20x20?text=%20" className="rounded mr-2" alt="" />
+                            <strong className="mr-auto">Changed Participants!</strong>
+                        </Toast.Header>
+                        <Toast.Body>{this.props.joinMsg}</Toast.Body>
+                    </Toast>
+                </div>
+
+                <Card className="mt-4">
                     <Card.Header className="d-flex justify-content-left">
                         <h4 className="m-2">Code: {this.props.code}</h4>
                         <Button className="m-1" variant="outline-secondary" onClick={() => { navigator.clipboard.writeText(this.props.code); this.setState({ codeCopied: true }) }}>

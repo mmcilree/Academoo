@@ -21,7 +21,8 @@ class SketchMenu extends React.Component {
         this.props.history.push("/sketchamoo/" + code);
     }
 
-    handleJoin() {
+    handleJoin(event) {
+        event.preventDefault();
         this.props.history.push("/sketchamoo/" + this.state.code);
     }
 
@@ -39,9 +40,9 @@ class SketchMenu extends React.Component {
 
                 <div className="m-4 d-flex flex-column align-items-center">
                     <h4 className="m-2">Or join an existing room</h4>
-                    <Form inline>
+                    <Form inline onSubmit={this.handleJoin.bind(this)}>
                         <Form.Control onChange={this.handleChange.bind(this)} className="m-2" value={code} placeholder="Code e.g. XC32" />
-                        <Button variant="secondary" onClick={this.handleJoin.bind(this)}>
+                        <Button type="submit" variant="secondary">
                             Join
                     </Button>
                     </Form>
