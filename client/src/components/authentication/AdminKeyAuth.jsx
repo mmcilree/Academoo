@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Card, Button, Form, Alert } from "react-bootstrap"
 import { authFetch } from '../../auth';
 
+/* Admin Key Authentication Component for setting up the initial site admins */
 class AdminKeyAuth extends Component {
     constructor(props) {
         super(props);
@@ -21,6 +22,7 @@ class AdminKeyAuth extends Component {
         this.fetchUserDetails();
     }
 
+    //fetch current user's details
     async fetchUserDetails() {
         await authFetch("/api/get-user").then(response => response.json())
             .then(data =>
@@ -44,6 +46,7 @@ class AdminKeyAuth extends Component {
         });
     }
 
+    //validate the input form 
     validateInput() {
         const errors = [];
         if (this.state.key.length === 0) {
@@ -54,6 +57,7 @@ class AdminKeyAuth extends Component {
         return errors;
     }
 
+    //submit the admin key to be authenticated by the server
     handleSubmit(event) {
         event.preventDefault();
 
@@ -72,13 +76,13 @@ class AdminKeyAuth extends Component {
                 username: this.state.user,
                 key: this.state.key,
                 role: "site-admin",
-                host: this.state.host == "Academoo" ? "local" : this.state.host
+                host: this.state.host === "cs3099user-a1.host.cs.st-andrews.ac.uk" ? "local" : this.state.host
             }
 
         }
         requestOptions.body = JSON.stringify(requestOptions.body);
 
-        authFetch('/api/add-site-role/', requestOptions)
+        authFetch('/api/add-site-role', requestOptions)
             .then((response) => {
                 if (response.ok) {
                     this.setState({ changed: true, errors: [], key: "" });
@@ -94,9 +98,10 @@ class AdminKeyAuth extends Component {
                     this.setState({ changed: false, errors: errors })
                 }
 
-            }).catch(() => {});
+            }).catch(() => { });
     }
 
+    /* Render a component with an input box for entering an admin key to be assigned site-admin privileges */
     render() {
         return (
             <Card className="mt-4">

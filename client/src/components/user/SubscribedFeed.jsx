@@ -11,11 +11,25 @@ class SubscribedFeed extends Component {
   A user subscribes to a community, and then a list of the posts from those communities is displayed to the user
   This fetches the subscribed communities and the posts from these to display
   */
-    state = {
-        isLoading: true,
-        posts: [],
-        error: null,
-        subscribedCommunities: [],
+    
+    constructor(props) {
+        super(props);
+        this.parentCallback = this.parentCallback.bind(this);
+
+        this.state = {
+            isLoading: true,
+            posts: [],
+            error: null,
+            subscribedCommunities: [],
+        };
+
+    }
+
+
+    parentCallback(post) {
+        this.setState({
+          posts: this.state.posts.filter(p => p.id !== post.id),
+        });
     }
 
     componentDidMount() {
@@ -30,6 +44,7 @@ class SubscribedFeed extends Component {
             .then(data => {
                 // console.log("data = "  + data.subcriptions);
                 this.setState({
+                    user_id: data.id,
                     subscribedCommunities: data.subscriptions,
                     posts: []
                 })
@@ -146,12 +161,11 @@ class SubscribedFeed extends Component {
                                 {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
                                 {!isLoading ? (
                                     posts.length !== 0 ? 
-                                    <PostsViewer posts={posts} refreshPost={this.refreshPost.bind(this)} displayCommunityName />
+                                    <PostsViewer posts={posts} refreshPost={this.refreshPost.bind(this)} displayCommunityName parentCallback={this.parentCallback} />
                                     : <h3>There's no posts here :-(</h3>
                                 ) : (
                                     <h3>Loading Posts...</h3>
                                 )}
-                                
                             </Card.Body>
                         </Card>
                     </Col>

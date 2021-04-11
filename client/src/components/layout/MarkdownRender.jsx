@@ -3,6 +3,9 @@ import MathJax from 'react-mathjax2';
 import RemarkMathPlugin from 'remark-math';
 
 const gfm = require('remark-gfm');
+
+/* MarkdownRender component usese React Markdown library and Math Jax with React MathJax Plugin
+    Supports normal markdown syntax and mathjax in posts.  */
 function MarkdownRender(props) {
     const newProps = {
         ...props,

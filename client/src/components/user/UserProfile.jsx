@@ -114,12 +114,12 @@ class UserProfile extends Component {
   Method to fetch the other details about the user, like email, bio, if they have a private account
   */
   fetchUserDetails() {
-    authFetch('/api/users/' + this.state.username + (this.state.host !== "local" ? "&external=" + this.state.host : ""))
+    authFetch('/api/users/' + this.state.username + (this.state.host !== "local" ? "?external=" + this.state.host : ""))
       .then(response => response.json())
       .then(data => {
         this.setState({
           isLoading: false,
-          email: data.email,
+          email: data.email, // the users api does not return email :(
           // host: data.host,
           bio: data.bio,
           private_acc: data.private,
@@ -148,7 +148,7 @@ class UserProfile extends Component {
               width={150}
               height={150}
               className="mr-5 rounded-circle border border-primary"
-              src={email ? "https://en.gravatar.com/avatar/" + emailHash : defaultProfile}
+              src={email ? "https://en.gravatar.com/avatar/" + emailHash + "?d=wavatar" : defaultProfile}
               alt="Profile image placeholder"
             />
             {!this.state.isLoading ? (

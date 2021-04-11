@@ -1,8 +1,8 @@
 export default function timeSince(timestamp) {
     let date = new Date(timestamp*1000);
     
-    let seconds = Math.floor((new Date() - date) / 1000);
-
+    let seconds = Math.floor((new Date() - timestamp*1000) / 1000);
+    
     let interval = seconds / 31536000;
     let count = Math.floor(interval);
 
@@ -38,5 +38,5 @@ export default function timeSince(timestamp) {
       return count + " minute" + ((count > 1) ? "s" : "");
     }
     
-    return seconds + " second" + ((seconds > 1 || seconds == 0 ) ? "s" : "");
+    return seconds + " second" + ((seconds > 1 || seconds === 0 ) ? "s" : "");
 }

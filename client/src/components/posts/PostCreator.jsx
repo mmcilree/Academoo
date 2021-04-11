@@ -7,7 +7,10 @@ import Alert from 'react-bootstrap/Alert';
 import { authFetch } from '../../auth';
 import { Route } from 'react-router-dom';
 import { Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
+import Poll from 'react-polls';
 
+/* Post Creator component has a form for entering post information to create a new post */
+const contentTypeArr = ["Text", "Markdown", "Poll"];
 class PostCreator extends React.Component {
     constructor(props) {
         super(props);
@@ -26,13 +29,16 @@ class PostCreator extends React.Component {
                 community: this.props.location && this.props.location.state && this.props.location.state.community ?
                     this.props.location.state.community : "",
             }],
-            markdown: this.props.location && this.props.location.state && this.props.location.state.markdown ? true : false,
+            // markdown: this.props.location && this.props.location.state && this.props.location.state.markdown ? true : false,
+            contentIdx: 0,
+            contentType: contentTypeArr[0],
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleContentSwitch = this.handleContentSwitch.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    //input validation for the post creation form 
     validateForm() {
         const errors = [];
         if (this.state.title.length === 0) {
@@ -50,21 +56,25 @@ class PostCreator extends React.Component {
 
         return errors;
     }
+
     componentDidMount() {
         this.fetchInstances();
         this.fetchUserDetails();
     }
 
+    //fetch logged-in user's details
     fetchUserDetails() {
         authFetch("/api/get-user").then(response => response.json())
             .then(data =>
                 this.setState({
                     user_id: data.id,
                     email: data.email,
+                    userHost: data.host,
                 })
             ).catch(() => { })
     }
 
+    //fetch all instances and their communities
     async fetchInstances() {
         await authFetch("/api/get-instances")
             .then(response => response.json())
@@ -76,6 +86,7 @@ class PostCreator extends React.Component {
         this.state.instances.map(host => (this.fetchCommunities(host)));
     }
 
+    //fetch communities from a given instance
     async fetchCommunities(host) {
         await authFetch('/api/communities' + (host !== "local" ? "?external=" + host : ""),
             {
@@ -89,12 +100,14 @@ class PostCreator extends React.Component {
                 })).catch(() => { })
     }
 
+    //toggle markdown or regular text post
     handleContentSwitch(event) {
-        if (this.state.markdown) {
-            this.setState({ markdown: false });
-        } else {
-            this.setState({ markdown: true });
-        }
+        const idx = (this.state.contentIdx + 1) % contentTypeArr.length;
+
+        this.setState({
+            contentType: contentTypeArr[idx],
+            contentIdx: idx,
+        })
     }
 
     handleChange(event) {
@@ -107,6 +120,7 @@ class PostCreator extends React.Component {
         });
     }
 
+    //submit post data to create the post
     handleSubmit(event) {
         event.preventDefault();
 
@@ -130,7 +144,7 @@ class PostCreator extends React.Component {
                 content: [],
                 author: {
                     id: this.state.user_id,
-                    host: "Academoo"
+                    host: this.state.userHost,
                 }
             }
         };
@@ -138,22 +152,60 @@ class PostCreator extends React.Component {
             requestOptions.body.external = this.state.selected[0].host;
         }
 
-        if (this.state.markdown) {
-            requestOptions.body.content.push({
-                markdown: {
-                    text: this.state.body
+        switch(this.state.contentIdx) {
+            case 0: {
+                requestOptions.body.content.push({
+                    text: {
+                        text: this.state.body
+                    }
+                });
+                break;
+            }
+            case 1: {
+                requestOptions.body.content.push({
+                    markdown: {
+                        text: this.state.body
+                    }
+                });
+                break;
+            }
+            case 2: {
+                let options = this.state.body.split("\n");
+                if (options.length > 6) {
+                    let errors = this.state.errors;                
+                    errors.push("Poll max size exceeded. There can be at most 6 options.");
+                    this.setState({ errors });
+                    return;
                 }
-            });
-        } else {
-            requestOptions.body.content.push({
-                text: {
-                    text: this.state.body
+                
+                // Check for non-unique entries
+                if (options.length !== new Set(options).size) {
+                    let errors = this.state.errors;                
+                    errors.push("There are duplicate possible options.");
+                    this.setState({ errors });
+                    return;
                 }
-            });
+
+                requestOptions.body.content.push({
+                    poll: {
+                        question: this.state.title,
+                        possibleAnswers: 
+                            options.map((item, idx) => ({
+                                "number": idx,
+                                "answer": item,
+                            })),
+                        results: 
+                            options.map((item, idx) => ({
+                                "answerNumber": idx,
+                                "answers": [],
+                            }))
+                    }
+                });
+                break;
+            }
         }
 
         requestOptions.body = JSON.stringify(requestOptions.body);
-
         authFetch('/api/posts', requestOptions)
             .then(response => {
                 if (!response.ok) {
@@ -181,8 +233,9 @@ class PostCreator extends React.Component {
             })
     }
 
+    /* Render the post creator with form for post data submission */
     render() {
-        const { markdown, errors } = this.state;
+        const { contentType, contentIdx, errors } = this.state;
         return this.state.communities && (
             <Card className="mt-4">
                 <Card.Header className="pt-4">
@@ -202,18 +255,21 @@ class PostCreator extends React.Component {
 
                         <Form.Group controlId="createPostText">
                             <Form.Label className="d-flex justify-content-between">
-                                Post Content:
-                                {markdown ? " Markdown" : " Text"}
-                                <Button variant="outline-secondary" onClick={this.handleContentSwitch}>Switch To {markdown ? "Text" : "Markdown"} Editor</Button>
+                                Post Content: {contentType}
+                                <Button size="sm" variant="outline-secondary" onClick={this.handleContentSwitch}>Switch To {contentTypeArr[(contentIdx + 1) % 3]} Editor</Button>
                             </Form.Label>
                             <Form.Control as="textarea"
                                 rows={4}
-                                placeholder="Moooo"
+                                placeholder={contentIdx === 2 ? "Moooo 1\nMoooo 2\nMoooo 3" : "Moooo"}
                                 name="body"
                                 onChange={this.handleChange.bind(this)}
                                 value={this.state.body} />
 
-                            {markdown && <MarkdownPreviewer body={this.state.body} handleChange={this.handleChange} />}
+                            {contentIdx === 1 && <MarkdownPreviewer body={this.state.body} handleChange={this.handleChange} />}
+                            {contentIdx === 2 && <Poll customStyles={{theme: "cyan"}} noStorage onVote={() => {}} answers={this.state.body.split("\n").map(item => ({
+                                "option": item,
+                                "votes": 0,
+                            }))} />}
 
                         </Form.Group>
 

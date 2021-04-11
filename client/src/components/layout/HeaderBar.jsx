@@ -1,15 +1,15 @@
 import React, { Component } from "react";
+import { Form, FormControl, Button } from "react-bootstrap";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
 import Image from "react-bootstrap/Image";
 import { logout, useAuth, authFetch } from "../../auth";
-import defaultProfile from "../../images/default_profile.png";
 import logo from "../../images/logo.svg";
 // import logo from "../images/logo.png";
 import { useState, useEffect, useContext } from "react";
+import { useHistory } from "react-router-dom";
 
 
 import {
@@ -23,8 +23,9 @@ import {
 } from "react-bootstrap-icons";
 
 import { Link } from "react-router-dom";
-var md5 = require("md5");
+var md5 = require("md5"); //hash used by gravatar for email associated with profile picture 
 
+/* HeaderBar component is the main navigation bar that appears on every page. */
 function HeaderBar() {
 
   const [logged] = useAuth();
@@ -33,7 +34,8 @@ function HeaderBar() {
   const [username, setUsername] = useState(null);
   const [hasSiteRole, setHasSiteRole] = useState(null);
   const [isLoading, setIsLoading] = useState(true)
-
+  const [query, setQuery] = useState("");
+  let history = useHistory();
 
   useEffect(() => {
     async function fetchData() {
@@ -52,13 +54,13 @@ function HeaderBar() {
             logout();
           }
         }
-        ).catch(() => {})
+        ).catch(() => { })
     }
 
     fetchData();
   }, []);
 
-
+  //Returns JSX for a navbar component with links to pages in the site 
   return (
     <Navbar bg="primary" variant="dark" expand="lg" {...(!logged ? { className: 'justify-content-center' } : {})}>
       <Navbar.Brand as={Link} to="/">
@@ -95,15 +97,20 @@ function HeaderBar() {
 
             <Nav>
 
+            <Form inline onSubmit={(e) => {
+              // e.preventDefault();
+              history.push('/search/' + query);
+            }}>
+              <FormControl type="text" placeholder="Search posts" className="mr-sm-2" value={query} onChange={e => setQuery(e.target.value)} />
+            </Form>
+
               <DropdownButton
-                // as={Link}
-                // to="/user-profile"
                 variant="outline-light"
                 title={
                   <span>
                     <Image
                       className="mr-3"
-                      src={"https://en.gravatar.com/avatar/" + email}
+                      src={"https://en.gravatar.com/avatar/" + email + "?d=wavatar"}
                       roundedCircle
                       width="25"
                       height="25"

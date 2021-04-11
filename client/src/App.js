@@ -22,7 +22,11 @@ import CommunityCreator from "./components/community/CommunityCreator";
 import SubscribedFeed from "./components/user/SubscribedFeed";
 import AdminKeyAuth from "./components/authentication/AdminKeyAuth";
 import ControlPanel from "./components/authentication/ControlPanel";
+<<<<<<< HEAD
 import SketchMenu from "./components/sketch/SketchMenu";
+=======
+import SearchFeed from "./components/search/SearchFeed";
+>>>>>>> master
 
 class App extends React.Component {
   constructor(props) {
@@ -61,6 +65,7 @@ class App extends React.Component {
                 <PrivateRoute path="/control-panel" component={ControlPanel} />
                 <PrivateRoute path="/admin-key" component={AdminKeyAuth} />
                 <PrivateRoute path="/forbidden" component={AccessForbidden} />
+                <PrivateRoute path="/search/:query" component={SearchFeed} />
                 <LoggedOutRoute path="/login" component={Login} />
                 <LoggedOutRoute path="/sign-up" component={SignUp} />
                 <Route path="/404" component={PageNotFound} />

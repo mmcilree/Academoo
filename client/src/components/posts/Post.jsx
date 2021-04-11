@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Card, Row, Col, Modal, Button } from "react-bootstrap";
+import { Card, Row, Col, Modal, Button, Image } from "react-bootstrap";
 import timeSince from "../../util/timeSince";
 import { Link, withRouter } from "react-router-dom";
 import { ThreeDots, PencilSquare, Trash } from "react-bootstrap-icons";
@@ -7,19 +7,22 @@ import Dropdown from "react-bootstrap/Dropdown";
 import PostEditor from "./PostEditor"
 import { authFetch } from '../../auth';
 import MarkdownRender from '../layout/MarkdownRender';
+import PollPost from '../polls/PollPost';
+import md5 from "md5";
+import defaultProfile from "../../images/default_profile.png";
 
+/* Post component is used to display a single post with all its data and options
+  The post data is passed in as props from the Post Viewer component */
 class Post extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentUser: "",
+      currentUser: null,
       showEdit: false,
       showDelete: false,
       updatedTitle: this.props.postData.title,
-      updatedBody: this.props.postData.content[0].text ? this.props.postData.content[0].text.text : this.props.postData.content[0].markdown.text,
       title: this.props.postData.title,
-      body: this.props.postData.content[0].text ? this.props.postData.content[0].text.text : this.props.postData.content[0].markdown.text,
-      contentType: this.props.postData.content[0].text ? "text" : "markdown",
+      contentType: Object.keys(this.props.postData.content[0])[0],
       cannotEdit: true,
       cannotDelete: true,
       errors: [],
@@ -27,7 +30,18 @@ class Post extends Component {
       isLoading: false,
       adminCommunities: [],
       isSiteMod: false,
+      body: "",
+      updatedBody: "",
+      avatarLoaded: !"https://cs3099user-a1.host.cs.st-andrews.ac.uk".includes(this.props.postData.author.host),
     }
+
+    switch(this.state.contentType) {
+      case "text": this.state.body = this.props.postData.content[0].text.text; break;
+      case "markdown": this.state.body = this.props.postData.content[0].markdown.text; break;
+      case "poll": this.state.body = this.props.postData.content[0].poll; break;
+    }
+
+    this.state.updatedBody = this.state.body;
     this.validateForm = this.validateForm.bind(this);
     this.handleSubmitEdit = this.handleSubmitEdit.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -37,6 +51,7 @@ class Post extends Component {
     this.fetchUserDetails();
   }
 
+  //Fetch the logged-in user's details
   async fetchUserDetails() {
     await authFetch("/api/get-user").then(response => response.json())
       .then(data => {
@@ -50,12 +65,27 @@ class Post extends Component {
       )
       .catch(error => this.setState({ error, isLoading: false }));
     this.checkPermissions();
+
+    if (this.props.postData.author.id && "https://cs3099user-a1.host.cs.st-andrews.ac.uk".includes(this.props.postData.author.host)) {
+      await authFetch('/api/users/' + this.props.postData.author.id)
+        .then(response => response.json())
+        .then(data => {
+          this.setState({
+            postEmail: data.email,
+            postAvatar: data.avatarUrl,
+            avatarLoaded: true,
+          });
+      })
+      .catch(error => this.setState({ userError: error, isLoading: false }));
+    }
   }
 
+  //checks if a user has permission to edit or delete a post 
+  // (i.e it's their own post or they have moderator permissions)
   checkPermissions() {
-    if (this.props.postData.author.id === this.state.currentUser || this.state.isSiteMod) {
+    if ((this.props.postData.author.id === this.state.currentUser || this.state.isSiteMod)) {
       this.setState({
-        cannotEdit: false,
+        cannotEdit: this.state.contentType === "poll",
         cannotDelete: false
       })
     }
@@ -72,6 +102,7 @@ class Post extends Component {
     }
   }
 
+  //deletes a post
   handleDeletePost(event) {
     event.preventDefault();
     const requestOptions = {
@@ -84,17 +115,32 @@ class Post extends Component {
       body: {}
 
     }
+
+    if (this.props.postData.host === undefined) { this.props.postData.host = "local" }
     if (this.props.postData.host !== "local") {
       requestOptions.body.external = this.props.postData.host;
     }
     requestOptions.body = JSON.stringify(requestOptions.body);
 
-    authFetch('/api/posts/' + this.props.postData.id, requestOptions);
+    authFetch('/api/posts/' + this.props.postData.id, requestOptions).then(r => r.status).then(statusCode => {
+      if (statusCode != 200) {
+        this.setState({ errors: ["Could not delete post"] })
+      }
+    }).catch(() => { });
+
     this.handleCloseDelete();
-    this.props.history.push("/communities/" + this.props.postData.community)
-    window.location.reload(false);
+
+    console.log(this.props.parentId);
+    if (this.props.postData.parentPost == null || this.props.postData.parentPost == "") {
+      this.props.history.push("/communities/" + (this.props.postData.host !== "local" ? this.props.postData.host + "/" : "") + this.props.postData.community);
+    } else {
+      this.props.history.push("/comments/" + (this.props.postData.host !== "local" ? this.props.postData.host + "/" : "") + this.props.parentId);
+    }
+
+    this.props.parentCallback(this.props.postData);
   }
 
+  //opens delete modal
   handleShowDelete(event) {
     event.preventDefault();
     this.setState({
@@ -103,12 +149,14 @@ class Post extends Component {
     });
   }
 
+  //closes delete modal
   handleCloseDelete = () => {
     this.setState({
       showDelete: false
     });
   }
 
+  //opens edit modal
   handleShowEdit(event) {
     event.preventDefault();
     this.setState({
@@ -117,6 +165,7 @@ class Post extends Component {
     });
   }
 
+  //closes edit modal
   handleCloseEdit = () => {
     this.setState({
       showEdit: false
@@ -133,9 +182,11 @@ class Post extends Component {
     });
   }
 
+  //validates the post editor form 
   validateForm() {
     const errors = [];
     if (this.state.updatedTitle.length === 0) {
+
       //post is a comment and has no title
       if (this.state.title.length !== 0) {
         errors.push("The title is invalid for a comment")
@@ -152,6 +203,7 @@ class Post extends Component {
     return errors;
   }
 
+  //logic to edit a post 
   handleSubmitEdit(event) {
     event.preventDefault();
 
@@ -208,22 +260,25 @@ class Post extends Component {
     }).catch(() => { });
   }
 
-
+  /* Renders a Post component using the Content Type Component to display the post's data correctly. */
   render() {
     const { postData, displayCommunityName } = this.props;
+    const id = (this.state.postEmail === undefined ? this.props.postData.author.id : this.state.postEmail);
     if (!postData.id) return <div />;
     return (
       <React.Fragment>
         <Row>
           <Col>
             <Card.Subtitle className="text-muted mb-2" style={{ fontSize: 12 }}>
-              {displayCommunityName &&
-
-                <b style={{ zIndex: 2, position: "relative" }}>
-                  <Link style={{ color: "inherit" }} to={"/communities/" + (postData.host ? postData.host + "/" : "") + postData.community}>
-                    {(postData.host ? postData.host + + "/" : "") + postData.community}
-                  </Link>{" · "}</b>}
-
+            <Image
+                className="mr-3"
+                src={id && this.state.avatarLoaded ? "https://en.gravatar.com/avatar/" + md5(id) + "?d=wavatar" : defaultProfile}
+                roundedCircle
+                width="42"
+                height="42"
+              >
+              </Image>
+              
               <b style={{ zIndex: 2, position: "relative" }}>
 
                 {postData.author.id ?
@@ -234,19 +289,27 @@ class Post extends Component {
               </b>
               {postData.author.host ? " from " + postData.author.host : ""}
 
+              {displayCommunityName &&
+                <b style={{ zIndex: 2, position: "relative" }}>
+                  {" · "}
+                  <Link style={{ color: "inherit" }} to={"/communities/" + (postData.host ? postData.host + "/" : "") + postData.community}>
+                    {(postData.host ? postData.host + "/" : "") + postData.community}
+                  </Link>
+                </b>
+              }
               {" · "} {timeSince(postData.created)} ago
         </Card.Subtitle>
           </Col>
           <Col xs={2} sm={1} className="mb-2">
             <Card.Subtitle>
-              <Dropdown drop="left">
+              {!this.props.hideOptions && <Dropdown drop="left">
                 <Dropdown.Toggle as={CustomToggle} />
                 <Dropdown.Menu size="sm" title="">
                   <Dropdown.Header>Options</Dropdown.Header>
                   <Dropdown.Item disabled={this.state.cannotEdit} onClick={this.handleShowEdit.bind(this)}><PencilSquare /> Edit Post</Dropdown.Item>
                   <Dropdown.Item disabled={this.state.cannotDelete} onClick={this.handleShowDelete.bind(this)}><Trash /> Delete Post</Dropdown.Item>
                 </Dropdown.Menu>
-              </Dropdown>
+              </Dropdown>}
             </Card.Subtitle>
           </Col>
         </Row>
@@ -281,6 +344,7 @@ class Post extends Component {
           contentType={this.state.contentType}
           body={this.state.updatedBody}
           postType={this.props.postType}
+          postID={postData.id}
         />
       </React.Fragment >
     );
@@ -289,7 +353,14 @@ class Post extends Component {
 
 export default withRouter(Post);
 
-const ContentTypeComponent = ({ contentType, body, postType }) => {
+/*Content Type Component specifies how to display different content types such as links, images and markdown*/
+const ContentTypeComponent = ({ contentType, body, postType, postID }) => {
+  var content = "";
+  if(contentType === "poll") {
+    content = body; 
+    body = "";
+  }
+
   const URL_REGEX = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
   const IMG_SUFFIX_REGEX = /\.(gif|jpe?g|tiff?|png|webp|bmp)$/i;
   const imageURLs = body.split(/\s+/).filter(part =>
@@ -333,6 +404,17 @@ const ContentTypeComponent = ({ contentType, body, postType }) => {
           </Card.Text>
         </React.Fragment>
       )
+    case "poll":
+      return (
+        <React.Fragment>
+          <Card.Text variant="top" style={{
+            whiteSpace: "nowrap",
+            maxHeight: "50vh", overflow: "hidden", textOverflow: "ellipsis"
+          }}>
+            <PollPost pollData={content} postID={postID} />
+          </Card.Text>
+        </React.Fragment>
+      )
     default:
       return <Card.Text>{renderText}</Card.Text>
   }
@@ -355,6 +437,7 @@ const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
   </a>
 ));
 
+//Heading renderer overrides default markdown rendering for headers
 const HeadingRenderer = (props) => {
   if (props.level === 1) {
     return <h3>{props.children}</h3>
@@ -369,6 +452,7 @@ const HeadingRenderer = (props) => {
   }
 }
 
+//Image renderer overrides default rendering for markdown renderer
 const ImageRenderer = (props) => {
   return <Card.Img src={props.src} style={{ width: "40vh" }} />
 }

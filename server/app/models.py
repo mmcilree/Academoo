@@ -2,6 +2,7 @@ from sqlalchemy.ext.declarative.api import instrument_declarative
 from sqlalchemy.orm import backref
 from app import db
 from datetime import datetime
+from datetime import timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 import time
 import uuid
@@ -12,7 +13,7 @@ def getUUID():
     return str(uuid.uuid4())
 
 def getTime():
-    return int(datetime.utcnow().timestamp())
+    return int(datetime.now(tz=timezone.utc).timestamp())
 
 # Table to hold roles given out by communities
 class UserRole(db.Model): 
@@ -110,7 +111,6 @@ class Community(db.Model):
     title = db.Column(db.String(1000), nullable=False)
     description = db.Column(db.String(1000))
     posts = db.relationship('Post', backref='community')
-    #administrators = db.relationship("User", secondary=administrating, backref='communities')
     subscribers = db.relationship("User", secondary=subscriptions, backref='subscribed_communities')
     roles_granted = db.relationship('UserRole', backref='community')
     default_role = db.Column(db.String(50), default="contributor", nullable=False)
@@ -171,3 +171,9 @@ class PostContentField(db.Model):
     post_id = db.Column(db.String(1000), db.ForeignKey('post.id'), primary_key=True)
     content_type = db.Column(db.String(50), primary_key=True)
     json_object = db.Column(types.JSON())
+
+    def __str__(self):
+        if self.content_type == "poll":
+            return f"{self.content_type} {self.json_object.get('question')}"
+        else:
+            return f"{self.content_type} {self.post.title} {self.json_object.get('text')}"

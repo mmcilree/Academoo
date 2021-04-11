@@ -11,20 +11,31 @@ import CommunitySubscribeButton from "./CommunitySubscribeButton";
  * component which shows all of the communities in a given instance
  */
 class CommunityFeed extends Component {
-  state = {
-    isLoadingCommunity: true,
-    isLoadingPosts: true,
-    posts: [],
-    currentCommunity: this.props.match.params.id,
-    error: null,
-    host: this.props.match.params.instance ? this.props.match.params.instance : "local",
-    newPostText: "",
-    isAdmin: false,
-    isSiteAdmin: false,
-    communityData: null,
-    isSubscribed: false,
-    userID: null,
-    notFound: false
+  constructor(props) {
+    super(props);
+    this.parentCallback = this.parentCallback.bind(this);
+
+    this.state = {
+      isLoadingCommunity: true,
+      isLoadingPosts: true,
+      posts: [],
+      currentCommunity: this.props.match.params.id,
+      error: null,
+      host: this.props.match.params.instance ? this.props.match.params.instance : "local",
+      newPostText: "",
+      isAdmin: false,
+      isSiteAdmin: false,
+      communityData: null,
+      isSubscribed: false,
+      userID: null,
+      notFound: false
+    }
+  }
+
+  parentCallback(post) {
+    this.setState({
+      posts: this.state.posts.filter(p => p.id !== post.id),
+    });
   }
 
   componentDidMount() {
@@ -43,7 +54,7 @@ class CommunityFeed extends Component {
           isSubscribed: data.subscriptions.includes(this.state.currentCommunity),
           isSiteAdmin: data.site_roles.split(",").includes("site-admin")
         })
-        console.log(this.state.userID)
+        // console.log(this.state.userID)
         this.fetchPosts()
       }).catch(() => {})
 
@@ -124,7 +135,7 @@ class CommunityFeed extends Component {
    * method which renders a community, its relevant info and the posts on this community
    */
   render() {
-    console.log(this.state)
+    // console.log(this.state)
     const { isLoadingPosts, isLoadingCommunity, posts, error, currentCommunity,  host, communityData, isAdmin, isSiteAdmin } = this.state;
     const popover = (
       <Popover id="popover-basic">
@@ -150,7 +161,7 @@ class CommunityFeed extends Component {
                   height="40"></img></Spinner>
                 <span>Loading... </span></h2>}
 
-            <CommunitySubscribeButton community={this.state.currentCommunity} external={this.state.instance === "local" ? null : this.state.instance}/>
+            <CommunitySubscribeButton community={this.state.currentCommunity} external={this.state.host === "local" ? null : this.state.host}/>
           </div>
 
           <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>
@@ -158,7 +169,7 @@ class CommunityFeed extends Component {
 
         </Card.Header>
         <Card.Body>
-          {(isAdmin || isSiteAdmin) &&
+          {(isAdmin || (isSiteAdmin && host == "local")) &&
             <Alert className="d-flex justify-content-between align-itemsp-center" variant="primary">You are an admin!
             <Link to={"/communities/" + currentCommunity + "/manage"}>
                 Manage Community
@@ -167,7 +178,7 @@ class CommunityFeed extends Component {
           <MiniPostCreator currentCommunity={currentCommunity} host={host} />
           {error ? <Alert variant="warning">Error fetching posts: {error}</Alert> : null}
           {!isLoadingPosts ? (
-            <PostViewer posts={posts} />
+            <PostViewer posts={posts} parentCallback={this.parentCallback} />
           ) : (
               <h3>Loading Posts...</h3>
             )}

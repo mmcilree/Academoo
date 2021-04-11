@@ -1,11 +1,13 @@
 from app import db, guard
 from app.models import User, Community, Post, UserRole, PostContentField, UserVote, getTime, PostTag, UserSubscription
+from flask import current_app
 from sqlalchemy import desc
 import json
 from uuid import UUID
 import re
 from utils import *
 from sqlalchemy.sql.elements import Null
+from fuzzywuzzy import process, fuzz
 
 # Add new community to db
 def createCommunity(community_id, title, description, admin):
@@ -189,7 +191,7 @@ def createUser(username, email, password):
             user_id=username,
             email=email,
             password_hash=guard.hash_password(password),
-            host="Academoo",
+            host=current_app.config["HOST"],
         ))
         db.session.commit()
         return (None, 200)
@@ -408,6 +410,30 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     
     return (post_dicts, 200)
 
+def searchPosts(query):
+    posts = {p.post_id: str(p) for p in PostContentField.query.all()}
+    ratios = process.extract(query, posts, scorer=fuzz.token_set_ratio, limit=25)
+    print(ratios)
+    
+    post_ids = {res[2]: idx for idx, res in enumerate(ratios) if res[1] >= 70}
+    ret = sorted(Post.query.filter(Post.id.in_(post_ids)).all(), key=lambda x: post_ids[x.id])
+    post_dicts = [
+    {
+        "id": post.id, 
+        "community": post.community_id, 
+        "parentPost": post.parent_id, 
+        "children": [comment.id for comment in post.comments], 
+        "title": post.title, 
+        "content": [{cont_obj.content_type: cont_obj.json_object} for cont_obj in post.content_objects], 
+        "author": {"id": post.author.user_id if post.author else None, "host": post.author.host if post.author else None}, 
+        "modified": post.modified, 
+        "created": post.created,
+        "upvotes": post.upvotes,
+        "downvotes": post.downvotes
+    } for post in ret]
+    
+    return (post_dicts, 200)
+
 # Create post and add to Post table
 def createPost(post_data, author_id, author_host):
     community_id = post_data["community"]
@@ -613,6 +639,7 @@ def downvotePost(user_id, post_id):
 
     if current_vote is None:
         new_vote = UserVote(user_id=user_id, post_id=post_id, value="downvote")
+        post.downvotes += 1
         db.session.add(new_vote)
         db.session.commit()
     # Need to ensure user cannot vote twice, so must be replaced
@@ -695,3 +722,37 @@ def getPostTags(post_id):
     if post is None:
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
     return [post_tag.tag for post_tag in post.tags], 200
+
+def votePoll(post_id, option, user_id):
+    if validate_post_id(post_id): return validate_post_id(post_id)
+
+    post = Post.query.filter_by(id = post_id).first()
+    if post is None: return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
+    
+    content = {post.content_objects[0].content_type: post.content_objects[0].json_object}
+    if any(user_id in ans["answers"] for ans in content["poll"]["results"]):
+        return ({"title": "Duplicate Votes", "message": "User has already voted!"}, 403)
+
+    print(content["poll"]["possibleAnswers"])
+    for opt in content["poll"]["possibleAnswers"]:
+        print(opt["answer"])
+        if opt["answer"] == option:
+            idx = opt["number"]
+            break
+    else:
+        idx = None
+
+    if idx is None: # Don't change to pythonic way since 0 will result in true as well
+        return ({"title": "Invalid option", "message": "The selected option does not exist!"}, 400)
+    
+    content["poll"]["results"][idx]["answers"].append(user_id)
+
+    for content_field in post.content_objects:
+        db.session.delete(content_field)
+    
+    content_field = PostContentField(post_id=post.id, content_type="poll", json_object=content["poll"])
+    db.session.add(content_field)
+
+    db.session.commit()
+
+    return None, 200

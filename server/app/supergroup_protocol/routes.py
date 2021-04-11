@@ -231,8 +231,12 @@ def edit_post(id):
 
 @bp.route("/posts/<id>", methods=["DELETE"]) ################################### NO EXTERNAL FIELD FOR DELETING ON OTHER SERVERS :(
 def delete_post(id):
-    external = request.args.get("external")
+    if request.json is not None:
+        external = request.json.get("external", None)
+    else: external = None # Changed from request.json.get("external") as external not field in create_post json
 
+    print(external)
+    
     host = request.headers.get("Client-Host")
     requester_str = request.headers.get("User-ID")
     if not host or not requester_str: return jsonify(client_host_error), 400
@@ -249,4 +253,4 @@ def delete_post(id):
         return respond_with_action(actions.deletePost(id, requester))
     else:
         headers = {"Client-Host": host, "User-ID": requester_str}
-        return instance_manager.delete_post(external, request.json, id, headers) # NOTE: wait why does delete post have json?
+        return instance_manager.delete_post(external, request.json, id, headers) # NOTE: wait why does delete post have json? # NOTE: because it could be error message

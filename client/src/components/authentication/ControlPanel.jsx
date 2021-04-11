@@ -16,7 +16,7 @@ import { authFetch } from "../../auth";
 import { Typeahead, Menu, MenuItem } from 'react-bootstrap-typeahead';
 import ModeratorControls from "./ModeratorControls";
 
-
+/* Control Panel component with settings for site-wide admins and moderators */
 class ControlPanel extends Component {
     constructor(props) {
         super(props);
@@ -48,6 +48,7 @@ class ControlPanel extends Component {
         this.fetchUsers(this.state.host);
     }
 
+    //Fetch details of logged-in user
     async fetchUserDetails() {
         await authFetch("/api/get-user").then(response => response.json())
             .then(data =>
@@ -61,6 +62,7 @@ class ControlPanel extends Component {
             .catch(error => this.setState({ clientErrors: error, isLoading: false }));
     }
 
+    //fetch all the instances
     async fetchInstances() {
         await fetch("/api/get-instances")
             .then(response => response.json())
@@ -86,6 +88,7 @@ class ControlPanel extends Component {
         this.fetchUsers(name);
     }
 
+    //input validation of the user roles form 
     validateUserRolesForm() {
         const errors = [];
         if (this.state.selected[0].user.length === 0 || this.state.role.length === 0) {
@@ -99,6 +102,7 @@ class ControlPanel extends Component {
         return errors;
     }
 
+    //submit a user role to update the site-wide role for a user or remove their site roles
     handleSubmit(event) {
         event.preventDefault();
         const errors = this.validateUserRolesForm();
@@ -171,6 +175,7 @@ class ControlPanel extends Component {
         }
     }
 
+    /* Render the control panel component with different controls for site Admins and Moderators */
     render() {
         const { isLoading, isAdmin, isModerator } = this.state;
         return (
@@ -183,7 +188,6 @@ class ControlPanel extends Component {
                                 <Card.Body>
                                     <Card.Title>Assign User Role</Card.Title>
                                     <Form onSubmit={this.handleSubmit.bind(this)}>
-                                        {/* <Form.Label>Assign User Role</Form.Label> */}
                                         <Form.Row>
                                             <Form.Group as={Col} xs={12} sm={12} md={12} lg={6}>
                                                 <InputGroup>
@@ -204,9 +208,7 @@ class ControlPanel extends Component {
                                                             <Menu {...menuProps} maxHeight="500%">
                                                                 {results.map((result, index) => (
                                                                     <MenuItem option={result} position={index} key={index}>
-                                                                        {/* <small className="text-muted">{result.host + ":  "}</small> */}
                                                                         {result.user}
-
                                                                     </MenuItem>
                                                                 ))}
                                                             </Menu>
