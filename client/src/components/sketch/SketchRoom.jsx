@@ -1,6 +1,8 @@
 import React from 'react';
 import Whiteboard from './Whiteboard';
 import { authFetch } from '../../auth';
+import logo from "../../images/logo.svg";
+import {Card, Spinner} from "react-bootstrap";
 
 import io from "socket.io-client";
 
@@ -86,8 +88,16 @@ class SketchRoom extends React.Component {
 
 
     render() {
-        return <Whiteboard history={this.props.history} code={this.state.code} onSketchChange={this.onSketchChange.bind(this)} receivedJson={this.state.receivedJson} setReceivedJson={this.setReceivedJson.bind(this)} jsonValue={this.state.whiteboardJSON} joinMsg={this.state.joinMsg} />
-    }
+        return this.state.ready ?
+            <Whiteboard history={this.props.history} code={this.state.code} onSketchChange={this.onSketchChange.bind(this)} receivedJson={this.state.receivedJson} setReceivedJson={this.setReceivedJson.bind(this)} jsonValue={this.state.whiteboardJSON} joinMsg={this.state.joinMsg} />
+            : <Card className="mt-3">
+                <Card.Body>
+                <h1 className="mt-3">
+                <Spinner animation="border" role="status" variant="light">
+                    <img src={logo} width="40" height="40"></img></Spinner> Waiting to join Sketchamoo Room...</h1>
+                </Card.Body>
+            </Card>
+        }
 }
 
 export default SketchRoom;
