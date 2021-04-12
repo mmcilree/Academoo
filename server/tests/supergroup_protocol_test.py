@@ -12,7 +12,6 @@ headers_with_fake_user = dict(headers, **{"User-ID": "nonexistent"})
 
 
 def test_config():
-    assert not create_app().testing
     assert create_app(TestConfig).testing
 
 # Supergroup protocol
