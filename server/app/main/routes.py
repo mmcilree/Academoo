@@ -301,6 +301,8 @@ def on_message(data):
     room = data['room']
     print("message received")
     send(message, room=room, include_self=False)
+
+
 @bp.route("/search")
 @auth_required
 def search():

@@ -11,6 +11,8 @@ click==7.1.2
 coverage==5.5
 cryptography==3.4.6
 Deprecated==1.2.10
+dnspython==1.16.0
+eventlet==0.30.2
 Flask==1.1.2
 Flask-Authorize==0.2.2
 flask-buzz==0.1.15
@@ -20,7 +22,9 @@ Flask-Migrate==2.5.3
 flask-praetorian==1.0.0
 Flask-SocketIO==5.0.1
 Flask-SQLAlchemy==2.4.4
+frozendict==1.2
 fuzzywuzzy==0.18.0
+greenlet==1.0.0
 gunicorn==20.0.4
 idna==2.10
 importlib-metadata==3.10.0
@@ -51,8 +55,8 @@ python-dateutil==2.8.1
 python-dotenv==0.15.0
 python-editor==1.0.4
 python-engineio==4.0.1
-python-socketio==5.1.0
 python-Levenshtein==0.12.2
+python-socketio==5.1.0
 pytzdata==2020.1
 requests==2.25.0
 requests-mock==1.8.0
@@ -66,4 +70,3 @@ urllib3==1.26.1
 Werkzeug==1.0.1
 wrapt==1.12.1
 zipp==3.4.1
-

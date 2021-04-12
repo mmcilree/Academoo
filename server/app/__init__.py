@@ -34,7 +34,7 @@ def create_app(config_class=Config):
     guard.init_app(app, User)
     if not app.config["TESTING"]:
         socketio.init_app(app, cors_allowed_origins="*")
-        socketio.run(app)
+        if os.environ.get("FLASK_ENV") != "production": socketio.run(app)
 
     url_prefix = "/" if os.environ.get("FLASK_ENV") == "production" else "/api"
 
