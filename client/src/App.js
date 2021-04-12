@@ -50,7 +50,8 @@ class App extends React.Component {
               <PrivateRoute exact path="/communities/:id/manage" component={CommunityManager} />
               <PrivateRoute path="/communities/:instance/:id" component={CommunityFeed} />
               <PrivateRoute path="/create-post" component={PostCreator} />
-              <PrivateRoute exact path="/sketchamoo" component={Whiteboard} />
+              <PrivateRoute exact path="/sketchamoo" component={SketchMenu} />
+              <PrivateRoute exact path="/sketchamoo/:id" component={SketchRoom} />
               <PrivateRoute exact path="/comments/:id" component={CommentsViewer} />
               <PrivateRoute path="/comments/:instance/:id" component={CommentsViewer} />
               <PrivateRoute path="/user-settings" component={UserSettings} />
