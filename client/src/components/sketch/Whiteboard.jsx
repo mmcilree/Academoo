@@ -1,6 +1,6 @@
 import React from 'react';
 import { SketchField, Tools } from 'react-sketch-whiteboard';
-import { Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth, CursorText, PlusCircle, Share, ArrowCounterclockwise, ArrowClockwise, Eraser } from 'react-bootstrap-icons';
+import { Clipboard, Link45deg, Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth, CursorText, PlusCircle, Share, ArrowCounterclockwise, ArrowClockwise, Eraser } from 'react-bootstrap-icons';
 import { CompactPicker } from 'react-color';
 import {
     Card,
@@ -13,9 +13,10 @@ import {
     Dropdown,
     InputGroup,
     Tooltip,
-    Container
+    Toast,
+
 } from 'react-bootstrap';
-import { Route } from 'react-router-dom';
+import { Route, Link } from 'react-router-dom';
 import { authFetch } from '../../auth';
 
 class Whiteboard extends React.Component {
@@ -29,20 +30,45 @@ class Whiteboard extends React.Component {
             canUndo: false,
             canRedo: false,
             text: "",
-            enableRemoveSelected: false
+            codeCopied: false,
+            enableRemoveSelected: false,
+            receivedUpdate: false,
+            showNotif: true,
         }
     }
 
-    onSketchChange = () => {
+    componentDidUpdate(prevProps) {
+        if (this.props.joinMsg !== prevProps.joinMsg) {
+            this.setState({ showNotif: true });
+        }
+    }
+
+    onSketchChange() {
         let prev = this.state.canUndo;
         let now = this.sketch.canUndo();
         if (prev !== now) {
             this.setState({ canUndo: now });
         }
+
+        // console.log(this.props.receivedJson);
+        if (!this.props.receivedJson) {
+            this.sendUpdate()
+        } else {
+            this.props.setReceivedJson();
+        }
+
     };
 
+    sendUpdate() {
+        this.props.onSketchChange(this.sketch.toJSON());
+    }
+
+    getUpdate() {
+        console.log(this.props.jsonValue);
+        this.sketch.fromJSON(this.props.jsonValue);
+    }
+
     setTool(event) {
-        console.log(event.target.value);
         this.setState({
             currentTool: event.target.value,
             enableRemoveSelected: event.target.value === Tools.Select
@@ -50,7 +76,6 @@ class Whiteboard extends React.Component {
     }
 
     clear = () => {
-        console.log("here")
         this.sketch.clear();
         this.sketch.setBackgroundFromDataUrl('');
         this.setState({
@@ -70,7 +95,6 @@ class Whiteboard extends React.Component {
     }
 
     addText = (event) => {
-        console.log(this.state)
         event.preventDefault();
         this.sketch.addText(this.state.text);
         this.setState({ text: "" });
@@ -109,7 +133,7 @@ class Whiteboard extends React.Component {
                 a.click();
             }
             );
-        }).catch(() => {});
+        }).catch(() => { });
     }
 
     share = () => {
@@ -125,6 +149,7 @@ class Whiteboard extends React.Component {
 
     render() {
         const { currentTool, lineColour, backgroundColour, lineWidth, text, selected } = this.state;
+        const closeNotif = () => this.setState({ showNotif: false });
         const colourPopover = (
             <Popover id="popover-basic">
                 <Popover.Title as="h3">Pick a Colour!</Popover.Title>
@@ -154,13 +179,46 @@ class Whiteboard extends React.Component {
             </Popover>
         );
 
-        console.log(lineWidth)
         return (
             <Card className="mt-4 p-4" style={{ width: '1200px' }}>
-                <h1>Whiteboard</h1>
-                <p>Share your moosings on the sketch-a-moo!</p>
-                <Card>
-                    <Card.Header className="d-flex justifycontent-between">
+                <div className="d-flex justify-content-between">
+                    <div>
+                        <h1>Whiteboard</h1>
+                        <p>Share your moosings on the sketch-a-moo!</p>
+                    </div>
+
+                    <Toast show={this.state.showNotif} onClose={closeNotif.bind(this)}>
+                        <Toast.Header>
+                            <img src="holder.js/20x20?text=%20" className="rounded mr-2" alt="" />
+                            <strong className="mr-auto">Changed Participants!</strong>
+                        </Toast.Header>
+                        <Toast.Body>{this.props.joinMsg}</Toast.Body>
+                    </Toast>
+                </div>
+
+                <Card className="mt-4">
+                    <Card.Header className="d-flex justify-content-left">
+                        <h4 className="m-2">Code: {this.props.code}</h4>
+                        <Button className="m-1" variant="outline-secondary" onClick={() => { navigator.clipboard.writeText(this.props.code); this.setState({ codeCopied: true }) }}>
+                            {this.state.codeCopied ? <span>Code Copied! </span> : <span><Clipboard className="m-1" /> Copy Code</span>}
+                        </Button>
+                        <Link to={
+                            {
+                                pathname: "/create-post",
+                                state: {
+                                    body: "Join our shared whiteboard here: " + window.location,
+                                    community: "",
+                                    host: ""
+                                }
+
+                            }}
+                        >
+                            <Button variant="outline-secondary" className="m-1">
+                                <Link45deg /> Send Invite Link
+                                        </Button>
+                        </Link>
+                    </Card.Header>
+                    <Card.Header className="d-flex justify-content-between">
                         <ToggleButtonGroup name="tools" >
                             <ToggleButton type="radio" value={Tools.Select}
                                 onClick={this.setTool.bind(this)}
@@ -264,17 +322,18 @@ class Whiteboard extends React.Component {
                             lineColor={lineColour}
                             lineWidth={lineWidth}
                             backgroundColor={backgroundColour}
+                            value={this.props.jsonValue}
                             // canUndo={this.state.canUndo}
                             // canRedo={this.state.canRedo}
-                            // defaultValue={dataJson}
-                            forceValue
+                            defaultValue={this.props.jsonValue}
+                            // forceValue
                             onChange={this.onSketchChange.bind(this)}
                         />
                     </Card.Body>
                 </Card>
 
 
-            </Card>
+            </Card >
         );
     }
 }
