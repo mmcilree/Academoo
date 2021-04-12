@@ -6,8 +6,7 @@ import {Card, Spinner} from "react-bootstrap";
 
 import io from "socket.io-client";
 
-let socket = io.connect();
-
+const socket = io();
 
 
 class SketchRoom extends React.Component {
