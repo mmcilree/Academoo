@@ -217,7 +217,7 @@ class Instance(object):
     def create_post(self, data, headers):
         data.pop("external")
 
-        body, digest, date = self.get_request_data(f"post /fed/posts", headers.get("User-ID"), bytes(str(data), "utf-8"))
+        body, digest, date = self.get_request_data(f"post /fed/posts", headers.get("User-ID"), bytes(str(json.dumps(data)), "utf-8"))
         headers["Signature"] = get_signature(body, headers.get("User-ID"))
         headers["Digest"] = "sha-512=" + digest
         headers["Date"] = date
@@ -235,7 +235,7 @@ class Instance(object):
     def edit_post(self, data, id, headers):
         data.pop("external")
 
-        body, digest, date = self.get_request_data(f"put /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
+        body, digest, date = self.get_request_data(f"put /fed/posts/{id}", headers.get("User-ID"), bytes(str(json.dumps(data)), "utf-8"))
         headers["Signature"] = get_signature(body, headers.get("User-ID"))
         headers["Digest"] = "sha-512=" + digest
         headers["Date"] = date
@@ -251,7 +251,7 @@ class Instance(object):
     def delete_post(self, data, id, headers):
         # data.pop("external")
 
-        body, digest, date = self.get_request_data(f"delete /fed/posts/{id}", headers.get("User-ID"), bytes(str(data), "utf-8"))
+        body, digest, date = self.get_request_data(f"delete /fed/posts/{id}", headers.get("User-ID"), bytes(str(json.dumps(data)), "utf-8"))
         headers["Signature"] = get_signature(body, headers.get("User-ID"))
         headers["Digest"] = "sha-512=" + digest
         headers["Date"] = date

@@ -175,7 +175,7 @@ def create_post():
         message, status_code = verify_request(
             headers=request.headers, 
             request_target=f"post /fed/posts",
-            body=bytes(str(request.json), "utf-8")
+            body=request.data
         )
         if status_code != 200: return jsonify(message), status_code
 
@@ -220,7 +220,7 @@ def edit_post(id):
         message, status_code = verify_request(
             headers=request.headers, 
             request_target=f"put /fed/posts",
-            body=bytes(str(request.json), "utf-8")
+            body=request.data
         )
         if status_code != 200: return jsonify(message), status_code
 
@@ -246,7 +246,7 @@ def delete_post(id):
         message, status_code = verify_request(
             headers=request.headers, 
             request_target=f"delete /fed/posts/{id}",
-            body=bytes(str(request.json), "utf-8")
+            body=request.data
         )
         if status_code != 200: return jsonify(message), status_code
 
