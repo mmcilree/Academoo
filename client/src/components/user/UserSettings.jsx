@@ -225,7 +225,7 @@ class UserSettings extends Component {
                   <Form.Text>New Password</Form.Text>
                   <Form.Control type="password" name="newPassword" onChange={this.handleChange.bind(this)} value={this.state.newPassword} />
                 </Form.Group>
-                <Button type="submit" variant="secondary">Change Password</Button>
+                <Button type="submit" name = "settingsSubmit" variant="secondary">Change Password</Button>
               </Form>
             </Card.Body>
           </Card>
@@ -240,7 +240,7 @@ class UserSettings extends Component {
                     onChange={this.handleChange.bind(this)}
                     value={this.state.new_bio} />
                 </Form.Group>
-                <Button variant="secondary" type="submit">
+                <Button variant="secondary" name = "bioSubmit" type="submit">
                   Update Bio
                   </Button>
               </Form>
@@ -281,7 +281,7 @@ class UserSettings extends Component {
                   <Form.Text>Enter your password to confirm: </Form.Text>
                   <Form.Control type="password" name="confirmPassword" onChange={this.handleChange.bind(this)} value={this.state.confirmPassword}></Form.Control>
                   </Form.Group>
-                <Button variant="secondary" type="submit" disabled={(this.state.username !== this.state.confirmUsername)}>Delete Account</Button>
+                <Button variant="secondary" name = "deleteButton" type="submit" disabled={(this.state.username !== this.state.confirmUsername)}>Delete Account</Button>
               </Form>
             </Card.Body>
           </Card>
