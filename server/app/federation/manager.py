@@ -20,7 +20,8 @@ class Manager(object):
                 "nebula": Instance("https://nebula0.herokuapp.com"),
                 "fritter": Instance("https://bc89.host.cs.st-andrews.ac.uk/"),
                 "wabberjocky": Instance("https://cs3099user-a4.host.cs.st-andrews.ac.uk/"),
-                "jha10": Instance("https://cs3099user-a10.host.cs.st-andrews.ac.uk")  
+                "jha10": Instance("https://cs3099user-a10.host.cs.st-andrews.ac.uk"),
+                "ribbit": Instance("https://cs3099user-a6.host.cs.st-andrews.ac.uk")
             }
         else:
             self.instances = {
@@ -50,8 +51,9 @@ class Manager(object):
                 for child_url in ret.json():
                     child_url = format_url(child_url)
                     if child_url in memo: continue
-                    if self.add_instance(host=urlparse(child_url).netloc, url=child_url):
-                        stack.append(child_url)
+
+                    self.add_instance(host=urlparse(child_url).netloc, url=child_url)
+                    stack.append(child_url)
                                 
     def create_post(self, host, data, headers):
         return self.instances[host].create_post(data, headers)
