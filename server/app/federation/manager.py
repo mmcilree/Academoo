@@ -20,8 +20,8 @@ class Manager(object):
                 "nebula": Instance("https://nebula0.herokuapp.com"),
                 "fritter": Instance("https://bc89.host.cs.st-andrews.ac.uk/"),
                 "wabberjocky": Instance("https://cs3099user-a4.host.cs.st-andrews.ac.uk/"),
-                "jha10": Instance("https://cs3099user-a10.host.cs.st-andrews.ac.uk"),
-                "ribbit": Instance("https://cs3099user-a6.host.cs.st-andrews.ac.uk")
+                # "jha10": Instance("https://cs3099user-a10.host.cs.st-andrews.ac.uk"),
+                # "ribbit": Instance("https://cs3099user-a6.host.cs.st-andrews.ac.uk")
             }
         else:
             self.instances = {

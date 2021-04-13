@@ -410,10 +410,10 @@ def getFilteredPosts(limit, community_id, min_date, author, host, parent_post, i
     
     return (post_dicts, 200)
 
+# Given a query, return a list of posts relevant to the query
 def searchPosts(query):
     posts = {p.post_id: str(p) for p in PostContentField.query.all()}
     ratios = process.extract(query, posts, scorer=fuzz.token_set_ratio, limit=25)
-    print(ratios)
     
     post_ids = {res[2]: idx for idx, res in enumerate(ratios) if res[1] >= 70}
     ret = sorted(Post.query.filter(Post.id.in_(post_ids)).all(), key=lambda x: post_ids[x.id])
@@ -723,6 +723,7 @@ def getPostTags(post_id):
         return ({"title": "could not find post id " + post_id, "message": "Could not find post id, use another post id"}, 404)
     return [post_tag.tag for post_tag in post.tags], 200
 
+# Add a vote to a poll
 def votePoll(post_id, option, user_id):
     if validate_post_id(post_id): return validate_post_id(post_id)
 
