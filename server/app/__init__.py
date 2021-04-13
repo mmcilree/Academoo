@@ -32,6 +32,8 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
     guard.init_app(app, User)
+    instance_manager.discover_instances()
+    
     if not app.config["TESTING"]:
         socketio.init_app(app, cors_allowed_origins="*")
         if os.environ.get("FLASK_ENV") != "production": socketio.run(app)
