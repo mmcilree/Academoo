@@ -18,6 +18,8 @@ let username;
 let password;
 let deleteButton;
 
+/*Tests to check that the user settings component works properly*/
+
 const history = createMemoryHistory();
 jest.mock('../auth', () => {
     const { authFetchMock } = require('./fetchMocks');

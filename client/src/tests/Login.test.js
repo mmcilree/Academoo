@@ -17,6 +17,8 @@ let passwordField;
 let submitButton;
 let loginForm;
 
+/*Tests to check that the login component works*/
+
 const history = createMemoryHistory();
 jest.mock('../auth', () => {
     const { authFetchMock } = require('./fetchMocks');
