@@ -19,6 +19,7 @@ import {
 import { Route, Link } from 'react-router-dom';
 import { authFetch } from '../../auth';
 
+/* Whiteboard component displays a canvas with drawing tools that can be shared with other users */
 class Whiteboard extends React.Component {
     constructor(props) {
         super(props);
@@ -37,6 +38,7 @@ class Whiteboard extends React.Component {
         }
     }
 
+    /* Update messages from room notifying users joining or leaving */
     componentDidUpdate(prevProps) {
         if (this.props.joinMsg !== prevProps.joinMsg) {
             this.setState({ showNotif: true });
@@ -44,13 +46,7 @@ class Whiteboard extends React.Component {
     }
 
     onSketchChange() {
-        // let prev = this.state.canUndo;
-        // let now = this.sketch.canUndo();
-        // if (prev !== now) {
-        //     this.setState({ canUndo: now });
-        // }
-
-        // console.log(this.props.receivedJson);
+        //Sends an update to all other users in room if the sketch changes
         if (!this.props.receivedJson) {
             this.sendUpdate()
         } else {
@@ -63,6 +59,7 @@ class Whiteboard extends React.Component {
         this.props.onSketchChange(this.sketch.toJSON());
     }
 
+    //Receives updates from another user in room and updates the sketch json
     getUpdate() {
         console.log(this.props.jsonValue);
         this.sketch.fromJSON(this.props.jsonValue);
@@ -80,8 +77,6 @@ class Whiteboard extends React.Component {
         this.sketch.setBackgroundFromDataUrl('');
         this.setState({
             backgroundColour: "white",
-            // canUndo: this.sketch.canUndo(),
-            // canRedo: this.sketch.canRedo(),
         })
     }
 
@@ -99,26 +94,6 @@ class Whiteboard extends React.Component {
         this.sketch.addText(this.state.text);
         this.setState({ text: "" });
     }
-
-    // undo = () => {
-    //     this.sketch.undo();
-    //     this.setState({
-    //         canUndo: this.sketch.canUndo(),
-    //         canRedo: this.sketch.canRedo(),
-    //     });
-    // };
-
-    // redo = () => {
-    //     this.sketch.redo();
-    //     this.setState({
-    //         canUndo: this.sketch.canUndo(),
-    //         canRedo: this.sketch.canRedo(),
-    //     });
-    // };
-
-    // remove = index => {
-    //     this.sketch.removeSelected();
-    // }
 
     download = () => {
         this.downloadURL(this.sketch.toDataURL(), "sketchamoo.png");
@@ -147,6 +122,7 @@ class Whiteboard extends React.Component {
         })
     }
 
+    /* Renders the canvas and whiteboard drawing and sharing tools */
     render() {
         const { currentTool, lineColour, backgroundColour, lineWidth, text, selected } = this.state;
         const closeNotif = () => this.setState({ showNotif: false });
@@ -238,15 +214,6 @@ class Whiteboard extends React.Component {
                             <ToggleButton type="radio" value={Tools.Pan}
                                 onClick={this.setTool.bind(this)}
                             ><ArrowsMove /></ToggleButton>
-                            {/* <ToggleButton type="radio" value={this.state.canUndo}
-                                disabled={!this.state.canUndo} onChange={this.undo}>
-                                <ArrowCounterclockwise />
-                            </ToggleButton> */}
-
-                            {/* <ToggleButton type="radio" value={this.state.canRedo}
-                                disabled={!this.state.canRedo} onChange={this.redo}>
-                                <ArrowClockwise />
-                            </ToggleButton> */}
 
                             <ToggleButton type="radio" value={this.state.enableRemoveSelected}
                                 disabled={!this.state.enableRemoveSelected} onChange={this.removeSelected}>
@@ -323,10 +290,7 @@ class Whiteboard extends React.Component {
                             lineWidth={lineWidth}
                             backgroundColor={backgroundColour}
                             value={this.props.jsonValue}
-                            // canUndo={this.state.canUndo}
-                            // canRedo={this.state.canRedo}
                             defaultValue={this.props.jsonValue}
-                            // forceValue
                             onChange={this.onSketchChange.bind(this)}
                         />
                     </Card.Body>
