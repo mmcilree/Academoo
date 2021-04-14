@@ -5,29 +5,9 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from flask.globals import current_app
 from utils import format_url
 from urllib.parse import urlparse
+import app
 
-import app # circular imports :(
-
-# def verify_signature(encoded_signature, pkey):
-#     ok = b"""(request-target): get /fed/posts?community=General
-# host: cs3099user-a1.host.cs.st-andrews.ac.uk
-# client-host: cs3099user-a1.host.cs.st-andrews.ac.uk
-# user-id: nnv2
-# date: Tue, 23 Mar 2021 14:23:01 GMT
-# digest: z4PhNX7vuL3xVChQ1m2AB9Yg5AULVxXcg/SpIdNs6c5H0NE8XYXysP+DGNKHfuwvY7kxvUdBeoGlODJ6+SfaPg=="""
-
-#     public_key = serialization.load_pem_public_key(pkey)
-
-#     decoded_signature = base64.b64decode(encoded_signature)
-#     ret = public_key.verify(
-#         decoded_signature,
-#         ok,
-#         padding.PKCS1v15(),
-#         hashes.SHA512()
-#     )
-
-#     print(ret)
-
+# Verify the incoming request, returns appropriate error message when invalid
 def verify_request(headers, request_target, body=b""):
     if not current_app.config["SIGNATURE_FEATURE"]: return None, 200
 
@@ -51,13 +31,14 @@ def verify_request(headers, request_target, body=b""):
 
         if not host or not signature: return {"title": "Bad Request", "message": "Signature Missing"}, 400
 
-        signature = signature.split("signature=")[-1].replace('"', '') # zzzzz
+        signature = signature.split("signature=")[-1].replace('"', '')
         
         if not instance.verify_signature(signature, request_target, headers, body=body):
             return {"title": "Permission Denied", "message": "Invalid Signature"}, 403
         
     return None, 200
 
+# Given a message, sign the message and return the encoded signature
 def generate_signature(body):
     with open("../.ssh/private.pem", "rb") as key_file:
         private_key = serialization.load_pem_private_key(
@@ -71,9 +52,9 @@ def generate_signature(body):
         hashes.SHA512()
     )
 
-    # Signature: keyId="rsa-global",algorithm="hs2019",headers="(request-target) host client-host user-id date digest",signature="<base64_signature>"
     return base64.b64encode(signature).decode("ascii")
 
+# Given a content body, return the SHA512 digest of the body
 def generate_digest(body):
     digest = hashes.Hash(hashes.SHA512())
     digest.update(body)

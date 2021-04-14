@@ -21,16 +21,11 @@ class TimeoutRequestsSession(requests.Session):
 
 requests = TimeoutRequestsSession()
 
-def get_date(): # just why this instead of timestamp like a normal person??
+# Returns the current UTC date in a specific format
+def get_date():
     return datetime.now(tz=timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
 
-# NOTE: Some comments about the security protocol
-# What's the difference between host and client-host?
-# Why can't we have a nested json object instead of this string below that is so so complicated to parse
-# Date should really be a timestamp instead of a readable format. Only computers will look at this..
-# Also, what will happen when there is a >1second latency? The signature generated will be different because of the date
-# For consistency, can we not omit User-ID in the body to sign? It's so difficult to remove this cleanly from the string. 
-# Lastly, what do we generate digest from when it's a GET request? For now I just digest an empty string. 
+# Returns the signature message to put into the headers
 def get_signature(body, user_id=None):
     body = bytes(body, "utf-8")
     if(user_id):
@@ -40,6 +35,8 @@ def get_signature(body, user_id=None):
         
     return s.format(sig=generate_signature(body))
 
+# This class represents an external instance. 
+# Federation with other instances are encapsulated and abstracted away here.
 class Instance(object):
     def __init__(self, url):
         self.url = url
@@ -48,11 +45,10 @@ class Instance(object):
         self.public_key = None
         self.get_public_key()
 
-        # Possibly the worst signature specification possible
         self.request_data = "\n".join(
             (
                 "(request-target): {req}", 
-                "host: {url}", # this needs changing probs
+                "host: {url}",
                 "client-host: {client_host}", 
                 "user-id: {user_id}", 
                 "date: {date}", 
@@ -63,7 +59,7 @@ class Instance(object):
         self.request_data_without_user = "\n".join(
             (
                 "(request-target): {req}", 
-                "host: {url}", # this needs changing probs
+                "host: {url}",
                 "client-host: {client_host}", 
                 "date: {date}", 
                 "digest: SHA-512={digest}"
@@ -73,8 +69,8 @@ class Instance(object):
     def __repr__(self):
         return f"(URL: {self.url}, PUB-KEY: {self.public_key})"
     
+    # Get the instance's public key
     def get_public_key(self):
-        # Getting the instance's public key
         try:
             req = requests.get(urljoin(self.url, "/fed/key"), timeout=3)
             if req.status_code == 200: 
@@ -84,6 +80,7 @@ class Instance(object):
 
         return False
     
+    # Return request data string that needs to be signed
     def get_request_data(self, request_target, user_id=None, body=b""):
         date = get_date()
         if user_id:
@@ -104,10 +101,9 @@ class Instance(object):
                 client_host=current_app.config["HOST"]
             )
 
-        print(f"Sending {request_target}"); print(ret)
-
         return (ret, generate_digest(body), date)
 
+    # Given an encoded signature, return whether it is valid or not
     def verify_signature(self, encoded_signature, request_target, headers, body):
         if not self.public_key and not self.get_public_key(): return False
         date = get_date()
@@ -130,8 +126,6 @@ class Instance(object):
                 client_host=urlparse(self.url).netloc
             )
 
-        print("Expected Message:"); print(message)
-
         public_key = serialization.load_pem_public_key(self.public_key)
         decoded_signature = base64.b64decode(encoded_signature)
 
@@ -147,6 +141,7 @@ class Instance(object):
 
         return True
     
+    # Return a list of all users when id not specified, otherwise return the specified user
     def get_users(self, id=None):
         request_target = f"/fed/users/{id}" if id else f"/fed/users"
         (body, digest, date) = self.get_request_data(request_target)
@@ -165,6 +160,7 @@ class Instance(object):
         except:
             return Response(status=ret.status_code)
 
+    # Return a list of post modification/creation timestamps
     def get_timestamps(self, community, headers):
         body, digest, date = self.get_request_data(f"get /fed/communities/{community}/timestamps", headers.get("User-ID"))
         headers["Signature"] = get_signature(body, headers.get("User-ID"))
@@ -176,7 +172,7 @@ class Instance(object):
             return None
         return ret.json()
 
-    # If the timestamp is different, then the cache is invalidated
+    # Return a list of posts belonging to a community
     def get_posts(self, community, headers):
         body, digest, date = self.get_request_data(f"get /fed/posts", headers.get("User-ID"))
         headers["Signature"] = get_signature(body, headers.get("User-ID"))
@@ -187,6 +183,7 @@ class Instance(object):
         if check_get_filtered_post(ret.content): return check_get_filtered_post(ret.content)
         return ret.json(), ret.status_code
 
+    # Return a post by id
     def get_post_by_id(self, id, headers):
         body, digest, date = self.get_request_data(f"get /fed/posts/{id}", headers.get("User-ID"))
         headers["Signature"] = get_signature(body, headers.get("User-ID"))
@@ -197,6 +194,7 @@ class Instance(object):
         if check_get_post(ret.content): return check_get_post(ret.content)
         return ret.json(), ret.status_code
 
+    # Return a list of all communities when id not specified, otherwise return details about the specified community
     def get_communities(self, headers, id=None):
         request_target = f"get /fed/communities/{id}" if id else f"get /fed/communities"
         body, digest, date = self.get_request_data(request_target, headers.get("User-ID"))
@@ -212,7 +210,6 @@ class Instance(object):
             if check_array_json(ret.content): return check_array_json(ret.content)
 
         return jsonify(ret.json()), ret.status_code
-
 
     def create_post(self, data, headers):
         data.pop("external")

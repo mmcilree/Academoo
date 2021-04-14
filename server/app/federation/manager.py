@@ -6,6 +6,9 @@ from utils import format_url
 import requests
 import time
 
+# This class is responsible for the management of external instances.
+# It can add and self discover new instances. The backend Flask server communicates with
+# the manager, which then redirects the requests to the correct instance to be handled.
 class Manager(object):
     def __init__(self, host):
         self.host = host
@@ -16,30 +19,24 @@ class Manager(object):
                 "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
                 "nebula": Instance("https://nebula0.herokuapp.com"),
                 "fritter": Instance("https://bc89.host.cs.st-andrews.ac.uk/"),
-                # "feddit": Instance("http://86.176.106.252:8000/"),
                 "wabberjocky": Instance("https://cs3099user-a4.host.cs.st-andrews.ac.uk/"),
-                "jha10": Instance("https://cs3099user-a10.host.cs.st-andrews.ac.uk")  
+                # "jha10": Instance("https://cs3099user-a10.host.cs.st-andrews.ac.uk"),
+                # "ribbit": Instance("https://cs3099user-a6.host.cs.st-andrews.ac.uk")
             }
         else:
             self.instances = {
                 "academoo": Instance("https://cs3099user-a1.host.cs.st-andrews.ac.uk/"),
                 "freddit": Instance("https://cs3099user-a7.host.cs.st-andrews.ac.uk/"),
                 "nebula": Instance("https://nebula0.herokuapp.com"),
-                "fritter": Instance("https://bc89.host.cs.st-andrews.ac.uk/"),
-                "feddit": Instance("http://86.176.106.252:8000/"),
-                "wabberjocky": Instance("https://cs3099user-a4.host.cs.st-andrews.ac.uk/"),
-                "jha10": Instance("https://cs3099user-a10.host.cs.st-andrews.ac.uk")  
             }
 
         # URL to Instance, used for public key retrieval
         self.url_to_instance = {}
         for inst in self.instances.values():
             self.url_to_instance[urlparse(inst.url).netloc] = inst
-        
-        self.discover_instances()
     
+    # Depth-First Search Algorithm to automatically discover new instances within the network
     def discover_instances(self):
-        # Depth-First Search with memoization in production?!? omg! Incredible. 
         memo = set()
         stack = [inst.url for inst in self.instances.values()]
 
@@ -54,8 +51,9 @@ class Manager(object):
                 for child_url in ret.json():
                     child_url = format_url(child_url)
                     if child_url in memo: continue
-                    if self.add_instance(host=urlparse(child_url).netloc, url=child_url):
-                        stack.append(child_url)
+
+                    self.add_instance(host=urlparse(child_url).netloc, url=child_url)
+                    stack.append(child_url)
                                 
     def create_post(self, host, data, headers):
         return self.instances[host].create_post(data, headers)
@@ -66,6 +64,8 @@ class Manager(object):
     def delete_post(self, host, data, id, headers):
         return self.instances[host].delete_post(data, id, headers)
 
+    # Returns the latest modification timestamp of a community.
+    # Used to determine whether cache needs updating
     def _get_latest_timestamp(self, host, community, headers):
         timestamps = self.instances[host].get_timestamps(community, headers)
         if timestamps is None:
