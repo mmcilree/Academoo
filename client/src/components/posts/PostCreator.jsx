@@ -8,6 +8,7 @@ import { authFetch } from '../../auth';
 import { Route } from 'react-router-dom';
 import { Menu, MenuItem, Typeahead } from 'react-bootstrap-typeahead';
 import Poll from 'react-polls';
+import { Dropdown, DropdownButton } from 'react-bootstrap';
 
 /* Post Creator component has a form for entering post information to create a new post */
 const contentTypeArr = ["Text", "Markdown", "Poll"];
@@ -102,12 +103,12 @@ class PostCreator extends React.Component {
 
     //toggle markdown or regular text post
     handleContentSwitch(event) {
-        const idx = (this.state.contentIdx + 1) % contentTypeArr.length;
-
-        this.setState({
-            contentType: contentTypeArr[idx],
-            contentIdx: idx,
-        })
+        // const idx = (this.state.contentIdx + 1) % contentTypeArr.length;
+        // const idx 
+        // this.setState({
+        //     contentType: contentTypeArr[idx],
+        //     contentIdx: idx,
+        // })
     }
 
     handleChange(event) {
@@ -152,7 +153,7 @@ class PostCreator extends React.Component {
             requestOptions.body.external = this.state.selected[0].host;
         }
 
-        switch(this.state.contentIdx) {
+        switch (this.state.contentIdx) {
             case 0: {
                 requestOptions.body.content.push({
                     text: {
@@ -172,15 +173,15 @@ class PostCreator extends React.Component {
             case 2: {
                 let options = this.state.body.split("\n");
                 if (options.length > 6) {
-                    let errors = this.state.errors;                
+                    let errors = this.state.errors;
                     errors.push("Poll max size exceeded. There can be at most 6 options.");
                     this.setState({ errors });
                     return;
                 }
-                
+
                 // Check for non-unique entries
                 if (options.length !== new Set(options).size) {
-                    let errors = this.state.errors;                
+                    let errors = this.state.errors;
                     errors.push("There are duplicate possible options.");
                     this.setState({ errors });
                     return;
@@ -189,12 +190,12 @@ class PostCreator extends React.Component {
                 requestOptions.body.content.push({
                     poll: {
                         question: this.state.title,
-                        possibleAnswers: 
+                        possibleAnswers:
                             options.map((item, idx) => ({
                                 "number": idx,
                                 "answer": item,
                             })),
-                        results: 
+                        results:
                             options.map((item, idx) => ({
                                 "answerNumber": idx,
                                 "answers": [],
@@ -256,7 +257,25 @@ class PostCreator extends React.Component {
                         <Form.Group controlId="createPostText">
                             <Form.Label className="d-flex justify-content-between">
                                 Post Content: {contentType}
-                                <Button size="sm" variant="outline-secondary" onClick={this.handleContentSwitch}>Switch To {contentTypeArr[(contentIdx + 1) % 3]} Editor</Button>
+                                <DropdownButton title="Select Content Type" size="sm" variant="outline-secondary">
+                                    <Dropdown.Item
+                                        onSelect={() => this.setState({
+                                            contentIdx: 0,
+                                            contentType: contentTypeArr[0],
+                                        })}>
+                                        Text
+                                    </Dropdown.Item>
+                                    <Dropdown.Item onSelect={() => this.setState({
+                                        contentIdx: 1,
+                                        contentType: contentTypeArr[1],
+                                    })}>
+                                        Markdown</Dropdown.Item>
+                                    <Dropdown.Item onSelect={() => this.setState({
+                                        contentIdx: 2,
+                                        contentType: contentTypeArr[2],
+                                    })}>Poll</Dropdown.Item>
+                                    {/* Switch To {contentTypeArr[(contentIdx + 1) % 3]} Editor */}
+                                </DropdownButton>
                             </Form.Label>
                             <Form.Control as="textarea"
                                 rows={4}
@@ -266,7 +285,7 @@ class PostCreator extends React.Component {
                                 value={this.state.body} />
 
                             {contentIdx === 1 && <MarkdownPreviewer body={this.state.body} handleChange={this.handleChange} />}
-                            {contentIdx === 2 && <Poll customStyles={{theme: "cyan"}} noStorage onVote={() => {}} answers={this.state.body.split("\n").map(item => ({
+                            {contentIdx === 2 && <Poll customStyles={{ theme: "cyan" }} noStorage onVote={() => { }} answers={this.state.body.split("\n").map(item => ({
                                 "option": item,
                                 "votes": 0,
                             }))} />}
