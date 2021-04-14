@@ -69,6 +69,8 @@ class Manager(object):
     # Used to determine whether cache needs updating
     def _get_latest_timestamp(self, host, community, headers):
         timestamps = self.instances[host].get_timestamps(community, headers)
+
+        if timestamps == []: return 0
         if timestamps is None:
             return max([x["modified"] for x in self.instances[host].get_posts(community, headers)[0]] + [0]) #Added [0] at end of call as now returns a tuple of (json list, status_code) may be good idea to check status code before iterating over list
 

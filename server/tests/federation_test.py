@@ -44,6 +44,7 @@ def test_get_community_by_id(client, requests_mock):
 def test_get_posts(client, requests_mock):
     requests_mock.get(
         "https://cs3099user-a1.host.cs.st-andrews.ac.uk/fed/posts", json={})
+
     requests_mock.get(
         "https://cs3099user-a1.host.cs.st-andrews.ac.uk/fed/communities/TestCommunity/timestamps", json=[])
 
@@ -52,7 +53,10 @@ def test_get_posts(client, requests_mock):
     assert response.status_code == 400
 
     requests_mock.get(
+        "https://cs3099user-a1.host.cs.st-andrews.ac.uk/fed/communities/TestCommunity/timestamps", json=[{"modified": 1}])
+    requests_mock.get(
         "https://cs3099user-a1.host.cs.st-andrews.ac.uk/fed/posts", json=[])
+
     response = client.get(
         "api/posts?community=TestCommunity&external=academoo", headers=headers_with_user)
     assert response.status_code == 200
