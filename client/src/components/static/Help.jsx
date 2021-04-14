@@ -44,7 +44,12 @@ class Help extends React.Component {
               <p>Just navigate from Yoo->Settings and change your bio there.</p>
             </Card.Body>
           </Card>
-
+          <Card className="mt-4">
+            <Card.Body>
+              <h5><i>How do I change my profile picture?</i></h5>
+              <p>To set your profile picture you must create an account on Gravatar with the email associated with your Academoo account and set a picture. </p>
+            </Card.Body>
+          </Card>
         </Card.Body>
       </Card>
 

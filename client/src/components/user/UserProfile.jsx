@@ -29,9 +29,9 @@ class UserProfile extends Component {
   }
 
 
-    /*
-    method which retrieves the user so we can then render the profile
-    */
+  /*
+  method which retrieves the user so we can then render the profile
+  */
   fetchCurrentUser() {
     authFetch("/api/get-user").then(response => response.json())
       .then(data => {
@@ -65,12 +65,17 @@ class UserProfile extends Component {
           'Client-Host': window.location.hostname
         }
       })
-      .then(response => {
+      .then(async response => {
         if (!response.ok) {
-          return response.json().then((error) => {
-            let err = error.title + ": " + error.message
+          if (response.status === 500) {
+            // const error = await response.json();
+            let err = "This user is not a member of a Academoo so there are no posts to display";
             throw new Error(err);
-          })
+          } else {
+            const error_1 = await response.json();
+            let err_1 = error_1.title + ": " + error_1.message;
+            throw new Error(err_1);
+          }
         } else {
           return response.json()
         }

@@ -3,6 +3,7 @@ import { Card, Form, Button } from 'react-bootstrap';
 
 var randomize = require('randomatic');
 
+/* Sketch Menu component lets a user choose whether to create a new whiteboard room or join an existing room */
 class SketchMenu extends React.Component {
 
     constructor(props) {
@@ -16,6 +17,7 @@ class SketchMenu extends React.Component {
         this.setState({ code: event.target.value })
     }
 
+    //Generates a unique 4-digit code for a new room
     handleCreate() {
         const code = randomize('Aa0', 4);
         let path = {
@@ -27,11 +29,13 @@ class SketchMenu extends React.Component {
         this.props.history.push(path);
     }
 
+    //User can join a room using the 4-digit code
     handleJoin(event) {
         event.preventDefault();
         this.props.history.push("/sketchamoo/" + this.state.code);
     }
 
+    /* Renders a menu with options for interacting with the shared whiteboard */
     render() {
         const { code } = this.state;
 
