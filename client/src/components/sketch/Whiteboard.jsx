@@ -44,11 +44,11 @@ class Whiteboard extends React.Component {
     }
 
     onSketchChange() {
-        let prev = this.state.canUndo;
-        let now = this.sketch.canUndo();
-        if (prev !== now) {
-            this.setState({ canUndo: now });
-        }
+        // let prev = this.state.canUndo;
+        // let now = this.sketch.canUndo();
+        // if (prev !== now) {
+        //     this.setState({ canUndo: now });
+        // }
 
         // console.log(this.props.receivedJson);
         if (!this.props.receivedJson) {
@@ -80,8 +80,8 @@ class Whiteboard extends React.Component {
         this.sketch.setBackgroundFromDataUrl('');
         this.setState({
             backgroundColour: "white",
-            canUndo: this.sketch.canUndo(),
-            canRedo: this.sketch.canRedo(),
+            // canUndo: this.sketch.canUndo(),
+            // canRedo: this.sketch.canRedo(),
         })
     }
 
@@ -100,21 +100,21 @@ class Whiteboard extends React.Component {
         this.setState({ text: "" });
     }
 
-    undo = () => {
-        this.sketch.undo();
-        this.setState({
-            canUndo: this.sketch.canUndo(),
-            canRedo: this.sketch.canRedo(),
-        });
-    };
+    // undo = () => {
+    //     this.sketch.undo();
+    //     this.setState({
+    //         canUndo: this.sketch.canUndo(),
+    //         canRedo: this.sketch.canRedo(),
+    //     });
+    // };
 
-    redo = () => {
-        this.sketch.redo();
-        this.setState({
-            canUndo: this.sketch.canUndo(),
-            canRedo: this.sketch.canRedo(),
-        });
-    };
+    // redo = () => {
+    //     this.sketch.redo();
+    //     this.setState({
+    //         canUndo: this.sketch.canUndo(),
+    //         canRedo: this.sketch.canRedo(),
+    //     });
+    // };
 
     // remove = index => {
     //     this.sketch.removeSelected();
@@ -261,7 +261,7 @@ class Whiteboard extends React.Component {
                             </Button>
                         </OverlayTrigger>
 
-                        <OverlayTrigger trigger={['click', 'focus']} placement="bottom" overlay={textPopover}>
+                        <OverlayTrigger trigger={['click']} placement="bottom" overlay={textPopover}>
                             <Button className="ml-2">
                                 <CursorText />
                             </Button>
