@@ -1,4 +1,4 @@
-import React, { Component} from "react";
+import React, { Component } from "react";
 import Sidebar from "../layout/Sidebar";
 import { Nav, Card, Container, Row, Col, Alert } from "react-bootstrap";
 import MiniPostCreator from "../posts/MiniPostCreator";
@@ -11,7 +11,7 @@ class SubscribedFeed extends Component {
   A user subscribes to a community, and then a list of the posts from those communities is displayed to the user
   This fetches the subscribed communities and the posts from these to display
   */
-    
+
     constructor(props) {
         super(props);
         this.parentCallback = this.parentCallback.bind(this);
@@ -28,7 +28,7 @@ class SubscribedFeed extends Component {
 
     parentCallback(post) {
         this.setState({
-          posts: this.state.posts.filter(p => p.id !== post.id),
+            posts: this.state.posts.filter(p => p.id !== post.id),
         });
     }
 
@@ -60,30 +60,48 @@ class SubscribedFeed extends Component {
     async fetchPosts() {
         await Promise.all(this.state.subscribedCommunities.map((subscription, i) => {
             this.appendPostsFromSubscription(subscription, i);
-        }));
+        }))
+            .then(async response => {
+                if (!response.ok || response.status === 400) {
+                    const error_1 = await response.json();
+                    let err_1 = error_1.title + ": " + error_1.message;
+                    throw new Error(err_1);
+                } else {
+                    return response.json()
+                }
+            })
+            .catch(error => this.setState({ error: error.message, isLoading: false }));
         this.state.subscribedCommunities.length === 0 && this.setState({ isLoading: false });
     }
 
     async appendPostsFromSubscription(subscription, i) {
         console.log(i)
         await authFetch('/api/posts?community=' + subscription.communityId
-        + '&includeSubChildrenPosts=false'
-        + (subscription.external !== null ? '&external=' + subscription.external : ''),
+            + '&includeSubChildrenPosts=false'
+            + (subscription.external !== null ? '&external=' + subscription.external : ''),
             {
                 headers: {
                     'User-ID': this.state.user_id,
                     'Client-Host': window.location.hostname
                 }
             })
-            .then(response => response.json())
+            .then(async response => {
+                if (!response.ok || response.status === 400) {
+                    const error_1 = await response.json();
+                    let err_1 = error_1.title + ": " + error_1.message;
+                    throw new Error(err_1);
+                } else {
+                    return response.json()
+                }
+            })
             .then(data =>
-                i === this.state.subscribedCommunities.length - 1 ? 
-                this.setState((prevState) => {return {posts: [...prevState.posts, ...data]}}, () => this.setState({isLoading: false}))
-                : this.setState({posts: [...this.state.posts, ...data]})
+                i === this.state.subscribedCommunities.length - 1 ?
+                    this.setState((prevState) => { return { posts: [...prevState.posts, ...data] } }, () => this.setState({ isLoading: false }))
+                    : this.setState({ posts: [...this.state.posts, ...data] })
             )
             .catch(error => this.setState({ error, isLoading: false }));
         this.setState({ posts: this.state.posts.slice().sort((a, b) => b.created - a.created) });
-           
+
     }
 
     /*
@@ -134,7 +152,7 @@ class SubscribedFeed extends Component {
     */
     render() {
         console.log(this.state)
-        const { isLoading, posts, error, currentCommunity} = this.state;
+        const { isLoading, posts, error, currentCommunity } = this.state;
         return (
             <Container fluid>
                 <Row>
@@ -160,12 +178,12 @@ class SubscribedFeed extends Component {
 
                                 {error ? <Alert variant="danger">Error fetching posts: {error.message}</Alert> : null}
                                 {!isLoading ? (
-                                    posts.length !== 0 ? 
-                                    <PostsViewer posts={posts} refreshPost={this.refreshPost.bind(this)} displayCommunityName parentCallback={this.parentCallback} />
-                                    : <h3>There's no posts here :-(</h3>
+                                    posts.length !== 0 ?
+                                        <PostsViewer posts={posts} refreshPost={this.refreshPost.bind(this)} displayCommunityName parentCallback={this.parentCallback} />
+                                        : <h3>There's no posts here :-(</h3>
                                 ) : (
-                                    <h3>Loading Posts...</h3>
-                                )}
+                                        <h3>Loading Posts...</h3>
+                                    )}
                             </Card.Body>
                         </Card>
                     </Col>

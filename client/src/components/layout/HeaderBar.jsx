@@ -103,9 +103,9 @@ function HeaderBar() {
                 history.push('/search/' + query);
               }} className="mr-sm-2">
                 <InputGroup>
-                  <FormControl className="border-light" type="text" placeholder="Search posts" value={query} onChange={e => setQuery(e.target.value)} />
+                  <FormControl className="border-secondary" type="text" placeholder="Search posts" value={query} onChange={e => setQuery(e.target.value)} />
                   <InputGroup.Append>
-                    <Button variant="outline-light" type="submit"><Search /></Button>
+                    <Button variant="secondary" type="submit"><Search /></Button>
                   </InputGroup.Append>
                 </InputGroup>
 

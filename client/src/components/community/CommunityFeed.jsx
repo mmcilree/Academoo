@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PostViewer from "../posts/PostsViewer";
-import { Card,  Alert, OverlayTrigger, Popover, Spinner } from "react-bootstrap";
+import { Card, Alert, OverlayTrigger, Popover, Spinner } from "react-bootstrap";
 import { Link, Redirect } from "react-router-dom";
 import { authFetch } from '../../auth';
 import MiniPostCreator from "../posts/MiniPostCreator";
@@ -56,7 +56,7 @@ class CommunityFeed extends Component {
         })
         // console.log(this.state.userID)
         this.fetchPosts()
-      }).catch(() => {})
+      }).catch(() => { })
 
   }
 
@@ -124,7 +124,7 @@ class CommunityFeed extends Component {
           communityData: data,
           isLoadingCommunity: false,
         })
-      ).catch((error) => {this.setState({notFound: true})})
+      ).catch((error) => { this.setState({ notFound: true }) })
   }
 
   handleSubmit(event) {
@@ -136,7 +136,7 @@ class CommunityFeed extends Component {
    */
   render() {
     // console.log(this.state)
-    const { isLoadingPosts, isLoadingCommunity, posts, error, currentCommunity,  host, communityData, isAdmin, isSiteAdmin } = this.state;
+    const { isLoadingPosts, isLoadingCommunity, posts, error, currentCommunity, host, communityData, isAdmin, isSiteAdmin } = this.state;
     const popover = (
       <Popover id="popover-basic">
         <Popover.Title as="h3">Community description</Popover.Title>
@@ -161,7 +161,7 @@ class CommunityFeed extends Component {
                   height="40"></img></Spinner>
                 <span>Loading... </span></h2>}
 
-            <CommunitySubscribeButton community={this.state.currentCommunity} external={this.state.host === "local" ? null : this.state.host}/>
+            <CommunitySubscribeButton community={this.state.currentCommunity} external={this.state.host === "local" ? null : this.state.host} />
           </div>
 
           <Card.Subtitle className="text-muted"><h6>{host + "/" + currentCommunity}</h6></Card.Subtitle>
