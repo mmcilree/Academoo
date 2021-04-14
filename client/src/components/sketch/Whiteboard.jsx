@@ -1,5 +1,5 @@
 import React from 'react';
-import { SketchField, Tools } from 'react-sketch-whiteboard';
+import { SketchField, Tools } from 'react-sketch';
 import { Clipboard, Link45deg, Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth, CursorText, PlusCircle, Share, ArrowCounterclockwise, ArrowClockwise, Eraser } from 'react-bootstrap-icons';
 import { CompactPicker } from 'react-color';
 import {
@@ -35,6 +35,7 @@ class Whiteboard extends React.Component {
             enableRemoveSelected: false,
             receivedUpdate: false,
             showNotif: true,
+            oldJSON: {},
         }
     }
 
@@ -50,9 +51,14 @@ class Whiteboard extends React.Component {
         if (!this.props.receivedJson) {
             this.sendUpdate()
         } else {
-            this.props.setReceivedJson();
+            if(JSON.stringify(this.sketch.toJSON()) !== JSON.stringify(this.state.oldJSON)) {
+                this.setState({
+                    oldJSON: this.sketch.toJSON(),
+                })
+                
+                this.props.setReceivedJson();
+            }
         }
-
     };
 
     sendUpdate() {
