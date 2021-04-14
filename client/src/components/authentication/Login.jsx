@@ -107,7 +107,7 @@ class Login extends React.Component {
 
               {this.state.isIncorrect ? (<Alert variant='warning'> Username or password not recognised.</Alert>) : null}
               {this.state.errors.map(error => (
-                <Alert variant='danger' key={error}>{error}</Alert>
+                <Alert variant='danger' key={error}>There was a problem logging you in.</Alert>
               ))}              <Route render={({ history }) => (
                 <Button
                   type='submit'
