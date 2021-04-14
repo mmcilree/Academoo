@@ -125,7 +125,7 @@ class ControlPanel extends Component {
                 )
             };
 
-            authFetch('/api/remove-site-roles/', requestOptions)
+            authFetch('/api/remove-site-roles', requestOptions)
                 .then(response => response.json())
                 .then((data) => {
                     if (data) {
@@ -155,7 +155,7 @@ class ControlPanel extends Component {
             };
 
 
-            authFetch('/api/add-site-role/', requestOptions)
+            authFetch('/api/add-site-role', requestOptions)
                 .then((response) => {
                     if (response.ok) {
                         this.setState({ changed: true, errors: [], host: "local", serverDropdown: "Select Server", role: "", selected: [{ user: "" }] });

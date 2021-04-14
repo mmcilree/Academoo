@@ -41,7 +41,7 @@ class ModeratorControls extends Component {
 
     //fetch the users for a given instance
     async fetchUsers(host) {
-        await fetch('/api/users' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
+        await authFetch('/api/users' + (host !== "local" ? "?external=" + host : "")).then(response => response.json())
             .then(data =>
                 this.setState({
                     users: [...data.map(user => ({ host: host, user: user }))],
@@ -91,7 +91,7 @@ class ModeratorControls extends Component {
         };
 
         // fetch the user's current account status
-        authFetch('/api/account-activation/', requestOptions)
+        authFetch('/api/account-activation', requestOptions)
             .then((response) => {
                 if (response.ok) {
                     this.setState({ changed: true, errors: [], host: "local", serverDropdown: "Select Server", role: "", selected: [{ user: "" }] });
