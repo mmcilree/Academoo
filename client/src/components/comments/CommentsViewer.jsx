@@ -50,7 +50,9 @@ class CommentsViewer extends React.Component {
       this.state.grandchildren[post.parentPost] = this.state.grandchildren[post.parentPost].filter(child => child.id !== post.id);
     }
 
-    this.props.history.push("/communities/" + (post.host !== "local" ? post.host + "/" : "") + post.community);
+    if(post.parentPost === null) {
+      this.props.history.push("/communities/" + (post.host !== "local" ? post.host + "/" : "") + post.community);
+    }
   }
 
   fetchUserDetails() {
