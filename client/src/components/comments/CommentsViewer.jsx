@@ -46,11 +46,11 @@ class CommentsViewer extends React.Component {
       needsUpdate: true,
     });
 
-    if(this.state.grandchildren[post.parentPost]) {
+    if (this.state.grandchildren[post.parentPost]) {
       this.state.grandchildren[post.parentPost] = this.state.grandchildren[post.parentPost].filter(child => child.id !== post.id);
     }
 
-    if(post.parentPost === null) {
+    if (post.parentPost === null) {
       this.props.history.push("/communities/" + (post.host !== "local" ? post.host + "/" : "") + post.community);
     }
   }
@@ -88,7 +88,7 @@ class CommentsViewer extends React.Component {
       {
         headers: {
           'User-ID': this.state.userID,
-          'Client-Host': window.location.protocol + "//" + window.location.hostname
+          'Client-Host': window.location.hostname
         }
       })
       .then(response => {
@@ -145,15 +145,15 @@ class CommentsViewer extends React.Component {
           .catch(error => this.setState({ error: error.message, isLoading: false }));
       }));
 
-      if(this.state.grandchildren[parentId] && isChild) {
-        new_children = [...this.state.grandchildren[parentId], ...new_children];
-      }
+    if (this.state.grandchildren[parentId] && isChild) {
+      new_children = [...this.state.grandchildren[parentId], ...new_children];
+    }
 
-      if(!isChild) {
-        this.setState({ isLoading: false, children: [...children, ...new_children] });
-      } else {
-        this.setState({ isLoading: false, grandchildren: { ...grandchildren, [parentId]: new_children } });
-      }
+    if (!isChild) {
+      this.setState({ isLoading: false, children: [...children, ...new_children] });
+    } else {
+      this.setState({ isLoading: false, grandchildren: { ...grandchildren, [parentId]: new_children } });
+    }
   }
 
   componentDidMount() {
@@ -174,11 +174,11 @@ class CommentsViewer extends React.Component {
           {!isLoading && !error ? (
             <Card.Body>
               <Button variant="secondary" onClick={() => {
-                this.props.history.push("/communities/" + (this.state.host === "local" ? "": this.state.host + "/") + this.state.parentPost.community);
+                this.props.history.push("/communities/" + (this.state.host === "local" ? "" : this.state.host + "/") + this.state.parentPost.community);
               }}>All Community Posts <ArrowReturnLeft /></Button>
               <Card className="mt-4">
                 <Card.Body>
-                  <Post postData={this.state.parentPost} displayCommunityName parentCallback={this.parentCallback}/>
+                  <Post postData={this.state.parentPost} displayCommunityName parentCallback={this.parentCallback} />
                   <div className="d-flex justify-content-between">
                     <Button variant="primary" onClick={this.handleOpenCommentEditor.bind(this)}>
                       Leave a comment
@@ -213,11 +213,11 @@ class CommentsViewer extends React.Component {
                   <Card key={child.id} className="mt-4 ml-4 comment">
 
                     <Card.Body className="pb-1">
-                      <Post postData={child} parentCallback={this.parentCallback} parentId={this.state.parentPostId}/>
+                      <Post postData={child} parentCallback={this.parentCallback} parentId={this.state.parentPostId} />
                       {/* <Accordion defaultActiveKey={this.state.currentChild && (this.state.currentChild.id === child.id) && !this.state.showReplyEditor ? "0" : "1"}> */}
                       <Accordion>
                         <div className="d-flex justify-content-between">
-                          <div>                            
+                          <div>
                             <Accordion.Toggle as={Button} variant="link" eventKey="0" onClick={() => this.fetchChildren(child.children, true, child.id)}>
                               <small><ChatSquare className="mb-1 mr-1" /> Replies ({child.children.length})</small>
                             </Accordion.Toggle>
@@ -227,7 +227,7 @@ class CommentsViewer extends React.Component {
 
                           <VoteDisplay upvotes={child.upvotes} downvotes={child.downvotes} postId={child.id} />
                         </div>
-                        
+
                         <Accordion.Collapse eventKey="0" className="p-0">
                           <Card.Body className="pt-0 pl-0">
                             {child.children.length === 0 ?
@@ -236,7 +236,7 @@ class CommentsViewer extends React.Component {
                                 newchild ? (
                                   <Card key={newchild.id} className="mt-4 ml-4 comment">
                                     <Card.Body>
-                                      <Post postData={newchild} parentCallback={this.parentCallback} parentId={this.state.parentPostId}/>
+                                      <Post postData={newchild} parentCallback={this.parentCallback} parentId={this.state.parentPostId} />
                                       <div className="d-flex justify-content-between">
                                         <div>
                                         </div>

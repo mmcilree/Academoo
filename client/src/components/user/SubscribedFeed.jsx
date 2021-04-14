@@ -61,16 +61,16 @@ class SubscribedFeed extends Component {
         await Promise.all(this.state.subscribedCommunities.map((subscription, i) => {
             this.appendPostsFromSubscription(subscription, i);
         }))
-            .then(async response => {
-                if (!response.ok || response.status === 400) {
-                    const error_1 = await response.json();
-                    let err_1 = error_1.title + ": " + error_1.message;
-                    throw new Error(err_1);
-                } else {
-                    return response.json()
-                }
-            })
-            .catch(error => this.setState({ error: error.message, isLoading: false }));
+        // .then(async response => {
+        //     if (!response.ok || response.status === 400) {
+        //         const error_1 = await response.json();
+        //         let err_1 = error_1.title + ": " + error_1.message;
+        //         throw new Error(err_1);
+        //     } else {
+        //         return response.json()
+        //     }
+        // })
+        // .catch(error => this.setState({ error: error.message, isLoading: false }));
         this.state.subscribedCommunities.length === 0 && this.setState({ isLoading: false });
     }
 
@@ -88,7 +88,7 @@ class SubscribedFeed extends Component {
             .then(async response => {
                 if (!response.ok || response.status === 400) {
                     const error_1 = await response.json();
-                    let err_1 = error_1.title + ": " + error_1.message;
+                    let err_1 = error_1.title + ": " + error_1.message + " for subscribed community \"" + subscription.communityId + "\"";
                     throw new Error(err_1);
                 } else {
                     return response.json()
@@ -97,7 +97,7 @@ class SubscribedFeed extends Component {
             .then(data =>
                 i === this.state.subscribedCommunities.length - 1 ?
                     this.setState((prevState) => { return { posts: [...prevState.posts, ...data] } }, () => this.setState({ isLoading: false }))
-                    : this.setState({ posts: [...this.state.posts, ...data] })
+                    : this.setState({ posts: [...this.state.posts, ...data], error: null })
             )
             .catch(error => this.setState({ error, isLoading: false }));
         this.setState({ posts: this.state.posts.slice().sort((a, b) => b.created - a.created) });
