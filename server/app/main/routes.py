@@ -9,7 +9,7 @@ from utils import *
 
 BAD_REQUEST = ({"message": "Bad Request"}, 400)
 
-
+# Take return value from actions and turn into network sendable format
 def respond_with_action(actionResponse):
     data, status = actionResponse
     return jsonify(data), status
@@ -19,23 +19,21 @@ def respond_with_action(actionResponse):
 def index():
     return "Hello World!"
 
-
+# Assign community role to specified user
 @bp.route("/assign-role", methods=["POST"])
-# @roles_accepted("site-admin, site-moderator")
 def assign_role():
     req = request.json
-    user_host = req["host"]  # someday
+    user_host = req["host"]
     user_id = req["user"]
     community_id = req["community"]
     role = req["role"]
-    # NOTE: shouldn't we use auth required and get user from there instead?
     current_user = request.headers.get("User-ID")
     if user_host in ["local", "nnv2host"]:
         return respond_with_action(actions.grantRole(user_id, community_id, current_user, role))
     else:
         return respond_with_action(actions.grantRole(user_id, community_id, current_user, role, True, user_host))
 
-
+# Set the default role for a community
 @bp.route("/set-default-role", methods=["POST"])
 def set_default_role():
     req = request.json
@@ -53,7 +51,7 @@ def get_default_role(id):
 def get_community_roles(id):
     return respond_with_action(actions.getRoles(id))
 
-
+# Add a sitewide role to a user
 @bp.route("/add-site-role", methods=["POST"])
 @auth_required
 def add_sitewide_role():
@@ -72,7 +70,7 @@ def add_sitewide_role():
 
     return respond_with_action(actions.addSiteWideRole(admin, username, role, key, host))
 
-
+# Remove a sitwide role from a user
 @bp.route("/remove-site-roles", methods=["PUT"])
 @roles_required("site-admin")
 def remove_site_roles():
@@ -87,7 +85,7 @@ def remove_site_roles():
         return BAD_REQUEST
     return respond_with_action(actions.removeSiteWideRoles(username, host))
 
-
+# Activate a new users account
 @bp.route("/account-activation", methods=["PUT"])
 @roles_accepted("site-moderator", "site-admin")
 def account_activation():
@@ -102,7 +100,6 @@ def account_activation():
     except KeyError:
         return BAD_REQUEST
     return respond_with_action(actions.userAccountActivation(username, host, activation))
-
 
 @bp.route("/create-community", methods=["POST"])
 def create_community():
@@ -120,7 +117,7 @@ def create_community():
 
     return respond_with_action(actions.createCommunity(community_id, title, description, admin))
 
-
+# Update the bio information of a user account
 @bp.route("/update-bio", methods=["POST"])
 @auth_required
 def update_bio():
@@ -134,6 +131,7 @@ def update_bio():
     return Response(status=200) if actions.updateBio(u.user_id, bio) else BAD_REQUEST
 
 
+# Update privacy settings of an account
 @bp.route("/update-privacy", methods=["POST"])
 @auth_required
 def update_privacy():
@@ -146,7 +144,7 @@ def update_privacy():
 
     return Response(status=200) if actions.updatePrivacy(u.user_id, private) else BAD_REQUEST
 
-
+# Change the password of a user account
 @bp.route("/change-password", methods=["POST"])
 @auth_required
 def change_password():
@@ -159,7 +157,6 @@ def change_password():
     new_password = req["new_password"]
 
     return Response(status=200) if actions.changePassword(username, old_password, new_password) else BAD_REQUEST
-
 
 @bp.route("/get-user")
 @auth_required
@@ -178,7 +175,7 @@ def get_user():
 
     return jsonify({"id": u.user_id, "email": u.email, "host": u.host, "adminOf": adminOf, "subscriptions": subscriptions, "about": u.about, "private": u.private_account, "site_roles": u.site_roles})
 
-
+# Add a subscription from a user to a community
 @bp.route("/subscribe", methods=["POST"])
 @auth_required
 def subscribe():
@@ -188,7 +185,7 @@ def subscribe():
     external = req["external"]
     return respond_with_action(actions.addSubscriber(u.user_id, community_id, external))
 
-
+# Remove a subscription froma a user to a community
 @bp.route("/unsubscribe", methods=["POST"])
 @auth_required
 def unsubscribe():
@@ -198,7 +195,7 @@ def unsubscribe():
     external = req["external"]
     return respond_with_action(actions.removeSubscriber(u.user_id, community_id, external))
 
-
+# Add an external server instance to instance manager
 @bp.route("/add-instance", methods=["POST"])
 def add_instance():
     req = request.json
@@ -207,12 +204,11 @@ def add_instance():
 
     return Response(status=200) if instance_manager.add_instance(host, url) else BAD_REQUEST
 
-
 @bp.route("/get-instances", methods=["GET"])
 def get_all_instances():
     return jsonify(instance_manager.get_instances())
 
-
+# Delete a user account
 @bp.route("/delete-account", methods=["POST"])
 @auth_required
 def delete_user():

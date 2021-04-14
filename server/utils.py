@@ -263,7 +263,7 @@ def check_create_post(file):
         "properties": {
             "community": {"type": "string"},
             "parentPost": {"type": ["string", "null"], "default": "null"},
-            "title": {"type": "string"},
+            "title": {"type": ["string", "null"], "default": "null"},
             "content": content_schema
         },
         "required": ["community", "title", "content"]

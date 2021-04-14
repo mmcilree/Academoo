@@ -4,6 +4,7 @@ from app import actions, guard
 from utils import *
 from flask_praetorian import auth_required, roles_required, roles_accepted, current_user
 
+# Convert action return value to network sendable format
 def respond_with_action(actionResponse):
     data, status = actionResponse
     return jsonify(data), status
