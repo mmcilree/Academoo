@@ -1,5 +1,5 @@
 import React from 'react';
-import { SketchField, Tools } from 'react-sketch-whiteboard';
+import { SketchField, Tools } from 'react-sketch2';
 import { Clipboard, Link45deg, Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth, CursorText, PlusCircle, Share, ArrowCounterclockwise, ArrowClockwise, Eraser } from 'react-bootstrap-icons';
 import { CompactPicker } from 'react-color';
 import {
@@ -35,6 +35,7 @@ class Whiteboard extends React.Component {
             enableRemoveSelected: false,
             receivedUpdate: false,
             showNotif: true,
+            oldJSON: {},
         }
     }
 
@@ -50,9 +51,14 @@ class Whiteboard extends React.Component {
         if (!this.props.receivedJson) {
             this.sendUpdate()
         } else {
-            this.props.setReceivedJson();
+            if(JSON.stringify(this.sketch.toJSON()) !== JSON.stringify(this.state.oldJSON)) {
+                this.setState({
+                    oldJSON: this.sketch.toJSON(),
+                })
+                
+                this.props.setReceivedJson();
+            }
         }
-
     };
 
     sendUpdate() {
@@ -72,16 +78,20 @@ class Whiteboard extends React.Component {
         });
     }
 
-    clear = () => {
-        this.sketch.clear();
-        this.sketch.setBackgroundFromDataUrl('');
+    clear = async () => {
+        await this.sketch.clear();
+        await this.sketch.setBackgroundFromDataUrl('');
         this.setState({
             backgroundColour: "white",
         })
+
+        this.sendUpdate();
     }
 
-    removeSelected = () => {
-        this.sketch.removeSelected()
+    removeSelected = async () => {
+        await this.sketch.removeSelected();
+
+        this.sendUpdate();
     };
 
 
@@ -89,10 +99,12 @@ class Whiteboard extends React.Component {
         this.setState({ text: event.target.value });
     }
 
-    addText = (event) => {
+    addText = async (event) => {
         event.preventDefault();
-        this.sketch.addText(this.state.text);
+        await this.sketch.addText(this.state.text);
         this.setState({ text: "" });
+
+        this.sendUpdate();
     }
 
     download = () => {

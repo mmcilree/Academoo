@@ -19,6 +19,7 @@ class SketchRoom extends React.Component {
             user: "",
             messages: [],
             whiteboardJSON: {},
+            oldJSON: {},
             receivedJson: false,
             joinMsg: "",
             ready: this.props.location && this.props.location.state ?
@@ -41,9 +42,13 @@ class SketchRoom extends React.Component {
 
     //sends an updated Json board state to other users in the room
     sendUpdate(jsonValue) {
+        if (this.state.ready && JSON.stringify(this.state.oldJSON) !== JSON.stringify(jsonValue)) {
+            console.log("new json whiteboard sent");
 
-        if (this.state.ready) {
-            console.log("new json whiteboard sent")
+            this.setState({
+                oldJSON: jsonValue,
+            })
+
             socket.emit("message", { message: jsonValue, room: this.state.code });
         }
     }
