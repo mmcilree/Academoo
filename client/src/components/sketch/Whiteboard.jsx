@@ -1,5 +1,5 @@
 import React from 'react';
-import { SketchField, Tools } from 'react-sketch';
+import { SketchField, Tools } from 'react-sketch2';
 import { Clipboard, Link45deg, Cursor, Pencil, Slash, Circle, Square, ArrowsMove, Palette, Download, Trash, BorderWidth, CursorText, PlusCircle, Share, ArrowCounterclockwise, ArrowClockwise, Eraser } from 'react-bootstrap-icons';
 import { CompactPicker } from 'react-color';
 import {
