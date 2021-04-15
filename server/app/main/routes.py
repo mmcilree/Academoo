@@ -70,7 +70,7 @@ def add_sitewide_role():
 
     return respond_with_action(actions.addSiteWideRole(admin, username, role, key, host))
 
-# Remove a sitwide role from a user
+# Remove a sitewide role from a user
 @bp.route("/remove-site-roles", methods=["PUT"])
 @roles_required("site-admin")
 def remove_site_roles():
@@ -87,7 +87,7 @@ def remove_site_roles():
 
 # Activate a new users account
 @bp.route("/account-activation", methods=["PUT"])
-@roles_accepted("site-moderator", "site-admin")
+@roles_required("site-moderator")
 def account_activation():
     req = request.json
     if not req:
