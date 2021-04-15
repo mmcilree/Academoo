@@ -1,5 +1,7 @@
 # CS3099 Group Project Code
 
+This contains the complete source code for "Academoo", an instance of a federated social media platform for Universities. 
+
 ## Commit Message Conventions 
 
 We are using [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/). 
@@ -38,7 +40,7 @@ We are using the react naming conventions similar to those adoped by [Airbnb](ht
 - **Quotes**: Double Quotes ("") for all JSX attributes and Single Quotes ('') for all other JS. 
 - **Spacing**: Single space in <SelfClosing /> tags. Embedded JS should be {unpadded}
 
-## When starting the backend for the first time:
+## When starting the backend locally for the first time:
 
 ```
 python3 -m venv venv
@@ -48,4 +50,3 @@ pip3 install -r requirements.txt
 flask db init
 flask db upgrade
 ```
-to be continued...
