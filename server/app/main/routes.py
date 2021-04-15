@@ -87,7 +87,7 @@ def remove_site_roles():
 
 # Activate a new users account
 @bp.route("/account-activation", methods=["PUT"])
-@roles_required("site-moderator")
+@roles_accepted("site-admin", "site-moderator")
 def account_activation():
     req = request.json
     if not req:
